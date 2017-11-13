@@ -15,7 +15,7 @@
   -->
 
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout">
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout" xmlns:fmt="jelly:fmt">
     <l:layout xmlns:jm="/de/tsystems/mms/apm/performancesignature/ui/tags"
               title="Performance Signature report details for build ${it.build.number}">
         <l:header>
@@ -63,7 +63,8 @@
                                 </div>
                                 <br/>
                                 <div class="row col-md-6">
-                                    ${%Timestamp:} ${it.build.time}
+                                    ${%Timestamp:}
+                                    <fmt:formatDate dateStyle="medium" type="both" value="${it.build.time}"/>
                                 </div>
                                 <br/>
                                 <br/>
@@ -127,6 +128,42 @@
                                                 </div>
                                             </div>
                                         </div>
+                                    </div>
+                                </j:if>
+
+                                <j:if test="${!dashboardReport.incidents.isEmpty()}">
+                                    <h3>Incidents</h3>
+                                    <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                                        <j:forEach var="incident" items="${dashboardReport.incidents}">
+                                            <j:set var="position" value="${dashboardReport.incidents.indexOf(incident)}"/>
+                                            <div class="panel panel-default ${incident.panelColor}">
+                                                <div class="panel-heading" role="tab" id="heading${position}">
+                                                    <h4 class="panel-title">
+                                                        <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse${position}"
+                                                           aria-expanded="true"
+                                                           aria-controls="collapse${position}">
+                                                            ${incident.severity} Incident: ${incident.message}
+                                                        </a>
+                                                    </h4>
+                                                </div>
+                                                <div id="collapse${position}" class="panel-collapse collapse" role="tabpanel"
+                                                     aria-labelledby="heading${position}">
+                                                    <div class="panel-body">
+                                                        <b>rule:</b>
+                                                        ${incident.rule}
+                                                        <br/>
+                                                        <b>description:</b>
+                                                        ${incident.description}
+                                                        <br/>
+                                                        <b>start:</b>
+                                                        ${incident.start}
+                                                        <br/>
+                                                        <b>end:</b>
+                                                        ${incident.end}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </j:forEach>
                                     </div>
                                 </j:if>
                                 <j:forEach var="chartDashlet" items="${dashboardReport.chartDashlets}">

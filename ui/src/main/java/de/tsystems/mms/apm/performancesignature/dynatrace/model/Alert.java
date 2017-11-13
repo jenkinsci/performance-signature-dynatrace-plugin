@@ -38,13 +38,13 @@ import java.util.Date;
 @ExportedBean
 public class Alert {
     @SerializedName("severity")
-    private final SeverityEnum severity = null;
+    private SeverityEnum severity;
     @SerializedName("state")
-    private final StateEnum state = null;
+    private StateEnum state;
     @SerializedName("message")
-    private final String message = null;
+    private String message;
     @SerializedName("description")
-    private final String description = null;
+    private String description;
     @SerializedName("start")
     private Date start;
     @SerializedName("end")
@@ -52,7 +52,7 @@ public class Alert {
     @SerializedName("rule")
     private final String rule = null;
     @SerializedName("systemprofile")
-    private final String systemprofile = null;
+    private String systemprofile;
 
     /**
      * The severity of the alert
@@ -138,6 +138,18 @@ public class Alert {
     @ApiModelProperty(required = true, value = "System Profile name")
     public String getSystemprofile() {
         return systemprofile;
+    }
+
+    public String getPanelColor() {
+        switch (severity) {
+            case INFORMATIONAL:
+                return "";
+            case WARNING:
+                return "panel-warning";
+            case SEVERE:
+                return "panel-danger";
+        }
+        return null;
     }
 
     @Override
