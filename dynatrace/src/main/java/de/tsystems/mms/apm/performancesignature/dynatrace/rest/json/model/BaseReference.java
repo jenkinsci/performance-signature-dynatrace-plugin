@@ -21,10 +21,10 @@ import de.tsystems.mms.apm.performancesignature.util.PerfSigUIUtils;
 import io.swagger.annotations.ApiModelProperty;
 
 /**
- * ResponseReferenceBase
+ * BaseReference
  */
 
-public class ResponseReferenceBase {
+public abstract class BaseReference {
     @SerializedName("id")
     private final String id = null;
 
@@ -54,7 +54,7 @@ public class ResponseReferenceBase {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("class ResponseReferenceBase {\n");
+        sb.append("class BaseReference {\n");
 
         sb.append("    id: ").append(PerfSigUIUtils.toIndentedString(id)).append("\n");
         sb.append("    href: ").append(PerfSigUIUtils.toIndentedString(href)).append("\n");

@@ -24,25 +24,9 @@ import io.swagger.annotations.ApiModelProperty;
  * SystemProfileReference
  */
 
-public class SystemProfileReference {
-    @SerializedName("id")
-    private final String id = null;
-
+public class SystemProfileReference extends BaseReference {
     @SerializedName("isrecording")
     private final Boolean isrecording = false;
-
-    @SerializedName("href")
-    private final String href = null;
-
-    /**
-     * System Profile id
-     *
-     * @return id
-     **/
-    @ApiModelProperty(value = "System Profile id")
-    public String getId() {
-        return id;
-    }
 
     /**
      * Session recording state
@@ -54,24 +38,14 @@ public class SystemProfileReference {
         return isrecording;
     }
 
-    /**
-     * Base URL of the REST resource. Further information can be retrieved from this URL or its subresources
-     *
-     * @return href
-     **/
-    @ApiModelProperty(value = "Base URL of the REST resource. Further information can be retrieved from this URL or its subresources")
-    public String getHref() {
-        return href;
-    }
-
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("class SystemProfileReference {\n");
 
-        sb.append("    id: ").append(PerfSigUIUtils.toIndentedString(id)).append("\n");
+        sb.append("    id: ").append(PerfSigUIUtils.toIndentedString(super.getId())).append("\n");
         sb.append("    isrecording: ").append(PerfSigUIUtils.toIndentedString(isrecording)).append("\n");
-        sb.append("    href: ").append(PerfSigUIUtils.toIndentedString(href)).append("\n");
+        sb.append("    href: ").append(PerfSigUIUtils.toIndentedString(super.getHref())).append("\n");
         sb.append("}");
         return sb.toString();
     }

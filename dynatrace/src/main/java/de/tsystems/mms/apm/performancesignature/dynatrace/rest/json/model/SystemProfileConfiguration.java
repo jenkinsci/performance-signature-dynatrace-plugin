@@ -18,41 +18,14 @@ package de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model;
 
 import com.google.gson.annotations.SerializedName;
 import de.tsystems.mms.apm.performancesignature.util.PerfSigUIUtils;
-import io.swagger.annotations.ApiModelProperty;
 
 /**
  * SystemProfileConfiguration
  */
 
-public class SystemProfileConfiguration {
-    @SerializedName("id")
-    private final String id = null;
-
-    @SerializedName("href")
-    private final String href = null;
-
+public class SystemProfileConfiguration extends BaseReference {
     @SerializedName("isactive")
     private final Boolean isactive = false;
-
-    /**
-     * ID of the reference
-     *
-     * @return id
-     **/
-    @ApiModelProperty(value = "ID of the reference")
-    public String getId() {
-        return id;
-    }
-
-    /**
-     * Base URL of the REST resource. Further information can be retrieved from this URL or its subresources
-     *
-     * @return href
-     **/
-    @ApiModelProperty(value = "Base URL of the REST resource. Further information can be retrieved from this URL or its subresources")
-    public String getHref() {
-        return href;
-    }
 
     /**
      * Get isactive
@@ -69,8 +42,8 @@ public class SystemProfileConfiguration {
         StringBuilder sb = new StringBuilder();
         sb.append("class SystemProfileConfiguration {\n");
 
-        sb.append("    id: ").append(PerfSigUIUtils.toIndentedString(id)).append("\n");
-        sb.append("    href: ").append(PerfSigUIUtils.toIndentedString(href)).append("\n");
+        sb.append("    id: ").append(PerfSigUIUtils.toIndentedString(super.getId())).append("\n");
+        sb.append("    href: ").append(PerfSigUIUtils.toIndentedString(super.getHref())).append("\n");
         sb.append("    isactive: ").append(PerfSigUIUtils.toIndentedString(isactive)).append("\n");
         sb.append("}");
         return sb.toString();

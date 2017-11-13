@@ -30,27 +30,13 @@ import java.io.IOException;
  * SessionData
  */
 
-public class SessionData {
-    @SerializedName("id")
-    private final String id = null;
+public class SessionData extends BaseReference {
     @SerializedName("storedsessiontype")
     private final StoredsessiontypeEnum storedsessiontype = null;
     @SerializedName("sessiontype")
     private final SessiontypeEnum sessiontype = null;
     @SerializedName("systemprofile")
     private final String systemprofile = null;
-    @SerializedName("href")
-    private final String href = null;
-
-    /**
-     * Unique id of the session
-     *
-     * @return id
-     **/
-    @ApiModelProperty(value = "Unique id of the session")
-    public String getId() {
-        return id;
-    }
 
     /**
      * Stored session type
@@ -82,26 +68,16 @@ public class SessionData {
         return systemprofile;
     }
 
-    /**
-     * Base URL of the REST resource. Further information can be retrieved from this URL or its subresources
-     *
-     * @return href
-     **/
-    @ApiModelProperty(value = "Base URL of the REST resource. Further information can be retrieved from this URL or its subresources")
-    public String getHref() {
-        return href;
-    }
-
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("class SessionData {\n");
 
-        sb.append("    id: ").append(PerfSigUIUtils.toIndentedString(id)).append("\n");
+        sb.append("    id: ").append(PerfSigUIUtils.toIndentedString(super.getId())).append("\n");
         sb.append("    storedsessiontype: ").append(PerfSigUIUtils.toIndentedString(storedsessiontype)).append("\n");
         sb.append("    sessiontype: ").append(PerfSigUIUtils.toIndentedString(sessiontype)).append("\n");
         sb.append("    systemprofile: ").append(PerfSigUIUtils.toIndentedString(systemprofile)).append("\n");
-        sb.append("    href: ").append(PerfSigUIUtils.toIndentedString(href)).append("\n");
+        sb.append("    href: ").append(PerfSigUIUtils.toIndentedString(super.getHref())).append("\n");
         sb.append("}");
         return sb.toString();
     }

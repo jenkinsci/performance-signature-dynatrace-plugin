@@ -35,17 +35,13 @@ import java.util.List;
  */
 @ApiModel(description = "Comprehensive metadata of a session")
 
-public class SessionMetadata {
-    @SerializedName("id")
-    private final String id = null;
+public class SessionMetadata extends BaseReference {
     @SerializedName("storedsessiontype")
     private final StoredsessiontypeEnum storedsessiontype = null;
     @SerializedName("sessiontype")
     private final SessiontypeEnum sessiontype = null;
     @SerializedName("systemprofile")
     private final String systemprofile = null;
-    @SerializedName("href")
-    private final String href = null;
     @SerializedName("name")
     private final String name = null;
     @SerializedName("description")
@@ -76,16 +72,6 @@ public class SessionMetadata {
     private List<String> labels = null;
 
     /**
-     * Unique id of the session
-     *
-     * @return id
-     **/
-    @ApiModelProperty(value = "Unique id of the session")
-    public String getId() {
-        return id;
-    }
-
-    /**
      * Stored session type
      *
      * @return storedsessiontype
@@ -113,16 +99,6 @@ public class SessionMetadata {
     @ApiModelProperty(value = "Name of the system profile the session belongs to")
     public String getSystemprofile() {
         return systemprofile;
-    }
-
-    /**
-     * Base URL of the REST resource. Further information can be retrieved from this URL or its subresources
-     *
-     * @return href
-     **/
-    @ApiModelProperty(value = "Base URL of the REST resource. Further information can be retrieved from this URL or its subresources")
-    public String getHref() {
-        return href;
     }
 
     /**
@@ -287,11 +263,11 @@ public class SessionMetadata {
         StringBuilder sb = new StringBuilder();
         sb.append("class SessionMetadata {\n");
 
-        sb.append("    id: ").append(PerfSigUIUtils.toIndentedString(id)).append("\n");
+        sb.append("    id: ").append(PerfSigUIUtils.toIndentedString(super.getId())).append("\n");
         sb.append("    storedsessiontype: ").append(PerfSigUIUtils.toIndentedString(storedsessiontype)).append("\n");
         sb.append("    sessiontype: ").append(PerfSigUIUtils.toIndentedString(sessiontype)).append("\n");
         sb.append("    systemprofile: ").append(PerfSigUIUtils.toIndentedString(systemprofile)).append("\n");
-        sb.append("    href: ").append(PerfSigUIUtils.toIndentedString(href)).append("\n");
+        sb.append("    href: ").append(PerfSigUIUtils.toIndentedString(super.getHref())).append("\n");
         sb.append("    name: ").append(PerfSigUIUtils.toIndentedString(name)).append("\n");
         sb.append("    description: ").append(PerfSigUIUtils.toIndentedString(description)).append("\n");
         sb.append("    size: ").append(PerfSigUIUtils.toIndentedString(size)).append("\n");
