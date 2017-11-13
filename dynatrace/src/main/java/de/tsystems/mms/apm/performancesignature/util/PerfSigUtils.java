@@ -24,6 +24,7 @@ import de.tsystems.mms.apm.performancesignature.dynatrace.PerfSigGlobalConfigura
 import de.tsystems.mms.apm.performancesignature.dynatrace.configuration.CredProfilePair;
 import de.tsystems.mms.apm.performancesignature.dynatrace.configuration.DynatraceServerConfiguration;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.DTServerConnection;
+import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.ApiResponse;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model.BaseReference;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.RESTErrorException;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.model.Agent;
@@ -33,6 +34,8 @@ import hudson.security.ACL;
 import hudson.util.ListBoxModel;
 import org.apache.commons.collections.CollectionUtils;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -144,5 +147,41 @@ public final class PerfSigUtils {
             throw new RESTErrorException(de.tsystems.mms.apm.performancesignature.dynatrace.Messages.PerfSigRecorder_DTConnectionError());
         }
         return connection;
+    }
+
+    public static String getIdFromLocationHeader(ApiResponse<Void> response) {
+        List<String> locationList = response.getHeaders().get("Location");
+        if (locationList == null || locationList.isEmpty()) {
+            return null;
+        }
+        String locationUrl = locationList.get(0);
+        String location = locationUrl.substring(locationUrl.lastIndexOf('/') + 1);
+        return unescapeString(location);
+    }
+
+
+    /**
+     * Escape the given string to be used as URL query value.
+     *
+     * @param str String to be escaped
+     * @return Escaped string
+     */
+    public static String escapeString(String str) {
+        return PerfSigUIUtils.encodeString(str);
+    }
+
+    /**
+     * Unescape the given string coming from a query parameter.
+     *
+     * @param str String to be unescaped
+     * @return unescaped string
+     */
+    public static String unescapeString(String str) {
+        try {
+            String decoded = URLDecoder.decode(str, "utf8");
+            return URLDecoder.decode(decoded, "utf8");
+        } catch (UnsupportedEncodingException e) {
+            return str;
+        }
     }
 }

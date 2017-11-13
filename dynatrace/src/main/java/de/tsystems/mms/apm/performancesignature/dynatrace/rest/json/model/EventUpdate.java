@@ -47,6 +47,10 @@ public class EventUpdate {
     @SerializedName("end")
     private Date end;
 
+    public EventUpdate(Date end) {
+        this.end = end;
+    }
+
     /**
      * The severity of the event
      *

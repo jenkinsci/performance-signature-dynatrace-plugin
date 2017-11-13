@@ -22,6 +22,7 @@ import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.*;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model.DeletedStoredSessions;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model.SessionMetadata;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model.Sessions;
+import de.tsystems.mms.apm.performancesignature.util.PerfSigUtils;
 
 import java.io.File;
 import java.lang.reflect.Type;
@@ -56,7 +57,7 @@ public class StoredSessionsApi {
     public Call deleteStoredSessionCall(String sessionid) throws ApiException {
         // create path and map variables
         String localVarPath = ApiClient.API_SUFFIX + "/sessions/{sessionid}"
-                .replaceAll("\\{sessionid\\}", apiClient.escapeString(sessionid));
+                .replaceAll("\\{sessionid\\}", PerfSigUtils.escapeString(sessionid));
 
         List<Pair> localVarQueryParams = new ArrayList<>();
 
@@ -215,7 +216,7 @@ public class StoredSessionsApi {
     public Call getStoredSessionCall(String sessionid, Boolean removeconfidentialstrings, Date timeframestart, Date timeframeend) throws ApiException {
         // create path and map variables
         String localVarPath = ApiClient.API_SUFFIX + "/sessions/{sessionid}"
-                .replaceAll("\\{sessionid\\}", apiClient.escapeString(sessionid));
+                .replaceAll("\\{sessionid\\}", PerfSigUtils.escapeString(sessionid));
 
         List<Pair> localVarQueryParams = new ArrayList<>();
         if (removeconfidentialstrings != null) {
@@ -302,7 +303,7 @@ public class StoredSessionsApi {
     public Call getStoredSessionMetaDataCall(String sessionid) throws ApiException {
         // create path and map variables
         String localVarPath = ApiClient.API_SUFFIX + "/sessions/{sessionid}/metadata"
-                .replaceAll("\\{sessionid\\}", apiClient.escapeString(sessionid));
+                .replaceAll("\\{sessionid\\}", PerfSigUtils.escapeString(sessionid));
 
         List<Pair> localVarQueryParams = new ArrayList<>();
 

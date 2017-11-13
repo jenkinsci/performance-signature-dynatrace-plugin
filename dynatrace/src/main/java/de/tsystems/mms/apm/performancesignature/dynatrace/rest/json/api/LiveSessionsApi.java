@@ -22,6 +22,7 @@ import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.*;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model.RecordingStatus;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model.SessionRecordingOptions;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model.SessionStoringOptions;
+import de.tsystems.mms.apm.performancesignature.util.PerfSigUtils;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -58,7 +59,7 @@ public class LiveSessionsApi {
     public Call getRecordingCall(String profileid) throws ApiException {
         // create path and map variables
         String localVarPath = ApiClient.API_SUFFIX + "/profiles/{profileid}/session/recording/status"
-                .replaceAll("\\{profileid\\}", apiClient.escapeString(profileid));
+                .replaceAll("\\{profileid\\}", PerfSigUtils.escapeString(profileid));
 
         List<Pair> localVarQueryParams = new ArrayList<>();
 
@@ -131,7 +132,7 @@ public class LiveSessionsApi {
     public Call postRecordingCall(String profileid, SessionRecordingOptions body) throws ApiException {
         // create path and map variables
         String localVarPath = ApiClient.API_SUFFIX + "/profiles/{profileid}/session/recording"
-                .replaceAll("\\{profileid\\}", apiClient.escapeString(profileid));
+                .replaceAll("\\{profileid\\}", PerfSigUtils.escapeString(profileid));
 
         List<Pair> localVarQueryParams = new ArrayList<>();
 
@@ -176,7 +177,7 @@ public class LiveSessionsApi {
      */
     public String postRecording(String profileid, SessionRecordingOptions body) throws ApiException {
         ApiResponse<Void> response = postRecordingWithHttpInfo(profileid, body);
-        return getSessionIdFromLocationHeader(response);
+        return PerfSigUtils.getIdFromLocationHeader(response);
     }
 
     /**
@@ -204,7 +205,7 @@ public class LiveSessionsApi {
     public Call stopRecordingCall(String profileid, RecordingStatus body) throws ApiException {
         // create path and map variables
         String localVarPath = ApiClient.API_SUFFIX + "/profiles/{profileid}/session/recording/status"
-                .replaceAll("\\{profileid\\}", apiClient.escapeString(profileid));
+                .replaceAll("\\{profileid\\}", PerfSigUtils.escapeString(profileid));
 
         List<Pair> localVarQueryParams = new ArrayList<>();
 
@@ -249,7 +250,7 @@ public class LiveSessionsApi {
      */
     public String stopRecording(String profileid, RecordingStatus body) throws ApiException {
         ApiResponse<Void> response = stopRecordingWithHttpInfo(profileid, body);
-        return getSessionIdFromLocationHeader(response);
+        return PerfSigUtils.getIdFromLocationHeader(response);
     }
 
     /**
@@ -277,7 +278,7 @@ public class LiveSessionsApi {
     public Call storeSessionCall(String profileid, SessionStoringOptions body) throws ApiException {
         // create path and map variables
         String localVarPath = ApiClient.API_SUFFIX + "/profiles/{profileid}/session/store"
-                .replaceAll("\\{profileid\\}", apiClient.escapeString(profileid));
+                .replaceAll("\\{profileid\\}", PerfSigUtils.escapeString(profileid));
 
         List<Pair> localVarQueryParams = new ArrayList<>();
 
@@ -322,7 +323,7 @@ public class LiveSessionsApi {
      */
     public String storeSession(String profileid, SessionStoringOptions body) throws ApiException {
         ApiResponse<Void> response = storeSessionWithHttpInfo(profileid, body);
-        return getSessionIdFromLocationHeader(response);
+        return PerfSigUtils.getIdFromLocationHeader(response);
     }
 
     /**
@@ -337,15 +338,5 @@ public class LiveSessionsApi {
     public ApiResponse<Void> storeSessionWithHttpInfo(String profileid, SessionStoringOptions body) throws ApiException {
         Call call = storeSessionValidateBeforeCall(profileid, body);
         return apiClient.execute(call);
-    }
-
-    private String getSessionIdFromLocationHeader(ApiResponse<Void> response) {
-        List<String> locationList = response.getHeaders().get("Location");
-        if (locationList == null || locationList.isEmpty()) {
-            return null;
-        }
-        String locationUrl = locationList.get(0);
-        String location = locationUrl.substring(locationUrl.lastIndexOf('/') + 1);
-        return apiClient.unescapeString(location);
     }
 }

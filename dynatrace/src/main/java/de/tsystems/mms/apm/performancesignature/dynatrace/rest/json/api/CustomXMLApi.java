@@ -23,6 +23,7 @@ import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.*;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.model.AgentList;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.model.DashboardList;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.model.Result;
+import de.tsystems.mms.apm.performancesignature.util.PerfSigUtils;
 
 import javax.annotation.Nonnull;
 import java.io.File;
@@ -86,7 +87,7 @@ public class CustomXMLApi {
             throw new ApiException("Missing the required parameter 'source' when calling getXMLDashboard");
         }
 
-        String localVarPath = "/rest/management/dashboard/" + apiClient.escapeString(dashboard);
+        String localVarPath = "/rest/management/dashboard/" + PerfSigUtils.escapeString(dashboard);
         List<Pair> localVarQueryParams = new ArrayList<>();
         localVarQueryParams.addAll(apiClient.parameterToPair("source", "stored:" + source));
 
@@ -122,7 +123,7 @@ public class CustomXMLApi {
         if (agentId == 0) {
             throw new ApiException("Missing the required parameter 'agentId' when calling hotSensorPlacement");
         }
-        String localVarPath = String.format("/rest/management/agents/%1$s/hotsensorplacement", apiClient.escapeString(String.valueOf(agentId)));
+        String localVarPath = String.format("/rest/management/agents/%1$s/hotsensorplacement", PerfSigUtils.escapeString(String.valueOf(agentId)));
 
         return getXmlCall(localVarPath, new ArrayList<Pair>());
     }
@@ -142,7 +143,7 @@ public class CustomXMLApi {
     public Call createMemoryDumpCall(String systemProfile, String agentName, String hostName, int processId, String dumpType, boolean sessionLocked,
                                      boolean captureStrings, boolean capturePrimitives, boolean autoPostProcess, boolean doGC) throws ApiException {
         // create path and map variables
-        String localVarPath = String.format("/rest/management/profiles/%1$s/memorydump", apiClient.escapeString(systemProfile));
+        String localVarPath = String.format("/rest/management/profiles/%1$s/memorydump", PerfSigUtils.escapeString(systemProfile));
 
         List<Pair> localVarQueryParams = new ArrayList<>();
         Map<String, String> localVarHeaderParams = new HashMap<>();
@@ -224,7 +225,7 @@ public class CustomXMLApi {
         }
 
         String localVarPath = String.format("/rest/management/profiles/%1$s/memorydumpcreated/%2$s",
-                apiClient.escapeString(profileName), apiClient.escapeString(memoryDumpName));
+                PerfSigUtils.escapeString(profileName), PerfSigUtils.escapeString(memoryDumpName));
 
         return getXmlCall(localVarPath, new ArrayList<Pair>());
     }
@@ -244,7 +245,7 @@ public class CustomXMLApi {
     public Call createThreadDumpCall(final String systemProfile, final String agentName, final String hostName, final int processId,
                                      final boolean sessionLocked) throws ApiException {
         // create path and map variables
-        String localVarPath = String.format("/rest/management/profiles/%1$s/threaddump", apiClient.escapeString(systemProfile));
+        String localVarPath = String.format("/rest/management/profiles/%1$s/threaddump", PerfSigUtils.escapeString(systemProfile));
 
         List<Pair> localVarQueryParams = new ArrayList<>();
         Map<String, String> localVarHeaderParams = new HashMap<>();
@@ -310,7 +311,7 @@ public class CustomXMLApi {
         }
 
         String localVarPath = String.format("/rest/management/profiles/%1$s/threaddumpcreated/%2$s",
-                apiClient.escapeString(profileName), apiClient.escapeString(threadDumpName));
+                PerfSigUtils.escapeString(profileName), PerfSigUtils.escapeString(threadDumpName));
 
         return getXmlCall(localVarPath, new ArrayList<Pair>());
     }
@@ -329,7 +330,7 @@ public class CustomXMLApi {
 
     public Call getPDFReportCall(String dashboard, String sessionId, String comparedSessionId, String type) throws ApiException {
         // create path and map variables
-        String localVarPath = "/rest/management/reports/create/" + apiClient.escapeString(dashboard);
+        String localVarPath = "/rest/management/reports/create/" + PerfSigUtils.escapeString(dashboard);
 
         List<Pair> localVarQueryParams = new ArrayList<>();
         if (sessionId != null) {

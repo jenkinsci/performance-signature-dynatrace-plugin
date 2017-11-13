@@ -23,6 +23,7 @@ import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.*;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model.Alerts;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model.DeploymentEvent;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model.EventUpdate;
+import de.tsystems.mms.apm.performancesignature.util.PerfSigUtils;
 
 import java.lang.reflect.Type;
 import java.util.*;
@@ -96,8 +97,9 @@ public class AlertsIncidentsAndEventsApi {
      * @param body Event record (required)
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
      */
-    public void createDeploymentEvent(DeploymentEvent body) throws ApiException {
-        createDeploymentEventWithHttpInfo(body);
+    public String createDeploymentEvent(DeploymentEvent body) throws ApiException {
+        ApiResponse<Void> response = createDeploymentEventWithHttpInfo(body);
+        return PerfSigUtils.getIdFromLocationHeader(response);
     }
 
     /**
@@ -123,7 +125,7 @@ public class AlertsIncidentsAndEventsApi {
     public Call getDeploymentEventCall(String eventid) throws ApiException {
         // create path and map variables
         String localVarPath = ApiClient.API_SUFFIX + "/events/Deployment/{eventid}"
-                .replaceAll("\\{eventid\\}", apiClient.escapeString(eventid));
+                .replaceAll("\\{eventid\\}", PerfSigUtils.escapeString(eventid));
 
         List<Pair> localVarQueryParams = new ArrayList<>();
 
@@ -195,7 +197,7 @@ public class AlertsIncidentsAndEventsApi {
     public Call getIncidentCall(String alertid) throws ApiException {
         // create path and map variables
         String localVarPath = ApiClient.API_SUFFIX + "/alerts/{alertid}"
-                .replaceAll("\\{alertid\\}", apiClient.escapeString(alertid));
+                .replaceAll("\\{alertid\\}", PerfSigUtils.escapeString(alertid));
 
         List<Pair> localVarQueryParams = new ArrayList<>();
 
@@ -356,7 +358,7 @@ public class AlertsIncidentsAndEventsApi {
     public Call updateDeploymentEventCall(String eventid, EventUpdate body) throws ApiException {
         // create path and map variables
         String localVarPath = ApiClient.API_SUFFIX + "/events/Deployment/{eventid}"
-                .replaceAll("\\{eventid\\}", apiClient.escapeString(eventid));
+                .replaceAll("\\{eventid\\}", PerfSigUtils.escapeString(eventid));
 
         List<Pair> localVarQueryParams = new ArrayList<>();
 

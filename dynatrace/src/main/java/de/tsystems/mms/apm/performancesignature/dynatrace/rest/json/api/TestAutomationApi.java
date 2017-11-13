@@ -33,6 +33,7 @@ import com.squareup.okhttp.Call;
 import de.tsystems.mms.apm.performancesignature.dynatrace.model.TestRun;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.*;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model.TestRunDefinition;
+import de.tsystems.mms.apm.performancesignature.util.PerfSigUtils;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -70,8 +71,8 @@ public class TestAutomationApi {
     public Call finishTestRunCall(String profileid, String testrunid) throws ApiException {
         // create path and map variables
         String localVarPath = ApiClient.API_SUFFIX + "/profiles/{profileid}/testruns/{testrunid}/finish"
-                .replaceAll("\\{profileid\\}", apiClient.escapeString(profileid))
-                .replaceAll("\\{testrunid\\}", apiClient.escapeString(testrunid));
+                .replaceAll("\\{profileid\\}", PerfSigUtils.escapeString(profileid))
+                .replaceAll("\\{testrunid\\}", PerfSigUtils.escapeString(testrunid));
 
         List<Pair> localVarQueryParams = new ArrayList<>();
 
@@ -151,8 +152,8 @@ public class TestAutomationApi {
     public Call getTestrunByIdCall(String profileid, String testrunid) throws ApiException {
         // create path and map variables
         String localVarPath = ApiClient.API_SUFFIX + "/profiles/{profileid}/testruns/{testrunid}"
-                .replaceAll("\\{profileid\\}", apiClient.escapeString(profileid))
-                .replaceAll("\\{testrunid\\}", apiClient.escapeString(testrunid));
+                .replaceAll("\\{profileid\\}", PerfSigUtils.escapeString(profileid))
+                .replaceAll("\\{testrunid\\}", PerfSigUtils.escapeString(testrunid));
 
         List<Pair> localVarQueryParams = new ArrayList<>();
 
@@ -233,8 +234,8 @@ public class TestAutomationApi {
     public Call markTestExecutionAsFailedCall(String profileid, String testrunid, String testId) throws ApiException {
         // create path and map variables
         String localVarPath = ApiClient.API_SUFFIX + "/profiles/{profileid}/testruns/{testrunid}/markAsFailed"
-                .replaceAll("\\{profileid\\}", apiClient.escapeString(profileid))
-                .replaceAll("\\{testrunid\\}", apiClient.escapeString(testrunid));
+                .replaceAll("\\{profileid\\}", PerfSigUtils.escapeString(profileid))
+                .replaceAll("\\{testrunid\\}", PerfSigUtils.escapeString(testrunid));
 
         List<Pair> localVarQueryParams = new ArrayList<>();
         if (testId != null) {
@@ -324,7 +325,7 @@ public class TestAutomationApi {
     public Call postTestRunCall(String profileid, TestRunDefinition body) throws ApiException {
         // create path and map variables
         String localVarPath = ApiClient.API_SUFFIX + "/profiles/{profileid}/testruns"
-                .replaceAll("\\{profileid\\}", apiClient.escapeString(profileid));
+                .replaceAll("\\{profileid\\}", PerfSigUtils.escapeString(profileid));
 
         List<Pair> localVarQueryParams = new ArrayList<>();
 

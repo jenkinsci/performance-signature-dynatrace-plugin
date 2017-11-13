@@ -22,6 +22,7 @@ import com.squareup.okhttp.logging.HttpLoggingInterceptor;
 import com.squareup.okhttp.logging.HttpLoggingInterceptor.Level;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.auth.Authentication;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.auth.HttpBasicAuth;
+import de.tsystems.mms.apm.performancesignature.util.PerfSigUtils;
 import okio.BufferedSink;
 import okio.Okio;
 import org.apache.commons.lang.StringUtils;
@@ -36,11 +37,8 @@ import javax.xml.bind.Unmarshaller;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
 import java.net.URLConnection;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.security.GeneralSecurityException;
 import java.security.SecureRandom;
 import java.security.cert.CertificateException;
@@ -470,35 +468,6 @@ public class ApiClient {
     }
 
     /**
-     * Escape the given string to be used as URL query value.
-     *
-     * @param str String to be escaped
-     * @return Escaped string
-     */
-    public String escapeString(String str) {
-        try {
-            return URLEncoder.encode(str, "utf8").replaceAll("\\+", "%20");
-        } catch (UnsupportedEncodingException e) {
-            return str;
-        }
-    }
-
-    /**
-     * Unescape the given string coming from a query parameter.
-     *
-     * @param str String to be unescaped
-     * @return unescaped string
-     */
-    public String unescapeString(String str) {
-        try {
-            String decoded = URLDecoder.decode(str, "utf8");
-            return URLDecoder.decode(decoded, "utf8");
-        } catch (UnsupportedEncodingException e) {
-            return str;
-        }
-    }
-
-    /**
      * Deserialize response body to Java object, according to the return type and
      * the Content-Type response header.
      *
@@ -821,7 +790,7 @@ public class ApiClient {
                         url.append("&");
                     }
                     String value = parameterToString(param.getValue());
-                    url.append(escapeString(param.getName())).append("=").append(escapeString(value));
+                    url.append(PerfSigUtils.escapeString(param.getName())).append("=").append(PerfSigUtils.escapeString(value));
                 }
             }
         }

@@ -23,6 +23,7 @@ import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model.Activa
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model.SystemProfile;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model.SystemProfileConfigurations;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model.SystemProfiles;
+import de.tsystems.mms.apm.performancesignature.util.PerfSigUtils;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -118,8 +119,8 @@ public class SystemProfilesApi {
     public Call getSystemProfileConfigurationStatusCall(String profileid, String configname) throws ApiException {
         // create path and map variables
         String localVarPath = ApiClient.API_SUFFIX + "/profiles/{profileid}/configurations/{configname}/status"
-                .replaceAll("\\{profileid\\}", apiClient.escapeString(profileid))
-                .replaceAll("\\{configname\\}", apiClient.escapeString(configname));
+                .replaceAll("\\{profileid\\}", PerfSigUtils.escapeString(profileid))
+                .replaceAll("\\{configname\\}", PerfSigUtils.escapeString(configname));
 
         List<Pair> localVarQueryParams = new ArrayList<>();
 
@@ -198,7 +199,7 @@ public class SystemProfilesApi {
     public Call getSystemProfileConfigurationsCall(String profileid) throws ApiException {
         // create path and map variables
         String localVarPath = ApiClient.API_SUFFIX + "/profiles/{profileid}/configurations"
-                .replaceAll("\\{profileid\\}", apiClient.escapeString(profileid));
+                .replaceAll("\\{profileid\\}", PerfSigUtils.escapeString(profileid));
 
         List<Pair> localVarQueryParams = new ArrayList<>();
 
@@ -270,7 +271,7 @@ public class SystemProfilesApi {
     public Call getSystemProfileMetaDataCall(String profileid) throws ApiException {
         // create path and map variables
         String localVarPath = ApiClient.API_SUFFIX + "/profiles/{profileid}"
-                .replaceAll("\\{profileid\\}", apiClient.escapeString(profileid));
+                .replaceAll("\\{profileid\\}", PerfSigUtils.escapeString(profileid));
 
         List<Pair> localVarQueryParams = new ArrayList<>();
 
@@ -342,7 +343,7 @@ public class SystemProfilesApi {
     public Call getSystemProfileStateCall(String profileid) throws ApiException {
         // create path and map variables
         String localVarPath = ApiClient.API_SUFFIX + "/profiles/{profileid}/status"
-                .replaceAll("\\{profileid\\}", apiClient.escapeString(profileid));
+                .replaceAll("\\{profileid\\}", PerfSigUtils.escapeString(profileid));
 
         List<Pair> localVarQueryParams = new ArrayList<>();
 
@@ -416,8 +417,8 @@ public class SystemProfilesApi {
     public Call putSystemProfileConfigurationStatusCall(String profileid, String configname, ActivationStatus body) throws ApiException {
         // create path and map variables
         String localVarPath = ApiClient.API_SUFFIX + "/profiles/{profileid}/configurations/{configname}/status"
-                .replaceAll("\\{profileid\\}", apiClient.escapeString(profileid))
-                .replaceAll("\\{configname\\}", apiClient.escapeString(configname));
+                .replaceAll("\\{profileid\\}", PerfSigUtils.escapeString(profileid))
+                .replaceAll("\\{configname\\}", PerfSigUtils.escapeString(configname));
 
         List<Pair> localVarQueryParams = new ArrayList<>();
 
@@ -495,7 +496,7 @@ public class SystemProfilesApi {
     public Call putSystemProfileStateCall(String profileid, ActivationStatus body) throws ApiException {
         // create path and map variables
         String localVarPath = ApiClient.API_SUFFIX + "/profiles/{profileid}/status"
-                .replaceAll("\\{profileid\\}", apiClient.escapeString(profileid));
+                .replaceAll("\\{profileid\\}", PerfSigUtils.escapeString(profileid));
 
         List<Pair> localVarQueryParams = new ArrayList<>();
 

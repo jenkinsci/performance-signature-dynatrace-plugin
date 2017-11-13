@@ -35,21 +35,32 @@ import java.util.Date;
 
 public class DeploymentEvent {
     @SerializedName("severity")
-    private final SeverityEnum severity = null;
+    private final SeverityEnum severity;
     @SerializedName("state")
-    private final StateEnum state = null;
+    private final StateEnum state;
     @SerializedName("message")
-    private final String message = null;
+    private final String message;
     @SerializedName("description")
-    private final String description = null;
+    private final String description;
     @SerializedName("start")
     private Date start;
     @SerializedName("end")
     private Date end;
     @SerializedName("systemprofile")
-    private final String systemprofile = null;
+    private final String systemprofile;
     @SerializedName("application")
-    private final String application = null;
+    private final String application;
+
+    public DeploymentEvent(SeverityEnum severity, StateEnum state, String message, String description, Date start, Date end, String systemprofile, String application) {
+        this.severity = severity;
+        this.state = state;
+        this.message = message;
+        this.description = description;
+        this.start = start;
+        this.end = end;
+        this.systemprofile = systemprofile;
+        this.application = application;
+    }
 
     /**
      * The severity of the event
