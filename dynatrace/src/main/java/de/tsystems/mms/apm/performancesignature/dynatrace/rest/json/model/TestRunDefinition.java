@@ -16,15 +16,11 @@
 
 package de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model;
 
-import com.google.gson.TypeAdapter;
-import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonWriter;
 import de.tsystems.mms.apm.performancesignature.util.PerfSigUIUtils;
 import io.swagger.annotations.ApiModelProperty;
 
-import java.io.IOException;
+import static de.tsystems.mms.apm.performancesignature.dynatrace.model.TestRun.CategoryEnum;
 
 /**
  * TestRunDefinition
@@ -143,57 +139,5 @@ public class TestRunDefinition {
         sb.append("    category: ").append(PerfSigUIUtils.toIndentedString(category)).append("\n");
         sb.append("}");
         return sb.toString();
-    }
-    /**
-     * Gets or Sets category
-     */
-    @JsonAdapter(CategoryEnum.Adapter.class)
-    public enum CategoryEnum {
-        UNIT("unit"),
-
-        UIDRIVEN("uidriven"),
-
-        PERFORMANCE("performance"),
-
-        WEBAPI("webapi"),
-
-        EXTERNAL("external");
-
-        private final String value;
-
-        CategoryEnum(String value) {
-            this.value = value;
-        }
-
-        public static CategoryEnum fromValue(String text) {
-            for (CategoryEnum b : CategoryEnum.values()) {
-                if (String.valueOf(b.value).equals(text)) {
-                    return b;
-                }
-            }
-            return null;
-        }
-
-        public String getValue() {
-            return value;
-        }
-
-        @Override
-        public String toString() {
-            return String.valueOf(value);
-        }
-
-        public static class Adapter extends TypeAdapter<CategoryEnum> {
-            @Override
-            public void write(final JsonWriter jsonWriter, final CategoryEnum enumeration) throws IOException {
-                jsonWriter.value(enumeration.getValue());
-            }
-
-            @Override
-            public CategoryEnum read(final JsonReader jsonReader) throws IOException {
-                String value = jsonReader.nextString();
-                return CategoryEnum.fromValue(String.valueOf(value));
-            }
-        }
     }
 }

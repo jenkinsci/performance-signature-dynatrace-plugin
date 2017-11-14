@@ -17,13 +17,14 @@
 package de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model;
 
 import com.google.gson.annotations.SerializedName;
-import de.tsystems.mms.apm.performancesignature.dynatrace.model.EventStateEnum;
-import de.tsystems.mms.apm.performancesignature.dynatrace.model.SeverityEnum;
 import de.tsystems.mms.apm.performancesignature.util.PerfSigUIUtils;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.util.Date;
+
+import static de.tsystems.mms.apm.performancesignature.dynatrace.model.Alert.SeverityEnum;
+import static de.tsystems.mms.apm.performancesignature.dynatrace.model.Alert.StateEnum;
 
 /**
  * Event update description
@@ -34,7 +35,7 @@ public class EventUpdate {
     @SerializedName("severity")
     private final SeverityEnum severity = null;
     @SerializedName("state")
-    private final EventStateEnum state = null;
+    private final StateEnum state = null;
     @SerializedName("message")
     private final String message = null;
     @SerializedName("description")
@@ -64,7 +65,7 @@ public class EventUpdate {
      * @return state
      **/
     @ApiModelProperty(value = "The state of the event")
-    public EventStateEnum getState() {
+    public StateEnum getState() {
         return state;
     }
 

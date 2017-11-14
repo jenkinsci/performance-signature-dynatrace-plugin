@@ -16,13 +16,18 @@
 
 package de.tsystems.mms.apm.performancesignature.dynatrace.model;
 
+import com.google.gson.TypeAdapter;
+import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
 import de.tsystems.mms.apm.performancesignature.util.PerfSigUIUtils;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
 
+import java.io.IOException;
 import java.util.Date;
 
 /**
@@ -35,7 +40,7 @@ public class Alert {
     @SerializedName("severity")
     private SeverityEnum severity;
     @SerializedName("state")
-    private EventStateEnum state;
+    private StateEnum state;
     @SerializedName("message")
     private String message;
     @SerializedName("description")
@@ -67,7 +72,7 @@ public class Alert {
      **/
     @Exported
     @ApiModelProperty(value = "The state of the alert")
-    public EventStateEnum getState() {
+    public StateEnum getState() {
         return state;
     }
 
@@ -162,5 +167,101 @@ public class Alert {
         sb.append("    systemprofile: ").append(PerfSigUIUtils.toIndentedString(systemprofile)).append("\n");
         sb.append("}");
         return sb.toString();
+    }
+
+    /**
+     * The severity of the alert
+     */
+    @JsonAdapter(SeverityEnum.Adapter.class)
+    public enum SeverityEnum {
+        INFORMATIONAL("informational"),
+        WARNING("warning"),
+        SEVERE("severe");
+
+        private final String value;
+
+        SeverityEnum(String value) {
+            this.value = value;
+        }
+
+        public static SeverityEnum fromValue(String text) {
+            for (SeverityEnum b : SeverityEnum.values()) {
+                if (String.valueOf(b.value).equals(text)) {
+                    return b;
+                }
+            }
+            return null;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        @Override
+        public String toString() {
+            return String.valueOf(value);
+        }
+
+        public static class Adapter extends TypeAdapter<SeverityEnum> {
+            @Override
+            public void write(final JsonWriter jsonWriter, final SeverityEnum enumeration) throws IOException {
+                jsonWriter.value(enumeration.getValue());
+            }
+
+            @Override
+            public SeverityEnum read(final JsonReader jsonReader) throws IOException {
+                String value = jsonReader.nextString();
+                return SeverityEnum.fromValue(String.valueOf(value));
+            }
+        }
+    }
+
+    /**
+     * The state of the alert
+     */
+    @JsonAdapter(StateEnum.Adapter.class)
+    public enum StateEnum {
+        CREATED("Created"),
+
+        INPROGRESS("InProgress"),
+
+        CONFIRMED("Confirmed");
+
+        private final String value;
+
+        StateEnum(String value) {
+            this.value = value;
+        }
+
+        public static StateEnum fromValue(String text) {
+            for (StateEnum b : StateEnum.values()) {
+                if (String.valueOf(b.value).equals(text)) {
+                    return b;
+                }
+            }
+            return null;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        @Override
+        public String toString() {
+            return String.valueOf(value);
+        }
+
+        public static class Adapter extends TypeAdapter<StateEnum> {
+            @Override
+            public void write(final JsonWriter jsonWriter, final StateEnum enumeration) throws IOException {
+                jsonWriter.value(enumeration.getValue());
+            }
+
+            @Override
+            public StateEnum read(final JsonReader jsonReader) throws IOException {
+                String value = jsonReader.nextString();
+                return StateEnum.fromValue(String.valueOf(value));
+            }
+        }
     }
 }

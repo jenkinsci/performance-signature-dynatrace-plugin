@@ -17,13 +17,14 @@
 package de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model;
 
 import com.google.gson.annotations.SerializedName;
-import de.tsystems.mms.apm.performancesignature.dynatrace.model.EventStateEnum;
-import de.tsystems.mms.apm.performancesignature.dynatrace.model.SeverityEnum;
 import de.tsystems.mms.apm.performancesignature.util.PerfSigUIUtils;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.util.Date;
+
+import static de.tsystems.mms.apm.performancesignature.dynatrace.model.Alert.SeverityEnum;
+import static de.tsystems.mms.apm.performancesignature.dynatrace.model.Alert.StateEnum;
 
 /**
  * Deployment event record description
@@ -34,7 +35,7 @@ public class DeploymentEvent {
     @SerializedName("severity")
     private final SeverityEnum severity;
     @SerializedName("state")
-    private final EventStateEnum state;
+    private final StateEnum state;
     @SerializedName("message")
     private final String message;
     @SerializedName("description")
@@ -48,7 +49,7 @@ public class DeploymentEvent {
     @SerializedName("application")
     private final String application;
 
-    public DeploymentEvent(SeverityEnum severity, EventStateEnum state, String message, String description, Date start, Date end, String systemprofile, String application) {
+    public DeploymentEvent(SeverityEnum severity, StateEnum state, String message, String description, Date start, Date end, String systemprofile, String application) {
         this.severity = severity;
         this.state = state;
         this.message = message;
@@ -75,7 +76,7 @@ public class DeploymentEvent {
      * @return state
      **/
     @ApiModelProperty(value = "The state of the event")
-    public EventStateEnum getState() {
+    public StateEnum getState() {
         return state;
     }
 
