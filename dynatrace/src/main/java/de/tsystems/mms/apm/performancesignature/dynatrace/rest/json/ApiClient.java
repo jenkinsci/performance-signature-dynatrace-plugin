@@ -667,12 +667,11 @@ public class ApiClient {
      * @param body         The request body object
      * @param headerParams The header parameters
      * @param formParams   The form parameters
-     * @param authNames    The authentications to apply
      * @return The HTTP call
      * @throws ApiException If fail to serialize the request body object
      */
-    public Call buildCall(String path, String method, List<Pair> queryParams, Object body, Map<String, String> headerParams, Map<String, Object> formParams, String[] authNames) throws ApiException {
-        Request request = buildRequest(path, method, queryParams, body, headerParams, formParams, authNames);
+    public Call buildCall(String path, String method, List<Pair> queryParams, Object body, Map<String, String> headerParams, Map<String, Object> formParams) throws ApiException {
+        Request request = buildRequest(path, method, queryParams, body, headerParams, formParams);
 
         return httpClient.newCall(request);
     }
@@ -686,12 +685,11 @@ public class ApiClient {
      * @param body         The request body object
      * @param headerParams The header parameters
      * @param formParams   The form parameters
-     * @param authNames    The authentications to apply
      * @return The HTTP request
      * @throws ApiException If fail to serialize the request body object
      */
-    public Request buildRequest(String path, String method, List<Pair> queryParams, Object body, Map<String, String> headerParams, Map<String, Object> formParams, String[] authNames) throws ApiException {
-        updateParamsForAuth(authNames, queryParams, headerParams);
+    public Request buildRequest(String path, String method, List<Pair> queryParams, Object body, Map<String, String> headerParams, Map<String, Object> formParams) throws ApiException {
+        updateParamsForAuth(new String[]{"basicAuth"}, queryParams, headerParams);
 
         final String url = buildUrl(path, queryParams);
         final Request.Builder reqBuilder = new Request.Builder().url(url);

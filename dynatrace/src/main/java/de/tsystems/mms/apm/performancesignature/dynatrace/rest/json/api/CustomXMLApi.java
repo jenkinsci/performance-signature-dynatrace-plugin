@@ -54,11 +54,8 @@ public class CustomXMLApi {
 
     private Call getXmlCall(@Nonnull String localVarPath, @Nonnull List<Pair> localVarQueryParams) throws ApiException {
         Map<String, String> localVarHeaderParams = new HashMap<>();
-        Map<String, Object> localVarFormParams = new HashMap<>();
         localVarHeaderParams.put("Accept", "text/xml");
-
-        String[] localVarAuthNames = new String[]{"basicAuth"};
-        return apiClient.buildCall(localVarPath, "GET", localVarQueryParams, null, localVarHeaderParams, localVarFormParams, localVarAuthNames);
+        return apiClient.buildCall(localVarPath, "GET", localVarQueryParams, null, localVarHeaderParams, null);
     }
 
     public DashboardList listDashboards() throws ApiException {
@@ -166,8 +163,7 @@ public class CustomXMLApi {
         localVarHeaderParams.put("Accept", "text/xml");
         localVarHeaderParams.put("Content-Type", "application/x-www-form-urlencoded");
 
-        String[] localVarAuthNames = new String[]{"basicAuth"};
-        return apiClient.buildCall(localVarPath, "POST", localVarQueryParams, null, localVarHeaderParams, localVarFormParams, localVarAuthNames);
+        return apiClient.buildCall(localVarPath, "POST", localVarQueryParams, null, localVarHeaderParams, localVarFormParams);
     }
 
     @SuppressWarnings("rawtypes")
@@ -260,8 +256,7 @@ public class CustomXMLApi {
         localVarHeaderParams.put("Accept", "text/xml");
         localVarHeaderParams.put("Content-Type", "application/x-www-form-urlencoded");
 
-        String[] localVarAuthNames = new String[]{"basicAuth"};
-        return apiClient.buildCall(localVarPath, "POST", localVarQueryParams, null, localVarHeaderParams, localVarFormParams, localVarAuthNames);
+        return apiClient.buildCall(localVarPath, "POST", localVarQueryParams, null, localVarHeaderParams, localVarFormParams);
     }
 
     @SuppressWarnings("rawtypes")
@@ -339,11 +334,9 @@ public class CustomXMLApi {
         }
 
         Map<String, String> localVarHeaderParams = new HashMap<>();
-        Map<String, Object> localVarFormParams = new HashMap<>();
         localVarHeaderParams.put("Accept", "application/octet-stream");
 
-        String[] localVarAuthNames = new String[]{"basicAuth"};
-        return apiClient.buildCall(localVarPath, "GET", localVarQueryParams, null, localVarHeaderParams, localVarFormParams, localVarAuthNames);
+        return apiClient.buildCall(localVarPath, "GET", localVarQueryParams, null, localVarHeaderParams, null);
     }
 
     @SuppressWarnings("rawtypes")

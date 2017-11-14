@@ -80,8 +80,7 @@ public class TestAutomationApi {
         Map<String, Object> localVarFormParams = new HashMap<>();
         localVarHeaderParams.put("Accept", "application/json");
 
-        String[] localVarAuthNames = new String[]{"basicAuth"};
-        return apiClient.buildCall(localVarPath, "POST", localVarQueryParams, null, localVarHeaderParams, localVarFormParams, localVarAuthNames);
+        return apiClient.buildCall(localVarPath, "POST", localVarQueryParams, null, localVarHeaderParams, localVarFormParams);
     }
 
     @SuppressWarnings("rawtypes")
@@ -146,11 +145,9 @@ public class TestAutomationApi {
         List<Pair> localVarQueryParams = new ArrayList<>();
 
         Map<String, String> localVarHeaderParams = new HashMap<>();
-        Map<String, Object> localVarFormParams = new HashMap<>();
         localVarHeaderParams.put("Accept", "application/json");
 
-        String[] localVarAuthNames = new String[]{"basicAuth"};
-        return apiClient.buildCall(localVarPath, "GET", localVarQueryParams, null, localVarHeaderParams, localVarFormParams, localVarAuthNames);
+        return apiClient.buildCall(localVarPath, "GET", localVarQueryParams, null, localVarHeaderParams, null);
     }
 
     @SuppressWarnings("rawtypes")
@@ -222,8 +219,7 @@ public class TestAutomationApi {
         Map<String, Object> localVarFormParams = new HashMap<>();
         localVarHeaderParams.put("Accept", "application/json");
 
-        String[] localVarAuthNames = new String[]{"basicAuth"};
-        return apiClient.buildCall(localVarPath, "POST", localVarQueryParams, null, localVarHeaderParams, localVarFormParams, localVarAuthNames);
+        return apiClient.buildCall(localVarPath, "POST", localVarQueryParams, null, localVarHeaderParams, localVarFormParams);
     }
 
     @SuppressWarnings("rawtypes")
@@ -298,8 +294,7 @@ public class TestAutomationApi {
         localVarHeaderParams.put("Accept", "application/json");
         localVarHeaderParams.put("Content-Type", "application/json");
 
-        String[] localVarAuthNames = new String[]{"basicAuth"};
-        return apiClient.buildCall(localVarPath, "POST", localVarQueryParams, body, localVarHeaderParams, localVarFormParams, localVarAuthNames);
+        return apiClient.buildCall(localVarPath, "POST", localVarQueryParams, body, localVarHeaderParams, localVarFormParams);
     }
 
     @SuppressWarnings("rawtypes")

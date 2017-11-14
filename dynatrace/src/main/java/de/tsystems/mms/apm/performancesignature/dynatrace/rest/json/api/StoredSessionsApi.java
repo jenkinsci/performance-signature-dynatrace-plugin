@@ -64,8 +64,7 @@ public class StoredSessionsApi {
         Map<String, Object> localVarFormParams = new HashMap<>();
         localVarHeaderParams.put("Accept", "application/json");
 
-        String[] localVarAuthNames = new String[]{"basicAuth"};
-        return apiClient.buildCall(localVarPath, "DELETE", localVarQueryParams, null, localVarHeaderParams, localVarFormParams, localVarAuthNames);
+        return apiClient.buildCall(localVarPath, "DELETE", localVarQueryParams, null, localVarHeaderParams, localVarFormParams);
     }
 
     @SuppressWarnings("rawtypes")
@@ -129,12 +128,9 @@ public class StoredSessionsApi {
         }
 
         Map<String, String> localVarHeaderParams = new HashMap<>();
-        Map<String, Object> localVarFormParams = new HashMap<>();
         localVarHeaderParams.put("Accept", "application/octet-stream");
 
-
-        String[] localVarAuthNames = new String[]{"basicAuth"};
-        return apiClient.buildCall(localVarPath, "GET", localVarQueryParams, null, localVarHeaderParams, localVarFormParams, localVarAuthNames);
+        return apiClient.buildCall(localVarPath, "GET", localVarQueryParams, null, localVarHeaderParams, null);
     }
 
     @SuppressWarnings("rawtypes")
@@ -196,11 +192,9 @@ public class StoredSessionsApi {
         List<Pair> localVarQueryParams = new ArrayList<>();
 
         Map<String, String> localVarHeaderParams = new HashMap<>();
-        Map<String, Object> localVarFormParams = new HashMap<>();
         localVarHeaderParams.put("Accept", "application/json");
 
-        String[] localVarAuthNames = new String[]{"basicAuth"};
-        return apiClient.buildCall(localVarPath, "GET", localVarQueryParams, null, localVarHeaderParams, localVarFormParams, localVarAuthNames);
+        return apiClient.buildCall(localVarPath, "GET", localVarQueryParams, null, localVarHeaderParams, null);
     }
 
     @SuppressWarnings("rawtypes")
@@ -254,11 +248,9 @@ public class StoredSessionsApi {
         List<Pair> localVarQueryParams = new ArrayList<>();
 
         Map<String, String> localVarHeaderParams = new HashMap<>();
-        Map<String, Object> localVarFormParams = new HashMap<>();
         localVarHeaderParams.put("Accept", "application/json");
 
-        String[] localVarAuthNames = new String[]{"basicAuth"};
-        return apiClient.buildCall(localVarPath, "GET", localVarQueryParams, null, localVarHeaderParams, localVarFormParams, localVarAuthNames);
+        return apiClient.buildCall(localVarPath, "GET", localVarQueryParams, null, localVarHeaderParams, null);
     }
 
     /**
