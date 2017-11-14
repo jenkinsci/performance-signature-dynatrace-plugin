@@ -16,16 +16,13 @@
 
 package de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model;
 
-import com.google.gson.TypeAdapter;
-import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonWriter;
+import de.tsystems.mms.apm.performancesignature.dynatrace.model.EventStateEnum;
+import de.tsystems.mms.apm.performancesignature.dynatrace.model.SeverityEnum;
 import de.tsystems.mms.apm.performancesignature.util.PerfSigUIUtils;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
-import java.io.IOException;
 import java.util.Date;
 
 /**
@@ -37,7 +34,7 @@ public class DeploymentEvent {
     @SerializedName("severity")
     private final SeverityEnum severity;
     @SerializedName("state")
-    private final StateEnum state;
+    private final EventStateEnum state;
     @SerializedName("message")
     private final String message;
     @SerializedName("description")
@@ -51,7 +48,7 @@ public class DeploymentEvent {
     @SerializedName("application")
     private final String application;
 
-    public DeploymentEvent(SeverityEnum severity, StateEnum state, String message, String description, Date start, Date end, String systemprofile, String application) {
+    public DeploymentEvent(SeverityEnum severity, EventStateEnum state, String message, String description, Date start, Date end, String systemprofile, String application) {
         this.severity = severity;
         this.state = state;
         this.message = message;
@@ -78,7 +75,7 @@ public class DeploymentEvent {
      * @return state
      **/
     @ApiModelProperty(value = "The state of the event")
-    public StateEnum getState() {
+    public EventStateEnum getState() {
         return state;
     }
 
@@ -157,103 +154,5 @@ public class DeploymentEvent {
         sb.append("    application: ").append(PerfSigUIUtils.toIndentedString(application)).append("\n");
         sb.append("}");
         return sb.toString();
-    }
-
-    /**
-     * The severity of the event
-     */
-    @JsonAdapter(SeverityEnum.Adapter.class)
-    public enum SeverityEnum {
-        INFORMATIONAL("informational"),
-
-        WARNING("warning"),
-
-        SEVERE("severe");
-
-        private final String value;
-
-        SeverityEnum(String value) {
-            this.value = value;
-        }
-
-        public static SeverityEnum fromValue(String text) {
-            for (SeverityEnum b : SeverityEnum.values()) {
-                if (String.valueOf(b.value).equals(text)) {
-                    return b;
-                }
-            }
-            return null;
-        }
-
-        public String getValue() {
-            return value;
-        }
-
-        @Override
-        public String toString() {
-            return String.valueOf(value);
-        }
-
-        public static class Adapter extends TypeAdapter<SeverityEnum> {
-            @Override
-            public void write(final JsonWriter jsonWriter, final SeverityEnum enumeration) throws IOException {
-                jsonWriter.value(enumeration.getValue());
-            }
-
-            @Override
-            public SeverityEnum read(final JsonReader jsonReader) throws IOException {
-                String value = jsonReader.nextString();
-                return SeverityEnum.fromValue(String.valueOf(value));
-            }
-        }
-    }
-
-    /**
-     * The state of the event
-     */
-    @JsonAdapter(StateEnum.Adapter.class)
-    public enum StateEnum {
-        CREATED("Created"),
-
-        INPROGRESS("InProgress"),
-
-        CONFIRMED("Confirmed");
-
-        private final String value;
-
-        StateEnum(String value) {
-            this.value = value;
-        }
-
-        public static StateEnum fromValue(String text) {
-            for (StateEnum b : StateEnum.values()) {
-                if (String.valueOf(b.value).equals(text)) {
-                    return b;
-                }
-            }
-            return null;
-        }
-
-        public String getValue() {
-            return value;
-        }
-
-        @Override
-        public String toString() {
-            return String.valueOf(value);
-        }
-
-        public static class Adapter extends TypeAdapter<StateEnum> {
-            @Override
-            public void write(final JsonWriter jsonWriter, final StateEnum enumeration) throws IOException {
-                jsonWriter.value(enumeration.getValue());
-            }
-
-            @Override
-            public StateEnum read(final JsonReader jsonReader) throws IOException {
-                String value = jsonReader.nextString();
-                return StateEnum.fromValue(String.valueOf(value));
-            }
-        }
     }
 }
