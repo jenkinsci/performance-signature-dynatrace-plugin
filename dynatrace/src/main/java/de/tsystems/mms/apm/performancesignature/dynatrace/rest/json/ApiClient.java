@@ -426,48 +426,6 @@ public class ApiClient {
     }
 
     /**
-     * Select the Accept header's value from the given accepts array:
-     * if JSON exists in the given array, use it;
-     * otherwise use all of them (joining into a string)
-     *
-     * @param accepts The accepts array to select from
-     * @return The Accept header to use. If the given array is empty,
-     * null will be returned (not to set the Accept header explicitly).
-     */
-    public String selectHeaderAccept(String[] accepts) {
-        if (accepts.length == 0) {
-            return null;
-        }
-        for (String accept : accepts) {
-            if (isJsonMime(accept)) {
-                return accept;
-            }
-        }
-        return StringUtils.join(accepts, ",");
-    }
-
-    /**
-     * Select the Content-Type header's value from the given array:
-     * if JSON exists in the given array, use it;
-     * otherwise use the first one of the array.
-     *
-     * @param contentTypes The Content-Type array to select from
-     * @return The Content-Type header to use. If the given array is empty,
-     * or matches "any", JSON will be used.
-     */
-    public String selectHeaderContentType(String[] contentTypes) {
-        if (contentTypes.length == 0 || contentTypes[0].equals("*/*")) {
-            return "application/json";
-        }
-        for (String contentType : contentTypes) {
-            if (isJsonMime(contentType)) {
-                return contentType;
-            }
-        }
-        return contentTypes[0];
-    }
-
-    /**
      * Deserialize response body to Java object, according to the return type and
      * the Content-Type response header.
      *

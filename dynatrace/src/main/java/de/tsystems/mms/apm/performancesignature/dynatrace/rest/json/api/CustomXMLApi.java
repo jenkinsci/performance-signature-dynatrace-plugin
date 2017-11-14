@@ -57,11 +57,6 @@ public class CustomXMLApi {
         Map<String, Object> localVarFormParams = new HashMap<>();
         localVarHeaderParams.put("Accept", "text/xml");
 
-        final String[] localVarContentTypes = {
-        };
-        final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
-        localVarHeaderParams.put("Content-Type", localVarContentType);
-
         String[] localVarAuthNames = new String[]{"basicAuth"};
         return apiClient.buildCall(localVarPath, "GET", localVarQueryParams, null, localVarHeaderParams, localVarFormParams, localVarAuthNames);
     }
@@ -346,11 +341,6 @@ public class CustomXMLApi {
         Map<String, String> localVarHeaderParams = new HashMap<>();
         Map<String, Object> localVarFormParams = new HashMap<>();
         localVarHeaderParams.put("Accept", "application/octet-stream");
-
-        final String[] localVarContentTypes = {
-        };
-        final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
-        localVarHeaderParams.put("Content-Type", localVarContentType);
 
         String[] localVarAuthNames = new String[]{"basicAuth"};
         return apiClient.buildCall(localVarPath, "GET", localVarQueryParams, null, localVarHeaderParams, localVarFormParams, localVarAuthNames);

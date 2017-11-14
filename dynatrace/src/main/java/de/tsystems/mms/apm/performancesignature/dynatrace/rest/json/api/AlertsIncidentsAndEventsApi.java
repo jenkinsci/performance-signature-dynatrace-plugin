@@ -63,18 +63,8 @@ public class AlertsIncidentsAndEventsApi {
         Map<String, String> localVarHeaderParams = new HashMap<>();
 
         Map<String, Object> localVarFormParams = new HashMap<>();
-
-        final String[] localVarAccepts = {
-                "application/json"
-        };
-        final String localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
-        if (localVarAccept != null) localVarHeaderParams.put("Accept", localVarAccept);
-
-        final String[] localVarContentTypes = {
-                "application/json"
-        };
-        final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
-        localVarHeaderParams.put("Content-Type", localVarContentType);
+        localVarHeaderParams.put("Accept", "application/json");
+        localVarHeaderParams.put("Content-Type", "application/json");
 
         String[] localVarAuthNames = new String[]{"basicAuth"};
         return apiClient.buildCall(localVarPath, "POST", localVarQueryParams, body, localVarHeaderParams, localVarFormParams, localVarAuthNames);
@@ -130,20 +120,8 @@ public class AlertsIncidentsAndEventsApi {
         List<Pair> localVarQueryParams = new ArrayList<>();
 
         Map<String, String> localVarHeaderParams = new HashMap<>();
-
         Map<String, Object> localVarFormParams = new HashMap<>();
-
-        final String[] localVarAccepts = {
-                "application/json"
-        };
-        final String localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
-        if (localVarAccept != null) localVarHeaderParams.put("Accept", localVarAccept);
-
-        final String[] localVarContentTypes = {
-
-        };
-        final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
-        localVarHeaderParams.put("Content-Type", localVarContentType);
+        localVarHeaderParams.put("Accept", "application/json");
 
         String[] localVarAuthNames = new String[]{"basicAuth"};
         return apiClient.buildCall(localVarPath, "GET", localVarQueryParams, null, localVarHeaderParams, localVarFormParams, localVarAuthNames);
@@ -202,20 +180,8 @@ public class AlertsIncidentsAndEventsApi {
         List<Pair> localVarQueryParams = new ArrayList<>();
 
         Map<String, String> localVarHeaderParams = new HashMap<>();
-
         Map<String, Object> localVarFormParams = new HashMap<>();
-
-        final String[] localVarAccepts = {
-                "application/json"
-        };
-        final String localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
-        if (localVarAccept != null) localVarHeaderParams.put("Accept", localVarAccept);
-
-        final String[] localVarContentTypes = {
-
-        };
-        final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
-        localVarHeaderParams.put("Content-Type", localVarContentType);
+        localVarHeaderParams.put("Accept", "application/json");
 
         String[] localVarAuthNames = new String[]{"basicAuth"};
         return apiClient.buildCall(localVarPath, "GET", localVarQueryParams, null, localVarHeaderParams, localVarFormParams, localVarAuthNames);
@@ -289,26 +255,10 @@ public class AlertsIncidentsAndEventsApi {
         Map<String, String> localVarHeaderParams = new HashMap<>();
 
         Map<String, Object> localVarFormParams = new HashMap<>();
-
-        final String[] localVarAccepts = {
-                "application/json"
-        };
-        final String localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
-        if (localVarAccept != null) localVarHeaderParams.put("Accept", localVarAccept);
-
-        final String[] localVarContentTypes = {
-
-        };
-        final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
-        localVarHeaderParams.put("Content-Type", localVarContentType);
+        localVarHeaderParams.put("Accept", "application/json");
 
         String[] localVarAuthNames = new String[]{"basicAuth"};
         return apiClient.buildCall(localVarPath, "GET", localVarQueryParams, null, localVarHeaderParams, localVarFormParams, localVarAuthNames);
-    }
-
-    @SuppressWarnings("rawtypes")
-    private Call getIncidentsValidateBeforeCall(String systemprofile, String incidentrule, String state, Date from, Date to) throws ApiException {
-        return getIncidentsCall(systemprofile, incidentrule, state, from, to);
     }
 
     /**
@@ -341,7 +291,7 @@ public class AlertsIncidentsAndEventsApi {
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
      */
     public ApiResponse<Alerts> getIncidentsWithHttpInfo(String systemprofile, String incidentrule, String state, Date from, Date to) throws ApiException {
-        Call call = getIncidentsValidateBeforeCall(systemprofile, incidentrule, state, from, to);
+        Call call = getIncidentsCall(systemprofile, incidentrule, state, from, to);
         Type localVarReturnType = new TypeToken<Alerts>() {
         }.getType();
         return apiClient.execute(call, localVarReturnType);
@@ -365,18 +315,8 @@ public class AlertsIncidentsAndEventsApi {
         Map<String, String> localVarHeaderParams = new HashMap<>();
 
         Map<String, Object> localVarFormParams = new HashMap<>();
-
-        final String[] localVarAccepts = {
-                "application/json"
-        };
-        final String localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
-        if (localVarAccept != null) localVarHeaderParams.put("Accept", localVarAccept);
-
-        final String[] localVarContentTypes = {
-                "application/json"
-        };
-        final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
-        localVarHeaderParams.put("Content-Type", localVarContentType);
+        localVarHeaderParams.put("Accept", "application/json");
+        localVarHeaderParams.put("Content-Type", "application/json");
 
         String[] localVarAuthNames = new String[]{"basicAuth"};
         return apiClient.buildCall(localVarPath, "PUT", localVarQueryParams, body, localVarHeaderParams, localVarFormParams, localVarAuthNames);

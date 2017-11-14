@@ -64,20 +64,8 @@ public class LiveSessionsApi {
         List<Pair> localVarQueryParams = new ArrayList<>();
 
         Map<String, String> localVarHeaderParams = new HashMap<>();
-
         Map<String, Object> localVarFormParams = new HashMap<>();
-
-        final String[] localVarAccepts = {
-                "application/json"
-        };
-        final String localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
-        if (localVarAccept != null) localVarHeaderParams.put("Accept", localVarAccept);
-
-        final String[] localVarContentTypes = {
-
-        };
-        final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
-        localVarHeaderParams.put("Content-Type", localVarContentType);
+        localVarHeaderParams.put("Accept", "application/json");
 
         String[] localVarAuthNames = new String[]{"basicAuth"};
         return apiClient.buildCall(localVarPath, "GET", localVarQueryParams, null, localVarHeaderParams, localVarFormParams, localVarAuthNames);
@@ -139,18 +127,8 @@ public class LiveSessionsApi {
         Map<String, String> localVarHeaderParams = new HashMap<>();
 
         Map<String, Object> localVarFormParams = new HashMap<>();
-
-        final String[] localVarAccepts = {
-                "application/json"
-        };
-        final String localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
-        if (localVarAccept != null) localVarHeaderParams.put("Accept", localVarAccept);
-
-        final String[] localVarContentTypes = {
-                "application/json"
-        };
-        final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
-        localVarHeaderParams.put("Content-Type", localVarContentType);
+        localVarHeaderParams.put("Accept", "application/json");
+        localVarHeaderParams.put("Content-Type", "application/json");
 
         String[] localVarAuthNames = new String[]{"basicAuth"};
         return apiClient.buildCall(localVarPath, "POST", localVarQueryParams, body, localVarHeaderParams, localVarFormParams, localVarAuthNames);
@@ -212,18 +190,8 @@ public class LiveSessionsApi {
         Map<String, String> localVarHeaderParams = new HashMap<>();
 
         Map<String, Object> localVarFormParams = new HashMap<>();
-
-        final String[] localVarAccepts = {
-                "application/json"
-        };
-        final String localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
-        if (localVarAccept != null) localVarHeaderParams.put("Accept", localVarAccept);
-
-        final String[] localVarContentTypes = {
-                "application/json"
-        };
-        final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
-        localVarHeaderParams.put("Content-Type", localVarContentType);
+        localVarHeaderParams.put("Accept", "application/json");
+        localVarHeaderParams.put("Content-Type", "application/json");
 
         String[] localVarAuthNames = new String[]{"basicAuth"};
         return apiClient.buildCall(localVarPath, "PUT", localVarQueryParams, body, localVarHeaderParams, localVarFormParams, localVarAuthNames);
@@ -285,18 +253,8 @@ public class LiveSessionsApi {
         Map<String, String> localVarHeaderParams = new HashMap<>();
 
         Map<String, Object> localVarFormParams = new HashMap<>();
-
-        final String[] localVarAccepts = {
-                "application/json"
-        };
-        final String localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
-        if (localVarAccept != null) localVarHeaderParams.put("Accept", localVarAccept);
-
-        final String[] localVarContentTypes = {
-                "application/json"
-        };
-        final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
-        localVarHeaderParams.put("Content-Type", localVarContentType);
+        localVarHeaderParams.put("Accept", "application/json");
+        localVarHeaderParams.put("Content-Type", "application/json");
 
         String[] localVarAuthNames = new String[]{"basicAuth"};
         return apiClient.buildCall(localVarPath, "POST", localVarQueryParams, body, localVarHeaderParams, localVarFormParams, localVarAuthNames);

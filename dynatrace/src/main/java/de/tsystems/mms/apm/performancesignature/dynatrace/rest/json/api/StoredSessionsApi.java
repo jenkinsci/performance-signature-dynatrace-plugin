@@ -19,7 +19,6 @@ package de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.api;
 import com.google.gson.reflect.TypeToken;
 import com.squareup.okhttp.Call;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.*;
-import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model.DeletedStoredSessions;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model.SessionMetadata;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model.Sessions;
 import de.tsystems.mms.apm.performancesignature.util.PerfSigUtils;
@@ -62,20 +61,8 @@ public class StoredSessionsApi {
         List<Pair> localVarQueryParams = new ArrayList<>();
 
         Map<String, String> localVarHeaderParams = new HashMap<>();
-
         Map<String, Object> localVarFormParams = new HashMap<>();
-
-        final String[] localVarAccepts = {
-                "application/json"
-        };
-        final String localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
-        if (localVarAccept != null) localVarHeaderParams.put("Accept", localVarAccept);
-
-        final String[] localVarContentTypes = {
-
-        };
-        final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
-        localVarHeaderParams.put("Content-Type", localVarContentType);
+        localVarHeaderParams.put("Accept", "application/json");
 
         String[] localVarAuthNames = new String[]{"basicAuth"};
         return apiClient.buildCall(localVarPath, "DELETE", localVarQueryParams, null, localVarHeaderParams, localVarFormParams, localVarAuthNames);
@@ -116,94 +103,6 @@ public class StoredSessionsApi {
     }
 
     /**
-     * Build call for deleteStoredSessions
-     *
-     * @param type             Type of sessions which shall be deleted (required)
-     * @param olderthanminutes The minimum age in minutes a stored session must have to be deleted. The value 0 will delete stored sessions regardless of their age (required)
-     * @param profile          If specified, the deletion will only affect stored sessions of this System Profile. Otherwise the System Profile will be irrelevant for deletion (optional)
-     * @return Call to execute
-     * @throws ApiException If fail to serialize the request body object
-     */
-    public Call deleteStoredSessionsCall(String type, String olderthanminutes, String profile) throws ApiException {
-        // create path and map variables
-        String localVarPath = ApiClient.API_SUFFIX + "/sessions";
-
-        List<Pair> localVarQueryParams = new ArrayList<>();
-        if (type != null)
-            localVarQueryParams.addAll(apiClient.parameterToPair("type", type));
-        if (olderthanminutes != null)
-            localVarQueryParams.addAll(apiClient.parameterToPair("olderthanminutes", olderthanminutes));
-        if (profile != null)
-            localVarQueryParams.addAll(apiClient.parameterToPair("profile", profile));
-
-        Map<String, String> localVarHeaderParams = new HashMap<>();
-
-        Map<String, Object> localVarFormParams = new HashMap<>();
-
-        final String[] localVarAccepts = {
-                "application/json"
-        };
-        final String localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
-        if (localVarAccept != null) localVarHeaderParams.put("Accept", localVarAccept);
-
-        final String[] localVarContentTypes = {
-
-        };
-        final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
-        localVarHeaderParams.put("Content-Type", localVarContentType);
-
-        String[] localVarAuthNames = new String[]{"basicAuth"};
-        return apiClient.buildCall(localVarPath, "DELETE", localVarQueryParams, null, localVarHeaderParams, localVarFormParams, localVarAuthNames);
-    }
-
-    @SuppressWarnings("rawtypes")
-    private Call deleteStoredSessionsValidateBeforeCall(String type, String olderthanminutes, String profile) throws ApiException {
-        // verify the required parameter 'type' is set
-        if (type == null) {
-            throw new ApiException("Missing the required parameter 'type' when calling deleteStoredSessions");
-        }
-
-        // verify the required parameter 'olderthanminutes' is set
-        if (olderthanminutes == null) {
-            throw new ApiException("Missing the required parameter 'olderthanminutes' when calling deleteStoredSessions");
-        }
-
-        return deleteStoredSessionsCall(type, olderthanminutes, profile);
-    }
-
-    /**
-     * Delete multiple stored sessions
-     * Delete every stored session that matches a specified session type and is older than a specified number of minutes. Additionally the deletion request can be restricted to stored sessions of a specific System Profile.
-     *
-     * @param type             Type of sessions which shall be deleted (required)
-     * @param olderthanminutes The minimum age in minutes a stored session must have to be deleted. The value 0 will delete stored sessions regardless of their age (required)
-     * @param profile          If specified, the deletion will only affect stored sessions of this System Profile. Otherwise the System Profile will be irrelevant for deletion (optional)
-     * @return DeletedStoredSessions
-     * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-     */
-    public DeletedStoredSessions deleteStoredSessions(String type, String olderthanminutes, String profile) throws ApiException {
-        ApiResponse<DeletedStoredSessions> resp = deleteStoredSessionsWithHttpInfo(type, olderthanminutes, profile);
-        return resp.getData();
-    }
-
-    /**
-     * Delete multiple stored sessions
-     * Delete every stored session that matches a specified session type and is older than a specified number of minutes. Additionally the deletion request can be restricted to stored sessions of a specific System Profile.
-     *
-     * @param type             Type of sessions which shall be deleted (required)
-     * @param olderthanminutes The minimum age in minutes a stored session must have to be deleted. The value 0 will delete stored sessions regardless of their age (required)
-     * @param profile          If specified, the deletion will only affect stored sessions of this System Profile. Otherwise the System Profile will be irrelevant for deletion (optional)
-     * @return ApiResponse&lt;DeletedStoredSessions&gt;
-     * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-     */
-    public ApiResponse<DeletedStoredSessions> deleteStoredSessionsWithHttpInfo(String type, String olderthanminutes, String profile) throws ApiException {
-        Call call = deleteStoredSessionsValidateBeforeCall(type, olderthanminutes, profile);
-        Type localVarReturnType = new TypeToken<DeletedStoredSessions>() {
-        }.getType();
-        return apiClient.execute(call, localVarReturnType);
-    }
-
-    /**
      * Build call for getStoredSession
      *
      * @param sessionid                 Unique session id (required)
@@ -230,20 +129,9 @@ public class StoredSessionsApi {
         }
 
         Map<String, String> localVarHeaderParams = new HashMap<>();
-
         Map<String, Object> localVarFormParams = new HashMap<>();
+        localVarHeaderParams.put("Accept", "application/octet-stream");
 
-        final String[] localVarAccepts = {
-                "application/octet-stream"
-        };
-        final String localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
-        if (localVarAccept != null) localVarHeaderParams.put("Accept", localVarAccept);
-
-        final String[] localVarContentTypes = {
-
-        };
-        final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
-        localVarHeaderParams.put("Content-Type", localVarContentType);
 
         String[] localVarAuthNames = new String[]{"basicAuth"};
         return apiClient.buildCall(localVarPath, "GET", localVarQueryParams, null, localVarHeaderParams, localVarFormParams, localVarAuthNames);
@@ -308,20 +196,8 @@ public class StoredSessionsApi {
         List<Pair> localVarQueryParams = new ArrayList<>();
 
         Map<String, String> localVarHeaderParams = new HashMap<>();
-
         Map<String, Object> localVarFormParams = new HashMap<>();
-
-        final String[] localVarAccepts = {
-                "application/json"
-        };
-        final String localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
-        if (localVarAccept != null) localVarHeaderParams.put("Accept", localVarAccept);
-
-        final String[] localVarContentTypes = {
-
-        };
-        final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
-        localVarHeaderParams.put("Content-Type", localVarContentType);
+        localVarHeaderParams.put("Accept", "application/json");
 
         String[] localVarAuthNames = new String[]{"basicAuth"};
         return apiClient.buildCall(localVarPath, "GET", localVarQueryParams, null, localVarHeaderParams, localVarFormParams, localVarAuthNames);
@@ -378,20 +254,8 @@ public class StoredSessionsApi {
         List<Pair> localVarQueryParams = new ArrayList<>();
 
         Map<String, String> localVarHeaderParams = new HashMap<>();
-
         Map<String, Object> localVarFormParams = new HashMap<>();
-
-        final String[] localVarAccepts = {
-                "application/json"
-        };
-        final String localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
-        if (localVarAccept != null) localVarHeaderParams.put("Accept", localVarAccept);
-
-        final String[] localVarContentTypes = {
-
-        };
-        final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
-        localVarHeaderParams.put("Content-Type", localVarContentType);
+        localVarHeaderParams.put("Accept", "application/json");
 
         String[] localVarAuthNames = new String[]{"basicAuth"};
         return apiClient.buildCall(localVarPath, "GET", localVarQueryParams, null, localVarHeaderParams, localVarFormParams, localVarAuthNames);
