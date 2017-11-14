@@ -20,6 +20,7 @@ import com.google.gson.reflect.TypeToken;
 import com.squareup.okhttp.Call;
 import de.tsystems.mms.apm.performancesignature.dynatrace.model.DashboardReport;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.*;
+import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.model.Agent;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.model.AgentList;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.model.DashboardList;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.model.Result;
@@ -98,9 +99,9 @@ public class CustomXMLApi {
         return apiClient.execute(call, localVarReturnType);
     }
 
-    public AgentList getAgents() throws ApiException {
+    public List<Agent> getAgents() throws ApiException {
         ApiResponse<AgentList> resp = getAgentsWithHttpInfo();
-        return resp.getData();
+        return resp.getData().getAgents();
     }
 
     public ApiResponse<AgentList> getAgentsWithHttpInfo() throws ApiException {

@@ -20,7 +20,6 @@ import de.tsystems.mms.apm.performancesignature.dynatrace.configuration.CredProf
 import de.tsystems.mms.apm.performancesignature.dynatrace.configuration.GenericTestCase;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.DTServerConnection;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.CommandExecutionException;
-import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.RESTErrorException;
 import de.tsystems.mms.apm.performancesignature.util.PerfSigUtils;
 import hudson.Extension;
 import hudson.FilePath;
@@ -79,23 +78,26 @@ public class PerfSigStartRecording extends Builder implements SimpleBuildStep {
         try {
             sessionId = connection.startRecording(sessionName, Messages.PerfSigStartRecording_SessionTriggered(), getRecordingOption(), lockSession, false);
         } catch (CommandExecutionException e) {
-            if (!e.getMessage().contains("license")) {
-                throw e;
+            if (!e.getMessage().contains("licenses")) {
+                throw new CommandExecutionException("error while starting session recording: " + e.getMessage());
             }
         }
         Date timeframeStart = new Date();
         if (sessionId != null) {
             logger.println(Messages.PerfSigStartRecording_StartedSessionRecording(pair.getProfile(), sessionName));
         } else {
-            throw new RESTErrorException(Messages.PerfSigStartRecording_SessionRecordingError(pair.getProfile()));
+            logger.println(Messages.PerfSigStartRecording_SessionRecordingError(pair.getProfile()));
         }
 
         logger.println(Messages.PerfSigStartRecording_RegisteringTestRun());
-        String testRunId = connection.registerTestRun(run.getNumber());
+        String testRunId = null;
+        try {
+            testRunId = connection.registerTestRun(run.getNumber());
+        } catch (CommandExecutionException e) {
+            logger.println(Messages.PerfSigStartRecording_CouldNotRegisterTestRun() + e.getMessage());
+        }
         if (testRunId != null) {
             logger.println(Messages.PerfSigStartRecording_StartedTestRun(pair.getProfile(), testRunId, PerfSigEnvContributor.TESTRUN_ID_KEY));
-        } else {
-            logger.println(Messages.PerfSigStartRecording_CouldNotRegisterTestRun());
         }
 
         run.addAction(new PerfSigEnvInvisAction(sessionId, timeframeStart, extTestCase, testRunId, sessionName));

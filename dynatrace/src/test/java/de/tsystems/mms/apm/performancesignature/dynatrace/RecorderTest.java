@@ -22,10 +22,12 @@ import de.tsystems.mms.apm.performancesignature.dynatrace.configuration.GenericT
 import de.tsystems.mms.apm.performancesignature.dynatrace.model.Alert;
 import de.tsystems.mms.apm.performancesignature.dynatrace.model.DashboardReport;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.DTServerConnection;
+import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.RESTErrorException;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.model.Agent;
 import de.tsystems.mms.apm.performancesignature.dynatrace.util.TestUtils;
 import de.tsystems.mms.apm.performancesignature.ui.PerfSigBuildAction;
 import de.tsystems.mms.apm.performancesignature.util.PerfSigUtils;
+import hudson.AbortException;
 import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
@@ -49,10 +51,15 @@ public class RecorderTest {
     @ClassRule
     public static JenkinsRule j = new JenkinsRule();
     private static ListBoxModel dynatraceConfigurations;
+    private DTServerConnection connection;
 
     @BeforeClass
     public static void setUp() throws Exception {
         dynatraceConfigurations = TestUtils.prepareDTConfigurations();
+    }
+
+    public RecorderTest() throws AbortException, RESTErrorException {
+        connection = PerfSigUtils.createDTServerConnection(dynatraceConfigurations.get(0).name);
     }
 
     @Test
@@ -131,21 +138,18 @@ public class RecorderTest {
 
     @Test
     public void testGetDashboardViaRest() throws Exception {
-        DTServerConnection connection = PerfSigUtils.createDTServerConnection(dynatraceConfigurations.get(0).name);
         List<de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.model.Dashboard> dashboardList = connection.getDashboards();
         assertTrue(!dashboardList.isEmpty());
     }
 
     @Test
     public void testGetAgentsViaRest() throws Exception {
-        DTServerConnection connection = PerfSigUtils.createDTServerConnection(dynatraceConfigurations.get(0).name);
         List<Agent> agentList = connection.getAllAgents();
         assertTrue(!agentList.isEmpty());
     }
 
     @Test
     public void testHotSensorPlacementViaRest() throws Exception {
-        DTServerConnection connection = PerfSigUtils.createDTServerConnection(dynatraceConfigurations.get(0).name);
         Agent javaAgent = connection.getAgents().get(0);
         assertTrue(connection.hotSensorPlacement(javaAgent.getAgentId()));
     }

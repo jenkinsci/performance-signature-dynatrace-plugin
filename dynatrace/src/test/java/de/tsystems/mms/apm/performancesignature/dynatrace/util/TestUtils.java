@@ -28,6 +28,7 @@ import hudson.util.ListBoxModel;
 import jenkins.model.Jenkins;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -41,8 +42,13 @@ public class TestUtils {
 
     public static ListBoxModel prepareDTConfigurations() throws IOException {
         List<CredProfilePair> credProfilePairs = Collections.singletonList(new CredProfilePair("easy Travel", "myCreds"));
-        List<DynatraceServerConfiguration> configurations = Collections.singletonList(new DynatraceServerConfiguration("PoC PerfSig",
+        List<DynatraceServerConfiguration> configurations = new ArrayList<>();
+        configurations.add(new DynatraceServerConfiguration("PoC PerfSig",
                 "https://192.168.192.202:8021", credProfilePairs, false, DynatraceServerConfiguration.DescriptorImpl.defaultDelay,
+                DynatraceServerConfiguration.DescriptorImpl.defaultRetryCount,
+                false, 0, null, 0, null, null));
+        configurations.add(new DynatraceServerConfiguration("TestMigration",
+                "https://192.168.194.68:8021", credProfilePairs, false, DynatraceServerConfiguration.DescriptorImpl.defaultDelay,
                 DynatraceServerConfiguration.DescriptorImpl.defaultRetryCount,
                 false, 0, null, 0, null, null));
         SystemCredentialsProvider.getInstance().getCredentials().add(new UsernamePasswordCredentialsImpl(CredentialsScope.GLOBAL,
@@ -58,8 +64,13 @@ public class TestUtils {
 
         ListBoxModel dynatraceConfigurations = PerfSigUtils.listToListBoxModel(PerfSigUtils.getDTConfigurations());
         assertTrue(containsOption(dynatraceConfigurations, "easy Travel (admin) @ PoC PerfSig"));
-        DTServerConnection connection = PerfSigUtils.createDTServerConnection(dynatraceConfigurations.get(0).name, false);
-        assumeTrue("assume that the server is reachable", connection.validateConnection());
+        assertTrue(containsOption(dynatraceConfigurations, "easy Travel (admin) @ TestMigration"));
+
+        for (ListBoxModel.Option configuration : dynatraceConfigurations) {
+            DTServerConnection connection = PerfSigUtils.createDTServerConnection(configuration.name, false);
+            assumeTrue("assume that the server is reachable", connection.validateConnection());
+        }
+
 
         return dynatraceConfigurations;
     }

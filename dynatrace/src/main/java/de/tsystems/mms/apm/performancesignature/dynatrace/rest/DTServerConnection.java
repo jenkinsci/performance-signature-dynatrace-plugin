@@ -29,7 +29,9 @@ import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.api.*;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model.*;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.CommandExecutionException;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.ContentRetrievalException;
-import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.model.*;
+import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.model.Agent;
+import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.model.Dashboard;
+import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.model.DashboardList;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.model.Result;
 import de.tsystems.mms.apm.performancesignature.util.PerfSigUIUtils;
 import hudson.FilePath;
@@ -141,7 +143,7 @@ public class DTServerConnection {
         try {
             return api.getVersion().getResult();
         } catch (ApiException ex) {
-            throw new CommandExecutionException("error getting version of server: " + ex.getMessage(), ex);
+            throw new CommandExecutionException("error getting version of server: " + ex.getResponseBody(), ex);
         }
     }
 
@@ -154,7 +156,7 @@ public class DTServerConnection {
 
             return api.storeSession(systemProfile, options);
         } catch (ApiException ex) {
-            throw new CommandExecutionException("error while storing purepaths: " + ex.getMessage(), ex);
+            throw new CommandExecutionException("error while storing purepaths: " + ex.getResponseBody(), ex);
         }
     }
 
@@ -165,7 +167,7 @@ public class DTServerConnection {
             SessionRecordingOptions options = new SessionRecordingOptions(sessionName, description, appendTimestamp, recordingOption, sessionLocked);
             return api.postRecording(systemProfile, options);
         } catch (ApiException ex) {
-            throw new CommandExecutionException("error while starting session recording: " + ex.getMessage(), ex);
+            throw new CommandExecutionException("error while starting session recording: " + ex.getResponseBody(), ex);
         }
     }
 
@@ -174,7 +176,7 @@ public class DTServerConnection {
         try {
             return api.stopRecording(systemProfile, new RecordingStatus(false));
         } catch (ApiException ex) {
-            throw new CommandExecutionException("error while stopping session recording: " + ex.getMessage(), ex);
+            throw new CommandExecutionException("error while stopping session recording: " + ex.getResponseBody(), ex);
         }
     }
 
@@ -183,7 +185,7 @@ public class DTServerConnection {
         try {
             return api.getRecording(systemProfile).getRecording();
         } catch (ApiException ex) {
-            throw new CommandExecutionException("error querying session recording status: " + ex.getMessage(), ex);
+            throw new CommandExecutionException("error querying session recording status: " + ex.getResponseBody(), ex);
         }
     }
 
@@ -191,8 +193,8 @@ public class DTServerConnection {
         StoredSessionsApi api = new StoredSessionsApi(apiClient);
         try {
             return api.listStoredSessions();
-        } catch (Exception ex) {
-            throw new CommandExecutionException("error while querying sessions: " + ex.getMessage(), ex);
+        } catch (ApiException ex) {
+            throw new CommandExecutionException("error while querying sessions: " + ex.getResponseBody(), ex);
         }
     }
 
@@ -210,17 +212,17 @@ public class DTServerConnection {
         SystemProfilesApi api = new SystemProfilesApi(apiClient);
         try {
             return api.getProfiles();
-        } catch (Exception ex) {
-            throw new CommandExecutionException("error while querying profiles: " + ex.getMessage(), ex);
+        } catch (ApiException ex) {
+            throw new CommandExecutionException("error while querying profiles: " + ex.getResponseBody(), ex);
         }
     }
 
-    public SystemProfileConfigurations getProfileConfigurations() {
+    public List<SystemProfileConfiguration> getProfileConfigurations() {
         SystemProfilesApi api = new SystemProfilesApi(apiClient);
         try {
-            return api.getSystemProfileConfigurations(systemProfile);
-        } catch (Exception ex) {
-            throw new CommandExecutionException("error while querying configurations of profile " + systemProfile + ": " + ex.getMessage(), ex);
+            return api.getSystemProfileConfigurations(systemProfile).getConfigurations();
+        } catch (ApiException ex) {
+            throw new CommandExecutionException("error while querying configurations of profile " + systemProfile + ": " + ex.getResponseBody(), ex);
         }
     }
 
@@ -228,16 +230,15 @@ public class DTServerConnection {
         SystemProfilesApi api = new SystemProfilesApi(apiClient);
         try {
             api.putSystemProfileConfigurationStatus(systemProfile, configuration, new ActivationStatus("ENABLED"));
-        } catch (Exception ex) {
-            throw new CommandExecutionException("error while activating configuration: " + ex.getMessage());
+        } catch (ApiException ex) {
+            throw new CommandExecutionException("error while activating configuration: " + ex.getResponseBody());
         }
     }
 
     public List<Agent> getAllAgents() {
         CustomXMLApi api = new CustomXMLApi(apiClient);
         try {
-            AgentList agentList = api.getAgents();
-            return agentList.getAgents();
+            return api.getAgents();
         } catch (Exception ex) {
             throw new CommandExecutionException("error while querying agents: " + ex.getMessage(), ex);
         }
@@ -247,7 +248,7 @@ public class DTServerConnection {
         List<Agent> agents = getAllAgents();
         List<Agent> filteredAgents = new ArrayList<>();
         for (Agent agent : agents) {
-            if (agent.getSystemProfile().equals(systemProfile))
+            if (systemProfile.equals(agent.getSystemProfile()))
                 filteredAgents.add(agent);
         }
         return filteredAgents;
@@ -334,8 +335,8 @@ public class DTServerConnection {
             TestRunDefinition body = new TestRunDefinition(versionBuild, "performance");
             TestRun testRun = api.postTestRun(systemProfile, body);
             return testRun.getId();
-        } catch (Exception ex) {
-            throw new CommandExecutionException("error registering test run: " + ex.getMessage(), ex);
+        } catch (ApiException ex) {
+            throw new CommandExecutionException("error registering test run: " + ex.getResponseBody(), ex);
         }
     }
 
@@ -343,8 +344,8 @@ public class DTServerConnection {
         TestAutomationApi api = new TestAutomationApi(apiClient);
         try {
             return api.finishTestRun(systemProfile, testRunID);
-        } catch (Exception ex) {
-            throw new CommandExecutionException("error finishing test run: " + ex.getMessage(), ex);
+        } catch (ApiException ex) {
+            throw new CommandExecutionException("error finishing test run: " + ex.getResponseBody(), ex);
         }
     }
 
@@ -353,7 +354,7 @@ public class DTServerConnection {
         try {
             return api.getTestrunById(systemProfile, testRunId);
         } catch (ApiException ex) {
-            throw new CommandExecutionException("error while getting test run details: " + ex.getMessage(), ex);
+            throw new CommandExecutionException("error while getting test run details: " + ex.getResponseBody(), ex);
         }
     }
 
@@ -367,7 +368,7 @@ public class DTServerConnection {
             }
             return incidents;
         } catch (ApiException ex) {
-            throw new CommandExecutionException("error while getting incident details: " + ex.getMessage(), ex);
+            throw new CommandExecutionException("error while getting incident details: " + ex.getResponseBody(), ex);
         }
     }
 }

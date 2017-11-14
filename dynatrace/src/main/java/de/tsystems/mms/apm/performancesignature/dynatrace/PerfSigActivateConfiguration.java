@@ -61,13 +61,11 @@ public class PerfSigActivateConfiguration extends Builder implements SimpleBuild
         logger.println(Messages.PerfSigActivateConfiguration_SuccessfullyActivated(dynatraceProfile));
 
         for (Agent agent : connection.getAgents()) {
-            if (agent.getSystemProfile().equalsIgnoreCase(connection.getCredProfilePair().getProfile())) {
-                boolean hotSensorPlacement = connection.hotSensorPlacement(agent.getAgentId());
-                if (hotSensorPlacement) {
-                    logger.println(Messages.PerfSigActivateConfiguration_HotSensorPlacementDone(agent.getName()));
-                } else {
-                    logger.println(Messages.PerfSigActivateConfiguration_FailureActivation(agent.getName()));
-                }
+            boolean hotSensorPlacement = connection.hotSensorPlacement(agent.getAgentId());
+            if (hotSensorPlacement) {
+                logger.println(Messages.PerfSigActivateConfiguration_HotSensorPlacementDone(agent.getName()));
+            } else {
+                logger.println(Messages.PerfSigActivateConfiguration_FailureActivation(agent.getName()));
             }
         }
     }
@@ -103,7 +101,7 @@ public class PerfSigActivateConfiguration extends Builder implements SimpleBuild
                 CredProfilePair pair = serverConfiguration.getCredProfilePair(dynatraceProfile);
                 if (pair != null) {
                     DTServerConnection connection = new DTServerConnection(serverConfiguration, pair);
-                    return PerfSigUtils.listToListBoxModel(connection.getProfileConfigurations().getConfigurations());
+                    return PerfSigUtils.listToListBoxModel(connection.getProfileConfigurations());
                 }
             }
             return null;

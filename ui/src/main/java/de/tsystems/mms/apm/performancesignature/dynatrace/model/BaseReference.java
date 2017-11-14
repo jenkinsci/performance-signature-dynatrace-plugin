@@ -14,28 +14,32 @@
  * limitations under the License.
  */
 
-package de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model;
+package de.tsystems.mms.apm.performancesignature.dynatrace.model;
 
 import com.google.gson.annotations.SerializedName;
 import de.tsystems.mms.apm.performancesignature.util.PerfSigUIUtils;
 import io.swagger.annotations.ApiModelProperty;
+import org.kohsuke.stapler.export.Exported;
+import org.kohsuke.stapler.export.ExportedBean;
 
 /**
  * BaseReference
  */
 
+@ExportedBean
 public abstract class BaseReference {
     @SerializedName("id")
-    private final String id = null;
+    private String id;
 
     @SerializedName("href")
-    private final String href = null;
+    private String href;
 
     /**
      * ID of the reference
      *
      * @return id
      **/
+    @Exported
     @ApiModelProperty(value = "ID of the reference")
     public String getId() {
         return id;
@@ -46,6 +50,7 @@ public abstract class BaseReference {
      *
      * @return href
      **/
+    @Exported
     @ApiModelProperty(value = "Base URL of the REST resource. Further information can be retrieved from this URL or its subresources")
     public String getHref() {
         return href;

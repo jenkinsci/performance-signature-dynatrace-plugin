@@ -24,7 +24,6 @@ import com.google.gson.stream.JsonWriter;
 import de.tsystems.mms.apm.performancesignature.util.PerfSigUIUtils;
 import io.swagger.annotations.ApiModelProperty;
 import org.kohsuke.stapler.export.Exported;
-import org.kohsuke.stapler.export.ExportedBean;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -35,10 +34,7 @@ import java.util.List;
  * TestRun
  */
 
-@ExportedBean
-public class TestRun {
-    @SerializedName("id")
-    private String id;
+public class TestRun extends BaseReference {
     @SerializedName("category")
     private CategoryEnum category;
     @SerializedName("versionBuild")
@@ -65,8 +61,6 @@ public class TestRun {
     private String marker;
     @SerializedName("message")
     private String message;
-    @SerializedName("href")
-    private String href;
     @SerializedName("creationMode")
     private CreationModeEnum creationMode;
     @SerializedName("finished")
@@ -88,16 +82,6 @@ public class TestRun {
 
     @Deprecated
     private transient Date timestamp;
-
-    /**
-     * Get id
-     *
-     * @return id
-     **/
-    @Exported
-    public String getId() {
-        return id;
-    }
 
     /**
      * Get category
@@ -232,17 +216,6 @@ public class TestRun {
     }
 
     /**
-     * Base URL of the REST resource. Further information can be retrieved from this URL or its subresources
-     *
-     * @return href
-     **/
-    @Exported
-    @ApiModelProperty(value = "Base URL of the REST resource. Further information can be retrieved from this URL or its subresources")
-    public String getHref() {
-        return href;
-    }
-
-    /**
      * Get creationMode
      *
      * @return creationMode
@@ -361,7 +334,7 @@ public class TestRun {
         StringBuilder sb = new StringBuilder();
         sb.append("class TestRun {\n");
 
-        sb.append("    id: ").append(PerfSigUIUtils.toIndentedString(id)).append("\n");
+        sb.append("    id: ").append(PerfSigUIUtils.toIndentedString(super.getId())).append("\n");
         sb.append("    category: ").append(PerfSigUIUtils.toIndentedString(category)).append("\n");
         sb.append("    versionBuild: ").append(PerfSigUIUtils.toIndentedString(versionBuild)).append("\n");
         sb.append("    versionMajor: ").append(PerfSigUIUtils.toIndentedString(versionMajor)).append("\n");
@@ -375,7 +348,7 @@ public class TestRun {
         sb.append("    systemProfile: ").append(PerfSigUIUtils.toIndentedString(systemProfile)).append("\n");
         sb.append("    marker: ").append(PerfSigUIUtils.toIndentedString(marker)).append("\n");
         sb.append("    message: ").append(PerfSigUIUtils.toIndentedString(message)).append("\n");
-        sb.append("    href: ").append(PerfSigUIUtils.toIndentedString(href)).append("\n");
+        sb.append("    href: ").append(PerfSigUIUtils.toIndentedString(super.getHref())).append("\n");
         sb.append("    creationMode: ").append(PerfSigUIUtils.toIndentedString(creationMode)).append("\n");
         sb.append("    numDegraded: ").append(PerfSigUIUtils.toIndentedString(numDegraded)).append("\n");
         sb.append("    numFailed: ").append(PerfSigUIUtils.toIndentedString(numFailed)).append("\n");
