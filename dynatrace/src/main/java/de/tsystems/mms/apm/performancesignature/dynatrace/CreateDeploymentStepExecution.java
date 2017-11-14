@@ -32,26 +32,24 @@ import org.jenkinsci.plugins.workflow.steps.StepExecution;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class CreateDeploymentStepExecution extends StepExecution {
+    private static final long serialVersionUID = 1L;
+    private static final Logger LOGGER = Logger.getLogger(CreateDeploymentStepExecution.class.getName());
     private final transient CreateDeploymentStep step;
-    private final transient TaskListener listener;
     private BodyExecution body;
     private String eventId;
-
-    private transient PrintStream console;
 
     CreateDeploymentStepExecution(CreateDeploymentStep createDeploymentStep, StepContext context) throws IOException, InterruptedException {
         super(context);
         this.step = createDeploymentStep;
-        this.listener = context.get(TaskListener.class);
     }
 
     @Override
     public boolean start() throws Exception {
-        console = listener.getLogger();
         StepContext context = getContext();
 
         DTServerConnection connection = PerfSigUtils.createDTServerConnection(step.getDynatraceProfile());
@@ -63,7 +61,7 @@ public class CreateDeploymentStepExecution extends StepExecution {
         if (eventId == null) {
             throw new AbortException("could not create deployment event");
         }
-        console.println("successfully created deployment event " + eventId);
+        listener().getLogger().println("successfully created deployment event " + eventId);
 
         body = context.newBodyInvoker()
                 .withCallback(new Callback())
@@ -85,12 +83,20 @@ public class CreateDeploymentStepExecution extends StepExecution {
             AlertsIncidentsAndEventsApi api = new AlertsIncidentsAndEventsApi(connection.getApiClient());
             EventUpdate event = new EventUpdate(new Date());
             api.updateDeploymentEvent(eventId, event);
-            console.println("successfully updated deployment event " + eventId);
+            listener().getLogger().println("successfully updated deployment event " + eventId);
+        }
+    }
+
+    private TaskListener listener() {
+        try {
+            return getContext().get(TaskListener.class);
+        } catch (Exception x) {
+            LOGGER.log(Level.WARNING, null, x);
+            return TaskListener.NULL;
         }
     }
 
     private class Callback extends BodyExecutionCallback.TailCall {
-
         private static final long serialVersionUID = 1L;
 
         @Override
@@ -99,5 +105,4 @@ public class CreateDeploymentStepExecution extends StepExecution {
         }
 
     }
-
 }
