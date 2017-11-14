@@ -56,8 +56,8 @@ public class DeploymentEvent {
         this.state = state;
         this.message = message;
         this.description = description;
-        this.start = start;
-        this.end = end;
+        this.start = start == null ? null : (Date) start.clone();
+        this.end = end == null ? null : (Date) end.clone();
         this.systemprofile = systemprofile;
         this.application = application;
     }

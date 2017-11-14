@@ -48,7 +48,7 @@ public class EventUpdate {
     private Date end;
 
     public EventUpdate(Date end) {
-        this.end = end;
+        this.end = end == null ? null : (Date) end.clone();
     }
 
     /**
