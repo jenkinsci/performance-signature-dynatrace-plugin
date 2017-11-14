@@ -31,6 +31,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import static de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model.SessionData.SessiontypeEnum;
+import static de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model.SessionData.StoredsessiontypeEnum;
+
 /**
  * Comprehensive metadata of a session
  */
@@ -285,112 +288,6 @@ public class SessionMetadata extends BaseReference {
         sb.append("    continuoussession: ").append(PerfSigUIUtils.toIndentedString(continuoussession)).append("\n");
         sb.append("}");
         return sb.toString();
-    }
-
-    /**
-     * Stored session type
-     */
-    @JsonAdapter(StoredsessiontypeEnum.Adapter.class)
-    public enum StoredsessiontypeEnum {
-        PUREPATH("purepath"),
-
-        MEMDUMP_SIMPLE("memdump_simple"),
-
-        MEMDUMP_EXTENDED("memdump_extended"),
-
-        MEMDUMP_SELECTIVE("memdump_selective"),
-
-        THREADDUMP("threaddump"),
-
-        SAMPLING("sampling");
-
-        private final String value;
-
-        StoredsessiontypeEnum(String value) {
-            this.value = value;
-        }
-
-        public static StoredsessiontypeEnum fromValue(String text) {
-            for (StoredsessiontypeEnum b : StoredsessiontypeEnum.values()) {
-                if (String.valueOf(b.value).equals(text)) {
-                    return b;
-                }
-            }
-            return null;
-        }
-
-        public String getValue() {
-            return value;
-        }
-
-        @Override
-        public String toString() {
-            return String.valueOf(value);
-        }
-
-        public static class Adapter extends TypeAdapter<StoredsessiontypeEnum> {
-            @Override
-            public void write(final JsonWriter jsonWriter, final StoredsessiontypeEnum enumeration) throws IOException {
-                jsonWriter.value(enumeration.getValue());
-            }
-
-            @Override
-            public StoredsessiontypeEnum read(final JsonReader jsonReader) throws IOException {
-                String value = jsonReader.nextString();
-                return StoredsessiontypeEnum.fromValue(String.valueOf(value));
-            }
-        }
-    }
-
-    /**
-     * Session type
-     */
-    @JsonAdapter(SessiontypeEnum.Adapter.class)
-    public enum SessiontypeEnum {
-        LIVE("live"),
-
-        SERVER("server"),
-
-        STORED("stored"),
-
-        UNTYPED("untyped");
-
-        private final String value;
-
-        SessiontypeEnum(String value) {
-            this.value = value;
-        }
-
-        public static SessiontypeEnum fromValue(String text) {
-            for (SessiontypeEnum b : SessiontypeEnum.values()) {
-                if (String.valueOf(b.value).equals(text)) {
-                    return b;
-                }
-            }
-            return null;
-        }
-
-        public String getValue() {
-            return value;
-        }
-
-        @Override
-        public String toString() {
-            return String.valueOf(value);
-        }
-
-        public static class Adapter extends TypeAdapter<SessiontypeEnum> {
-            @Override
-            public void write(final JsonWriter jsonWriter, final SessiontypeEnum enumeration) throws IOException {
-                jsonWriter.value(enumeration.getValue());
-            }
-
-            @Override
-            public SessiontypeEnum read(final JsonReader jsonReader) throws IOException {
-                String value = jsonReader.nextString();
-                return SessiontypeEnum.fromValue(String.valueOf(value));
-            }
-        }
     }
 
     /**
