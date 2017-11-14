@@ -133,21 +133,21 @@
 
                                 <j:if test="${!dashboardReport.incidents.isEmpty()}">
                                     <h3>Incidents</h3>
-                                    <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                                    <div class="panel-group" id="incidents-${dashboardReport.name}" role="tablist" aria-multiselectable="true">
                                         <j:forEach var="incident" items="${dashboardReport.incidents}">
                                             <j:set var="position" value="${dashboardReport.incidents.indexOf(incident)}"/>
                                             <div class="panel panel-default ${incident.panelColor}">
-                                                <div class="panel-heading" role="tab" id="heading${position}">
+                                                <div class="panel-heading" role="tab" id="${dashboardReport.name}-heading${position}">
                                                     <h4 class="panel-title">
-                                                        <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse${position}"
-                                                           aria-expanded="true"
-                                                           aria-controls="collapse${position}">
+                                                        <a role="button" data-toggle="collapse" data-parent="#incidents-${dashboardReport.name}"
+                                                           href="#${dashboardReport.name}-collapse${position}" aria-expanded="true"
+                                                           aria-controls="${dashboardReport.name}-collapse${position}">
                                                             ${incident.severity} Incident: ${incident.message}
                                                         </a>
                                                     </h4>
                                                 </div>
-                                                <div id="collapse${position}" class="panel-collapse collapse" role="tabpanel"
-                                                     aria-labelledby="heading${position}">
+                                                <div id="${dashboardReport.name}-collapse${position}" class="panel-collapse collapse" role="tabpanel"
+                                                     aria-labelledby="${dashboardReport.name}-heading${position}">
                                                     <div class="panel-body">
                                                         <b>rule:</b>
                                                         ${incident.rule}
