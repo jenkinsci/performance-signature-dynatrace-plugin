@@ -33,6 +33,7 @@ public class DashboardReport {
     @XmlElement(name = "chartdashlet")
     private final List<ChartDashlet> chartDashlets;
     private String name;
+    @XmlElement(name = "incident")
     private final List<Alert> incidents;
     private boolean unitTest;
     private ClientLinkGenerator clientLink;

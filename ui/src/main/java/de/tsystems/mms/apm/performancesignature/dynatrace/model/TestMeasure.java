@@ -21,28 +21,36 @@ import de.tsystems.mms.apm.performancesignature.util.PerfSigUIUtils;
 import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+
 /**
  * TestMeasure
  */
 
 @ExportedBean
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlRootElement(name = "testmeasure")
 public class TestMeasure {
     @SerializedName("name")
+    @XmlElement
     private String name;
-
     @SerializedName("metricGroup")
+    @XmlElement
     private String metricGroup;
-
     @SerializedName("value")
+    @XmlElement
     private Double value;
-
     @SerializedName("unit")
+    @XmlElement
     private String unit;
-
     @SerializedName("expectedMin")
+    @XmlElement
     private Double expectedMin;
-
     @SerializedName("expectedMax")
+    @XmlElement
     private Double expectedMax;
 
     /**

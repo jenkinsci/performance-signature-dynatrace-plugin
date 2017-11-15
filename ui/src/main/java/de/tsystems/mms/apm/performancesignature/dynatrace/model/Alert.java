@@ -27,6 +27,10 @@ import io.swagger.annotations.ApiModelProperty;
 import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.io.IOException;
 import java.util.Date;
 
@@ -36,21 +40,30 @@ import java.util.Date;
 @ApiModel(description = "Alert record description")
 
 @ExportedBean
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlRootElement(name = "incident")
 public class Alert {
+    @SerializedName("rule")
+    @XmlElement
+    private final String rule = null;
     @SerializedName("severity")
+    @XmlElement
     private SeverityEnum severity;
     @SerializedName("state")
+    @XmlElement
     private StateEnum state;
     @SerializedName("message")
+    @XmlElement
     private String message;
     @SerializedName("description")
+    @XmlElement
     private String description;
     @SerializedName("start")
+    @XmlElement
     private Date start;
     @SerializedName("end")
+    @XmlElement
     private Date end;
-    @SerializedName("rule")
-    private final String rule = null;
 
     /**
      * The severity of the alert

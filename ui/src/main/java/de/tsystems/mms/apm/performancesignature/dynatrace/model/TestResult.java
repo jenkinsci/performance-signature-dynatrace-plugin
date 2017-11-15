@@ -26,6 +26,10 @@ import io.swagger.annotations.ApiModelProperty;
 import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -36,26 +40,29 @@ import java.util.List;
  */
 
 @ExportedBean
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlRootElement(name = "testresult")
 public class TestResult {
     @SerializedName("name")
+    @XmlElement
     private String name;
-
     @SerializedName("status")
+    @XmlElement
     private StatusEnum status;
-
     @SerializedName("exectime")
+    @XmlElement
     private Date exectime;
-
     @SerializedName("package")
+    @XmlElement
     private String _package;
 
     @Deprecated
     private transient String packageName;
-
     @SerializedName("platform")
+    @XmlElement
     private String platform;
-
     @SerializedName("measures")
+    @XmlElement(name = "mesaure")
     private List<TestMeasure> measures;
 
     /**
@@ -200,6 +207,7 @@ public class TestResult {
         sb.append("}");
         return sb.toString();
     }
+
     /**
      * Gets or Sets category
      */

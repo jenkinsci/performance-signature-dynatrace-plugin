@@ -26,15 +26,23 @@ import de.tsystems.mms.apm.performancesignature.viewer.model.CredJobPair;
 import de.tsystems.mms.apm.performancesignature.viewer.model.CustomProxy;
 import de.tsystems.mms.apm.performancesignature.viewer.model.JenkinsServerConfiguration;
 import de.tsystems.mms.apm.performancesignature.viewer.rest.model.CustomJenkinsHttpClient;
+import de.tsystems.mms.apm.performancesignature.viewer.rest.model.RootElement;
 import hudson.FilePath;
 import hudson.util.XStream2;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
-import org.jdom2.JDOMException;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.util.StreamReaderDelegate;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.io.StringReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -87,11 +95,37 @@ public class JenkinsServerConnection {
         try {
             URL url = new URL(getJenkinsJob().getUrl() + buildNumber + "/performance-signature/api/xml?depth=10");
             String xml = getJenkinsJob().getClient().get(url.toString());
-            DashboardXMLReader reader = new DashboardXMLReader();
-            reader.parseXML(xml);
-            return reader.getParsedObjects();
-        } catch (IOException | JDOMException e) {
+            RootElement dashboardReport = null;
+            try {
+                JAXBContext jaxbContext = JAXBContext.newInstance(RootElement.class);
+                XMLInputFactory xif = XMLInputFactory.newInstance();
+                XMLStreamReader xsr = xif.createXMLStreamReader(new StringReader(xml));
+                xsr = new MyStreamReaderDelegate(xsr);
+                Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+                dashboardReport = (RootElement) jaxbUnmarshaller.unmarshal(xsr);
+            } catch (JAXBException | XMLStreamException e) {
+                e.printStackTrace();
+            }
+            System.out.println(dashboardReport);
+            return dashboardReport != null ? dashboardReport.getDashboardReports() : null;
+        } catch (IOException e) {
             throw new ContentRetrievalException(ExceptionUtils.getStackTrace(e) + "could not retrieve records from remote Jenkins: ", e);
+        }
+    }
+
+    private static class MyStreamReaderDelegate extends StreamReaderDelegate {
+        MyStreamReaderDelegate(XMLStreamReader xsr) {
+            super(xsr);
+        }
+
+        @Override
+        public String getAttributeLocalName(int index) {
+            return super.getAttributeLocalName(index).toLowerCase().intern();
+        }
+
+        @Override
+        public String getLocalName() {
+            return super.getLocalName().toLowerCase().intern();
         }
     }
 
