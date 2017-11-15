@@ -41,14 +41,4 @@ public class Measurement extends MeasureBaseModel {
     public long getTimestamp() {
         return timestamp;
     }
-
-    /**
-     * Legt den Wert der timestamp-Eigenschaft fest.
-     *
-     * @param value allowed object is
-     *              {@link long }
-     */
-    public void setTimestamp(long value) {
-        this.timestamp = value;
-    }
 }

@@ -51,8 +51,6 @@ public class Alert {
     private Date end;
     @SerializedName("rule")
     private final String rule = null;
-    @SerializedName("systemprofile")
-    private String systemprofile;
 
     /**
      * The severity of the alert
@@ -130,16 +128,6 @@ public class Alert {
         return rule;
     }
 
-    /**
-     * System Profile name
-     *
-     * @return systemprofile
-     **/
-    @ApiModelProperty(required = true, value = "System Profile name")
-    public String getSystemprofile() {
-        return systemprofile;
-    }
-
     public String getPanelColor() {
         switch (severity) {
             case INFORMATIONAL:
@@ -164,7 +152,6 @@ public class Alert {
         sb.append("    start: ").append(PerfSigUIUtils.toIndentedString(start)).append("\n");
         sb.append("    end: ").append(PerfSigUIUtils.toIndentedString(end)).append("\n");
         sb.append("    rule: ").append(PerfSigUIUtils.toIndentedString(rule)).append("\n");
-        sb.append("    systemprofile: ").append(PerfSigUIUtils.toIndentedString(systemprofile)).append("\n");
         sb.append("}");
         return sb.toString();
     }

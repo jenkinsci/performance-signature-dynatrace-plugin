@@ -57,7 +57,7 @@ public class ApiClient {
     public final static String API_SUFFIX = "/api/v2";
     private String basePath = "https://localhost/api/v2";
     private boolean debugging = false;
-    private Map<String, String> defaultHeaderMap = new HashMap<>();
+    private final Map<String, String> defaultHeaderMap = new HashMap<>();
     private String tempFolderPath = null;
 
     private Map<String, Authentication> authentications;

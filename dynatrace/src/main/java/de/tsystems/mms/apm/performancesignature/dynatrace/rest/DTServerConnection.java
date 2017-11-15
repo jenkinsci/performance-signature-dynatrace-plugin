@@ -358,7 +358,7 @@ public class DTServerConnection {
         }
     }
 
-    public List<Alert> getIncidents(Date from, Date to) throws InterruptedException {
+    public List<Alert> getIncidents(Date from, Date to) {
         AlertsIncidentsAndEventsApi api = new AlertsIncidentsAndEventsApi(apiClient);
         try {
             List<Alert> incidents = new ArrayList<>();

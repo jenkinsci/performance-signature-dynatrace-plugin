@@ -31,7 +31,6 @@ import org.jenkinsci.plugins.workflow.steps.StepContext;
 import org.jenkinsci.plugins.workflow.steps.StepExecution;
 
 import javax.annotation.Nonnull;
-import java.io.IOException;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -43,7 +42,7 @@ public class CreateDeploymentStepExecution extends StepExecution {
     private BodyExecution body;
     private String eventId;
 
-    CreateDeploymentStepExecution(CreateDeploymentStep createDeploymentStep, StepContext context) throws IOException, InterruptedException {
+    CreateDeploymentStepExecution(CreateDeploymentStep createDeploymentStep, StepContext context) {
         super(context);
         this.step = createDeploymentStep;
     }

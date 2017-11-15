@@ -41,9 +41,9 @@ public class DeploymentEvent {
     @SerializedName("description")
     private final String description;
     @SerializedName("start")
-    private Date start;
+    private final Date start;
     @SerializedName("end")
-    private Date end;
+    private final Date end;
     @SerializedName("systemprofile")
     private final String systemprofile;
     @SerializedName("application")

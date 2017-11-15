@@ -55,14 +55,8 @@ public class TestRun extends BaseReference {
     private String sessionId;
     @SerializedName("session")
     private String session;
-    @SerializedName("systemProfile")
-    private String systemProfile;
-    @SerializedName("marker")
-    private String marker;
     @SerializedName("message")
     private String message;
-    @SerializedName("creationMode")
-    private CreationModeEnum creationMode;
     @SerializedName("finished")
     private boolean finished;
     @SerializedName("numDegraded")
@@ -186,26 +180,6 @@ public class TestRun extends BaseReference {
     }
 
     /**
-     * Get systemProfile
-     *
-     * @return systemProfile
-     **/
-    @Exported
-    public String getSystemProfile() {
-        return systemProfile;
-    }
-
-    /**
-     * Get marker
-     *
-     * @return marker
-     **/
-    @Exported
-    public String getMarker() {
-        return marker;
-    }
-
-    /**
      * Get message
      *
      * @return message
@@ -213,17 +187,6 @@ public class TestRun extends BaseReference {
     @Exported
     public String getMessage() {
         return message;
-    }
-
-    /**
-     * Get creationMode
-     *
-     * @return creationMode
-     **/
-    @Exported
-    @ApiModelProperty(example = "MANUAL")
-    public CreationModeEnum getCreationMode() {
-        return creationMode;
     }
 
     public static TestRun mergeTestRuns(final List<TestRun> testRuns) {
@@ -302,19 +265,6 @@ public class TestRun extends BaseReference {
         return numVolatile;
     }
 
-    public TestRun testResults(List<TestResult> testResults) {
-        this.testResults = testResults;
-        return this;
-    }
-
-    public TestRun addTestResultsItem(TestResult testResultsItem) {
-        if (this.testResults == null) {
-            this.testResults = new ArrayList<>();
-        }
-        this.testResults.add(testResultsItem);
-        return this;
-    }
-
     /**
      * Get finished
      *
@@ -323,10 +273,6 @@ public class TestRun extends BaseReference {
     @Exported
     public boolean getFinished() {
         return finished;
-    }
-
-    public void setTestResults(List<TestResult> testResults) {
-        this.testResults = testResults;
     }
 
     @Override
@@ -345,11 +291,8 @@ public class TestRun extends BaseReference {
         sb.append("    startTime: ").append(PerfSigUIUtils.toIndentedString(startTime)).append("\n");
         sb.append("    sessionId: ").append(PerfSigUIUtils.toIndentedString(sessionId)).append("\n");
         sb.append("    session: ").append(PerfSigUIUtils.toIndentedString(session)).append("\n");
-        sb.append("    systemProfile: ").append(PerfSigUIUtils.toIndentedString(systemProfile)).append("\n");
-        sb.append("    marker: ").append(PerfSigUIUtils.toIndentedString(marker)).append("\n");
         sb.append("    message: ").append(PerfSigUIUtils.toIndentedString(message)).append("\n");
         sb.append("    href: ").append(PerfSigUIUtils.toIndentedString(super.getHref())).append("\n");
-        sb.append("    creationMode: ").append(PerfSigUIUtils.toIndentedString(creationMode)).append("\n");
         sb.append("    numDegraded: ").append(PerfSigUIUtils.toIndentedString(numDegraded)).append("\n");
         sb.append("    numFailed: ").append(PerfSigUIUtils.toIndentedString(numFailed)).append("\n");
         sb.append("    numImproved: ").append(PerfSigUIUtils.toIndentedString(numImproved)).append("\n");
@@ -432,53 +375,6 @@ public class TestRun extends BaseReference {
             public CategoryEnum read(final JsonReader jsonReader) throws IOException {
                 String value = jsonReader.nextString();
                 return CategoryEnum.fromValue(String.valueOf(value));
-            }
-        }
-    }
-
-    /**
-     * Gets or Sets creationMode
-     */
-    @JsonAdapter(CreationModeEnum.Adapter.class)
-    public enum CreationModeEnum {
-        MANUAL("MANUAL"),
-
-        AUTO("AUTO");
-
-        private final String value;
-
-        CreationModeEnum(String value) {
-            this.value = value;
-        }
-
-        public static CreationModeEnum fromValue(String text) {
-            for (CreationModeEnum b : CreationModeEnum.values()) {
-                if (String.valueOf(b.value).equals(text)) {
-                    return b;
-                }
-            }
-            return null;
-        }
-
-        public String getValue() {
-            return value;
-        }
-
-        @Override
-        public String toString() {
-            return String.valueOf(value);
-        }
-
-        public static class Adapter extends TypeAdapter<CreationModeEnum> {
-            @Override
-            public void write(final JsonWriter jsonWriter, final CreationModeEnum enumeration) throws IOException {
-                jsonWriter.value(enumeration.getValue());
-            }
-
-            @Override
-            public CreationModeEnum read(final JsonReader jsonReader) throws IOException {
-                String value = jsonReader.nextString();
-                return CreationModeEnum.fromValue(String.valueOf(value));
             }
         }
     }

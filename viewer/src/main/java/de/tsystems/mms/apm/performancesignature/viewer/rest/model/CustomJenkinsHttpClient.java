@@ -95,7 +95,8 @@ public class CustomJenkinsHttpClient extends JenkinsHttpClient {
                 httpClientBuilder.setProxy(new HttpHost(customProxy.getProxyServer(), customProxy.getProxyPort()));
                 if (StringUtils.isNotBlank(customProxy.getProxyUser()) && StringUtils.isNotBlank(customProxy.getProxyPassword())) {
                     CredentialsProvider credsProvider = new BasicCredentialsProvider();
-                    UsernamePasswordCredentials usernamePasswordCredentials = new UsernamePasswordCredentials(customProxy.getProxyUser(), customProxy.getProxyPassword());
+                    UsernamePasswordCredentials usernamePasswordCredentials = new UsernamePasswordCredentials(customProxy.getProxyUser(),
+                            customProxy.getProxyPassword());
                     credsProvider.setCredentials(new AuthScope(customProxy.getProxyServer(), customProxy.getProxyPort()), usernamePasswordCredentials);
                     httpClientBuilder.setDefaultCredentialsProvider(credsProvider);
                     httpClientBuilder.setProxyAuthenticationStrategy(new ProxyAuthenticationStrategy());
