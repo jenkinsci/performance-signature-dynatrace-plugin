@@ -123,7 +123,7 @@
                                                 <div class="panel-body">
                                                     <a href="${rootURL}/job/${it.build.project.name}/${it.build.number}/testReport">
                                                         <img width="16" height="16" src="${resURL}/images/24x24/clipboard.png"/>
-                                                        UnitTestReport with performance data
+                                                        ${%UnitTestReport with performance data}
                                                     </a>
                                                 </div>
                                             </div>
@@ -132,7 +132,7 @@
                                 </j:if>
 
                                 <j:if test="${!dashboardReport.incidents.isEmpty()}">
-                                    <h3>Incidents</h3>
+                                    <h3>${%Incidents}</h3>
                                     <div class="panel-group" id="incidents-${dashboardReport.name}" role="tablist" aria-multiselectable="true">
                                         <j:forEach var="incident" items="${dashboardReport.incidents}">
                                             <j:set var="position" value="${dashboardReport.incidents.indexOf(incident)}"/>
@@ -142,23 +142,24 @@
                                                         <a role="button" data-toggle="collapse" data-parent="#incidents-${dashboardReport.name}"
                                                            href="#${dashboardReport.name}-collapse${position}" aria-expanded="true"
                                                            aria-controls="${dashboardReport.name}-collapse${position}">
-                                                            ${incident.severity} Incident: ${incident.message}
+                                                            ${incident.severity} ${%Incident:} ${incident.message}
                                                         </a>
                                                     </h4>
                                                 </div>
                                                 <div id="${dashboardReport.name}-collapse${position}" class="panel-collapse collapse" role="tabpanel"
                                                      aria-labelledby="${dashboardReport.name}-heading${position}">
                                                     <div class="panel-body">
-                                                        <b>rule:</b>
+                                                        <b>${%rule:}</b>
                                                         ${incident.rule}
                                                         <br/>
-                                                        <b>description:</b>
+                                                        <b>${%description:}</b>
                                                         ${incident.description}
                                                         <br/>
-                                                        <b>start:</b>
+                                                        <b>${%start:}</b>
                                                         ${incident.start}
                                                         <br/>
-                                                        <b>end:</b>
+                                                        <b>${%end:}</b>
+                                                        <j:if test="${incident.end==null}">not set</j:if>
                                                         ${incident.end}
                                                     </div>
                                                 </div>

@@ -107,7 +107,6 @@ public class DashboardReport {
         this.chartDashlets.add(chartDashlet);
     }
 
-    @Exported
     public boolean isUnitTest() {
         return unitTest;
     }

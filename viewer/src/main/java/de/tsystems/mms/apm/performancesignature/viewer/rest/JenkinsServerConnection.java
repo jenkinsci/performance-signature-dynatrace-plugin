@@ -99,9 +99,9 @@ public class JenkinsServerConnection {
     public List<DashboardReport> getMeasureDataFromJSON(int buildNumber) {
         try {
             URL url = new URL(getJenkinsJob().getUrl() + buildNumber + "/performance-signature/api/json?depth=10");
-            String xml = getJenkinsJob().getClient().get(url.toString());
+            String json = getJenkinsJob().getClient().get(url.toString());
 
-            RootElement rootElement = gson.fromJson(xml, RootElement.class);
+            RootElement rootElement = gson.fromJson(json, RootElement.class);
             return rootElement.getDashboardReports();
         } catch (IOException | JsonSyntaxException e) {
             throw new ContentRetrievalException(ExceptionUtils.getStackTrace(e) + "could not retrieve records from remote Jenkins: ", e);

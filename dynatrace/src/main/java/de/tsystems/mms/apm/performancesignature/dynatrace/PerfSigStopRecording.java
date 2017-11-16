@@ -87,7 +87,8 @@ public class PerfSigStopRecording extends Builder implements SimpleBuildStep {
         if (StringUtils.isBlank(sessionId)) {
             throw new RESTErrorException(Messages.PerfSigStopRecording_InternalError());
         }
-        logger.println(Messages.PerfSigStopRecording_StoppedSessionRecording(connection.getCredProfilePair().getProfile(), sessionId));
+        logger.println(Messages.PerfSigStopRecording_StoppedSessionRecording(connection.getCredProfilePair().getProfile(),
+                buildEnvVars != null ? buildEnvVars.getSessionName() : sessionId));
     }
 
     public String getDynatraceProfile() {
