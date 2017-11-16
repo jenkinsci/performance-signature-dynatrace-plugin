@@ -16,6 +16,7 @@
 
 package de.tsystems.mms.apm.performancesignature.dynatrace.model;
 
+import com.google.gson.annotations.SerializedName;
 import de.tsystems.mms.apm.performancesignature.util.PerfSigUIUtils;
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.export.Exported;
@@ -33,6 +34,7 @@ public class Measure extends MeasureBaseModel {
 
     @XmlElement(name = "measurement")
     private List<Measurement> measurements;
+    @SerializedName("measure")
     @XmlAttribute(name = "measure")
     private String name;
     @XmlAttribute

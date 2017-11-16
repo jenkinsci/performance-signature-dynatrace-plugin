@@ -62,8 +62,9 @@ import java.util.logging.Logger;
 public class PerfSigProjectAction extends PerfSigBaseAction implements ProminentProjectAction {
     static final String UNITTEST_DASHLETNAME = "unittest_overview";
     private static final String JSON_FILENAME = "gridconfig.xml";
-    private static final XStream XSTREAM = new XStream2();
     private static final Logger logger = Logger.getLogger(PerfSigProjectAction.class.getName());
+    private static final XStream XSTREAM = new XStream2();
+    private static final Gson GSON = new Gson();
     private final Job<?, ?> job;
     private transient Map<String, JSONDashlet> jsonDashletMap;
 
@@ -268,7 +269,7 @@ public class PerfSigProjectAction extends PerfSigBaseAction implements Prominent
             }
         }
 
-        return new Gson().toJson(jsonDashletList);
+        return GSON.toJson(jsonDashletList);
     }
 
     private Map<String, JSONDashlet> createJSONConfiguration(final boolean useRandomId) {
@@ -322,7 +323,7 @@ public class PerfSigProjectAction extends PerfSigBaseAction implements Prominent
             json = json.substring(1, json.length() - 1);
         }
 
-        List<JSONDashlet> jsonDashletList = new Gson().fromJson(json, new TypeToken<List<JSONDashlet>>() {
+        List<JSONDashlet> jsonDashletList = GSON.fromJson(json, new TypeToken<List<JSONDashlet>>() {
         }.getType());
         for (JSONDashlet jsonDashlet : jsonDashletList) {
             idsFromJson.add(jsonDashlet.getId());

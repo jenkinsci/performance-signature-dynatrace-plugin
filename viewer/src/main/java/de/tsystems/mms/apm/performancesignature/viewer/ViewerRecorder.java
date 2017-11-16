@@ -67,7 +67,7 @@ public class ViewerRecorder extends Recorder implements SimpleBuildStep {
         }
 
         logger.println("parsing xml data from job " + serverConnection.getJenkinsJob().getName() + " #" + buildNumber);
-        final List<DashboardReport> dashboardReports = serverConnection.getDashboardReportsFromXML(buildNumber);
+        final List<DashboardReport> dashboardReports = serverConnection.getMeasureDataFromJSON(buildNumber);
         if (dashboardReports == null) {
             throw new RESTErrorException(Messages.ViewerRecorder_XMLReportError());
         }

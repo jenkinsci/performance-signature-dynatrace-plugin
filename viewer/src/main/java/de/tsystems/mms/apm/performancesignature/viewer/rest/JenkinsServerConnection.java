@@ -49,6 +49,7 @@ public class JenkinsServerConnection {
     private static final Logger LOGGER = Logger.getLogger(JenkinsServerConnection.class.getName());
     private Job jenkinsJob;
     private JenkinsServer jenkinsServer;
+    private final Gson gson;
 
     public JenkinsServerConnection(final String serverUrl, final CredJobPair pair, final boolean verifyCertificate,
                                    final CustomProxy customProxyServer) {
@@ -80,30 +81,29 @@ public class JenkinsServerConnection {
         } catch (IOException | URISyntaxException e) {
             LOGGER.severe(ExceptionUtils.getFullStackTrace(e));
         }
+
+        GsonBuilder builder = new GsonBuilder();
+        // Register an adapter to manage the date types as long values
+        builder.registerTypeAdapter(Date.class, new JsonDeserializer<Date>() {
+            public Date deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+                return new Date(json.getAsJsonPrimitive().getAsLong());
+            }
+        });
+        gson = builder.create();
     }
 
     public JenkinsServerConnection(final JenkinsServerConfiguration config, final CredJobPair pair) {
         this(config.getServerUrl(), pair, config.isVerifyCertificate(), config.getCustomProxy());
     }
 
-    public List<DashboardReport> getDashboardReportsFromXML(int buildNumber) {
+    public List<DashboardReport> getMeasureDataFromJSON(int buildNumber) {
         try {
-            URL url = new URL(getJenkinsJob().getUrl() + buildNumber + "/performance-signature/api/xml?depth=10");
+            URL url = new URL(getJenkinsJob().getUrl() + buildNumber + "/performance-signature/api/json?depth=10");
             String xml = getJenkinsJob().getClient().get(url.toString());
 
-            GsonBuilder builder = new GsonBuilder();
-            // Register an adapter to manage the date types as long values
-            builder.registerTypeAdapter(Date.class, new JsonDeserializer<Date>() {
-                public Date deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-                    return new Date(json.getAsJsonPrimitive().getAsLong());
-                }
-            });
-
-            Gson gson = builder.create();
             RootElement rootElement = gson.fromJson(xml, RootElement.class);
-            System.out.println(rootElement);
-            return rootElement != null ? rootElement.getDashboardReports() : null;
-        } catch (IOException e) {
+            return rootElement.getDashboardReports();
+        } catch (IOException | JsonSyntaxException e) {
             throw new ContentRetrievalException(ExceptionUtils.getStackTrace(e) + "could not retrieve records from remote Jenkins: ", e);
         }
     }

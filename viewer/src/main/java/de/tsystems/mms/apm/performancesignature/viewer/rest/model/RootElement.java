@@ -17,26 +17,17 @@
 package de.tsystems.mms.apm.performancesignature.viewer.rest.model;
 
 import de.tsystems.mms.apm.performancesignature.dynatrace.model.DashboardReport;
-import de.tsystems.mms.apm.performancesignature.dynatrace.model.TestRun;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class RootElement {
     private List<DashboardReport> dashboardReports;
-    private List<TestRun> testRuns;
 
     public List<DashboardReport> getDashboardReports() {
         if (dashboardReports == null) {
             dashboardReports = new ArrayList<>();
         }
         return dashboardReports;
-    }
-
-    public List<TestRun> getTestRuns() {
-        if (testRuns == null) {
-            testRuns = new ArrayList<>();
-        }
-        return testRuns;
     }
 }
