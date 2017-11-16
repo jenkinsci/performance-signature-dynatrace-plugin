@@ -19,21 +19,11 @@ package de.tsystems.mms.apm.performancesignature.viewer.rest.model;
 import de.tsystems.mms.apm.performancesignature.dynatrace.model.DashboardReport;
 import de.tsystems.mms.apm.performancesignature.dynatrace.model.TestRun;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 import java.util.ArrayList;
 import java.util.List;
 
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlRootElement(name = "perfsigbuildactionresultsdisplay")
 public class RootElement {
-
-    @XmlElement(name = "dashboardreport")
     private List<DashboardReport> dashboardReports;
-
-    @XmlElement(name = "testrun")
     private List<TestRun> testRuns;
 
     public List<DashboardReport> getDashboardReports() {

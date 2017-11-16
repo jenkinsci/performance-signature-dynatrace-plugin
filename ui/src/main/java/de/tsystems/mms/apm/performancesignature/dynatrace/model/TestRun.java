@@ -25,10 +25,6 @@ import de.tsystems.mms.apm.performancesignature.util.PerfSigUIUtils;
 import io.swagger.annotations.ApiModelProperty;
 import org.kohsuke.stapler.export.Exported;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -38,65 +34,44 @@ import java.util.List;
  * TestRun
  */
 
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlRootElement(name = "testrun")
 public class TestRun extends BaseReference {
     @SerializedName("category")
-    @XmlElement
     private CategoryEnum category;
     @SerializedName("versionBuild")
-    @XmlElement
     private String versionBuild;
     @SerializedName("versionMajor")
-    @XmlElement
     private String versionMajor;
     @SerializedName("versionMilestone")
-    @XmlElement
     private String versionMilestone;
     @SerializedName("versionMinor")
-    @XmlElement
     private String versionMinor;
     @SerializedName("versionRevision")
-    @XmlElement
     private String versionRevision;
     @SerializedName("platform")
-    @XmlElement
     private String platform;
     @SerializedName("startTime")
-    @XmlElement
     private Date startTime;
     @SerializedName("sessionId")
-    @XmlElement
     private String sessionId;
     @SerializedName("session")
-    @XmlElement
     private String session;
     @SerializedName("message")
-    @XmlElement
     private String message;
     @SerializedName("finished")
-    @XmlElement
     private boolean finished;
     @SerializedName("numDegraded")
-    @XmlElement
     private int numDegraded;
     @SerializedName("numFailed")
-    @XmlElement
     private int numFailed;
     @SerializedName("numImproved")
-    @XmlElement
     private int numImproved;
     @SerializedName("numInvalidated")
-    @XmlElement
     private int numInvalidated;
     @SerializedName("numPassed")
-    @XmlElement
     private int numPassed;
     @SerializedName("numVolatile")
-    @XmlElement
     private int numVolatile;
     @SerializedName("testResults")
-    @XmlElement(name = "testresult")
     private List<TestResult> testResults;
 
     @Deprecated
