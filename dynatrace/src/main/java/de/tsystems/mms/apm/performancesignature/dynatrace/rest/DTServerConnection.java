@@ -275,10 +275,10 @@ public class DTServerConnection {
         }
     }
 
-    public boolean downloadSession(final String sessionId, final FilePath outputFile) {
+    public boolean downloadSession(final String sessionId, final FilePath outputFile, boolean removeConfidentialStrings) {
         StoredSessionsApi api = new StoredSessionsApi(apiClient);
         try {
-            File tmpFile = api.getStoredSession(sessionId, true, null, null);
+            File tmpFile = api.getStoredSession(sessionId, removeConfidentialStrings, null, null);
             outputFile.copyFrom(new FilePath(tmpFile));
             return true;
         } catch (Exception ex) {

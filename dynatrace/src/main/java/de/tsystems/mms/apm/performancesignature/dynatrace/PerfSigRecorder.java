@@ -53,6 +53,7 @@ public class PerfSigRecorder extends Recorder implements SimpleBuildStep {
     private final String dynatraceProfile;
     private final List<ConfigurationTestCase> configurationTestCases;
     private boolean exportSessions;
+    private boolean removeConfidentialStrings;
     private int nonFunctionalFailure;
     private transient List<SessionData> availableSessions;
 
@@ -180,7 +181,7 @@ public class PerfSigRecorder extends Recorder implements SimpleBuildStep {
 
             if (exportSessions) {
                 boolean exportedSession = connection.downloadSession(sessionId,
-                        new FilePath(PerfSigUIUtils.getReportDirectory(run), buildEnvVars.getSessionName() + ".dts"));
+                        new FilePath(PerfSigUIUtils.getReportDirectory(run), buildEnvVars.getSessionName() + ".dts"), removeConfidentialStrings);
                 if (!exportedSession) {
                     throw new RESTErrorException(Messages.PerfSigRecorder_SessionDownloadError());
                 } else {
@@ -241,10 +242,20 @@ public class PerfSigRecorder extends Recorder implements SimpleBuildStep {
         return dynatraceProfile;
     }
 
+    public boolean isRemoveConfidentialStrings() {
+        return removeConfidentialStrings;
+    }
+
+    @DataBoundSetter
+    public void setRemoveConfidentialStrings(boolean removeConfidentialStrings) {
+        this.removeConfidentialStrings = removeConfidentialStrings;
+    }
+
     @Symbol("perfSigReports")
     @Extension
     public static final class DescriptorImpl extends BuildStepDescriptor<Publisher> {
         public static final boolean defaultExportSessions = true;
+        public static final boolean defaultRemoveConfidentialStrings = true;
         public static final int defaultNonFunctionalFailure = 0;
 
         public DescriptorImpl() {
