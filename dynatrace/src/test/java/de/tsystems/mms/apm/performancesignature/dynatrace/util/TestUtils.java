@@ -22,6 +22,7 @@ import com.cloudbees.plugins.credentials.impl.UsernamePasswordCredentialsImpl;
 import de.tsystems.mms.apm.performancesignature.dynatrace.PerfSigGlobalConfiguration;
 import de.tsystems.mms.apm.performancesignature.dynatrace.configuration.CredProfilePair;
 import de.tsystems.mms.apm.performancesignature.dynatrace.configuration.DynatraceServerConfiguration;
+import de.tsystems.mms.apm.performancesignature.dynatrace.configuration.DynatraceServerConfiguration.DescriptorImpl;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.DTServerConnection;
 import de.tsystems.mms.apm.performancesignature.util.PerfSigUtils;
 import hudson.util.ListBoxModel;
@@ -44,12 +45,12 @@ public class TestUtils {
         List<CredProfilePair> credProfilePairs = Collections.singletonList(new CredProfilePair("easy Travel", "myCreds"));
         List<DynatraceServerConfiguration> configurations = new ArrayList<>();
         configurations.add(new DynatraceServerConfiguration("PoC PerfSig",
-                "https://192.168.192.202:8021", credProfilePairs, false, DynatraceServerConfiguration.DescriptorImpl.defaultDelay,
-                DynatraceServerConfiguration.DescriptorImpl.defaultRetryCount,
+                "https://192.168.192.202:8021", credProfilePairs, false, DescriptorImpl.defaultDelay,
+                DescriptorImpl.defaultRetryCount, DescriptorImpl.defaultReadTimeout,
                 false, 0, null, 0, null, null));
         configurations.add(new DynatraceServerConfiguration("TestMigration",
-                "https://192.168.194.68:8021", credProfilePairs, false, DynatraceServerConfiguration.DescriptorImpl.defaultDelay,
-                DynatraceServerConfiguration.DescriptorImpl.defaultRetryCount,
+                "https://192.168.194.68:8021", credProfilePairs, false, DescriptorImpl.defaultDelay,
+                DescriptorImpl.defaultRetryCount, DescriptorImpl.defaultReadTimeout,
                 false, 0, null, 0, null, null));
         SystemCredentialsProvider.getInstance().getCredentials().add(new UsernamePasswordCredentialsImpl(CredentialsScope.GLOBAL,
                 "myCreds", null, "admin", "admin"));

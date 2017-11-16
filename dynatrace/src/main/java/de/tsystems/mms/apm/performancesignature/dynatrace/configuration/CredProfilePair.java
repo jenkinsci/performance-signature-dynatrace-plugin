@@ -114,7 +114,7 @@ public class CredProfilePair extends AbstractDescribableImpl<CredProfilePair> {
             }
             try {
                 CredProfilePair pair = new CredProfilePair("", credentialsId);
-                final DTServerConnection connection = new DTServerConnection(serverUrl, pair, verifyCertificate, customProxyServer);
+                final DTServerConnection connection = new DTServerConnection(serverUrl, pair, verifyCertificate, 0, customProxyServer);
                 return PerfSigUtils.listToListBoxModel(connection.getSystemProfiles().getSystemprofiles());
             } catch (CommandExecutionException ex) {
                 return new StandardListBoxModel().includeEmptyValue();
@@ -141,7 +141,7 @@ public class CredProfilePair extends AbstractDescribableImpl<CredProfilePair> {
                 customProxyServer = new CustomProxy(proxyServer, proxyPort, proxyUser, proxyPassword, StringUtils.isBlank(proxyServer));
             }
             CredProfilePair pair = new CredProfilePair("", credentialsId);
-            final DTServerConnection connection = new DTServerConnection(serverUrl, pair, verifyCertificate, customProxyServer);
+            final DTServerConnection connection = new DTServerConnection(serverUrl, pair, verifyCertificate, 0, customProxyServer);
 
             if (connection.validateConnection()) {
                 return FormValidation.ok(Messages.PerfSigRecorder_TestConnectionSuccessful());

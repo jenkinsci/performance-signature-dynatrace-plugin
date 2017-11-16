@@ -19,6 +19,7 @@ package de.tsystems.mms.apm.performancesignature.dynatrace.rest;
 import de.tsystems.mms.apm.performancesignature.dynatrace.configuration.CredProfilePair;
 import de.tsystems.mms.apm.performancesignature.dynatrace.configuration.CustomProxy;
 import de.tsystems.mms.apm.performancesignature.dynatrace.configuration.DynatraceServerConfiguration;
+import de.tsystems.mms.apm.performancesignature.dynatrace.configuration.DynatraceServerConfiguration.DescriptorImpl;
 import de.tsystems.mms.apm.performancesignature.dynatrace.model.Alert;
 import de.tsystems.mms.apm.performancesignature.dynatrace.model.DashboardReport;
 import de.tsystems.mms.apm.performancesignature.dynatrace.model.TestRun;
@@ -59,11 +60,11 @@ public class DTServerConnection {
     private DynatraceServerConfiguration configuration;
 
     public DTServerConnection(final DynatraceServerConfiguration config, final CredProfilePair pair) {
-        this(config.getServerUrl(), pair, config.isVerifyCertificate(), config.getCustomProxy());
+        this(config.getServerUrl(), pair, config.isVerifyCertificate(), config.getReadTimeout(), config.getCustomProxy());
         this.configuration = config;
     }
 
-    public DTServerConnection(final String serverUrl, final CredProfilePair pair, final boolean verifyCertificate, final CustomProxy customProxy) {
+    public DTServerConnection(final String serverUrl, final CredProfilePair pair, final boolean verifyCertificate, final int readTimeout, final CustomProxy customProxy) {
         this.systemProfile = pair.getProfile();
         this.credProfilePair = pair;
 
@@ -73,8 +74,7 @@ public class DTServerConnection {
         apiClient.setUsername(pair.getCredentials().getUsername());
         apiClient.setPassword(pair.getCredentials().getPassword().getPlainText());
         //apiClient.setDebugging(true);
-        //ToDo: make this configurable
-        apiClient.getHttpClient().setReadTimeout(300, TimeUnit.SECONDS);
+        apiClient.getHttpClient().setReadTimeout(readTimeout == 0 ? DescriptorImpl.defaultReadTimeout : readTimeout, TimeUnit.SECONDS);
 
         Proxy proxy = Proxy.NO_PROXY;
         if (customProxy != null) {

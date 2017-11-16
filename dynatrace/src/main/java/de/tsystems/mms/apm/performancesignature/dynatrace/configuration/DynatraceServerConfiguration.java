@@ -29,33 +29,37 @@ import java.util.List;
 public class DynatraceServerConfiguration extends AbstractDescribableImpl<DynatraceServerConfiguration> {
     private final String name;
     private String serverUrl;
+    private final int readTimeout;
     @Deprecated
-    private transient String protocol, host;
+    private transient String protocol;
     @Deprecated
     private transient int port;
     private final boolean verifyCertificate;
     private final int delay, retryCount;
+    @Deprecated
+    private transient String host;
     private final CustomProxy customProxy;
     private final List<CredProfilePair> credProfilePairs;
 
     @Deprecated
     public DynatraceServerConfiguration(final String name, final String protocol, final String host, final int port, final List<CredProfilePair> credProfilePairs,
-                                        final boolean verifyCertificate, final int delay, final int retryCount, final boolean proxy, final int proxySource,
-                                        final String proxyServer, final int proxyPort, final String proxyUser, final String proxyPassword) {
-        this(name, protocol + "://" + host + ":" + port, credProfilePairs, verifyCertificate, delay, retryCount, proxy, proxySource,
+                                        final boolean verifyCertificate, final int delay, final int retryCount, final int readTimeout, final boolean proxy,
+                                        final int proxySource, final String proxyServer, final int proxyPort, final String proxyUser, final String proxyPassword) {
+        this(name, protocol + "://" + host + ":" + port, credProfilePairs, verifyCertificate, delay, retryCount, readTimeout, proxy, proxySource,
                 proxyServer, proxyPort, proxyUser, proxyPassword);
     }
 
     @DataBoundConstructor
     public DynatraceServerConfiguration(final String name, final String serverUrl, final List<CredProfilePair> credProfilePairs,
-                                        final boolean verifyCertificate, final int delay, final int retryCount, final boolean proxy, final int proxySource,
-                                        final String proxyServer, final int proxyPort, final String proxyUser, final String proxyPassword) {
+                                        final boolean verifyCertificate, final int delay, final int retryCount, final int readTimeout, final boolean proxy,
+                                        final int proxySource, final String proxyServer, final int proxyPort, final String proxyUser, final String proxyPassword) {
         this.name = name;
         this.serverUrl = serverUrl;
         this.credProfilePairs = credProfilePairs;
         this.verifyCertificate = verifyCertificate;
         this.delay = delay;
         this.retryCount = retryCount;
+        this.readTimeout = readTimeout;
         this.customProxy = proxy ? new CustomProxy(proxyServer, proxyPort, proxyUser, proxyPassword, proxySource) : null;
     }
 
@@ -92,6 +96,10 @@ public class DynatraceServerConfiguration extends AbstractDescribableImpl<Dynatr
         return retryCount;
     }
 
+    public int getReadTimeout() {
+        return readTimeout;
+    }
+
     public CustomProxy getCustomProxy() {
         return customProxy;
     }
@@ -112,6 +120,7 @@ public class DynatraceServerConfiguration extends AbstractDescribableImpl<Dynatr
         public static final String defaultServerUrl = "https://dynatrace.server:8021";
         public static final int defaultDelay = 10;
         public static final int defaultRetryCount = 5;
+        public static final int defaultReadTimeout = 300;
         public static final boolean defaultVerifyCertificate = false;
 
         @Override
