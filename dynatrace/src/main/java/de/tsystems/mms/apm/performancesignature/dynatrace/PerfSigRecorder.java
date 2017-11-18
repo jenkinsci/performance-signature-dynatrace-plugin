@@ -88,7 +88,7 @@ public class PerfSigRecorder extends Recorder implements SimpleBuildStep {
             stopRecording.perform(run, workspace, launcher, listener);
         }
 
-        String sessionId, comparisonSessionId = null, singleFilename, comparisonFilename;
+        String sessionId, comparisonSessionId = null, comparisonSessionName = null, singleFilename, comparisonFilename;
         int comparisonBuildNumber = 0;
         final int buildNumber = run.getNumber();
         final List<DashboardReport> dashboardReports = new ArrayList<>();
@@ -123,6 +123,7 @@ public class PerfSigRecorder extends Recorder implements SimpleBuildStep {
                 final PerfSigEnvInvisAction otherEnvVars = getBuildEnvVars(previousRun, configurationTestCase.getName());
                 if (otherEnvVars != null) {
                     comparisonSessionId = otherEnvVars.getSessionId();
+                    comparisonSessionName = otherEnvVars.getSessionName();
                 }
             }
 
@@ -152,8 +153,8 @@ public class PerfSigRecorder extends Recorder implements SimpleBuildStep {
                 }
             }
             for (Dashboard comparisonDashboard : configurationTestCase.getComparisonDashboards()) {
-                if (comparisonBuildNumber != 0 && comparisonSessionId != null) {
-                    comparisonFilename = "Comparisonreport_" + comparisonSessionId.replace(comparisonBuildNumber + "_",
+                if (comparisonBuildNumber != 0 && comparisonSessionId != null && comparisonSessionName != null) {
+                    comparisonFilename = "Comparisonreport_" + comparisonSessionName.replace(comparisonBuildNumber + "_",
                             buildNumber + "_" + comparisonBuildNumber + "_") + "_" + comparisonDashboard.getName() + ".pdf";
                     logger.println(Messages.PerfSigRecorder_GettingPDFReport() + " " + comparisonFilename);
                     boolean comparisonResult = connection.getPDFReport(sessionId, comparisonSessionId, comparisonDashboard.getName(),
