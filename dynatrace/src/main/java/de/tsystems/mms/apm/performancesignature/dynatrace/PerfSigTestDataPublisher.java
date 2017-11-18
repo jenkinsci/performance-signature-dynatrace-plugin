@@ -20,7 +20,6 @@ import de.tsystems.mms.apm.performancesignature.dynatrace.model.TestRun;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.DTServerConnection;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.RESTErrorException;
 import de.tsystems.mms.apm.performancesignature.model.PerfSigTestData;
-import de.tsystems.mms.apm.performancesignature.model.PerfSigTestDataWrapper;
 import de.tsystems.mms.apm.performancesignature.util.PerfSigUtils;
 import hudson.AbortException;
 import hudson.Extension;
@@ -69,9 +68,7 @@ public class PerfSigTestDataPublisher extends TestDataPublisher {
             }
         }
 
-        PerfSigTestData perfSigTestData = new PerfSigTestData(run, testRuns);
-        run.addAction(new PerfSigTestDataWrapper(perfSigTestData));
-        return perfSigTestData;
+        return new PerfSigTestData(testRuns);
     }
 
     public String getDynatraceProfile() {

@@ -19,8 +19,6 @@ package de.tsystems.mms.apm.performancesignature.ui;
 import de.tsystems.mms.apm.performancesignature.dynatrace.model.DashboardReport;
 import de.tsystems.mms.apm.performancesignature.dynatrace.model.Measure;
 import de.tsystems.mms.apm.performancesignature.dynatrace.model.Measurement;
-import de.tsystems.mms.apm.performancesignature.dynatrace.model.TestRun;
-import de.tsystems.mms.apm.performancesignature.model.PerfSigTestDataWrapper;
 import de.tsystems.mms.apm.performancesignature.util.PerfSigUIUtils;
 import hudson.FilePath;
 import hudson.model.Api;
@@ -54,7 +52,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
@@ -95,12 +92,6 @@ public class PerfSigBuildActionResultsDisplay implements ModelObject {
     @Exported(name = "dashboardReports")
     public List<DashboardReport> getCurrentDashboardReports() {
         return this.currentDashboardReports;
-    }
-
-    @Exported
-    public List<TestRun> getTestRuns() {
-        PerfSigTestDataWrapper wrapper = getBuild().getAction(PerfSigTestDataWrapper.class);
-        return wrapper != null ? wrapper.getTestRuns() : Collections.<TestRun>emptyList();
     }
 
     @SuppressWarnings("WeakerAccess")

@@ -18,7 +18,6 @@ package de.tsystems.mms.apm.performancesignature.model;
 
 import de.tsystems.mms.apm.performancesignature.dynatrace.model.TestRun;
 import de.tsystems.mms.apm.performancesignature.ui.PerfSigTestAction;
-import hudson.model.Run;
 import hudson.tasks.junit.CaseResult;
 import hudson.tasks.junit.TestAction;
 import hudson.tasks.junit.TestObject;
@@ -28,11 +27,9 @@ import java.util.Collections;
 import java.util.List;
 
 public class PerfSigTestData extends TestResultAction.Data {
-    private final Run<?, ?> run;
     private final List<TestRun> testRuns;
 
-    public PerfSigTestData(final Run<?, ?> run, final List<TestRun> testRuns) {
-        this.run = run;
+    public PerfSigTestData(final List<TestRun> testRuns) {
         this.testRuns = testRuns;
     }
 
@@ -40,29 +37,14 @@ public class PerfSigTestData extends TestResultAction.Data {
         return testRuns == null ? Collections.<TestRun>emptyList() : testRuns;
     }
 
-    public PerfSigTestData getPreviousData() {
-        PerfSigTestData previousData = null;
-        Run previousRun = run.getPreviousNotFailedBuild();
-        if (previousRun != null) {
-            PerfSigTestDataWrapper wrapper = previousRun.getAction(PerfSigTestDataWrapper.class);
-            if (wrapper != null) {
-                previousData = wrapper.getData();
-            }
-        }
-        return previousData;
-    }
-
-    public Run<?, ?> getRun() {
-        return run;
-    }
-
     @Override
+    @SuppressWarnings("deprecation")
     public List<? extends TestAction> getTestAction(final TestObject testObject) {
         if (testObject instanceof CaseResult) {
             CaseResult caseResult = (CaseResult) testObject;
             String packageName = caseResult.getPackageName();
             String fullName = caseResult.getSimpleName() + "." + caseResult.getSearchName();
-            return Collections.singletonList(new PerfSigTestAction(this, packageName, fullName));
+            return Collections.singletonList(new PerfSigTestAction((hudson.tasks.test.TestObject) testObject, this, packageName, fullName));
         } else {
             return Collections.emptyList();
         }

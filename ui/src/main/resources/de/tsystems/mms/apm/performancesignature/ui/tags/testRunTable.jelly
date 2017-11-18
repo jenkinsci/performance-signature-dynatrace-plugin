@@ -17,7 +17,6 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:fmt="jelly:fmt" xmlns:jm="/de/tsystems/mms/apm/performancesignature/ui/tags"
          xmlns:st="jelly:stapler">
-    <j:set var="testRun" value="${it.matchingTestRun}"/>
     <j:set var="testResult" value="${it.matchingTestResult}"/>
     <j:set var="previousTestResult" value="${it.previousTestResult}"/>
     <table>
@@ -40,8 +39,11 @@
             </td>
         </tr>
         <j:if test="${previousTestResult!=null}">
-            <td>Previous status:&#160;&#160;</td>
-            <td>${testResult.status}
+            <td>Previous status:
+                <st:nbsp/>
+                <st:nbsp/>
+            </td>
+            <td>${previousTestResult.status}
                 <st:nbsp/>
                 <span title="Dynatrace Performance Status" class="glyphicon ${previousTestResult.statusIcon}"
                       style="font-size: 15px; color: ${previousTestResult.statusColor}" aria-hidden="true"/>
@@ -54,9 +56,9 @@
         <thead>
             <tr>
                 <th rowspan="2">Measure</th>
-                <th colspan="3">Current Build</th>
+                <th colspan="3">Current Build (#${it.testObject.run.number})</th>
                 <j:if test="${previousTestResult!=null}">
-                    <th colspan="3">Previous Build (#${it.testData.previousData.run.number})</th>
+                    <th colspan="3">Previous Build (#${it.testObject.previousResult.run.number})</th>
                 </j:if>
             </tr>
             <tr>

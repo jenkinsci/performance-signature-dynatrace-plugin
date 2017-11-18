@@ -18,7 +18,6 @@ package de.tsystems.mms.apm.performancesignature.ui;
 
 import de.tsystems.mms.apm.performancesignature.dynatrace.model.*;
 import de.tsystems.mms.apm.performancesignature.model.PerfSigTestData;
-import de.tsystems.mms.apm.performancesignature.model.PerfSigTestDataWrapper;
 import de.tsystems.mms.apm.performancesignature.util.PerfSigUIUtils;
 import hudson.FilePath;
 import hudson.Plugin;
@@ -50,8 +49,6 @@ public class PerfSigUIPlugin extends Plugin {
         Run.XSTREAM2.addCompatibilityAlias("de.tsystems.mms.apm.performancesignature.dynatrace.model.TestRunMeasure", TestMeasure.class);
 
         Run.XSTREAM2.addCompatibilityAlias("de.tsystems.mms.apm.performancesignature.model.PerfSigTestData", PerfSigTestData.class);
-        Run.XSTREAM2.addCompatibilityAlias("de.tsystems.mms.apm.performancesignature.PerfSigTestDataWrapper", PerfSigTestDataWrapper.class);
-
         Run.XSTREAM2.addCompatibilityAlias("de.tsystems.mms.apm.performancesignature.PerfSigBuildAction", PerfSigBuildAction.class);
         Run.XSTREAM2.addCompatibilityAlias("de.tsystems.mms.apm.performancesignature.PerfSigTestAction", PerfSigTestAction.class);
     }

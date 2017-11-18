@@ -24,12 +24,13 @@ import de.tsystems.mms.apm.performancesignature.dynatrace.model.DashboardReport;
 import de.tsystems.mms.apm.performancesignature.dynatrace.model.Measure;
 import de.tsystems.mms.apm.performancesignature.dynatrace.model.TestRun;
 import de.tsystems.mms.apm.performancesignature.model.JSONDashlet;
-import de.tsystems.mms.apm.performancesignature.model.PerfSigTestDataWrapper;
 import de.tsystems.mms.apm.performancesignature.util.PerfSigUIUtils;
 import hudson.XmlFile;
 import hudson.model.Job;
 import hudson.model.ProminentProjectAction;
 import hudson.model.Run;
+import hudson.tasks.junit.CaseResult;
+import hudson.tasks.junit.SuiteResult;
 import hudson.tasks.junit.TestResult;
 import hudson.tasks.junit.TestResultAction;
 import hudson.tasks.test.TestResultProjectAction;
@@ -180,17 +181,14 @@ public class PerfSigProjectAction extends PerfSigBaseAction implements Prominent
                 }
 
                 for (Run<?, ?> run : job.getBuilds()) {
-                    PerfSigTestDataWrapper testDataWrapper = run.getAction(PerfSigTestDataWrapper.class);
-                    if (testDataWrapper != null && testDataWrapper.getTestRuns() != null) {
-                        TestRun testRun = TestRun.mergeTestRuns(testDataWrapper.getTestRuns());
-                        if (testRun != null) {
-                            dsb.add(testRun.getNumFailed(), "failed", new ChartUtil.NumberOnlyBuildLabel(run));
-                            dsb.add(testRun.getNumDegraded(), "degraded", new ChartUtil.NumberOnlyBuildLabel(run));
-                            dsb.add(testRun.getNumImproved(), "improved", new ChartUtil.NumberOnlyBuildLabel(run));
-                            dsb.add(testRun.getNumPassed(), "passed", new ChartUtil.NumberOnlyBuildLabel(run));
-                            dsb.add(testRun.getNumVolatile(), "volatile", new ChartUtil.NumberOnlyBuildLabel(run));
-                            dsb.add(testRun.getNumInvalidated(), "invalidated", new ChartUtil.NumberOnlyBuildLabel(run));
-                        }
+                    TestRun testRun = getTestRun(run);
+                    if (testRun != null) {
+                        dsb.add(testRun.getNumFailed(), "failed", new ChartUtil.NumberOnlyBuildLabel(run));
+                        dsb.add(testRun.getNumDegraded(), "degraded", new ChartUtil.NumberOnlyBuildLabel(run));
+                        dsb.add(testRun.getNumImproved(), "improved", new ChartUtil.NumberOnlyBuildLabel(run));
+                        dsb.add(testRun.getNumPassed(), "passed", new ChartUtil.NumberOnlyBuildLabel(run));
+                        dsb.add(testRun.getNumVolatile(), "volatile", new ChartUtil.NumberOnlyBuildLabel(run));
+                        dsb.add(testRun.getNumInvalidated(), "invalidated", new ChartUtil.NumberOnlyBuildLabel(run));
                     }
                     i++;
                     if (buildCount != 0 && i == buildCount) {
@@ -223,9 +221,15 @@ public class PerfSigProjectAction extends PerfSigBaseAction implements Prominent
 
     public TestRun getTestRun(final Run<?, ?> run) {
         if (run != null) {
-            PerfSigTestDataWrapper testDataWrapper = run.getAction(PerfSigTestDataWrapper.class);
-            if (testDataWrapper != null) {
-                return TestRun.mergeTestRuns(testDataWrapper.getTestRuns());
+            TestResult testResult = getTestAction(run);
+            if (testResult == null || testResult.getSuites() == null) return null;
+            for (SuiteResult suite : testResult.getSuites()) {
+                for (CaseResult caseResult : suite.getCases()) {
+                    PerfSigTestAction testAction = caseResult.getTestAction(PerfSigTestAction.class);
+                    if (testAction != null && testAction.getTestData() != null) {
+                        return TestRun.mergeTestRuns(testAction.getTestData().getTestRuns());
+                    }
+                }
             }
         }
         return null;
