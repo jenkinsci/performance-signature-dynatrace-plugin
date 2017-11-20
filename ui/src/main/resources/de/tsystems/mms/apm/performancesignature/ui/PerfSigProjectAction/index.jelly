@@ -182,7 +182,7 @@
                                                 </td>
                                                 <j:if test="${isUnitTest}">
                                                     <j:set var="testRun" value="${it.getTestRun(dashboardReport.key)}"/>
-                                                    <j:set var="testResult" value="${it.getTestAction(dashboardReport.key)}"/>
+                                                    <j:set var="testResult" value="${it.getTestResult(dashboardReport.key)}"/>
                                                     <td class="nowrap">${utils.getDurationString(testResult.duration)}</td>
                                                     <td>${testResult.failCount}</td>
                                                     <td>${testRun.numFailed}</td>

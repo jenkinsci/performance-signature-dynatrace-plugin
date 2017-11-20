@@ -29,8 +29,6 @@ import hudson.XmlFile;
 import hudson.model.Job;
 import hudson.model.ProminentProjectAction;
 import hudson.model.Run;
-import hudson.tasks.junit.CaseResult;
-import hudson.tasks.junit.SuiteResult;
 import hudson.tasks.junit.TestResult;
 import hudson.tasks.junit.TestResultAction;
 import hudson.tasks.test.TestResultProjectAction;
@@ -220,22 +218,17 @@ public class PerfSigProjectAction extends PerfSigBaseAction implements Prominent
     }
 
     public TestRun getTestRun(final Run<?, ?> run) {
-        if (run != null) {
-            TestResult testResult = getTestAction(run);
-            if (testResult == null || testResult.getSuites() == null) return null;
-            for (SuiteResult suite : testResult.getSuites()) {
-                for (CaseResult caseResult : suite.getCases()) {
-                    PerfSigTestAction testAction = caseResult.getTestAction(PerfSigTestAction.class);
-                    if (testAction != null && testAction.getTestData() != null) {
-                        return TestRun.mergeTestRuns(testAction.getTestData().getTestRuns());
-                    }
-                }
+        TestResult testResult = getTestResult(run);
+        if (testResult != null) {
+            PerfSigTestAction testAction = testResult.getTestAction(PerfSigTestAction.class);
+            if (testAction != null) {
+                return TestRun.mergeTestRuns(testAction.getTestData().getTestRuns());
             }
         }
         return null;
     }
 
-    public TestResult getTestAction(final Run<?, ?> run) {
+    public TestResult getTestResult(final Run<?, ?> run) {
         if (run != null) {
             TestResultAction testResultAction = run.getAction(TestResultAction.class);
             if (testResultAction != null) {

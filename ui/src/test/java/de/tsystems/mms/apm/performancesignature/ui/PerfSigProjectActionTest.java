@@ -26,7 +26,6 @@ import de.tsystems.mms.apm.performancesignature.ui.util.TestUtils;
 import de.tsystems.mms.apm.performancesignature.util.PerfSigUIUtils;
 import hudson.model.Project;
 import hudson.model.Run;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -47,7 +46,6 @@ public class PerfSigProjectActionTest {
     @Rule
     public ExpectedException exception = ExpectedException.none();
 
-    @Ignore
     @LocalData
     @Test
     public void testProjectActionChartsFloatingBox() throws Exception {

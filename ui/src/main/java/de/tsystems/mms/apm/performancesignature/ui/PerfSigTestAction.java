@@ -20,6 +20,7 @@ import de.tsystems.mms.apm.performancesignature.dynatrace.model.TestResult;
 import de.tsystems.mms.apm.performancesignature.dynatrace.model.TestRun;
 import de.tsystems.mms.apm.performancesignature.model.PerfSigTestData;
 import de.tsystems.mms.apm.performancesignature.util.PerfSigUIUtils;
+import hudson.tasks.junit.CaseResult;
 import hudson.tasks.junit.TestAction;
 import hudson.tasks.test.TestObject;
 import org.kohsuke.stapler.export.Exported;
@@ -32,15 +33,21 @@ public class PerfSigTestAction extends TestAction {
     private TestRun matchingTestRun;
     private TestResult matchingTestResult;
 
-    public PerfSigTestAction(final TestObject testObject, final PerfSigTestData testData, final String packageName, final String fullName) {
+    public PerfSigTestAction(final TestObject testObject, final PerfSigTestData testData) {
         this.testData = testData;
         this.testObject = testObject;
 
-        for (TestRun testRun : testData.getTestRuns()) {
-            for (TestResult testResult : testRun.getTestResults()) {
-                if (testResult.getPackage().equalsIgnoreCase(packageName) && testResult.getName().equalsIgnoreCase(fullName)) {
-                    this.matchingTestRun = testRun;
-                    this.matchingTestResult = testResult;
+        if (testObject instanceof CaseResult) {
+            CaseResult caseResult = (CaseResult) this.testObject;
+            String packageName = caseResult.getPackageName();
+            String fullName = caseResult.getSimpleName() + "." + caseResult.getSearchName();
+
+            for (TestRun testRun : testData.getTestRuns()) {
+                for (TestResult testResult : testRun.getTestResults()) {
+                    if (testResult.getPackage().equalsIgnoreCase(packageName) && testResult.getName().equalsIgnoreCase(fullName)) {
+                        this.matchingTestRun = testRun;
+                        this.matchingTestResult = testResult;
+                    }
                 }
             }
         }

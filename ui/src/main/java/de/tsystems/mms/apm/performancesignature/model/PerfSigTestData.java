@@ -22,6 +22,7 @@ import hudson.tasks.junit.CaseResult;
 import hudson.tasks.junit.TestAction;
 import hudson.tasks.junit.TestObject;
 import hudson.tasks.junit.TestResultAction;
+import hudson.tasks.test.TestResult;
 
 import java.util.Collections;
 import java.util.List;
@@ -40,11 +41,8 @@ public class PerfSigTestData extends TestResultAction.Data {
     @Override
     @SuppressWarnings("deprecation")
     public List<? extends TestAction> getTestAction(final TestObject testObject) {
-        if (testObject instanceof CaseResult) {
-            CaseResult caseResult = (CaseResult) testObject;
-            String packageName = caseResult.getPackageName();
-            String fullName = caseResult.getSimpleName() + "." + caseResult.getSearchName();
-            return Collections.singletonList(new PerfSigTestAction((hudson.tasks.test.TestObject) testObject, this, packageName, fullName));
+        if (testObject instanceof CaseResult || testObject instanceof TestResult) {
+            return Collections.singletonList(new PerfSigTestAction((hudson.tasks.test.TestObject) testObject, this));
         } else {
             return Collections.emptyList();
         }
