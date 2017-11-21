@@ -21,7 +21,6 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import hudson.model.Project;
 import hudson.model.Run;
 import org.apache.commons.lang.StringUtils;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -31,7 +30,6 @@ import org.jvnet.hudson.test.recipes.LocalData;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-@Ignore
 public class PerfSigTestActionTest {
     private final String TEST_PROJECT_WITH_HISTORY = "projectAction";
     @Rule
@@ -45,18 +43,18 @@ public class PerfSigTestActionTest {
         Project proj = (Project) j.jenkins.getItem(TEST_PROJECT_WITH_HISTORY);
         assertNotNull("We should have a project named " + TEST_PROJECT_WITH_HISTORY, proj);
 
-        Run<?, ?> build = proj.getBuildByNumber(11157);
-        assertNotNull("We should have a build with number 11157", build);
+        Run<?, ?> build = proj.getBuildByNumber(10147);
+        assertNotNull("We should have a build with number 10147", build);
         JenkinsRule.WebClient wc = j.createWebClient();
         HtmlPage testReport = wc.getPage(build, "testReport");
 
-        assertEquals(testReport.getByXPath("//*[@id=\"main-panel\"]/table[2]/tbody/tr/td[1]/div[1]/a").size(), 11);
+        assertEquals(testReport.getByXPath("//*[@id=\"main-panel\"]/table[2]/tbody/tr/td[1]/div[1]/a").size(), 18);
         j.assertXPath(testReport, "//*[contains(@id,\"collapseid\")]/div/table/tbody/tr[1]/td[1]/b");
-        j.assertXPathValue(testReport, "//*[contains(@id,\"collapseid\")]/div/table/tbody/tr[1]/td[1]/b/text()", "PurePaths - PurePath CPU Duration (ms)");
-        j.assertXPath(testReport, "//*[contains(@id,\"collapseid\")]/div/p/text()[2]");
-        assertEquals(StringUtils.trim(((DomText) testReport.getByXPath("//*[contains(@id,\"collapseid\")]/div/p/text()[2]").get(0)).getWholeText()),
-                "Status: Failed\n" +
-                        "         ");
+        j.assertXPathValue(testReport, "//*[contains(@id,\"collapseid\")]/div/table/tbody/tr[1]/td[1]/b/text()", "PurePaths - PurePath Duration (ms)");
+        j.assertXPath(testReport, "//*[contains(@id,\"collapseid\")]/div/table[1]/tbody/tr[3]/td[2]/text()");
+        assertEquals(StringUtils.trim(((DomText) testReport.getByXPath("//*[contains(@id,\"collapseid\")]/div/table[1]/tbody/tr[3]/td[2]/text()").get(0)).getWholeText()),
+                "Failed\n" +
+                        "                 ");
     }
 
     @LocalData
@@ -65,16 +63,18 @@ public class PerfSigTestActionTest {
         Project proj = (Project) j.jenkins.getItem(TEST_PROJECT_WITH_HISTORY);
         assertNotNull("We should have a project named " + TEST_PROJECT_WITH_HISTORY, proj);
 
-        Run<?, ?> build = proj.getBuildByNumber(11157);
-        assertNotNull("We should have a build with number 11157", build);
+        Run<?, ?> build = proj.getBuildByNumber(10147);
+        assertNotNull("We should have a build with number 10147", build);
         JenkinsRule.WebClient wc = j.createWebClient();
         HtmlPage testReport = wc.getPage(build, "testReport/com.dynatrace.easytravel.util/ZipUtilsTest/testZipSrcDirExclude/");
 
-        j.assertXPath(testReport, "//*[@id=\"main-panel\"]/table/tbody/tr/td/div/table/tbody/tr[1]/td[2]");
-        j.assertXPathValue(testReport, "//*[@id=\"main-panel\"]/table/tbody/tr/td/div/table/tbody/tr[1]/td[2]/text()", "0.22");
-        j.assertXPath(testReport, "//*[@id=\"main-panel\"]/table/tbody/tr/td/div/p/text()[2]");
-        assertEquals(StringUtils.trim(((DomText) testReport.getByXPath("//*[@id=\"main-panel\"]/table/tbody/tr/td/div/p/text()[2]").get(0))
-                .getWholeText()), "Status: Failed\n" +
-                "         ");
+        //assert previous test result
+        j.assertXPath(testReport, "//*[@id=\"main-panel\"]/table/tbody/tr/td/div/table/thead/tr[1]/th[3]");
+        //assert pure path duration measure value
+        j.assertXPathValue(testReport, "//*[@id=\"main-panel\"]/table/tbody/tr/td/div/table[2]/tbody/tr[1]/td[2]/text()", "0.25");
+        //assert status failed
+        assertEquals(StringUtils.trim(((DomText) testReport.getByXPath("//*[@id=\"main-panel\"]/table/tbody/tr/td/div/table[1]/tbody/tr[3]/td[2]/text()").get(0))
+                .getWholeText()), "Failed\n" +
+                "                 ");
     }
 }
