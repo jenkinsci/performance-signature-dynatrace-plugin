@@ -21,6 +21,7 @@ import com.offbytwo.jenkins.model.Build;
 import com.offbytwo.jenkins.model.JobWithDetails;
 import com.offbytwo.jenkins.model.QueueItem;
 import com.offbytwo.jenkins.model.QueueReference;
+import de.tsystems.mms.apm.performancesignature.util.PerfSigUIUtils;
 import de.tsystems.mms.apm.performancesignature.viewer.rest.JenkinsServerConnection;
 import de.tsystems.mms.apm.performancesignature.viewer.util.ViewerUtils;
 import hudson.Extension;
@@ -30,6 +31,7 @@ import hudson.model.AbstractProject;
 import hudson.model.Result;
 import hudson.model.Run;
 import hudson.model.TaskListener;
+import hudson.plugins.analysis.util.PluginLogger;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
 import hudson.util.ListBoxModel;
@@ -39,7 +41,6 @@ import org.kohsuke.stapler.DataBoundConstructor;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
-import java.io.PrintStream;
 
 public class ViewerStartJob extends Builder implements SimpleBuildStep {
     private final String jenkinsJob;
@@ -52,11 +53,11 @@ public class ViewerStartJob extends Builder implements SimpleBuildStep {
     @Override
     public void perform(@Nonnull final Run<?, ?> run, @Nonnull final FilePath workspace, @Nonnull final Launcher launcher, @Nonnull final TaskListener listener)
             throws InterruptedException, IOException {
-        PrintStream logger = listener.getLogger();
+        PluginLogger logger = PerfSigUIUtils.createLogger(listener.getLogger());
         JenkinsServerConnection serverConnection = ViewerUtils.createJenkinsServerConnection(jenkinsJob);
         JobWithDetails job = serverConnection.getJenkinsJob().details();
         JenkinsServer server = serverConnection.getJenkinsServer();
-        logger.println(Messages.ViewerStartJob_TriggeringJenkinsJob(job.getName()));
+        logger.log(Messages.ViewerStartJob_TriggeringJenkinsJob(job.getName()));
 
         QueueReference queueRef = job.build(true);
         QueueItem queueItem = server.getQueueItem(queueRef);
@@ -69,13 +70,13 @@ public class ViewerStartJob extends Builder implements SimpleBuildStep {
 
         Build build = server.getBuild(queueItem);
         if (queueItem.isCancelled()) {
-            logger.println(Messages.ViewerStartJob_RemoteBuildCancelled());
+            logger.log(Messages.ViewerStartJob_RemoteBuildCancelled());
             run.setResult(Result.ABORTED);
             return;
         }
 
         run.addAction(new ViewerEnvInvisAction(build.getNumber()));
-        logger.println(Messages.ViewerStartJob_JenkinsJobStarted(job.getName(), String.valueOf(build.getNumber())));
+        logger.log(Messages.ViewerStartJob_JenkinsJobStarted(job.getName(), String.valueOf(build.getNumber())));
     }
 
     public String getJenkinsJob() {

@@ -19,6 +19,7 @@ package de.tsystems.mms.apm.performancesignature.dynatrace;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.DTServerConnection;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.RESTErrorException;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.model.Agent;
+import de.tsystems.mms.apm.performancesignature.util.PerfSigUIUtils;
 import de.tsystems.mms.apm.performancesignature.util.PerfSigUtils;
 import hudson.AbortException;
 import hudson.Extension;
@@ -27,6 +28,7 @@ import hudson.Launcher;
 import hudson.model.AbstractProject;
 import hudson.model.Run;
 import hudson.model.TaskListener;
+import hudson.plugins.analysis.util.PluginLogger;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
 import hudson.util.FormValidation;
@@ -40,7 +42,6 @@ import org.kohsuke.stapler.QueryParameter;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
-import java.io.PrintStream;
 
 public class PerfSigMemoryDump extends Builder implements SimpleBuildStep {
     private static final long waitForDumpTimeout = 60000L;
@@ -59,13 +60,13 @@ public class PerfSigMemoryDump extends Builder implements SimpleBuildStep {
     @Override
     public void perform(@Nonnull final Run<?, ?> run, @Nonnull final FilePath workspace, @Nonnull final Launcher launcher, @Nonnull final TaskListener listener)
             throws InterruptedException, IOException {
-        PrintStream logger = listener.getLogger();
+        PluginLogger logger = PerfSigUIUtils.createLogger(listener.getLogger());
         DTServerConnection connection = PerfSigUtils.createDTServerConnection(dynatraceProfile);
 
         for (Agent availAgent : connection.getAgents()) {
             if (availAgent.getName().equals(this.agent) && availAgent.getSystemProfile().equals(connection.getCredProfilePair().getProfile()) &&
                     availAgent.getHost().equals(this.host)) {
-                logger.println(Messages.PerfSigMemoryDump_CreatingMemoryDump(availAgent.getSystemProfile(), availAgent.getName(), availAgent.getHost(),
+                logger.log(Messages.PerfSigMemoryDump_CreatingMemoryDump(availAgent.getSystemProfile(), availAgent.getName(), availAgent.getHost(),
                         String.valueOf(availAgent.getProcessId())));
 
                 String memoryDump = connection.memoryDump(availAgent.getName(), availAgent.getHost(), availAgent.getProcessId(), getType(),
@@ -81,7 +82,7 @@ public class PerfSigMemoryDump extends Builder implements SimpleBuildStep {
                     dumpFinished = connection.memoryDumpStatus(memoryDump);
                 }
                 if (dumpFinished) {
-                    logger.println(Messages.PerfSigMemoryDump_SuccessfullyCreatedMemoryDump(availAgent.getName()));
+                    logger.log(Messages.PerfSigMemoryDump_SuccessfullyCreatedMemoryDump(availAgent.getName()));
                     return;
                 } else {
                     throw new RESTErrorException(Messages.PerfSigStopRecording_TimeoutRaised());

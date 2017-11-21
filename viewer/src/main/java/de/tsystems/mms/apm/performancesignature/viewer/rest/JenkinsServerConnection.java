@@ -29,13 +29,13 @@ import de.tsystems.mms.apm.performancesignature.viewer.model.JenkinsServerConfig
 import de.tsystems.mms.apm.performancesignature.viewer.rest.model.CustomJenkinsHttpClient;
 import de.tsystems.mms.apm.performancesignature.viewer.rest.model.RootElement;
 import hudson.FilePath;
+import hudson.plugins.analysis.util.PluginLogger;
 import hudson.util.XStream2;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintStream;
 import java.lang.reflect.Type;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -125,7 +125,7 @@ public class JenkinsServerConnection {
         return obj != null ? obj : Collections.emptyList();
     }
 
-    public boolean downloadPDFReports(final int buildNumber, final FilePath dir, final PrintStream logger) {
+    public boolean downloadPDFReports(final int buildNumber, final FilePath dir, final PluginLogger logger) {
         boolean result = true;
         try {
             for (ReportType reportType : ReportType.values()) {
@@ -142,7 +142,7 @@ public class JenkinsServerConnection {
         }
     }
 
-    public boolean downloadSession(final int buildNumber, final FilePath dir, final String testCase, final PrintStream logger) {
+    public boolean downloadSession(final int buildNumber, final FilePath dir, final String testCase, final PluginLogger logger) {
         try {
             URL url = new URL(getJenkinsJob().getUrl() + "/" + buildNumber + "/performance-signature/getSession?testCase=" + testCase);
             String sessionFileName = getJenkinsJob().getName() + "_Build_" + buildNumber + "_" + testCase + ".dts";
@@ -152,13 +152,13 @@ public class JenkinsServerConnection {
         }
     }
 
-    private boolean downloadArtifact(final FilePath file, final URL url, final PrintStream logger) {
+    private boolean downloadArtifact(final FilePath file, final URL url, final PluginLogger logger) {
         try {
             InputStream inputStream = getJenkinsJob().getClient().getFile(url.toURI());
             file.copyFrom(inputStream);
             return true;
         } catch (IOException | InterruptedException | URISyntaxException e) {
-            logger.println("Could not download artifact: " + FilenameUtils.getBaseName(url.toString()));
+            logger.log("Could not download artifact: " + FilenameUtils.getBaseName(url.toString()));
             return false;
         }
     }

@@ -20,6 +20,7 @@ import de.tsystems.mms.apm.performancesignature.dynatrace.configuration.CredProf
 import de.tsystems.mms.apm.performancesignature.dynatrace.configuration.GenericTestCase;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.DTServerConnection;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.CommandExecutionException;
+import de.tsystems.mms.apm.performancesignature.util.PerfSigUIUtils;
 import de.tsystems.mms.apm.performancesignature.util.PerfSigUtils;
 import hudson.Extension;
 import hudson.FilePath;
@@ -28,6 +29,7 @@ import hudson.model.AbstractProject;
 import hudson.model.Failure;
 import hudson.model.Run;
 import hudson.model.TaskListener;
+import hudson.plugins.analysis.util.PluginLogger;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
 import hudson.util.FormValidation;
@@ -42,7 +44,6 @@ import org.kohsuke.stapler.QueryParameter;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.util.Date;
 
 public class PerfSigStartRecording extends Builder implements SimpleBuildStep {
@@ -59,17 +60,17 @@ public class PerfSigStartRecording extends Builder implements SimpleBuildStep {
     @Override
     public void perform(@Nonnull final Run<?, ?> run, @Nonnull final FilePath workspace, @Nonnull final Launcher launcher, @Nonnull final TaskListener listener)
             throws InterruptedException, IOException {
-        PrintStream logger = listener.getLogger();
+        PluginLogger logger = PerfSigUIUtils.createLogger(listener.getLogger());
         DTServerConnection connection = PerfSigUtils.createDTServerConnection(dynatraceProfile);
         CredProfilePair pair = connection.getCredProfilePair();
 
-        logger.println(Messages.PerfSigStartRecording_StartingSession());
+        logger.log(Messages.PerfSigStartRecording_StartingSession());
         String extTestCase = run.getEnvironment(listener).expand(this.testCase);
         String sessionName = pair.getProfile() + "_" + run.getParent().getName() + "_Build-" + run.getNumber() + "_" + extTestCase;
         sessionName = sessionName.replace("/", "_");
 
         if (connection.getRecordingStatus()) {
-            logger.println(Messages.PerfSigStartRecording_AnotherSessionStillRecording());
+            logger.log(Messages.PerfSigStartRecording_AnotherSessionStillRecording());
             PerfSigStopRecording stopRecording = new PerfSigStopRecording(dynatraceProfile);
             stopRecording.perform(run, workspace, launcher, listener);
         }
@@ -84,20 +85,20 @@ public class PerfSigStartRecording extends Builder implements SimpleBuildStep {
         }
         Date timeframeStart = new Date();
         if (sessionId != null) {
-            logger.println(Messages.PerfSigStartRecording_StartedSessionRecording(pair.getProfile(), sessionName));
+            logger.log(Messages.PerfSigStartRecording_StartedSessionRecording(pair.getProfile(), sessionName));
         } else {
-            logger.println(Messages.PerfSigStartRecording_SessionRecordingError(pair.getProfile()));
+            logger.log(Messages.PerfSigStartRecording_SessionRecordingError(pair.getProfile()));
         }
 
-        logger.println(Messages.PerfSigStartRecording_RegisteringTestRun());
+        logger.log(Messages.PerfSigStartRecording_RegisteringTestRun());
         String testRunId = null;
         try {
             testRunId = connection.registerTestRun(run.getNumber());
         } catch (CommandExecutionException e) {
-            logger.println(Messages.PerfSigStartRecording_CouldNotRegisterTestRun() + e.getMessage());
+            logger.log(Messages.PerfSigStartRecording_CouldNotRegisterTestRun() + e.getMessage());
         }
         if (testRunId != null) {
-            logger.println(Messages.PerfSigStartRecording_StartedTestRun(pair.getProfile(), testRunId, PerfSigEnvContributor.TESTRUN_ID_KEY));
+            logger.log(Messages.PerfSigStartRecording_StartedTestRun(pair.getProfile(), testRunId, PerfSigEnvContributor.TESTRUN_ID_KEY));
         }
 
         run.addAction(new PerfSigEnvInvisAction(sessionId, timeframeStart, extTestCase, testRunId, sessionName));

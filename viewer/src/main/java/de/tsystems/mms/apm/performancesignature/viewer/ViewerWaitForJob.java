@@ -19,6 +19,7 @@ package de.tsystems.mms.apm.performancesignature.viewer;
 import com.offbytwo.jenkins.model.BuildResult;
 import com.offbytwo.jenkins.model.BuildWithDetails;
 import com.offbytwo.jenkins.model.JobWithDetails;
+import de.tsystems.mms.apm.performancesignature.util.PerfSigUIUtils;
 import de.tsystems.mms.apm.performancesignature.viewer.rest.JenkinsServerConnection;
 import de.tsystems.mms.apm.performancesignature.viewer.util.ViewerUtils;
 import hudson.AbortException;
@@ -28,6 +29,7 @@ import hudson.Launcher;
 import hudson.model.AbstractProject;
 import hudson.model.Run;
 import hudson.model.TaskListener;
+import hudson.plugins.analysis.util.PluginLogger;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
 import hudson.util.ListBoxModel;
@@ -38,7 +40,6 @@ import org.kohsuke.stapler.DataBoundConstructor;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
-import java.io.PrintStream;
 
 public class ViewerWaitForJob extends Builder implements SimpleBuildStep {
     static final int waitForPollingInterval = 5000;
@@ -51,7 +52,7 @@ public class ViewerWaitForJob extends Builder implements SimpleBuildStep {
 
     @Override
     public void perform(@Nonnull Run<?, ?> run, @Nonnull FilePath workspace, @Nonnull Launcher launcher, @Nonnull TaskListener listener) throws InterruptedException, IOException {
-        PrintStream logger = listener.getLogger();
+        PluginLogger logger = PerfSigUIUtils.createLogger(listener.getLogger());
         JenkinsServerConnection serverConnection = ViewerUtils.createJenkinsServerConnection(jenkinsJob);
 
         JobWithDetails job = serverConnection.getJenkinsJob().details();
@@ -63,20 +64,20 @@ public class ViewerWaitForJob extends Builder implements SimpleBuildStep {
             build = job.getLastBuild().details();
         }
 
-        logger.println(Messages.ViewerWaitForJob_WaitingForJob(job.getName(), String.valueOf(build.getNumber())));
+        logger.log(Messages.ViewerWaitForJob_WaitingForJob(job.getName(), String.valueOf(build.getNumber())));
         boolean buildFinished = build.isBuilding();
         while (buildFinished) {
             Thread.sleep(waitForPollingInterval);
             buildFinished = build.details().isBuilding();
         }
 
-        logger.println(Messages.ViewerWaitForJob_JenkinsJobFinished());
+        logger.log(Messages.ViewerWaitForJob_JenkinsJobFinished());
         BuildResult buildResult = build.details().getResult();
 
-        logger.println(Messages.ViewerWaitForJob_JenkinsJobStatus(buildResult));
+        logger.log(Messages.ViewerWaitForJob_JenkinsJobStatus(buildResult));
         if (!buildResult.equals(BuildResult.SUCCESS) && !buildResult.equals(BuildResult.UNSTABLE)) {
             String output = build.getConsoleOutputText();
-            logger.println(output.substring(StringUtils.lastOrdinalIndexOf(output, "\n", 5) + 1)); //get the last 5 lines of console output
+            logger.log(output.substring(StringUtils.lastOrdinalIndexOf(output, "\n", 5) + 1)); //get the last 5 lines of console output
             throw new AbortException(Messages.ViewerWaitForJob_JenkinsJobFailed());
         }
     }

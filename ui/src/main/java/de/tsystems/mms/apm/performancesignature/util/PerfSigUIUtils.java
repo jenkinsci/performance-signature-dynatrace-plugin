@@ -21,6 +21,7 @@ import de.tsystems.mms.apm.performancesignature.dynatrace.model.ChartDashlet;
 import hudson.FilePath;
 import hudson.model.Result;
 import hudson.model.Run;
+import hudson.plugins.analysis.util.PluginLogger;
 import jenkins.model.Jenkins;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.filefilter.RegexFileFilter;
@@ -68,6 +69,10 @@ public final class PerfSigUIUtils {
     public static List<FilePath> getDownloadFiles(final String testCase, final Run<?, ?> build) throws IOException, InterruptedException {
         FilePath filePath = PerfSigUIUtils.getReportDirectory(build);
         return filePath.list(new RegexFileFilter(testCase));
+    }
+
+    public static PluginLogger createLogger(final PrintStream printStream) {
+        return new PluginLogger(printStream, "[PERFSIG] ");
     }
 
     public static String removeExtension(final String fileName) {
@@ -134,18 +139,17 @@ public final class PerfSigUIUtils {
         return String.valueOf(o).replace("\n", "\n    ");
     }
 
-    public static void handleIncidents(final Run<?, ?> run, final List<Alert> incidents, final PrintStream logger, final int nonFunctionalFailure) {
+    public static void handleIncidents(final Run<?, ?> run, final List<Alert> incidents, final PluginLogger logger, final int nonFunctionalFailure) {
         int numWarning = 0, numSevere = 0;
         if (incidents != null && !incidents.isEmpty()) {
-            logger.println(Messages.PerfSigUIUtils_FollowingIncidents());
+            logger.log(Messages.PerfSigUIUtils_FollowingIncidents());
             for (Alert incident : incidents) {
+                logger.logLines(printIncident(incident));
                 switch (incident.getSeverity()) {
                     case SEVERE:
-                        logger.println(incident.toString());
                         numSevere++;
                         break;
                     case WARNING:
-                        logger.println(incident.toString());
                         numWarning++;
                         break;
                     default:
@@ -156,25 +160,25 @@ public final class PerfSigUIUtils {
             switch (nonFunctionalFailure) {
                 case 1:
                     if (numSevere > 0) {
-                        logger.println(Messages.PerfSigUIUtils_BuildsStatusSevereIncidentsFailed());
+                        logger.log(Messages.PerfSigUIUtils_BuildsStatusSevereIncidentsFailed());
                         run.setResult(Result.FAILURE);
                     }
                     break;
                 case 2:
                     if (numSevere > 0 || numWarning > 0) {
-                        logger.println(Messages.PerfSigUIUtils_BuildsStatusWarningIncidentsFailed());
+                        logger.log(Messages.PerfSigUIUtils_BuildsStatusWarningIncidentsFailed());
                         run.setResult(Result.FAILURE);
                     }
                     break;
                 case 3:
                     if (numSevere > 0) {
-                        logger.println(Messages.PerfSigUIUtils_BuildsStatusSevereIncidentsUnstable());
+                        logger.log(Messages.PerfSigUIUtils_BuildsStatusSevereIncidentsUnstable());
                         run.setResult(Result.UNSTABLE);
                     }
                     break;
                 case 4:
                     if (numSevere > 0 || numWarning > 0) {
-                        logger.println(Messages.PerfSigUIUtils_BuildsStatusWarningIncidentsUnstable());
+                        logger.log(Messages.PerfSigUIUtils_BuildsStatusWarningIncidentsUnstable());
                         run.setResult(Result.UNSTABLE);
                     }
                     break;
@@ -182,6 +186,15 @@ public final class PerfSigUIUtils {
                     break;
             }
         }
+    }
+
+    private static String printIncident(Alert incident) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("[PERFSIG]").append(incident.getSeverity()).append(" incident: \n");
+        sb.append("[PERFSIG]    rule: ").append(toIndentedString(incident.getRule())).append("\n");
+        sb.append("[PERFSIG]    message: ").append(toIndentedString(incident.getMessage())).append("\n");
+        sb.append("[PERFSIG]    description: ").append(toIndentedString(incident.getDescription())).append("\n");
+        return sb.toString();
     }
 
     public static boolean checkNotNullOrEmpty(final String string) {

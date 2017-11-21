@@ -17,6 +17,7 @@
 package de.tsystems.mms.apm.performancesignature.viewer;
 
 import com.offbytwo.jenkins.model.JobWithDetails;
+import de.tsystems.mms.apm.performancesignature.util.PerfSigUIUtils;
 import de.tsystems.mms.apm.performancesignature.viewer.rest.JenkinsServerConnection;
 import de.tsystems.mms.apm.performancesignature.viewer.util.ViewerUtils;
 import hudson.Extension;
@@ -25,6 +26,7 @@ import hudson.Launcher;
 import hudson.model.AbstractProject;
 import hudson.model.Run;
 import hudson.model.TaskListener;
+import hudson.plugins.analysis.util.PluginLogger;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
 import hudson.util.ListBoxModel;
@@ -34,7 +36,6 @@ import org.kohsuke.stapler.DataBoundConstructor;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
-import java.io.PrintStream;
 
 public class ViewerInputTrigger extends Builder implements SimpleBuildStep {
     private final String jenkinsJob;
@@ -48,7 +49,7 @@ public class ViewerInputTrigger extends Builder implements SimpleBuildStep {
 
     @Override
     public void perform(@Nonnull Run<?, ?> run, @Nonnull FilePath workspace, @Nonnull Launcher launcher, @Nonnull TaskListener listener) throws InterruptedException, IOException {
-        PrintStream logger = listener.getLogger();
+        PluginLogger logger = PerfSigUIUtils.createLogger(listener.getLogger());
         JenkinsServerConnection serverConnection = ViewerUtils.createJenkinsServerConnection(jenkinsJob);
 
         JobWithDetails perfSigJob = serverConnection.getJenkinsJob().details();
@@ -60,9 +61,9 @@ public class ViewerInputTrigger extends Builder implements SimpleBuildStep {
             buildNumber = perfSigJob.getLastBuild().getNumber();
         }
 
-        logger.println(Messages.ViewerInputTrigger_TriggerInputStep(perfSigJob.getName(), buildNumber));
+        logger.log(Messages.ViewerInputTrigger_TriggerInputStep(perfSigJob.getName(), buildNumber));
         serverConnection.triggerInputStep(buildNumber, getTriggerId());
-        logger.println(Messages.ViewerInputTrigger_TriggeredInputStep(perfSigJob.getName(), buildNumber));
+        logger.log(Messages.ViewerInputTrigger_TriggeredInputStep(perfSigJob.getName(), buildNumber));
     }
 
     public String getJenkinsJob() {

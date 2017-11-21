@@ -22,9 +22,11 @@ import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.api.AlertsIn
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model.DeploymentEvent;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model.EventUpdate;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.RESTErrorException;
+import de.tsystems.mms.apm.performancesignature.util.PerfSigUIUtils;
 import de.tsystems.mms.apm.performancesignature.util.PerfSigUtils;
 import hudson.AbortException;
 import hudson.model.TaskListener;
+import hudson.plugins.analysis.util.PluginLogger;
 import org.jenkinsci.plugins.workflow.steps.BodyExecution;
 import org.jenkinsci.plugins.workflow.steps.BodyExecutionCallback;
 import org.jenkinsci.plugins.workflow.steps.StepContext;
@@ -50,6 +52,7 @@ public class CreateDeploymentStepExecution extends StepExecution {
     @Override
     public boolean start() throws Exception {
         StepContext context = getContext();
+        PluginLogger logger = PerfSigUIUtils.createLogger(listener().getLogger());
 
         DTServerConnection connection = PerfSigUtils.createDTServerConnection(step.getDynatraceProfile());
         AlertsIncidentsAndEventsApi api = new AlertsIncidentsAndEventsApi(connection.getApiClient());
@@ -60,7 +63,7 @@ public class CreateDeploymentStepExecution extends StepExecution {
         if (eventId == null) {
             throw new AbortException("could not create deployment event");
         }
-        listener().getLogger().println("successfully created deployment event " + eventId);
+        logger.log("successfully created deployment event " + eventId);
 
         body = context.newBodyInvoker()
                 .withCallback(new Callback())
@@ -82,7 +85,8 @@ public class CreateDeploymentStepExecution extends StepExecution {
             AlertsIncidentsAndEventsApi api = new AlertsIncidentsAndEventsApi(connection.getApiClient());
             EventUpdate event = new EventUpdate(new Date());
             api.updateDeploymentEvent(eventId, event);
-            listener().getLogger().println("successfully updated deployment event " + eventId);
+            PluginLogger logger = PerfSigUIUtils.createLogger(listener().getLogger());
+            logger.log("successfully updated deployment event " + eventId);
         }
     }
 

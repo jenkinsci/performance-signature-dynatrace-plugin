@@ -20,6 +20,7 @@ import de.tsystems.mms.apm.performancesignature.dynatrace.configuration.CredProf
 import de.tsystems.mms.apm.performancesignature.dynatrace.configuration.DynatraceServerConfiguration;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.DTServerConnection;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.model.Agent;
+import de.tsystems.mms.apm.performancesignature.util.PerfSigUIUtils;
 import de.tsystems.mms.apm.performancesignature.util.PerfSigUtils;
 import hudson.Extension;
 import hudson.FilePath;
@@ -27,6 +28,7 @@ import hudson.Launcher;
 import hudson.model.AbstractProject;
 import hudson.model.Run;
 import hudson.model.TaskListener;
+import hudson.plugins.analysis.util.PluginLogger;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
 import hudson.util.FormValidation;
@@ -39,7 +41,6 @@ import org.kohsuke.stapler.QueryParameter;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
-import java.io.PrintStream;
 
 public class PerfSigActivateConfiguration extends Builder implements SimpleBuildStep {
     private final String dynatraceProfile, configuration;
@@ -53,19 +54,19 @@ public class PerfSigActivateConfiguration extends Builder implements SimpleBuild
     @Override
     public void perform(@Nonnull final Run<?, ?> run, @Nonnull final FilePath workspace, @Nonnull final Launcher launcher, @Nonnull final TaskListener listener)
             throws InterruptedException, IOException {
-        PrintStream logger = listener.getLogger();
+        PluginLogger logger = PerfSigUIUtils.createLogger(listener.getLogger());
         DTServerConnection connection = PerfSigUtils.createDTServerConnection(dynatraceProfile);
 
-        logger.println(Messages.PerfSigActivateConfiguration_ActivatingProfileConfiguration());
+        logger.log(Messages.PerfSigActivateConfiguration_ActivatingProfileConfiguration());
         connection.activateConfiguration(configuration);
-        logger.println(Messages.PerfSigActivateConfiguration_SuccessfullyActivated(dynatraceProfile));
+        logger.log(Messages.PerfSigActivateConfiguration_SuccessfullyActivated(dynatraceProfile));
 
         for (Agent agent : connection.getAgents()) {
             boolean hotSensorPlacement = connection.hotSensorPlacement(agent.getAgentId());
             if (hotSensorPlacement) {
-                logger.println(Messages.PerfSigActivateConfiguration_HotSensorPlacementDone(agent.getName()));
+                logger.log(Messages.PerfSigActivateConfiguration_HotSensorPlacementDone(agent.getName()));
             } else {
-                logger.println(Messages.PerfSigActivateConfiguration_FailureActivation(agent.getName()));
+                logger.log(Messages.PerfSigActivateConfiguration_FailureActivation(agent.getName()));
             }
         }
     }

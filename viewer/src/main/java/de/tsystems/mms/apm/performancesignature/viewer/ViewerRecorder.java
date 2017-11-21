@@ -28,6 +28,7 @@ import hudson.Launcher;
 import hudson.model.AbstractProject;
 import hudson.model.Run;
 import hudson.model.TaskListener;
+import hudson.plugins.analysis.util.PluginLogger;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
@@ -40,7 +41,6 @@ import org.kohsuke.stapler.DataBoundSetter;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.util.List;
 
 public class ViewerRecorder extends Recorder implements SimpleBuildStep {
@@ -55,7 +55,7 @@ public class ViewerRecorder extends Recorder implements SimpleBuildStep {
     @Override
     public void perform(@Nonnull final Run<?, ?> run, @Nonnull final FilePath workspace, @Nonnull final Launcher launcher, @Nonnull final TaskListener listener)
             throws InterruptedException, IOException {
-        PrintStream logger = listener.getLogger();
+        PluginLogger logger = PerfSigUIUtils.createLogger(listener.getLogger());
         JenkinsServerConnection serverConnection = ViewerUtils.createJenkinsServerConnection(jenkinsJob);
 
         ViewerEnvInvisAction envInvisAction = run.getAction(ViewerEnvInvisAction.class);
@@ -66,7 +66,7 @@ public class ViewerRecorder extends Recorder implements SimpleBuildStep {
             buildNumber = serverConnection.getJenkinsJob().details().getLastBuild().getNumber();
         }
 
-        logger.println("parsing xml data from job " + serverConnection.getJenkinsJob().getName() + " #" + buildNumber);
+        logger.log("parsing xml data from job " + serverConnection.getJenkinsJob().getName() + " #" + buildNumber);
         final List<DashboardReport> dashboardReports = serverConnection.getMeasureDataFromJSON(buildNumber);
         if (dashboardReports == null) {
             throw new RESTErrorException(Messages.ViewerRecorder_XMLReportError());
@@ -75,9 +75,9 @@ public class ViewerRecorder extends Recorder implements SimpleBuildStep {
         for (DashboardReport dashboardReport : dashboardReports) {
             boolean exportedSession = serverConnection.downloadSession(buildNumber, PerfSigUIUtils.getReportDirectory(run), dashboardReport.getName(), logger);
             if (!exportedSession) {
-                logger.println(Messages.ViewerRecorder_SessionDownloadError(dashboardReport.getName()));
+                logger.log(Messages.ViewerRecorder_SessionDownloadError(dashboardReport.getName()));
             } else {
-                logger.println(Messages.ViewerRecorder_SessionDownloadSuccessful(dashboardReport.getName()));
+                logger.log(Messages.ViewerRecorder_SessionDownloadSuccessful(dashboardReport.getName()));
             }
 
             PerfSigUIUtils.handleIncidents(run, dashboardReport.getIncidents(), logger, nonFunctionalFailure);
@@ -85,9 +85,9 @@ public class ViewerRecorder extends Recorder implements SimpleBuildStep {
 
         boolean exportedPDFReports = serverConnection.downloadPDFReports(buildNumber, PerfSigUIUtils.getReportDirectory(run), logger);
         if (!exportedPDFReports) {
-            logger.println(Messages.ViewerRecorder_ReportDownloadError());
+            logger.log(Messages.ViewerRecorder_ReportDownloadError());
         } else {
-            logger.println(Messages.ViewerRecorder_ReportDownloadSuccessful());
+            logger.log(Messages.ViewerRecorder_ReportDownloadSuccessful());
         }
 
         PerfSigBuildAction action = new PerfSigBuildAction(dashboardReports);
