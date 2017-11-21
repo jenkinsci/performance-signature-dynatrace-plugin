@@ -29,6 +29,7 @@ public class UnitTestCase extends ConfigurationTestCase {
         super(name, singleDashboards, comparisonDashboards, xmlDashboard);
     }
 
+    @Override
     @DataBoundSetter
     public void setClientDashboard(final String clientDashboard) {
         super.setClientDashboard(clientDashboard);

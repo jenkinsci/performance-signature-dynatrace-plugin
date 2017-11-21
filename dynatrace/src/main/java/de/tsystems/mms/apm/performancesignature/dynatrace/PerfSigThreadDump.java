@@ -43,10 +43,13 @@ import org.kohsuke.stapler.QueryParameter;
 import javax.annotation.Nonnull;
 import java.io.IOException;
 
+import static de.tsystems.mms.apm.performancesignature.dynatrace.PerfSigMemoryDump.WAIT_FOR_DUMP_POLLING_INTERVAL;
+import static de.tsystems.mms.apm.performancesignature.dynatrace.PerfSigMemoryDump.WAIT_FOR_DUMP_TIMEOUT;
+
 public class PerfSigThreadDump extends Builder implements SimpleBuildStep {
-    private static final int waitForDumpTimeout = 60000;
-    private static final int waitForDumpPollingInterval = 5000;
-    private final String dynatraceProfile, agent, host;
+    private final String dynatraceProfile;
+    private final String agent;
+    private final String host;
     private boolean lockSession;
 
     @DataBoundConstructor
@@ -72,11 +75,11 @@ public class PerfSigThreadDump extends Builder implements SimpleBuildStep {
                 if (StringUtils.isBlank(threadDump)) {
                     throw new RESTErrorException(Messages.PerfSigThreadDump_ThreadDumpWasntTaken());
                 }
-                int timeout = waitForDumpTimeout;
+                long timeout = WAIT_FOR_DUMP_TIMEOUT;
                 boolean dumpFinished = connection.threadDumpStatus(threadDump);
                 while ((!dumpFinished) && (timeout > 0)) {
-                    Thread.sleep(waitForDumpPollingInterval);
-                    timeout -= waitForDumpPollingInterval;
+                    Thread.sleep(WAIT_FOR_DUMP_POLLING_INTERVAL);
+                    timeout -= WAIT_FOR_DUMP_POLLING_INTERVAL;
                     dumpFinished = connection.threadDumpStatus(threadDump);
                 }
                 if (dumpFinished) {

@@ -42,7 +42,8 @@ import org.kohsuke.stapler.QueryParameter;
 import java.util.Collections;
 
 public class CredProfilePair extends AbstractDescribableImpl<CredProfilePair> {
-    private final String profile, credentialsId;
+    private final String profile;
+    private final String credentialsId;
 
     @DataBoundConstructor
     public CredProfilePair(final String profile, final String credentialsId) {

@@ -44,11 +44,17 @@ import javax.annotation.Nonnull;
 import java.io.IOException;
 
 public class PerfSigMemoryDump extends Builder implements SimpleBuildStep {
-    private static final long waitForDumpTimeout = 60000L;
-    private static final long waitForDumpPollingInterval = 5000L;
-    private final String dynatraceProfile, agent, host;
+    public static final long WAIT_FOR_DUMP_TIMEOUT = 60000L;
+    public static final long WAIT_FOR_DUMP_POLLING_INTERVAL = 5000L;
+    private final String dynatraceProfile;
+    private final String agent;
+    private final String host;
     private String type;
-    private boolean lockSession, captureStrings, capturePrimitives, autoPostProcess, dogc;
+    private boolean lockSession;
+    private boolean captureStrings;
+    private boolean capturePrimitives;
+    private boolean autoPostProcess;
+    private boolean dogc;
 
     @DataBoundConstructor
     public PerfSigMemoryDump(final String dynatraceProfile, final String agent, final String host) {
@@ -74,11 +80,11 @@ public class PerfSigMemoryDump extends Builder implements SimpleBuildStep {
                 if (StringUtils.isBlank(memoryDump)) {
                     throw new RESTErrorException(Messages.PerfSigMemoryDump_MemoryDumpWasntTaken());
                 }
-                long timeout = waitForDumpTimeout;
+                long timeout = WAIT_FOR_DUMP_TIMEOUT;
                 boolean dumpFinished = connection.memoryDumpStatus(memoryDump);
                 while ((!dumpFinished) && (timeout > 0)) {
-                    Thread.sleep(waitForDumpPollingInterval);
-                    timeout -= waitForDumpPollingInterval;
+                    Thread.sleep(WAIT_FOR_DUMP_POLLING_INTERVAL);
+                    timeout -= WAIT_FOR_DUMP_POLLING_INTERVAL;
                     dumpFinished = connection.memoryDumpStatus(memoryDump);
                 }
                 if (dumpFinished) {
@@ -169,7 +175,7 @@ public class PerfSigMemoryDump extends Builder implements SimpleBuildStep {
         public static final boolean defaultDogc = false;
 
         public ListBoxModel doFillTypeItems() {
-            return new ListBoxModel(new ListBoxModel.Option("simple"), new ListBoxModel.Option("extended"), new ListBoxModel.Option("selective"));
+            return new ListBoxModel(new ListBoxModel.Option(defaultType), new ListBoxModel.Option("extended"), new ListBoxModel.Option("selective"));
         }
 
         public FormValidation doCheckAgent(@QueryParameter final String agent) {

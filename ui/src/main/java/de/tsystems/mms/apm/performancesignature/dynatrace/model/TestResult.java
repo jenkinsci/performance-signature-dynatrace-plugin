@@ -47,10 +47,7 @@ public class TestResult {
     private Date exectime;
 
     @SerializedName("package")
-    private String _package;
-
-    @Deprecated
-    private transient String packageName;
+    private String packageName;
 
     @SerializedName("platform")
     private String platform;
@@ -96,7 +93,7 @@ public class TestResult {
      **/
     @Exported
     public String getPackage() {
-        return _package;
+        return packageName;
     }
 
     /**
@@ -178,14 +175,6 @@ public class TestResult {
         }
     }
 
-    @SuppressWarnings("deprecation")
-    protected Object readResolve() {
-        if (packageName != null) {
-            _package = packageName;
-        }
-        return this;
-    }
-
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -194,7 +183,7 @@ public class TestResult {
         sb.append("    name: ").append(PerfSigUIUtils.toIndentedString(name)).append("\n");
         sb.append("    status: ").append(PerfSigUIUtils.toIndentedString(status)).append("\n");
         sb.append("    exectime: ").append(PerfSigUIUtils.toIndentedString(exectime)).append("\n");
-        sb.append("    _package: ").append(PerfSigUIUtils.toIndentedString(_package)).append("\n");
+        sb.append("    _package: ").append(PerfSigUIUtils.toIndentedString(packageName)).append("\n");
         sb.append("    platform: ").append(PerfSigUIUtils.toIndentedString(platform)).append("\n");
         sb.append("    measures: ").append(PerfSigUIUtils.toIndentedString(measures)).append("\n");
         sb.append("}");

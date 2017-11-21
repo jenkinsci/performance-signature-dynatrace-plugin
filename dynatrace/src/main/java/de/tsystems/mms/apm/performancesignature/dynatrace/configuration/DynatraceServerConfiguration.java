@@ -35,7 +35,8 @@ public class DynatraceServerConfiguration extends AbstractDescribableImpl<Dynatr
     @Deprecated
     private transient int port;
     private final boolean verifyCertificate;
-    private final int delay, retryCount;
+    private final int delay;
+    private final int retryCount;
     @Deprecated
     private transient String host;
     private final CustomProxy customProxy;

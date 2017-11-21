@@ -43,7 +43,8 @@ import javax.annotation.Nonnull;
 import java.io.IOException;
 
 public class PerfSigActivateConfiguration extends Builder implements SimpleBuildStep {
-    private final String dynatraceProfile, configuration;
+    private final String dynatraceProfile;
+    private final String configuration;
 
     @DataBoundConstructor
     public PerfSigActivateConfiguration(final String dynatraceProfile, final String configuration) {

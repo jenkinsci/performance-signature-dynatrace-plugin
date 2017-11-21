@@ -21,7 +21,9 @@ import org.kohsuke.stapler.DataBoundConstructor;
 
 @SuppressWarnings("WeakerAccess")
 public class CustomProxy {
-    private final String proxyServer, proxyUser, proxyPassword;
+    private final String proxyServer;
+    private final String proxyUser;
+    private final String proxyPassword;
     private final int proxyPort;
     private final boolean useJenkinsProxy;
 

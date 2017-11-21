@@ -47,7 +47,8 @@ import java.io.IOException;
 import java.util.Date;
 
 public class PerfSigStartRecording extends Builder implements SimpleBuildStep {
-    private final String dynatraceProfile, testCase;
+    private final String dynatraceProfile;
+    private final String testCase;
     private String recordingOption;
     private boolean lockSession;
 

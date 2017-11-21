@@ -50,7 +50,7 @@ public class Alert {
     @SerializedName("end")
     private Date end;
     @SerializedName("rule")
-    private final String rule = null;
+    private String rule;
 
     /**
      * The severity of the alert
