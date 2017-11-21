@@ -18,7 +18,6 @@ package de.tsystems.mms.apm.performancesignature.ui;
 
 import de.tsystems.mms.apm.performancesignature.dynatrace.model.*;
 import de.tsystems.mms.apm.performancesignature.model.PerfSigTestData;
-import de.tsystems.mms.apm.performancesignature.model.PerfSigTestDataWrapper;
 import de.tsystems.mms.apm.performancesignature.util.PerfSigUIUtils;
 import hudson.FilePath;
 import hudson.Plugin;
@@ -43,18 +42,13 @@ public class PerfSigUIPlugin extends Plugin {
         // Moved in 2.2.0
         Run.XSTREAM2.addCompatibilityAlias("de.tsystems.mms.apm.performancesignature.dynatrace.model.ChartDashlet", ChartDashlet.class);
         Run.XSTREAM2.addCompatibilityAlias("de.tsystems.mms.apm.performancesignature.dynatrace.model.DashboardReport", DashboardReport.class);
-        Run.XSTREAM2.addCompatibilityAlias("de.tsystems.mms.apm.performancesignature.dynatrace.model.IncidentChart", IncidentChart.class);
-        Run.XSTREAM2.addCompatibilityAlias("de.tsystems.mms.apm.performancesignature.dynatrace.model.IncidentViolation", IncidentViolation.class);
         Run.XSTREAM2.addCompatibilityAlias("de.tsystems.mms.apm.performancesignature.dynatrace.model.Measure", Measure.class);
         Run.XSTREAM2.addCompatibilityAlias("de.tsystems.mms.apm.performancesignature.dynatrace.model.Measurement", Measurement.class);
         Run.XSTREAM2.addCompatibilityAlias("de.tsystems.mms.apm.performancesignature.dynatrace.model.TestResult", TestResult.class);
-        Run.XSTREAM2.addCompatibilityAlias("de.tsystems.mms.apm.performancesignature.dynatrace.model.TestResultStatus", TestResultStatus.class);
         Run.XSTREAM2.addCompatibilityAlias("de.tsystems.mms.apm.performancesignature.dynatrace.model.TestRun", TestRun.class);
-        Run.XSTREAM2.addCompatibilityAlias("de.tsystems.mms.apm.performancesignature.dynatrace.model.TestRunMeasure", TestRunMeasure.class);
+        Run.XSTREAM2.addCompatibilityAlias("de.tsystems.mms.apm.performancesignature.dynatrace.model.TestRunMeasure", TestMeasure.class);
 
         Run.XSTREAM2.addCompatibilityAlias("de.tsystems.mms.apm.performancesignature.model.PerfSigTestData", PerfSigTestData.class);
-        Run.XSTREAM2.addCompatibilityAlias("de.tsystems.mms.apm.performancesignature.PerfSigTestDataWrapper", PerfSigTestDataWrapper.class);
-
         Run.XSTREAM2.addCompatibilityAlias("de.tsystems.mms.apm.performancesignature.PerfSigBuildAction", PerfSigBuildAction.class);
         Run.XSTREAM2.addCompatibilityAlias("de.tsystems.mms.apm.performancesignature.PerfSigTestAction", PerfSigTestAction.class);
     }

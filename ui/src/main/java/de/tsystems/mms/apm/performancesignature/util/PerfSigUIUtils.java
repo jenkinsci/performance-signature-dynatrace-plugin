@@ -16,9 +16,8 @@
 
 package de.tsystems.mms.apm.performancesignature.util;
 
+import de.tsystems.mms.apm.performancesignature.dynatrace.model.Alert;
 import de.tsystems.mms.apm.performancesignature.dynatrace.model.ChartDashlet;
-import de.tsystems.mms.apm.performancesignature.dynatrace.model.IncidentChart;
-import de.tsystems.mms.apm.performancesignature.dynatrace.model.IncidentViolation;
 import hudson.FilePath;
 import hudson.model.Result;
 import hudson.model.Run;
@@ -43,7 +42,10 @@ public final class PerfSigUIUtils {
     private PerfSigUIUtils() {
     }
 
-    public static BigDecimal round(final double d, final int scale) {
+    public static BigDecimal round(final Double d, final int scale) {
+        if (d == null) {
+            return BigDecimal.ZERO;
+        }
         try {
             return BigDecimal.valueOf(d).setScale(d % 1 == 0 ? 0 : scale, BigDecimal.ROUND_HALF_UP);
         } catch (NumberFormatException ex) {
@@ -91,14 +93,17 @@ public final class PerfSigUIUtils {
         return list;
     }
 
-    public static String encodeString(final String value) {
-        if (StringUtils.isBlank(value)) {
-            return "";
-        }
+    /**
+     * Escape the given string to be used as URL query value.
+     *
+     * @param str String to be escaped
+     * @return Escaped string
+     */
+    public static String encodeString(final String str) {
         try {
-            return URLEncoder.encode(value, CharEncoding.UTF_8).replaceAll("\\+", "%20");
+            return URLEncoder.encode(str, CharEncoding.UTF_8).replaceAll("\\+", "%20");
         } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(Messages.PerfSigUIUtils_EncodingFailure(), e);
+            return str;
         }
     }
 
@@ -121,24 +126,30 @@ public final class PerfSigUIUtils {
         }
     }
 
-    public static void handleIncidents(final Run<?, ?> run, final List<IncidentChart> incidents, final PrintStream logger, final int nonFunctionalFailure) {
+    /**
+     * Convert the given object to string with each line indented by 4 spaces
+     * (except the first line).
+     */
+    public static String toIndentedString(Object o) {
+        return String.valueOf(o).replace("\n", "\n    ");
+    }
+
+    public static void handleIncidents(final Run<?, ?> run, final List<Alert> incidents, final PrintStream logger, final int nonFunctionalFailure) {
         int numWarning = 0, numSevere = 0;
         if (incidents != null && !incidents.isEmpty()) {
             logger.println(Messages.PerfSigUIUtils_FollowingIncidents());
-            for (IncidentChart incident : incidents) {
-                for (IncidentViolation violation : incident.getViolations()) {
-                    switch (violation.getSeverity()) {
-                        case SEVERE:
-                            logger.println(Messages.PerfSigUIUtils_SevereIncident(incident.getRule(), violation.getRule(), violation.getDescription()));
-                            numSevere++;
-                            break;
-                        case WARNING:
-                            logger.println(Messages.PerfSigUIUtils_WarningIncident(incident.getRule(), violation.getRule(), violation.getDescription()));
-                            numWarning++;
-                            break;
-                        default:
-                            break;
-                    }
+            for (Alert incident : incidents) {
+                switch (incident.getSeverity()) {
+                    case SEVERE:
+                        logger.println(incident.toString());
+                        numSevere++;
+                        break;
+                    case WARNING:
+                        logger.println(incident.toString());
+                        numWarning++;
+                        break;
+                    default:
+                        break;
                 }
             }
 

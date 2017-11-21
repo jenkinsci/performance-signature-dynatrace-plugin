@@ -24,7 +24,6 @@ import de.tsystems.mms.apm.performancesignature.dynatrace.model.DashboardReport;
 import de.tsystems.mms.apm.performancesignature.dynatrace.model.Measure;
 import de.tsystems.mms.apm.performancesignature.dynatrace.model.TestRun;
 import de.tsystems.mms.apm.performancesignature.model.JSONDashlet;
-import de.tsystems.mms.apm.performancesignature.model.PerfSigTestDataWrapper;
 import de.tsystems.mms.apm.performancesignature.util.PerfSigUIUtils;
 import hudson.XmlFile;
 import hudson.model.Job;
@@ -62,8 +61,9 @@ import java.util.logging.Logger;
 public class PerfSigProjectAction extends PerfSigBaseAction implements ProminentProjectAction {
     static final String UNITTEST_DASHLETNAME = "unittest_overview";
     private static final String JSON_FILENAME = "gridconfig.xml";
-    private static final XStream XSTREAM = new XStream2();
     private static final Logger logger = Logger.getLogger(PerfSigProjectAction.class.getName());
+    private static final XStream XSTREAM = new XStream2();
+    private static final Gson GSON = new Gson();
     private final Job<?, ?> job;
     private transient Map<String, JSONDashlet> jsonDashletMap;
 
@@ -179,17 +179,14 @@ public class PerfSigProjectAction extends PerfSigBaseAction implements Prominent
                 }
 
                 for (Run<?, ?> run : job.getBuilds()) {
-                    PerfSigTestDataWrapper testDataWrapper = run.getAction(PerfSigTestDataWrapper.class);
-                    if (testDataWrapper != null && testDataWrapper.getTestRuns() != null) {
-                        TestRun testRun = TestRun.mergeTestRuns(testDataWrapper.getTestRuns());
-                        if (testRun != null) {
-                            dsb.add(testRun.getNumFailed(), "failed", new ChartUtil.NumberOnlyBuildLabel(run));
-                            dsb.add(testRun.getNumDegraded(), "degraded", new ChartUtil.NumberOnlyBuildLabel(run));
-                            dsb.add(testRun.getNumImproved(), "improved", new ChartUtil.NumberOnlyBuildLabel(run));
-                            dsb.add(testRun.getNumPassed(), "passed", new ChartUtil.NumberOnlyBuildLabel(run));
-                            dsb.add(testRun.getNumVolatile(), "volatile", new ChartUtil.NumberOnlyBuildLabel(run));
-                            dsb.add(testRun.getNumInvalidated(), "invalidated", new ChartUtil.NumberOnlyBuildLabel(run));
-                        }
+                    TestRun testRun = getTestRun(run);
+                    if (testRun != null) {
+                        dsb.add(testRun.getNumFailed(), "failed", new ChartUtil.NumberOnlyBuildLabel(run));
+                        dsb.add(testRun.getNumDegraded(), "degraded", new ChartUtil.NumberOnlyBuildLabel(run));
+                        dsb.add(testRun.getNumImproved(), "improved", new ChartUtil.NumberOnlyBuildLabel(run));
+                        dsb.add(testRun.getNumPassed(), "passed", new ChartUtil.NumberOnlyBuildLabel(run));
+                        dsb.add(testRun.getNumVolatile(), "volatile", new ChartUtil.NumberOnlyBuildLabel(run));
+                        dsb.add(testRun.getNumInvalidated(), "invalidated", new ChartUtil.NumberOnlyBuildLabel(run));
                     }
                     i++;
                     if (buildCount != 0 && i == buildCount) {
@@ -221,16 +218,17 @@ public class PerfSigProjectAction extends PerfSigBaseAction implements Prominent
     }
 
     public TestRun getTestRun(final Run<?, ?> run) {
-        if (run != null) {
-            PerfSigTestDataWrapper testDataWrapper = run.getAction(PerfSigTestDataWrapper.class);
-            if (testDataWrapper != null) {
-                return TestRun.mergeTestRuns(testDataWrapper.getTestRuns());
+        TestResult testResult = getTestResult(run);
+        if (testResult != null) {
+            PerfSigTestAction testAction = testResult.getTestAction(PerfSigTestAction.class);
+            if (testAction != null) {
+                return TestRun.mergeTestRuns(testAction.getTestData().getTestRuns());
             }
         }
         return null;
     }
 
-    public TestResult getTestAction(final Run<?, ?> run) {
+    public TestResult getTestResult(final Run<?, ?> run) {
         if (run != null) {
             TestResultAction testResultAction = run.getAction(TestResultAction.class);
             if (testResultAction != null) {
@@ -268,7 +266,7 @@ public class PerfSigProjectAction extends PerfSigBaseAction implements Prominent
             }
         }
 
-        return new Gson().toJson(jsonDashletList);
+        return GSON.toJson(jsonDashletList);
     }
 
     private Map<String, JSONDashlet> createJSONConfiguration(final boolean useRandomId) {
@@ -322,7 +320,7 @@ public class PerfSigProjectAction extends PerfSigBaseAction implements Prominent
             json = json.substring(1, json.length() - 1);
         }
 
-        List<JSONDashlet> jsonDashletList = new Gson().fromJson(json, new TypeToken<List<JSONDashlet>>() {
+        List<JSONDashlet> jsonDashletList = GSON.fromJson(json, new TypeToken<List<JSONDashlet>>() {
         }.getType());
         for (JSONDashlet jsonDashlet : jsonDashletList) {
             idsFromJson.add(jsonDashlet.getId());
@@ -445,7 +443,7 @@ public class PerfSigProjectAction extends PerfSigBaseAction implements Prominent
     }
 
     @SuppressWarnings("unchecked")
-    private Map<String, JSONDashlet> readConfiguration() throws InterruptedException {
+    private Map<String, JSONDashlet> readConfiguration() {
         logger.fine(addTimeStampToLog("grid configuration read started"));
         try {
             if (getConfigFile().exists()) {

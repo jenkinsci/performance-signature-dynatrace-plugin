@@ -20,41 +20,57 @@ import de.tsystems.mms.apm.performancesignature.dynatrace.model.TestResult;
 import de.tsystems.mms.apm.performancesignature.dynatrace.model.TestRun;
 import de.tsystems.mms.apm.performancesignature.model.PerfSigTestData;
 import de.tsystems.mms.apm.performancesignature.util.PerfSigUIUtils;
+import hudson.tasks.junit.CaseResult;
 import hudson.tasks.junit.TestAction;
+import hudson.tasks.test.TestObject;
 import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
 
 @ExportedBean
 public class PerfSigTestAction extends TestAction {
     private final PerfSigTestData testData;
+    private final TestObject testObject;
     private TestRun matchingTestRun;
     private TestResult matchingTestResult;
 
-    public PerfSigTestAction(final PerfSigTestData testData, final String packageName, final String fullName) {
+    public PerfSigTestAction(final TestObject testObject, final PerfSigTestData testData) {
         this.testData = testData;
+        this.testObject = testObject;
 
-        for (TestRun testRun : testData.getTestRuns()) {
-            for (TestResult testResult : testRun.getTestResults()) {
-                if (testResult.getPackageName().equalsIgnoreCase(packageName) && testResult.getName().equalsIgnoreCase(fullName)) {
-                    this.matchingTestRun = testRun;
-                    this.matchingTestResult = testResult;
+        if (testObject instanceof CaseResult) {
+            CaseResult caseResult = (CaseResult) this.testObject;
+            String packageName = caseResult.getPackageName();
+            String fullName = caseResult.getSimpleName() + "." + caseResult.getSearchName();
+
+            for (TestRun testRun : testData.getTestRuns()) {
+                for (TestResult testResult : testRun.getTestResults()) {
+                    if (testResult.getPackage().equalsIgnoreCase(packageName) && testResult.getName().equalsIgnoreCase(fullName)) {
+                        this.matchingTestRun = testRun;
+                        this.matchingTestResult = testResult;
+                    }
                 }
             }
         }
     }
 
     public TestResult getPreviousTestResult() {
-        PerfSigTestData previousData = testData.getPreviousData();
-        if (previousData != null) {
-            for (TestRun testRun : previousData.getTestRuns()) {
-                for (TestResult testResult : testRun.getTestResults()) {
-                    if (testResult.getPackageName().equals(matchingTestResult.getPackageName()) && testResult.getName().equals(matchingTestResult.getName())) {
-                        return testResult;
+        hudson.tasks.test.TestResult testResult = testObject.getPreviousResult();
+        if (testResult == null) return null;
+        PerfSigTestAction testAction = testResult.getTestAction(PerfSigTestAction.class);
+        if (testAction != null && testAction.getTestData() != null) {
+            for (TestRun testRun : testAction.getTestData().getTestRuns()) {
+                for (TestResult result : testRun.getTestResults()) {
+                    if (result.getPackage().equals(matchingTestResult.getPackage()) && result.getName().equals(matchingTestResult.getName())) {
+                        return result;
                     }
                 }
             }
         }
         return null;
+    }
+
+    public TestObject getTestObject() {
+        return testObject;
     }
 
     public Class getPerfSigUtils() {

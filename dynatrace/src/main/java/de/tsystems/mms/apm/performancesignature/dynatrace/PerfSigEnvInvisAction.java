@@ -21,28 +21,37 @@ import hudson.model.InvisibleAction;
 import java.util.Date;
 
 public class PerfSigEnvInvisAction extends InvisibleAction {
-    private final String testRunID;
+    @Deprecated
+    private transient String testRunID;
+    private String testRunId;
     private final String testCase;
     private final Date timeframeStart;
-    private String sessionName;
+    private final String sessionName;
+    private String sessionId;
+    private Date timeframeStop;
 
-    PerfSigEnvInvisAction(final String sessionName, final Date timeframeStart, final String testCase, final String testRunID) {
-        this.sessionName = sessionName;
-        this.timeframeStart = timeframeStart != null ? (Date) timeframeStart.clone() : null;
+    PerfSigEnvInvisAction(final String sessionId, final Date timeframeStart, final String testCase, final String testRunId, final String sessionName) {
+        this.sessionId = sessionId;
+        this.timeframeStart = timeframeStart == null ? null : (Date) timeframeStart.clone();
         this.testCase = testCase;
-        this.testRunID = testRunID;
+        this.testRunId = testRunId;
+        this.sessionName = sessionName;
     }
 
     public String getSessionName() {
         return sessionName;
     }
 
-    void setSessionName(final String sessionName) {
-        this.sessionName = sessionName;
+    public String getSessionId() {
+        return sessionId;
     }
 
-    public String getTestRunID() {
-        return testRunID;
+    void setSessionId(final String sessionId) {
+        this.sessionId = sessionId;
+    }
+
+    public String getTestRunId() {
+        return testRunId;
     }
 
     public String getTestCase() {
@@ -50,6 +59,22 @@ public class PerfSigEnvInvisAction extends InvisibleAction {
     }
 
     public Date getTimeframeStart() {
-        return timeframeStart != null ? (Date) timeframeStart.clone() : null;
+        return timeframeStart == null ? null : (Date) timeframeStart.clone();
+    }
+
+    public Date getTimeframeStop() {
+        return timeframeStop == null ? null : (Date) timeframeStop.clone();
+    }
+
+    void setTimeframeStop(Date timeframeStop) {
+        this.timeframeStop = timeframeStop;
+    }
+
+    @SuppressWarnings("deprecation")
+    protected Object readResolve() {
+        if (testRunID != null) {
+            testRunId = testRunID;
+        }
+        return this;
     }
 }

@@ -53,25 +53,11 @@ public abstract class MeasureBaseModel {
     }
 
     /**
-     * Legt den Wert der avg-Eigenschaft fest.
-     */
-    public void setAvg(double value) {
-        this.avg = value;
-    }
-
-    /**
      * Ruft den Wert der min-Eigenschaft ab.
      */
     @Exported
     public double getMin() {
         return min;
-    }
-
-    /**
-     * Legt den Wert der min-Eigenschaft fest.
-     */
-    public void setMin(double value) {
-        this.min = value;
     }
 
     /**
@@ -83,25 +69,11 @@ public abstract class MeasureBaseModel {
     }
 
     /**
-     * Legt den Wert der max-Eigenschaft fest.
-     */
-    public void setMax(double value) {
-        this.max = value;
-    }
-
-    /**
      * Ruft den Wert der sum-Eigenschaft ab.
      */
     @Exported
     public double getSum() {
         return sum;
-    }
-
-    /**
-     * Legt den Wert der sum-Eigenschaft fest.
-     */
-    public void setSum(double value) {
-        this.sum = value;
     }
 
     /**
@@ -113,17 +85,6 @@ public abstract class MeasureBaseModel {
     @Exported
     public long getCount() {
         return count;
-    }
-
-    /**
-     * Legt den Wert der count-Eigenschaft fest.
-     *
-     * @param value allowed object is
-     *              {@link long }
-     */
-    @Exported
-    public void setCount(long value) {
-        this.count = value;
     }
 
     /**

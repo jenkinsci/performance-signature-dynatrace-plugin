@@ -19,12 +19,15 @@ package de.tsystems.mms.apm.performancesignature.dynatrace;
 import de.tsystems.mms.apm.performancesignature.dynatrace.configuration.ConfigurationTestCase;
 import de.tsystems.mms.apm.performancesignature.dynatrace.configuration.Dashboard;
 import de.tsystems.mms.apm.performancesignature.dynatrace.configuration.GenericTestCase;
+import de.tsystems.mms.apm.performancesignature.dynatrace.model.Alert;
 import de.tsystems.mms.apm.performancesignature.dynatrace.model.DashboardReport;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.DTServerConnection;
-import de.tsystems.mms.apm.performancesignature.dynatrace.rest.model.Agent;
+import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.RESTErrorException;
+import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.model.Agent;
 import de.tsystems.mms.apm.performancesignature.dynatrace.util.TestUtils;
 import de.tsystems.mms.apm.performancesignature.ui.PerfSigBuildAction;
 import de.tsystems.mms.apm.performancesignature.util.PerfSigUtils;
+import hudson.AbortException;
 import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
@@ -38,6 +41,7 @@ import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -47,10 +51,15 @@ public class RecorderTest {
     @ClassRule
     public static JenkinsRule j = new JenkinsRule();
     private static ListBoxModel dynatraceConfigurations;
+    private DTServerConnection connection;
 
     @BeforeClass
     public static void setUp() throws Exception {
         dynatraceConfigurations = TestUtils.prepareDTConfigurations();
+    }
+
+    public RecorderTest() throws AbortException, RESTErrorException {
+        connection = PerfSigUtils.createDTServerConnection(dynatraceConfigurations.get(0).name);
     }
 
     @Test
@@ -129,22 +138,19 @@ public class RecorderTest {
 
     @Test
     public void testGetDashboardViaRest() throws Exception {
-        DTServerConnection connection = PerfSigUtils.createDTServerConnection(dynatraceConfigurations.get(0).name);
-        List<de.tsystems.mms.apm.performancesignature.dynatrace.rest.model.Dashboard> dashboardList = connection.getDashboards();
+        List<de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.model.Dashboard> dashboardList = connection.getDashboards();
         assertTrue(!dashboardList.isEmpty());
     }
 
     @Test
     public void testGetAgentsViaRest() throws Exception {
-        DTServerConnection connection = PerfSigUtils.createDTServerConnection(dynatraceConfigurations.get(0).name);
         List<Agent> agentList = connection.getAllAgents();
         assertTrue(!agentList.isEmpty());
     }
 
     @Test
     public void testHotSensorPlacementViaRest() throws Exception {
-        DTServerConnection connection = PerfSigUtils.createDTServerConnection(dynatraceConfigurations.get(0).name);
-        Agent javaAgent = connection.getAllAgents().get(0);
+        Agent javaAgent = connection.getAgents().get(0);
         assertTrue(connection.hotSensorPlacement(javaAgent.getAgentId()));
     }
 
@@ -152,5 +158,15 @@ public class RecorderTest {
     public void testServerVersionViaRest() throws Exception {
         DTServerConnection connection = PerfSigUtils.createDTServerConnection(dynatraceConfigurations.get(0).name);
         assertNotNull(connection.getServerVersion());
+    }
+
+    @Test
+    public void testIncidentsViaRest() throws Exception {
+        DTServerConnection connection = PerfSigUtils.createDTServerConnection(dynatraceConfigurations.get(0).name);
+        Date now = new Date();
+        now.setTime(now.getTime() - 1800000);
+        List<Alert> alerts = connection.getIncidents(now, new Date());
+
+        assertNotNull(alerts);
     }
 }

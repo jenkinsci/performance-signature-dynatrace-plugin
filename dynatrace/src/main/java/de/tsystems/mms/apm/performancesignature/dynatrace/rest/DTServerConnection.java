@@ -1,138 +1,98 @@
 /*
- * Copyright (c) 2008-2015, DYNATRACE LLC
- * All rights reserved.
+ * Copyright (c) 2014 T-Systems Multimedia Solutions GmbH
  *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *     * Redistributions of source code must retain the above copyright notice,
- *       this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright notice,
- *       this list of conditions and the following disclaimer in the documentation
- *       and/or other materials provided with the distribution.
- *     * Neither the name of the dynaTrace software nor the names of its contributors
- *       may be used to endorse or promote products derived from this software without
- *       specific prior written permission.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
- * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
- * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
- * SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
- * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
- * TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
- * BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
- * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
- * DAMAGE.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package de.tsystems.mms.apm.performancesignature.dynatrace.rest;
 
-import com.cloudbees.plugins.credentials.common.UsernamePasswordCredentials;
 import de.tsystems.mms.apm.performancesignature.dynatrace.configuration.CredProfilePair;
 import de.tsystems.mms.apm.performancesignature.dynatrace.configuration.CustomProxy;
 import de.tsystems.mms.apm.performancesignature.dynatrace.configuration.DynatraceServerConfiguration;
+import de.tsystems.mms.apm.performancesignature.dynatrace.configuration.DynatraceServerConfiguration.DescriptorImpl;
+import de.tsystems.mms.apm.performancesignature.dynatrace.model.Alert;
 import de.tsystems.mms.apm.performancesignature.dynatrace.model.DashboardReport;
 import de.tsystems.mms.apm.performancesignature.dynatrace.model.TestRun;
-import de.tsystems.mms.apm.performancesignature.dynatrace.rest.model.*;
+import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.ApiClient;
+import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.ApiException;
+import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.Configuration;
+import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.api.*;
+import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model.*;
+import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.CommandExecutionException;
+import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.ContentRetrievalException;
+import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.model.Agent;
+import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.model.Dashboard;
+import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.model.DashboardList;
+import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.model.Result;
 import de.tsystems.mms.apm.performancesignature.util.PerfSigUIUtils;
-import de.tsystems.mms.apm.performancesignature.util.PerfSigUtils;
 import hudson.FilePath;
 import hudson.ProxyConfiguration;
 import jenkins.model.Jenkins;
-import org.apache.commons.codec.CharEncoding;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.XMLReaderFactory;
 
-import javax.net.ssl.*;
-import javax.xml.bind.*;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
-import java.net.*;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.X509Certificate;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import java.io.File;
+import java.net.Authenticator;
+import java.net.InetSocketAddress;
+import java.net.PasswordAuthentication;
+import java.net.Proxy;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.Inflater;
-import java.util.zip.InflaterInputStream;
 
 public class DTServerConnection {
     private static final Logger LOGGER = Logger.getLogger(DTServerConnection.class.getName());
-    private final String serverUrl;
-    private final boolean verifyCertificate;
-    private final CredProfilePair credProfilePair;
-    /* Dynatrace is unable to provide proper Certs to trust by default
-     Create a trust manager that does not validate certificate chains */
-    private final HostnameVerifier allHostsValid = new HostnameVerifier() {
-        public boolean verify(final String hostname, final SSLSession session) {
-            return true;
-        }
-    };
     private final String systemProfile;
+    private final ApiClient apiClient;
+    private final CredProfilePair credProfilePair;
     private DynatraceServerConfiguration configuration;
-    private Proxy proxy;
-    private SSLContext sc;
 
-    public DTServerConnection(final String serverUrl, final CredProfilePair pair,
-                              final boolean verifyCertificate, final CustomProxy customProxy) {
-        this.serverUrl = serverUrl;
-        this.credProfilePair = pair;
-        this.verifyCertificate = verifyCertificate;
-        this.proxy = Proxy.NO_PROXY;
+    public DTServerConnection(final DynatraceServerConfiguration config, final CredProfilePair pair) {
+        this(config.getServerUrl(), pair, config.isVerifyCertificate(), config.getReadTimeout(), config.getCustomProxy());
+        this.configuration = config;
+    }
+
+    public DTServerConnection(final String serverUrl, final CredProfilePair pair, final boolean verifyCertificate, final int readTimeout, final CustomProxy customProxy) {
         this.systemProfile = pair.getProfile();
+        this.credProfilePair = pair;
 
-        // Install the all-trusting trust manager
-        try {
-            sc = SSLContext.getInstance("TLSv1.2");
-            TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
-                public X509Certificate[] getAcceptedIssuers() {
-                    return null;
-                }
+        this.apiClient = Configuration.getDefaultApiClient();
+        apiClient.setVerifyingSsl(verifyCertificate);
+        apiClient.setBasePath(serverUrl);
+        apiClient.setUsername(pair.getCredentials().getUsername());
+        apiClient.setPassword(pair.getCredentials().getPassword().getPlainText());
+        //apiClient.setDebugging(true);
+        apiClient.getHttpClient().setReadTimeout(readTimeout == 0 ? DescriptorImpl.defaultReadTimeout : readTimeout, TimeUnit.SECONDS);
 
-                public void checkClientTrusted(final X509Certificate[] certs, final String authType) {
-                }
-
-                public void checkServerTrusted(final X509Certificate[] certs, final String authType) {
-                }
-            }
-            };
-            sc.init(null, trustAllCerts, new java.security.SecureRandom());
-        } catch (NoSuchAlgorithmException | KeyManagementException e) {
-            LOGGER.severe(ExceptionUtils.getFullStackTrace(e));
-        }
-
+        Proxy proxy = Proxy.NO_PROXY;
         if (customProxy != null) {
             Jenkins jenkins = PerfSigUIUtils.getInstance();
             ProxyConfiguration proxyConfiguration = jenkins.proxy;
             if (customProxy.isUseJenkinsProxy() && proxyConfiguration != null) {
-                setProxy(proxyConfiguration.name, proxyConfiguration.port, proxyConfiguration.getUserName(), proxyConfiguration.getPassword());
+                proxy = createProxy(proxyConfiguration.name, proxyConfiguration.port, proxyConfiguration.getUserName(), proxyConfiguration.getPassword());
             } else {
-                setProxy(customProxy.getProxyServer(), customProxy.getProxyPort(), customProxy.getProxyUser(), customProxy.getProxyPassword());
+                proxy = createProxy(customProxy.getProxyServer(), customProxy.getProxyPort(), customProxy.getProxyUser(), customProxy.getProxyPassword());
             }
         }
+        apiClient.getHttpClient().setProxy(proxy);
     }
 
-    public DTServerConnection(final DynatraceServerConfiguration config, final CredProfilePair pair) {
-        this(config.getServerUrl(), pair, config.isVerifyCertificate(), config.getCustomProxy());
-        this.configuration = config;
-    }
-
-    private void setProxy(String host, int port, final String proxyUser, final String proxyPassword) {
+    private Proxy createProxy(String host, int port, final String proxyUser, final String proxyPassword) {
+        Proxy proxy = Proxy.NO_PROXY;
         if (StringUtils.isNotBlank(host) && port > 0) {
-            this.proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(host, port));
+            proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(host, port));
             if (StringUtils.isNotBlank(proxyUser)) {
                 Authenticator authenticator = new Authenticator() {
                     public PasswordAuthentication getPasswordAuthentication() {
@@ -142,125 +102,29 @@ public class DTServerConnection {
                 Authenticator.setDefault(authenticator);
             }
         }
-    }
-
-    public CredProfilePair getCredProfilePair() {
-        return credProfilePair;
+        return proxy;
     }
 
     public DynatraceServerConfiguration getConfiguration() {
         return configuration;
     }
 
-    @Deprecated
-    public TestRun getTestRunFromXML(final String uuid) {
-        ManagementURLBuilder builder = new ManagementURLBuilder();
-        builder.setServerAddress(serverUrl);
-        URL url = builder.testRunDetailsURL(systemProfile, uuid);
-        try {
-            XMLReader xr = XMLReaderFactory.createXMLReader();
-            TestRunDetailsXMLHandler handler = new TestRunDetailsXMLHandler();
-            xr.setContentHandler(handler);
-            xr.parse(new InputSource(getInputStream(url)));
-            return handler.getParsedObjects();
-        } catch (Exception ex) {
-            throw new ContentRetrievalException(ExceptionUtils.getStackTrace(ex) + "Could not retrieve records from Dynatrace server: " + url.toString(), ex);
-        }
+    public CredProfilePair getCredProfilePair() {
+        return credProfilePair;
     }
 
-    public DashboardReport getDashboardReportFromXML(final String dashBoardName, final String sessionName, final String testCaseName) {
-        ReportURLBuilder builder = new ReportURLBuilder();
-        builder.setServerAddress(serverUrl).setDashboardName(dashBoardName).setSource(sessionName).setXMLReport(true);
-        URL url = builder.buildURL();
+    public ApiClient getApiClient() {
+        return apiClient;
+    }
+
+    public DashboardReport getDashboardReportFromXML(final String dashBoardName, final String sessionId, final String testCaseName) {
+        CustomXMLApi api = new CustomXMLApi(apiClient);
         try {
-            JAXBContext jaxbContext = JAXBContext.newInstance(DashboardReport.class);
-            Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-            DashboardReport dashboardReport = (DashboardReport) jaxbUnmarshaller.unmarshal(getInputStream(url));
+            DashboardReport dashboardReport = api.getXMLDashboard(dashBoardName, sessionId);
             dashboardReport.setName(testCaseName);
             return dashboardReport;
         } catch (Exception ex) {
-            throw new ContentRetrievalException(ExceptionUtils.getStackTrace(ex) + "could not retrieve records from Dynatrace server: " + url.toString(), ex);
-        }
-    }
-
-    private InputStream getInputStream(final URL documentURL) throws IOException {
-        URLConnection conn = documentURL.openConnection(proxy);
-        addAuthenticationHeader(conn);
-        return handleInputStream(conn);
-    }
-
-    private void addAuthenticationHeader(final URLConnection conn) throws UnsupportedEncodingException {
-        UsernamePasswordCredentials credentials = PerfSigUtils.getCredentials(credProfilePair.getCredentialsId());
-        String userPassword = credentials.getUsername() + ":" + credentials.getPassword().getPlainText();
-        String token = DatatypeConverter.printBase64Binary(userPassword.getBytes(CharEncoding.UTF_8));
-        conn.setRequestProperty("Authorization", "Basic" + " " + token);
-        conn.setUseCaches(false);
-        conn.setRequestProperty("Accept-Encoding", "gzip, deflate");
-        conn.setReadTimeout(120 * 1000);
-
-        if (conn instanceof HttpsURLConnection && !verifyCertificate) {
-            HttpsURLConnection httpsConn = (HttpsURLConnection) conn;
-            httpsConn.setHostnameVerifier(allHostsValid);
-            httpsConn.setSSLSocketFactory(sc.getSocketFactory());
-        }
-    }
-
-    private void addPostHeaders(final URLConnection conn, final String parameters) throws IOException {
-        if (parameters == null) {
-            return;
-        }
-        conn.setDoOutput(true);
-        IOUtils.write(parameters, conn.getOutputStream());
-    }
-
-    private InputStream handleInputStream(final URLConnection conn) throws IOException {
-        handleHTTPResponseCode((HttpURLConnection) conn);
-        InputStream resultingInputStream;
-        String encoding = conn.getContentEncoding();
-        if (encoding != null && encoding.equalsIgnoreCase("gzip")) {
-            resultingInputStream = new GZIPInputStream(conn.getInputStream());
-        } else if (encoding != null && encoding.equalsIgnoreCase("deflate")) {
-            resultingInputStream = new InflaterInputStream(conn.getInputStream(), new Inflater(true));
-        } else {
-            resultingInputStream = conn.getInputStream();
-        }
-        return resultingInputStream;
-    }
-
-    private ProfileXMLHandler getProfileXMLHandler(final URL url) throws IOException, SAXException {
-        ProfileXMLHandler handler = new ProfileXMLHandler();
-        XMLReader xr = XMLReaderFactory.createXMLReader();
-        xr.setContentHandler(handler);
-        xr.parse(new InputSource(getInputStream(url)));
-
-        return handler;
-    }
-
-    @Deprecated
-    private RESTStringArrayXMLHandler getStringArrayXMLHandler(final URL url) throws IOException, SAXException {
-        RESTStringArrayXMLHandler handler = new RESTStringArrayXMLHandler();
-        XMLReader xr = XMLReaderFactory.createXMLReader();
-        xr.setContentHandler(handler);
-        xr.parse(new InputSource(getInputStream(url)));
-
-        return handler;
-    }
-
-    private void handleHTTPResponseCode(final HttpURLConnection httpURLConnection) throws IOException {
-        if (httpURLConnection.getResponseCode() >= 300) {
-            if (httpURLConnection.getResponseCode() == 401) {
-                throw new RESTErrorException("invalid username/password. ResponseCode " + httpURLConnection.getResponseCode());
-            }
-            httpURLConnection.setReadTimeout(15000);
-            RESTXMLError error;
-            try {
-                JAXBContext jaxbContext = JAXBContext.newInstance(RESTXMLError.class);
-                Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-                error = (RESTXMLError) jaxbUnmarshaller.unmarshal(httpURLConnection.getErrorStream());
-            } catch (JAXBException e) {
-                throw new RESTErrorException("unexpected response code HTTP " + httpURLConnection.getResponseCode());
-            }
-            throw new RESTErrorException(error.getReason());
+            throw new ContentRetrievalException(ExceptionUtils.getStackTrace(ex) + "could not retrieve records from Dynatrace server: " + dashBoardName, ex);
         }
     }
 
@@ -274,182 +138,109 @@ public class DTServerConnection {
         }
     }
 
-    private Result getResultFromXML(URL commandURL) throws JAXBException, IOException {
-        JAXBContext jaxbContext = JAXBContext.newInstance(Result.class);
-        Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-        return (Result) jaxbUnmarshaller.unmarshal(getInputStream(commandURL));
-    }
-
-    private Result getResultFromXML(URLConnection conn) throws JAXBException, IOException {
-        JAXBContext jaxbContext = JAXBContext.newInstance(Result.class);
-        Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-        return (Result) jaxbUnmarshaller.unmarshal(handleInputStream(conn));
-    }
-
-    public String getServerVersion() throws CommandExecutionException {
+    public String getServerVersion() {
+        ServerManagementApi api = new ServerManagementApi(apiClient);
         try {
-            ManagementURLBuilder builder = new ManagementURLBuilder();
-            builder.setServerAddress(serverUrl);
-            URL commandURL = builder.serverVersionURL();
-
-            Result result = getResultFromXML(commandURL);
-            return result.getValue();
-        } catch (Exception ex) {
-            throw new CommandExecutionException("error getting version of server: " + ex.getMessage(), ex);
+            return api.getVersion().getResult();
+        } catch (ApiException ex) {
+            throw new CommandExecutionException("error getting version of server: " + ex.getResponseBody(), ex);
         }
     }
 
-    public boolean reanalyzeSession(final String sessionName) {
+    public String storeSession(final String sessionName, final Date timeframeStart, final Date timeframeEnd, final String recordingOption,
+                               final boolean sessionLocked, final boolean appendTimestamp) {
+        LiveSessionsApi api = new LiveSessionsApi(apiClient);
         try {
-            ManagementURLBuilder builder = new ManagementURLBuilder();
-            builder.setServerAddress(serverUrl);
-            URL commandURL = builder.reanalyzeSessionURL(sessionName);
+            SessionStoringOptions options = new SessionStoringOptions(sessionName, "Session recorded by Jenkins", appendTimestamp,
+                    recordingOption, sessionLocked, timeframeStart, timeframeEnd);
 
-            Result result = getResultFromXML(commandURL);
-            return result.isResultTrue();
-        } catch (Exception ex) {
-            throw new CommandExecutionException("error reanalyzing session: " + ex.getMessage(), ex);
-        }
-    }
-
-    public boolean reanalyzeSessionStatus(final String sessionName) {
-        try {
-            ManagementURLBuilder builder = new ManagementURLBuilder();
-            builder.setServerAddress(serverUrl);
-            URL commandURL = builder.reanalyzeSessionStatusURL(sessionName);
-
-            Result result = getResultFromXML(commandURL);
-            return result.isResultTrue();
-        } catch (Exception ex) {
-            throw new CommandExecutionException("error reanalyzing session: " + ex.getMessage(), ex);
-        }
-    }
-
-    public String storePurePaths(final String sessionName, final Date timeframeStart, final Date timeframeEnd, final String recordingOption,
-                                 final boolean sessionLocked, final boolean appendTimestamp) {
-        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.S");
-        try {
-            ManagementURLBuilder builder = new ManagementURLBuilder();
-            builder.setServerAddress(serverUrl);
-            URL commandURL = builder.storePurePathsURL(systemProfile, sessionName, df.format(timeframeStart), df.format(timeframeEnd), recordingOption,
-                    sessionLocked, appendTimestamp);
-
-            Result result = getResultFromXML(commandURL);
-            return result.getValue();
-        } catch (Exception ex) {
-            throw new CommandExecutionException("error storing purepaths: " + ex.getMessage(), ex);
+            return api.storeSession(systemProfile, options);
+        } catch (ApiException ex) {
+            throw new CommandExecutionException("error while storing purepaths: " + ex.getResponseBody(), ex);
         }
     }
 
     public String startRecording(final String sessionName, final String description, final String recordingOption,
-                                 final boolean sessionLocked, final boolean isTimeStampAllowed) {
+                                 final boolean sessionLocked, final boolean appendTimestamp) {
+        LiveSessionsApi api = new LiveSessionsApi(apiClient);
         try {
-            ManagementURLBuilder builder = new ManagementURLBuilder();
-            builder.setServerAddress(serverUrl);
-            URL commandURL = builder.startRecordingURL(systemProfile, sessionName, description, recordingOption, sessionLocked, isTimeStampAllowed);
-            URLConnection conn = commandURL.openConnection(proxy);
-            addAuthenticationHeader(conn);
-            addPostHeaders(conn, builder.getPostParameters());
-
-            Result result = getResultFromXML(conn);
-            return result.getValue();
-        } catch (Exception ex) {
-            throw new CommandExecutionException("error start recording session: " + ex.getMessage(), ex);
+            SessionRecordingOptions options = new SessionRecordingOptions(sessionName, description, appendTimestamp, recordingOption, sessionLocked);
+            return api.postRecording(systemProfile, options);
+        } catch (ApiException ex) {
+            throw new CommandExecutionException("error while starting session recording: " + ex.getResponseBody(), ex);
         }
     }
 
     public String stopRecording() {
+        LiveSessionsApi api = new LiveSessionsApi(apiClient);
         try {
-            ManagementURLBuilder builder = new ManagementURLBuilder();
-            builder.setServerAddress(serverUrl);
-            URL commandURL = builder.stopRecordingURL(systemProfile);
-
-            Result result = getResultFromXML(commandURL);
-            return result.getValue();
-        } catch (Exception ex) {
-            throw new CommandExecutionException("error stop recording session: " + ex.getMessage(), ex);
+            return api.stopRecording(systemProfile, new RecordingStatus(false));
+        } catch (ApiException ex) {
+            throw new CommandExecutionException("error while stopping session recording: " + ex.getResponseBody(), ex);
         }
     }
 
-    public List<String> getSessions() {
+    public boolean getRecordingStatus() {
+        LiveSessionsApi api = new LiveSessionsApi(apiClient);
         try {
-            ManagementURLBuilder builder = new ManagementURLBuilder();
-            builder.setServerAddress(serverUrl);
-            URL commandURL = builder.listSessionsURL();
+            return api.getRecording(systemProfile).getRecording();
+        } catch (ApiException ex) {
+            throw new CommandExecutionException("error querying session recording status: " + ex.getResponseBody(), ex);
+        }
+    }
 
-            RESTStringArrayXMLHandler handler = getStringArrayXMLHandler(commandURL);
-            return handler.getObjects();
-        } catch (Exception ex) {
-            throw new CommandExecutionException("error listing sessions: " + ex.getMessage(), ex);
+    public Sessions getSessions() {
+        StoredSessionsApi api = new StoredSessionsApi(apiClient);
+        try {
+            return api.listStoredSessions();
+        } catch (ApiException ex) {
+            throw new CommandExecutionException("error while querying sessions: " + ex.getResponseBody(), ex);
         }
     }
 
     public List<Dashboard> getDashboards() {
+        CustomXMLApi api = new CustomXMLApi(apiClient);
         try {
-            ManagementURLBuilder builder = new ManagementURLBuilder();
-            builder.setServerAddress(serverUrl);
-            URL commandURL = builder.listDashboardsURL();
-
-            JAXBContext jaxbContext = JAXBContext.newInstance(DashboardList.class);
-            Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-            DashboardList dashboardList = (DashboardList) jaxbUnmarshaller.unmarshal(new InputSource(getInputStream(commandURL)));
+            DashboardList dashboardList = api.listDashboards();
             return dashboardList.getDashboards();
         } catch (Exception ex) {
-            throw new CommandExecutionException("error listing profiles: " + ex.getMessage(), ex);
+            throw new CommandExecutionException("error while querying dashboards: " + ex.getMessage(), ex);
         }
     }
 
-    public List<BaseConfiguration> getSystemProfiles() {
+    public SystemProfiles getSystemProfiles() {
+        SystemProfilesApi api = new SystemProfilesApi(apiClient);
         try {
-            ManagementURLBuilder builder = new ManagementURLBuilder();
-            builder.setServerAddress(serverUrl);
-            URL commandURL = builder.listProfilesURL();
-
-            ProfileXMLHandler handler = getProfileXMLHandler(commandURL);
-            return handler.getConfigurationObjects();
-        } catch (Exception ex) {
-            throw new CommandExecutionException("error listing profiles: " + ex.getMessage(), ex);
+            return api.getProfiles();
+        } catch (ApiException ex) {
+            throw new CommandExecutionException("error while querying profiles: " + ex.getResponseBody(), ex);
         }
     }
 
-    public List<BaseConfiguration> getProfileConfigurations() {
+    public List<SystemProfileConfiguration> getProfileConfigurations() {
+        SystemProfilesApi api = new SystemProfilesApi(apiClient);
         try {
-            ManagementURLBuilder builder = new ManagementURLBuilder();
-            builder.setServerAddress(serverUrl);
-            URL commandURL = builder.listConfigurationsURL(systemProfile);
-
-            ProfileXMLHandler handler = getProfileXMLHandler(commandURL);
-            return handler.getConfigurationObjects();
-        } catch (Exception ex) {
-            throw new CommandExecutionException("error listing configurations of profile " + systemProfile + ": " + ex.getMessage(), ex);
+            return api.getSystemProfileConfigurations(systemProfile).getConfigurations();
+        } catch (ApiException ex) {
+            throw new CommandExecutionException("error while querying configurations of profile " + systemProfile + ": " + ex.getResponseBody(), ex);
         }
     }
 
-    public boolean activateConfiguration(final String configuration) {
+    public void activateConfiguration(final String configuration) {
+        SystemProfilesApi api = new SystemProfilesApi(apiClient);
         try {
-            ManagementURLBuilder builder = new ManagementURLBuilder();
-            builder.setServerAddress(serverUrl);
-            URL commandURL = builder.activateConfigurationURL(systemProfile, configuration);
-
-            Result result = getResultFromXML(commandURL);
-            return result.isResultTrue();
-        } catch (Exception ex) {
-            throw new CommandExecutionException("error activating configuration: " + ex.getMessage());
+            api.putSystemProfileConfigurationStatus(systemProfile, configuration, new ActivationStatus("ENABLED"));
+        } catch (ApiException ex) {
+            throw new CommandExecutionException("error while activating configuration: " + ex.getResponseBody());
         }
     }
 
     public List<Agent> getAllAgents() {
+        CustomXMLApi api = new CustomXMLApi(apiClient);
         try {
-            ManagementURLBuilder builder = new ManagementURLBuilder();
-            builder.setServerAddress(serverUrl);
-            URL commandURL = builder.listAgentsURL();
-
-            JAXBContext jaxbContext = JAXBContext.newInstance(AgentList.class);
-            Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-            AgentList agentList = (AgentList) jaxbUnmarshaller.unmarshal(getInputStream(commandURL));
-            return agentList.getAgents();
+            return api.getAgents();
         } catch (Exception ex) {
-            throw new CommandExecutionException("error listing agents: " + ex.getMessage(), ex);
+            throw new CommandExecutionException("error while querying agents: " + ex.getMessage(), ex);
         }
     }
 
@@ -457,153 +248,127 @@ public class DTServerConnection {
         List<Agent> agents = getAllAgents();
         List<Agent> filteredAgents = new ArrayList<>();
         for (Agent agent : agents) {
-            if (agent.getSystemProfile().equals(systemProfile))
+            if (systemProfile.equals(agent.getSystemProfile()))
                 filteredAgents.add(agent);
         }
         return filteredAgents;
     }
 
     public boolean hotSensorPlacement(final int agentId) {
+        CustomXMLApi api = new CustomXMLApi(apiClient);
         try {
-            ManagementURLBuilder builder = new ManagementURLBuilder();
-            builder.setServerAddress(serverUrl);
-            URL commandURL = builder.hotSensorPlacementURL(agentId);
-
-            JAXBContext jaxbContext = JAXBContext.newInstance(Result.class);
-            Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-            Result result = (Result) jaxbUnmarshaller.unmarshal(getInputStream(commandURL));
+            Result result = api.hotSensorPlacement(agentId);
             return result.isResultTrue();
         } catch (Exception ex) {
-            throw new CommandExecutionException("error doing hot sensor placement: " + ex.getMessage(), ex);
+            throw new CommandExecutionException("error while doing hot sensor placement: " + ex.getMessage(), ex);
         }
     }
 
     public boolean getPDFReport(final String sessionName, final String comparedSessionName, final String dashboard, final FilePath file) {
+        CustomXMLApi api = new CustomXMLApi(apiClient);
         try {
-            ReportURLBuilder builder = new ReportURLBuilder();
-            builder.setServerAddress(serverUrl)
-                    .setDashboardName(dashboard)
-                    .setSource(sessionName)
-                    .setType("PDF");
-            if (comparedSessionName != null) {
-                builder.setComparison(comparedSessionName);
-            }
-            file.copyFrom(getInputStream(builder.buildURL()));
+            File tmpFile = api.getPDFReport(dashboard, sessionName, comparedSessionName, "PDF");
+            file.copyFrom(new FilePath(tmpFile));
             return true;
         } catch (Exception ex) {
-            throw new CommandExecutionException("error downloading PDF Report: " + ex.getMessage(), ex);
+            throw new CommandExecutionException("error while downloading PDF Report: " + ex.getMessage(), ex);
         }
     }
 
-    public boolean downloadSession(final String sessionName, final FilePath outputFile) {
+    public boolean downloadSession(final String sessionId, final FilePath outputFile, boolean removeConfidentialStrings) {
+        StoredSessionsApi api = new StoredSessionsApi(apiClient);
         try {
-            ManagementURLBuilder builder = new ManagementURLBuilder();
-            builder.setServerAddress(serverUrl);
-
-            outputFile.copyFrom(getInputStream(builder.downloadSessionURL(sessionName)));
+            File tmpFile = api.getStoredSession(sessionId, removeConfidentialStrings, null, null);
+            outputFile.copyFrom(new FilePath(tmpFile));
             return true;
         } catch (Exception ex) {
-            throw new CommandExecutionException("error downloading session: " + ex.getMessage(), ex);
+            throw new CommandExecutionException("error while downloading session: " + ex.getMessage(), ex);
         }
     }
 
     public String threadDump(final String agentName, final String hostName, final int processId, final boolean sessionLocked) {
+        CustomXMLApi api = new CustomXMLApi(apiClient);
         try {
-            ManagementURLBuilder builder = new ManagementURLBuilder();
-            builder.setServerAddress(serverUrl);
-            URL commandURL = builder.threadDumpURL(systemProfile, agentName, hostName, processId, sessionLocked);
-            URLConnection conn = commandURL.openConnection(proxy);
-            addAuthenticationHeader(conn);
-            addPostHeaders(conn, builder.getPostParameters());
-
-            Result result = getResultFromXML(conn);
+            Result result = api.createThreadDump(systemProfile, agentName, hostName, processId, sessionLocked);
             return result.getValue();
         } catch (Exception ex) {
-            throw new CommandExecutionException("error with thread dump: " + ex.getMessage(), ex);
+            throw new CommandExecutionException("error while creating thread dump: " + ex.getMessage(), ex);
         }
     }
 
     public boolean threadDumpStatus(final String threadDump) {
+        CustomXMLApi api = new CustomXMLApi(apiClient);
         try {
-            ManagementURLBuilder builder = new ManagementURLBuilder();
-            builder.setServerAddress(serverUrl);
-            URL commandURL = builder.threadDumpStatusURL(systemProfile, threadDump);
-
-            Result result = getResultFromXML(commandURL);
-            return result.isResultTrue();
+            Result result = api.getThreadDumpStatus(systemProfile, threadDump);
+            return result.isSuccessTrue();
         } catch (Exception ex) {
-            throw new CommandExecutionException("error with thread dump status: " + ex.getMessage(), ex);
+            throw new CommandExecutionException("error while querying thread dump status: " + ex.getMessage(), ex);
         }
     }
 
     public String memoryDump(final String agentName, final String hostName, final int processId, final String dumpType,
-                             final boolean sessionLocked, final boolean captureStrings, final boolean capturePrimitives, final boolean autoPostProcess, final boolean dogC) {
+                             final boolean sessionLocked, final boolean captureStrings, final boolean capturePrimitives, final boolean autoPostProcess,
+                             final boolean doGC) {
+        CustomXMLApi api = new CustomXMLApi(apiClient);
         try {
-            ManagementURLBuilder builder = new ManagementURLBuilder();
-            builder.setServerAddress(serverUrl);
-            URL commandURL = builder.memoryDumpURL(systemProfile, agentName, hostName, processId, dumpType, sessionLocked, captureStrings, capturePrimitives, autoPostProcess, dogC);
-            URLConnection conn = commandURL.openConnection(proxy);
-            addAuthenticationHeader(conn);
-            addPostHeaders(conn, builder.getPostParameters());
-
-            Result result = getResultFromXML(conn);
+            Result result = api.createMemoryDump(systemProfile, agentName, hostName, processId, dumpType, sessionLocked, captureStrings, capturePrimitives,
+                    autoPostProcess, doGC);
             return result.getValue();
         } catch (Exception ex) {
-            throw new CommandExecutionException("error with memory dump: " + ex.getMessage(), ex);
+            throw new CommandExecutionException("error while creating memory dump: " + ex.getMessage(), ex);
         }
     }
 
     public boolean memoryDumpStatus(final String memoryDump) {
+        CustomXMLApi api = new CustomXMLApi(apiClient);
         try {
-            ManagementURLBuilder builder = new ManagementURLBuilder();
-            builder.setServerAddress(serverUrl);
-            URL commandURL = builder.memoryDumpStatusURL(systemProfile, memoryDump);
-
-            Result result = getResultFromXML(commandURL);
-            return result.isResultTrue();
+            Result result = api.getMemoryDumpStatus(systemProfile, memoryDump);
+            return result.isSuccessTrue();
         } catch (Exception ex) {
-            throw new CommandExecutionException("error with memory dump status: " + ex.getMessage(), ex);
+            throw new CommandExecutionException("error while querying memory dump status: " + ex.getMessage(), ex);
         }
     }
 
     public String registerTestRun(final int versionBuild) {
+        TestAutomationApi api = new TestAutomationApi(apiClient);
         try {
-            RegisterTestRunRequest requestContent = new RegisterTestRunRequest();
-            requestContent.setVersionBuild(String.valueOf(versionBuild));
-            requestContent.setCategory("performance");
+            TestRunDefinition body = new TestRunDefinition(versionBuild, "performance");
+            TestRun testRun = api.postTestRun(systemProfile, body);
+            return testRun.getId();
+        } catch (ApiException ex) {
+            throw new CommandExecutionException("error registering test run: " + ex.getResponseBody(), ex);
+        }
+    }
 
-            /*requestContent.setVersionMajor(versionMajor);
-            requestContent.setVersionMinor(versionMinor);
-            requestContent.setVersionRevision(versionRevision);
-            requestContent.setVersionMilestone(versionMilestone); */
+    public TestRun finishTestRun(String testRunID) {
+        TestAutomationApi api = new TestAutomationApi(apiClient);
+        try {
+            return api.finishTestRun(systemProfile, testRunID);
+        } catch (ApiException ex) {
+            throw new CommandExecutionException("error finishing test run: " + ex.getResponseBody(), ex);
+        }
+    }
 
-            StringWriter writer = new StringWriter();
-            JAXBContext context = JAXBContext.newInstance(requestContent.getClass());
-            Marshaller m = context.createMarshaller();
-            m.marshal(requestContent, writer);
-            writer.flush();
-            String testMetaDataPostXml = writer.toString();
+    public TestRun getTestRun(String testRunId) {
+        TestAutomationApi api = new TestAutomationApi(apiClient);
+        try {
+            return api.getTestrunById(systemProfile, testRunId);
+        } catch (ApiException ex) {
+            throw new CommandExecutionException("error while getting test run details: " + ex.getResponseBody(), ex);
+        }
+    }
 
-            ManagementURLBuilder builder = new ManagementURLBuilder();
-            builder.setServerAddress(serverUrl);
-            URL commandURL = builder.registerTestRunURL(systemProfile);
-            HttpURLConnection conn = (HttpURLConnection) commandURL.openConnection(proxy);
-            conn.setRequestMethod("POST");
-            addAuthenticationHeader(conn);
-            conn.setRequestProperty("Content-Type", "text/xml");
-
-            conn.setDoOutput(true);
-            IOUtils.write(testMetaDataPostXml, conn.getOutputStream());
-
-            handleHTTPResponseCode(conn);
-            TestMetaDataXMLHandler handler = new TestMetaDataXMLHandler();
-            XMLReader xr = XMLReaderFactory.createXMLReader();
-            xr.setContentHandler(handler);
-            xr.parse(new InputSource(handleInputStream(conn)));
-
-            return handler.getTestMetaDataUUID();
-        } catch (Exception ex) {
-            throw new CommandExecutionException("error setting testdata in startTest: " + ex.getMessage(), ex);
+    public List<Alert> getIncidents(Date from, Date to) {
+        AlertsIncidentsAndEventsApi api = new AlertsIncidentsAndEventsApi(apiClient);
+        try {
+            List<Alert> incidents = new ArrayList<>();
+            Alerts alerts = api.getIncidents(systemProfile, null, "Created", from, to);
+            for (AlertReference alertReference : alerts.getAlerts()) {
+                incidents.add(api.getIncident(alertReference.getId()));
+            }
+            return incidents;
+        } catch (ApiException ex) {
+            throw new CommandExecutionException("error while getting incident details: " + ex.getResponseBody(), ex);
         }
     }
 }

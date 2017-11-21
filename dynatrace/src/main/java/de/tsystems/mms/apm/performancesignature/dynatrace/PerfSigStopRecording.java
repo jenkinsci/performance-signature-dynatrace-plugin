@@ -16,8 +16,9 @@
 
 package de.tsystems.mms.apm.performancesignature.dynatrace;
 
+import de.tsystems.mms.apm.performancesignature.dynatrace.model.TestRun;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.DTServerConnection;
-import de.tsystems.mms.apm.performancesignature.dynatrace.rest.RESTErrorException;
+import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.RESTErrorException;
 import de.tsystems.mms.apm.performancesignature.util.PerfSigUtils;
 import hudson.Extension;
 import hudson.FilePath;
@@ -32,7 +33,6 @@ import jenkins.tasks.SimpleBuildStep;
 import org.apache.commons.lang.StringUtils;
 import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
-import org.kohsuke.stapler.DataBoundSetter;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -41,10 +41,7 @@ import java.util.Date;
 import java.util.List;
 
 public class PerfSigStopRecording extends Builder implements SimpleBuildStep {
-    private static final int reanalyzeSessionTimeout = 5 * 60000; //==1 minute
-    private static final int reanalyzeSessionPollingInterval = 5000; //==5 seconds
     private final String dynatraceProfile;
-    private boolean reanalyzeSession;
 
     @DataBoundConstructor
     public PerfSigStopRecording(final String dynatraceProfile) {
@@ -54,75 +51,53 @@ public class PerfSigStopRecording extends Builder implements SimpleBuildStep {
     @Override
     public void perform(@Nonnull final Run<?, ?> run, @Nonnull final FilePath workspace, @Nonnull final Launcher launcher, @Nonnull final TaskListener listener)
             throws InterruptedException, IOException {
-        PrintStream logger = listener.getLogger();
         DTServerConnection connection = PerfSigUtils.createDTServerConnection(dynatraceProfile);
+        final List<PerfSigEnvInvisAction> envVars = run.getActions(PerfSigEnvInvisAction.class);
+
+        PerfSigEnvInvisAction buildEnvVars = null;
+        String sessionId = null;
+        String testRunId = null;
+        Date timeframeStop = new Date();
+        PrintStream logger = listener.getLogger();
 
         logger.println(Messages.PerfSigStopRecording_StoppingSessionRecording());
-        final List<PerfSigEnvInvisAction> envVars = run.getActions(PerfSigEnvInvisAction.class);
-        PerfSigEnvInvisAction buildEnvVars = null;
-        Date timeframeStart = null;
         if (!envVars.isEmpty()) {
             buildEnvVars = envVars.get(envVars.size() - 1);
-            timeframeStart = buildEnvVars.getTimeframeStart();
+            buildEnvVars.setTimeframeStop(timeframeStop);
+            sessionId = buildEnvVars.getSessionId();
+            testRunId = buildEnvVars.getTestRunId();
         }
 
-        String sessionName;
-        if (timeframeStart != null) {
-            Date timeframeStop = new Date();
+        if (testRunId != null) {
+            TestRun testRun = connection.finishTestRun(testRunId);
+            logger.println("finished test run " + testRun.getId());
+        }
+
+        if (buildEnvVars != null && sessionId == null) {
+            Date timeframeStart = buildEnvVars.getTimeframeStart();
             logger.println(Messages.PerfSigStopRecording_TimeframeStart(timeframeStart));
             logger.println(Messages.PerfSigStopRecording_TimeframeStop(timeframeStop));
-            sessionName = connection.storePurePaths(buildEnvVars.getSessionName(), timeframeStart, timeframeStop,
+            sessionId = connection.storeSession(buildEnvVars.getSessionName(), timeframeStart, timeframeStop,
                     PerfSigStartRecording.DescriptorImpl.defaultRecordingOption, PerfSigStartRecording.DescriptorImpl.defaultLockSession, false);
+            buildEnvVars.setSessionId(sessionId);
         } else {
-            sessionName = connection.stopRecording();
+            sessionId = connection.stopRecording();
         }
 
-        if (StringUtils.isBlank(sessionName)) {
+        if (StringUtils.isBlank(sessionId)) {
             throw new RESTErrorException(Messages.PerfSigStopRecording_InternalError());
         }
-        if (buildEnvVars != null) {
-            buildEnvVars.setSessionName(sessionName);
-        }
-        logger.println(Messages.PerfSigStopRecording_StoppedSessionRecording(connection.getCredProfilePair().getProfile(), sessionName));
-
-        if (getReanalyzeSession()) {
-            logger.println(Messages.PerfSigStopRecording_ReanalyzeSession());
-            boolean reanalyzeFinished = connection.reanalyzeSessionStatus(sessionName);
-            if (connection.reanalyzeSession(sessionName)) {
-                int timeout = reanalyzeSessionTimeout;
-                while ((!reanalyzeFinished) && (timeout > 0)) {
-                    logger.println(Messages.PerfSigStopRecording_QueryingSession());
-                    Thread.sleep(reanalyzeSessionPollingInterval);
-                    timeout -= reanalyzeSessionPollingInterval;
-                    reanalyzeFinished = connection.reanalyzeSessionStatus(sessionName);
-                }
-                if (reanalyzeFinished) {
-                    logger.println(Messages.PerfSigStopRecording_SessionReanalysisFinished());
-                } else {
-                    throw new RESTErrorException(Messages.PerfSigStopRecording_TimeoutRaised());
-                }
-            }
-        }
+        logger.println(Messages.PerfSigStopRecording_StoppedSessionRecording(connection.getCredProfilePair().getProfile(),
+                buildEnvVars != null ? buildEnvVars.getSessionName() : sessionId));
     }
 
     public String getDynatraceProfile() {
         return dynatraceProfile;
     }
 
-    public boolean getReanalyzeSession() {
-        return reanalyzeSession;
-    }
-
-    @DataBoundSetter
-    public void setReanalyzeSession(final boolean reanalyzeSession) {
-        this.reanalyzeSession = reanalyzeSession;
-    }
-
     @Symbol("stopSession")
     @Extension
     public static final class DescriptorImpl extends BuildStepDescriptor<Builder> {
-        public static final boolean defaultReanalyzeSession = false;
-
         public ListBoxModel doFillDynatraceProfileItems() {
             return PerfSigUtils.listToListBoxModel(PerfSigUtils.getDTConfigurations());
         }

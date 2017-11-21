@@ -18,9 +18,8 @@ package de.tsystems.mms.apm.performancesignature.dynatrace;
 
 import de.tsystems.mms.apm.performancesignature.dynatrace.configuration.CredProfilePair;
 import de.tsystems.mms.apm.performancesignature.dynatrace.configuration.DynatraceServerConfiguration;
-import de.tsystems.mms.apm.performancesignature.dynatrace.rest.CommandExecutionException;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.DTServerConnection;
-import de.tsystems.mms.apm.performancesignature.dynatrace.rest.model.Agent;
+import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.model.Agent;
 import de.tsystems.mms.apm.performancesignature.util.PerfSigUtils;
 import hudson.Extension;
 import hudson.FilePath;
@@ -58,20 +57,15 @@ public class PerfSigActivateConfiguration extends Builder implements SimpleBuild
         DTServerConnection connection = PerfSigUtils.createDTServerConnection(dynatraceProfile);
 
         logger.println(Messages.PerfSigActivateConfiguration_ActivatingProfileConfiguration());
-        boolean result = connection.activateConfiguration(configuration);
-        if (!result) {
-            throw new CommandExecutionException(Messages.PerfSigActivateConfiguration_InternalError());
-        }
-        logger.println(Messages.PerfSigActivateConfiguration_SuccessfullyActivated(connection.getCredProfilePair().getProfile()));
+        connection.activateConfiguration(configuration);
+        logger.println(Messages.PerfSigActivateConfiguration_SuccessfullyActivated(dynatraceProfile));
 
         for (Agent agent : connection.getAgents()) {
-            if (agent.getSystemProfile().equalsIgnoreCase(connection.getCredProfilePair().getProfile())) {
-                boolean hotSensorPlacement = connection.hotSensorPlacement(agent.getAgentId());
-                if (hotSensorPlacement) {
-                    logger.println(Messages.PerfSigActivateConfiguration_HotSensorPlacementDone(agent.getName()));
-                } else {
-                    logger.println(Messages.PerfSigActivateConfiguration_FailureActivation(agent.getName()));
-                }
+            boolean hotSensorPlacement = connection.hotSensorPlacement(agent.getAgentId());
+            if (hotSensorPlacement) {
+                logger.println(Messages.PerfSigActivateConfiguration_HotSensorPlacementDone(agent.getName()));
+            } else {
+                logger.println(Messages.PerfSigActivateConfiguration_FailureActivation(agent.getName()));
             }
         }
     }

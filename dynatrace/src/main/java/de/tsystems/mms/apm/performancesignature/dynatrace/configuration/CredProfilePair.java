@@ -23,8 +23,8 @@ import com.cloudbees.plugins.credentials.common.StandardUsernameListBoxModel;
 import com.cloudbees.plugins.credentials.common.StandardUsernamePasswordCredentials;
 import com.cloudbees.plugins.credentials.common.UsernamePasswordCredentials;
 import com.cloudbees.plugins.credentials.domains.DomainRequirement;
-import de.tsystems.mms.apm.performancesignature.dynatrace.rest.CommandExecutionException;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.DTServerConnection;
+import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.CommandExecutionException;
 import de.tsystems.mms.apm.performancesignature.util.PerfSigUIUtils;
 import de.tsystems.mms.apm.performancesignature.util.PerfSigUtils;
 import hudson.Extension;
@@ -105,15 +105,18 @@ public class CredProfilePair extends AbstractDescribableImpl<CredProfilePair> {
                                                @RelativePath("..") @QueryParameter final String proxyServer, @RelativePath("..") @QueryParameter final int proxyPort,
                                                @RelativePath("..") @QueryParameter final String proxyUser, @RelativePath("..") @QueryParameter final String proxyPassword) {
 
+            if (StringUtils.isBlank(serverUrl) || StringUtils.isBlank(credentialsId)) {
+                return new StandardListBoxModel().includeEmptyValue();
+            }
             CustomProxy customProxyServer = null;
             if (proxy) {
                 customProxyServer = new CustomProxy(proxyServer, proxyPort, proxyUser, proxyPassword, StringUtils.isBlank(proxyServer));
             }
             try {
                 CredProfilePair pair = new CredProfilePair("", credentialsId);
-                final DTServerConnection connection = new DTServerConnection(serverUrl, pair, verifyCertificate, customProxyServer);
-                return PerfSigUtils.listToListBoxModel(connection.getSystemProfiles());
-            } catch (CommandExecutionException ignored) {
+                final DTServerConnection connection = new DTServerConnection(serverUrl, pair, verifyCertificate, 0, customProxyServer);
+                return PerfSigUtils.listToListBoxModel(connection.getSystemProfiles().getSystemprofiles());
+            } catch (CommandExecutionException ex) {
                 return new StandardListBoxModel().includeEmptyValue();
             }
         }
@@ -138,7 +141,7 @@ public class CredProfilePair extends AbstractDescribableImpl<CredProfilePair> {
                 customProxyServer = new CustomProxy(proxyServer, proxyPort, proxyUser, proxyPassword, StringUtils.isBlank(proxyServer));
             }
             CredProfilePair pair = new CredProfilePair("", credentialsId);
-            final DTServerConnection connection = new DTServerConnection(serverUrl, pair, verifyCertificate, customProxyServer);
+            final DTServerConnection connection = new DTServerConnection(serverUrl, pair, verifyCertificate, 0, customProxyServer);
 
             if (connection.validateConnection()) {
                 return FormValidation.ok(Messages.PerfSigRecorder_TestConnectionSuccessful());

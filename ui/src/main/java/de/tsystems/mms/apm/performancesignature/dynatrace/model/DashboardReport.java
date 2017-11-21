@@ -31,9 +31,10 @@ public class DashboardReport {
 
     @XmlElementWrapper(name = "data")
     @XmlElement(name = "chartdashlet")
-    private List<ChartDashlet> chartDashlets;
+    private final List<ChartDashlet> chartDashlets;
     private String name;
-    private final List<IncidentChart> incidents;
+    @XmlElement(name = "incident")
+    private final List<Alert> incidents;
     private boolean unitTest;
     private ClientLinkGenerator clientLink;
 
@@ -48,11 +49,11 @@ public class DashboardReport {
     }
 
     @Exported
-    public List<IncidentChart> getIncidents() {
+    public List<Alert> getIncidents() {
         return incidents;
     }
 
-    public void addIncident(final IncidentChart incident) {
+    public void addIncident(final Alert incident) {
         this.incidents.add(incident);
     }
 
@@ -78,9 +79,6 @@ public class DashboardReport {
      */
     @Exported
     public List<ChartDashlet> getChartDashlets() {
-        if (chartDashlets == null) {
-            chartDashlets = new ArrayList<>();
-        }
         return this.chartDashlets;
     }
 
@@ -109,7 +107,6 @@ public class DashboardReport {
         this.chartDashlets.add(chartDashlet);
     }
 
-    @Exported
     public boolean isUnitTest() {
         return unitTest;
     }

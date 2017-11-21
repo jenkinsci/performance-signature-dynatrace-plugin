@@ -17,6 +17,7 @@
 package de.tsystems.mms.apm.performancesignature.viewer.rest;
 
 import com.google.common.base.Optional;
+import com.google.gson.*;
 import com.offbytwo.jenkins.JenkinsServer;
 import com.offbytwo.jenkins.client.JenkinsHttpClient;
 import com.offbytwo.jenkins.model.FolderJob;
@@ -26,19 +27,21 @@ import de.tsystems.mms.apm.performancesignature.viewer.model.CredJobPair;
 import de.tsystems.mms.apm.performancesignature.viewer.model.CustomProxy;
 import de.tsystems.mms.apm.performancesignature.viewer.model.JenkinsServerConfiguration;
 import de.tsystems.mms.apm.performancesignature.viewer.rest.model.CustomJenkinsHttpClient;
+import de.tsystems.mms.apm.performancesignature.viewer.rest.model.RootElement;
 import hudson.FilePath;
 import hudson.util.XStream2;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
-import org.jdom2.JDOMException;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.lang.reflect.Type;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -46,6 +49,7 @@ public class JenkinsServerConnection {
     private static final Logger LOGGER = Logger.getLogger(JenkinsServerConnection.class.getName());
     private Job jenkinsJob;
     private JenkinsServer jenkinsServer;
+    private final Gson gson;
 
     public JenkinsServerConnection(final String serverUrl, final CredJobPair pair, final boolean verifyCertificate,
                                    final CustomProxy customProxyServer) {
@@ -77,20 +81,29 @@ public class JenkinsServerConnection {
         } catch (IOException | URISyntaxException e) {
             LOGGER.severe(ExceptionUtils.getFullStackTrace(e));
         }
+
+        GsonBuilder builder = new GsonBuilder();
+        // Register an adapter to manage the date types as long values
+        builder.registerTypeAdapter(Date.class, new JsonDeserializer<Date>() {
+            public Date deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+                return new Date(json.getAsJsonPrimitive().getAsLong());
+            }
+        });
+        gson = builder.create();
     }
 
     public JenkinsServerConnection(final JenkinsServerConfiguration config, final CredJobPair pair) {
         this(config.getServerUrl(), pair, config.isVerifyCertificate(), config.getCustomProxy());
     }
 
-    public List<DashboardReport> getDashboardReportsFromXML(int buildNumber) {
+    public List<DashboardReport> getMeasureDataFromJSON(int buildNumber) {
         try {
-            URL url = new URL(getJenkinsJob().getUrl() + buildNumber + "/performance-signature/api/xml?depth=10");
-            String xml = getJenkinsJob().getClient().get(url.toString());
-            DashboardXMLReader reader = new DashboardXMLReader();
-            reader.parseXML(xml);
-            return reader.getParsedObjects();
-        } catch (IOException | JDOMException e) {
+            URL url = new URL(getJenkinsJob().getUrl() + buildNumber + "/performance-signature/api/json?depth=10");
+            String json = getJenkinsJob().getClient().get(url.toString());
+
+            RootElement rootElement = gson.fromJson(json, RootElement.class);
+            return rootElement.getDashboardReports();
+        } catch (IOException | JsonSyntaxException e) {
             throw new ContentRetrievalException(ExceptionUtils.getStackTrace(e) + "could not retrieve records from remote Jenkins: ", e);
         }
     }

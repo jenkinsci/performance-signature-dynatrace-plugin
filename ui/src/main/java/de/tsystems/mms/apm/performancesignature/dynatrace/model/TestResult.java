@@ -16,61 +16,132 @@
 
 package de.tsystems.mms.apm.performancesignature.dynatrace.model;
 
-import de.tsystems.mms.apm.performancesignature.dynatrace.util.AttributeUtils;
+import com.google.gson.TypeAdapter;
+import com.google.gson.annotations.JsonAdapter;
+import com.google.gson.annotations.SerializedName;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
+import de.tsystems.mms.apm.performancesignature.util.PerfSigUIUtils;
+import io.swagger.annotations.ApiModelProperty;
 import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
 
-import java.io.Serializable;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * TestResult
+ */
+
 @ExportedBean
-public class TestResult implements Serializable {
-    private static final long serialVersionUID = 1L;
-    private final Date exectime;
-    private final String name, packageName;
-    private final TestResultStatus status;
-    private final List<TestRunMeasure> measures;
+public class TestResult {
+    @SerializedName("name")
+    private String name;
 
-    public TestResult(final Object attr) {
-        this.exectime = AttributeUtils.getDateAttribute("exectime", attr);
-        this.name = AttributeUtils.getStringAttribute("name", attr);
-        this.packageName = AttributeUtils.getStringAttribute("package", attr);
-        this.status = TestResultStatus.fromString(AttributeUtils.getStringAttribute("status", attr));
-        this.measures = new ArrayList<>();
-    }
+    @SerializedName("status")
+    private StatusEnum status;
 
-    @Exported
-    public Date getExectime() {
-        return (Date) exectime.clone();
-    }
+    @SerializedName("exectime")
+    private Date exectime;
 
-    @Exported
-    public String getPackageName() {
-        return packageName;
-    }
+    @SerializedName("package")
+    private String _package;
 
+    @Deprecated
+    private transient String packageName;
+
+    @SerializedName("platform")
+    private String platform;
+
+    @SerializedName("measures")
+    private List<TestMeasure> measures;
+
+    /**
+     * Get name
+     *
+     * @return name
+     **/
     @Exported
     public String getName() {
         return name;
     }
 
-    public TestRunMeasure getMeasure(final String metricGroup, final String metric) {
-        for (TestRunMeasure measure : measures) {
+    /**
+     * Get status
+     *
+     * @return status
+     **/
+    @Exported
+    public StatusEnum getStatus() {
+        return status;
+    }
+
+    /**
+     * Start time of the test in ISO 8601 compatible date/time of format: yyyy-MM-dd&#39;T&#39;HH:mm:ss.SSSXXX
+     *
+     * @return exectime
+     **/
+    @Exported
+    @ApiModelProperty(example = "2016-07-18T16:44:00.055+02:00", value = "Start time of the test in ISO 8601 compatible date/time of format: yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
+    public Date getExectime() {
+        return exectime == null ? null : (Date) exectime.clone();
+    }
+
+    /**
+     * Get _package
+     *
+     * @return _package
+     **/
+    @Exported
+    public String getPackage() {
+        return _package;
+    }
+
+    /**
+     * Get platform
+     *
+     * @return platform
+     **/
+    @Exported
+    public String getPlatform() {
+        return platform;
+    }
+
+    public TestResult measures(List<TestMeasure> measures) {
+        this.measures = measures;
+        return this;
+    }
+
+    public TestResult addMeasuresItem(TestMeasure measuresItem) {
+        if (this.measures == null) {
+            this.measures = new ArrayList<>();
+        }
+        this.measures.add(measuresItem);
+        return this;
+    }
+
+    public TestMeasure getMeasure(final String metricGroup, final String metric) {
+        for (TestMeasure measure : measures) {
             if (measure.getMetricGroup().equals(metricGroup) && measure.getName().equals(metric))
                 return measure;
         }
         return null;
     }
 
+    /**
+     * Get measures
+     *
+     * @return measures
+     **/
     @Exported
-    public List<TestRunMeasure> getTestRunMeasures() {
+    public List<TestMeasure> getMeasures() {
         return measures;
     }
 
-    public void addTestRunMeasure(final TestRunMeasure measure) {
-        measures.add(measure);
+    public void setMeasures(List<TestMeasure> measures) {
+        this.measures = measures;
     }
 
     public String getStatusIcon() {
@@ -107,8 +178,75 @@ public class TestResult implements Serializable {
         }
     }
 
-    @Exported
-    public TestResultStatus getStatus() {
-        return status;
+    @SuppressWarnings("deprecation")
+    protected Object readResolve() {
+        if (packageName != null) {
+            _package = packageName;
+        }
+        return this;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("class TestResult {\n");
+
+        sb.append("    name: ").append(PerfSigUIUtils.toIndentedString(name)).append("\n");
+        sb.append("    status: ").append(PerfSigUIUtils.toIndentedString(status)).append("\n");
+        sb.append("    exectime: ").append(PerfSigUIUtils.toIndentedString(exectime)).append("\n");
+        sb.append("    _package: ").append(PerfSigUIUtils.toIndentedString(_package)).append("\n");
+        sb.append("    platform: ").append(PerfSigUIUtils.toIndentedString(platform)).append("\n");
+        sb.append("    measures: ").append(PerfSigUIUtils.toIndentedString(measures)).append("\n");
+        sb.append("}");
+        return sb.toString();
+    }
+    /**
+     * Gets or Sets category
+     */
+    @JsonAdapter(TestResult.StatusEnum.Adapter.class)
+    public enum StatusEnum {
+        FAILED("Failed"),
+        VOLATILE("Volatile"),
+        DEGRADED("Degraded"),
+        IMPROVED("Improved"),
+        PASSED("Passed"),
+        NONE("None");
+
+        private final String value;
+
+        StatusEnum(String value) {
+            this.value = value;
+        }
+
+        public static TestResult.StatusEnum fromValue(String text) {
+            for (TestResult.StatusEnum b : TestResult.StatusEnum.values()) {
+                if (String.valueOf(b.value).equalsIgnoreCase(text)) {
+                    return b;
+                }
+            }
+            return null;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        @Override
+        public String toString() {
+            return String.valueOf(value);
+        }
+
+        public static class Adapter extends TypeAdapter<TestResult.StatusEnum> {
+            @Override
+            public void write(final JsonWriter jsonWriter, final TestResult.StatusEnum enumeration) throws IOException {
+                jsonWriter.value(enumeration.getValue());
+            }
+
+            @Override
+            public TestResult.StatusEnum read(final JsonReader jsonReader) throws IOException {
+                String value = jsonReader.nextString();
+                return TestResult.StatusEnum.fromValue(String.valueOf(value));
+            }
+        }
     }
 }

@@ -16,6 +16,7 @@
 
 package de.tsystems.mms.apm.performancesignature.dynatrace.model;
 
+import com.google.gson.annotations.SerializedName;
 import de.tsystems.mms.apm.performancesignature.util.PerfSigUIUtils;
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.export.Exported;
@@ -25,16 +26,15 @@ import javax.xml.bind.annotation.*;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement
 @ExportedBean
 public class Measure extends MeasureBaseModel {
-    private static final Logger LOGGER = Logger.getLogger(Measure.class.getName());
 
     @XmlElement(name = "measurement")
     private List<Measurement> measurements;
+    @SerializedName("measure")
     @XmlAttribute(name = "measure")
     private String name;
     @XmlAttribute
@@ -100,16 +100,6 @@ public class Measure extends MeasureBaseModel {
     }
 
     /**
-     * Legt den Wert der name-Eigenschaft fest.
-     *
-     * @param value allowed object is
-     *              {@link String }
-     */
-    public void setName(String value) {
-        this.name = value;
-    }
-
-    /**
      * Ruft den Wert der color-Eigenschaft ab.
      *
      * @return possible object is
@@ -118,16 +108,6 @@ public class Measure extends MeasureBaseModel {
     @Exported
     public String getColor() {
         return color;
-    }
-
-    /**
-     * Legt den Wert der color-Eigenschaft fest.
-     *
-     * @param value allowed object is
-     *              {@link String }
-     */
-    public void setColor(String value) {
-        this.color = value;
     }
 
     /**
@@ -142,16 +122,6 @@ public class Measure extends MeasureBaseModel {
     }
 
     /**
-     * Legt den Wert der aggregation-Eigenschaft fest.
-     *
-     * @param value allowed object is
-     *              {@link String }
-     */
-    public void setAggregation(String value) {
-        this.aggregation = value;
-    }
-
-    /**
      * Ruft den Wert der unit-Eigenschaft ab.
      *
      * @return possible object is
@@ -160,16 +130,6 @@ public class Measure extends MeasureBaseModel {
     @Exported
     public String getUnit() {
         return unit;
-    }
-
-    /**
-     * Legt den Wert der unit-Eigenschaft fest.
-     *
-     * @param value allowed object is
-     *              {@link String }
-     */
-    public void setUnit(String value) {
-        this.unit = value;
     }
 
     /**
@@ -184,16 +144,6 @@ public class Measure extends MeasureBaseModel {
     }
 
     /**
-     * Legt den Wert der lastvalue-Eigenschaft fest.
-     *
-     * @param value allowed object is
-     *              {@link Double }
-     */
-    public void setLastvalue(Double value) {
-        this.lastvalue = value;
-    }
-
-    /**
      * Ruft den Wert der thresholds-Eigenschaft ab.
      *
      * @return possible object is
@@ -202,16 +152,6 @@ public class Measure extends MeasureBaseModel {
     @Exported
     public String getThresholds() {
         return thresholds;
-    }
-
-    /**
-     * Legt den Wert der thresholds-Eigenschaft fest.
-     *
-     * @param value allowed object is
-     *              {@link String }
-     */
-    public void setThresholds(String value) {
-        this.thresholds = value;
     }
 
     /**
@@ -226,16 +166,6 @@ public class Measure extends MeasureBaseModel {
     }
 
     /**
-     * Legt den Wert der rate-Eigenschaft fest.
-     *
-     * @param value allowed object is
-     *              {@link String }
-     */
-    public void setRate(String value) {
-        this.rate = value;
-    }
-
-    /**
      * Ruft den Wert der scale-Eigenschaft ab.
      *
      * @return possible object is
@@ -244,16 +174,6 @@ public class Measure extends MeasureBaseModel {
     @Exported
     public String getScale() {
         return scale;
-    }
-
-    /**
-     * Legt den Wert der scale-Eigenschaft fest.
-     *
-     * @param value allowed object is
-     *              {@link String }
-     */
-    public void setScale(String value) {
-        this.scale = value;
     }
 
     /**
@@ -268,16 +188,6 @@ public class Measure extends MeasureBaseModel {
     }
 
     /**
-     * Legt den Wert der parent-Eigenschaft fest.
-     *
-     * @param value allowed object is
-     *              {@link String }
-     */
-    public void setParent(String value) {
-        this.parent = value;
-    }
-
-    /**
      * Ruft den Wert der splitting-Eigenschaft ab.
      *
      * @return possible object is
@@ -286,16 +196,6 @@ public class Measure extends MeasureBaseModel {
     @Exported
     public String getSplitting() {
         return splitting;
-    }
-
-    /**
-     * Legt den Wert der splitting-Eigenschaft fest.
-     *
-     * @param value allowed object is
-     *              {@link String }
-     */
-    public void setSplitting(String value) {
-        this.splitting = value;
     }
 
     public String getUnit(final String aggregation) {

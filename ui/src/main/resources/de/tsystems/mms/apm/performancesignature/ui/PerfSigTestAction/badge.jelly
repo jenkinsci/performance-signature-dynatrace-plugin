@@ -16,7 +16,6 @@
 
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:jm="/de/tsystems/mms/apm/performancesignature/ui/tags">
-    <j:set var="testRun" value="${it.matchingTestRun}"/>
     <j:set var="testResult" value="${it.matchingTestResult}"/>
     <j:if test="${testResult!=null}">
         <st:adjunct includes="org.jenkins.ui.jsmodules.css.bootstrapprefix"/>
@@ -32,7 +31,7 @@
             <div class="collapse" id="${id}">
                 <div class="well" style="padding-top:5px;">
                     <h4>Performance data</h4>
-                    <jm:testRunTable it="${it}" testRun="${testRun}" testResult="${testResult}"/>
+                    <jm:testRunTable it="${it}"/>
                 </div>
             </div>
         </div>

@@ -18,15 +18,13 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:jm="/de/tsystems/mms/apm/performancesignature/ui/tags">
     <st:adjunct includes="org.jenkins.ui.jsmodules.css.bootstrapprefix"/>
     <j:set var="utils" value="${it.PerfSigUtils}"/>
-    <j:set var="testRun" value="${it.matchingTestRun}"/>
-    <j:set var="testResult" value="${it.matchingTestResult}"/>
 
-    <j:if test="${testResult!=null}">
+    <j:if test="${it.matchingTestResult!=null}">
         <tr>
             <td>
                 <h3>Performance data</h3>
                 <div class="tw-bs">
-                    <jm:testRunTable it="${it}" testRun="${testRun}" testResult="${testResult}"/>
+                    <jm:testRunTable it="${it}"/>
                 </div>
             </td>
         </tr>

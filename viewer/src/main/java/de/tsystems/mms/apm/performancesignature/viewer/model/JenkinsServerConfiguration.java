@@ -30,7 +30,9 @@ public class JenkinsServerConfiguration extends AbstractDescribableImpl<JenkinsS
     private final String name;
     private String serverUrl;
     @Deprecated
-    private transient String protocol, host;
+    private transient String protocol;
+    @Deprecated
+    private transient String host;
     @Deprecated
     private transient int port;
     private final boolean verifyCertificate;

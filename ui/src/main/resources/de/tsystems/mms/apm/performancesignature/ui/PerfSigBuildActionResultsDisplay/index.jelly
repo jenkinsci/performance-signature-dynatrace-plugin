@@ -15,7 +15,7 @@
   -->
 
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout">
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout" xmlns:fmt="jelly:fmt">
     <l:layout xmlns:jm="/de/tsystems/mms/apm/performancesignature/ui/tags"
               title="Performance Signature report details for build ${it.build.number}">
         <l:header>
@@ -63,7 +63,8 @@
                                 </div>
                                 <br/>
                                 <div class="row col-md-6">
-                                    ${%Timestamp:} ${it.build.time}
+                                    ${%Timestamp:}
+                                    <fmt:formatDate dateStyle="medium" type="both" value="${it.build.time}"/>
                                 </div>
                                 <br/>
                                 <br/>
@@ -122,11 +123,48 @@
                                                 <div class="panel-body">
                                                     <a href="${rootURL}/job/${it.build.project.name}/${it.build.number}/testReport">
                                                         <img width="16" height="16" src="${resURL}/images/24x24/clipboard.png"/>
-                                                        UnitTestReport with performance data
+                                                        ${%UnitTestReport with performance data}
                                                     </a>
                                                 </div>
                                             </div>
                                         </div>
+                                    </div>
+                                </j:if>
+
+                                <j:if test="${!dashboardReport.incidents.isEmpty()}">
+                                    <h3>${%Incidents}</h3>
+                                    <div class="panel-group" id="incidents-${dashboardReport.name}" role="tablist" aria-multiselectable="true">
+                                        <j:forEach var="incident" items="${dashboardReport.incidents}">
+                                            <j:set var="position" value="${dashboardReport.incidents.indexOf(incident)}"/>
+                                            <div class="panel panel-default ${incident.panelColor}">
+                                                <div class="panel-heading" role="tab" id="${dashboardReport.name}-heading${position}">
+                                                    <h4 class="panel-title">
+                                                        <a role="button" data-toggle="collapse" data-parent="#incidents-${dashboardReport.name}"
+                                                           href="#${dashboardReport.name}-collapse${position}" aria-expanded="true"
+                                                           aria-controls="${dashboardReport.name}-collapse${position}">
+                                                            ${incident.severity} ${%Incident:} ${incident.message}
+                                                        </a>
+                                                    </h4>
+                                                </div>
+                                                <div id="${dashboardReport.name}-collapse${position}" class="panel-collapse collapse" role="tabpanel"
+                                                     aria-labelledby="${dashboardReport.name}-heading${position}">
+                                                    <div class="panel-body">
+                                                        <b>${%rule:}</b>
+                                                        ${incident.rule}
+                                                        <br/>
+                                                        <b>${%description:}</b>
+                                                        ${incident.description}
+                                                        <br/>
+                                                        <b>${%start:}</b>
+                                                        ${incident.start}
+                                                        <br/>
+                                                        <b>${%end:}</b>
+                                                        <j:if test="${incident.end==null}">not set</j:if>
+                                                        ${incident.end}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </j:forEach>
                                     </div>
                                 </j:if>
                                 <j:forEach var="chartDashlet" items="${dashboardReport.chartDashlets}">
