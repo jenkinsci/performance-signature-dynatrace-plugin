@@ -190,7 +190,7 @@ public final class PerfSigUIUtils {
 
     private static String printIncident(Alert incident) {
         StringBuilder sb = new StringBuilder();
-        sb.append("[PERFSIG]").append(incident.getSeverity()).append(" incident: \n");
+        sb.append("[PERFSIG] ").append(incident.getSeverity()).append(" incident: \n");
         sb.append("[PERFSIG]    rule: ").append(toIndentedString(incident.getRule())).append("\n");
         sb.append("[PERFSIG]    message: ").append(toIndentedString(incident.getMessage())).append("\n");
         sb.append("[PERFSIG]    description: ").append(toIndentedString(incident.getDescription())).append("\n");

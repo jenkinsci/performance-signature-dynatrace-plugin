@@ -37,24 +37,14 @@ public class Measure extends MeasureBaseModel {
     @SerializedName("measure")
     @XmlAttribute(name = "measure")
     private String name;
+    @XmlElement(name = "measure")
+    private List<Measure> measures;
     @XmlAttribute
     private String color;
     @XmlAttribute
     private String aggregation;
     @XmlAttribute
     private String unit;
-    @XmlAttribute
-    private Double lastvalue;
-    @XmlAttribute
-    private String thresholds;
-    @XmlAttribute
-    private String rate;
-    @XmlAttribute
-    private String scale;
-    @XmlAttribute
-    private String parent;
-    @XmlAttribute
-    private String splitting;
 
     /**
      * Gets the value of the measurement property.
@@ -99,6 +89,13 @@ public class Measure extends MeasureBaseModel {
         return name;
     }
 
+    public List<Measure> getMeasures() {
+        if (measures == null) {
+            measures = new ArrayList<>();
+        }
+        return measures;
+    }
+
     /**
      * Ruft den Wert der color-Eigenschaft ab.
      *
@@ -130,72 +127,6 @@ public class Measure extends MeasureBaseModel {
     @Exported
     public String getUnit() {
         return unit;
-    }
-
-    /**
-     * Ruft den Wert der lastvalue-Eigenschaft ab.
-     *
-     * @return possible object is
-     * {@link Double }
-     */
-    @Exported
-    public Double getLastvalue() {
-        return lastvalue;
-    }
-
-    /**
-     * Ruft den Wert der thresholds-Eigenschaft ab.
-     *
-     * @return possible object is
-     * {@link String }
-     */
-    @Exported
-    public String getThresholds() {
-        return thresholds;
-    }
-
-    /**
-     * Ruft den Wert der rate-Eigenschaft ab.
-     *
-     * @return possible object is
-     * {@link String }
-     */
-    @Exported
-    public String getRate() {
-        return rate;
-    }
-
-    /**
-     * Ruft den Wert der scale-Eigenschaft ab.
-     *
-     * @return possible object is
-     * {@link String }
-     */
-    @Exported
-    public String getScale() {
-        return scale;
-    }
-
-    /**
-     * Ruft den Wert der parent-Eigenschaft ab.
-     *
-     * @return possible object is
-     * {@link String }
-     */
-    @Exported
-    public String getParent() {
-        return parent;
-    }
-
-    /**
-     * Ruft den Wert der splitting-Eigenschaft ab.
-     *
-     * @return possible object is
-     * {@link String }
-     */
-    @Exported
-    public String getSplitting() {
-        return splitting;
     }
 
     public String getUnit(final String aggregation) {

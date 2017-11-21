@@ -20,9 +20,7 @@ import de.tsystems.mms.apm.performancesignature.dynatrace.configuration.CredProf
 import de.tsystems.mms.apm.performancesignature.dynatrace.configuration.CustomProxy;
 import de.tsystems.mms.apm.performancesignature.dynatrace.configuration.DynatraceServerConfiguration;
 import de.tsystems.mms.apm.performancesignature.dynatrace.configuration.DynatraceServerConfiguration.DescriptorImpl;
-import de.tsystems.mms.apm.performancesignature.dynatrace.model.Alert;
-import de.tsystems.mms.apm.performancesignature.dynatrace.model.DashboardReport;
-import de.tsystems.mms.apm.performancesignature.dynatrace.model.TestRun;
+import de.tsystems.mms.apm.performancesignature.dynatrace.model.*;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.ApiClient;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.ApiException;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.Configuration;
@@ -122,6 +120,25 @@ public class DTServerConnection {
         try {
             DashboardReport dashboardReport = api.getXMLDashboard(dashBoardName, sessionId);
             dashboardReport.setName(testCaseName);
+
+            //handle dynamic measures in the dashboard xml probably
+            for (ChartDashlet chartDashlet : dashboardReport.getChartDashlets()) {
+                List<Measure> dynamicMeasures = new ArrayList<>();
+                List<Measure> oldMeasures = new ArrayList<>();
+                for (Measure measure : chartDashlet.getMeasures()) {
+                    if (!measure.getMeasures().isEmpty()) {
+                        oldMeasures.add(measure);
+                        List<Measure> copy = new ArrayList<>(measure.getMeasures());
+                        measure.getMeasures().clear();
+                        dynamicMeasures.addAll(copy);
+                    }
+                }
+                if (!dynamicMeasures.isEmpty()) {
+                    chartDashlet.getMeasures().removeAll(oldMeasures);
+                    chartDashlet.getMeasures().addAll(dynamicMeasures);
+                }
+            }
+
             return dashboardReport;
         } catch (Exception ex) {
             throw new ContentRetrievalException(ExceptionUtils.getStackTrace(ex) + "could not retrieve records from Dynatrace server: " + dashBoardName, ex);
