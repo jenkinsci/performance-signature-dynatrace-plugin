@@ -56,7 +56,7 @@
         <thead>
             <tr>
                 <th rowspan="2">Measure</th>
-                <th colspan="3">Current Build (#${it.testObject.run.number})</th>
+                <th colspan="3">Current Build</th>
                 <j:if test="${previousTestResult!=null}">
                     <th colspan="3">Previous Build (#${it.testObject.previousResult.run.number})</th>
                 </j:if>
