@@ -19,8 +19,8 @@ package de.tsystems.mms.apm.performancesignature.dynatrace.rest.json;
 import org.apache.commons.lang.StringUtils;
 
 public class Pair {
-    private String name = "";
-    private String value = "";
+    private String name;
+    private String value;
 
     public Pair(String name, String value) {
         setName(name);
@@ -32,9 +32,9 @@ public class Pair {
     }
 
     private void setName(String name) {
-        if (!isValidString(name)) return;
-
-        this.name = name;
+        if (StringUtils.isNotBlank(name)) {
+            this.name = name;
+        }
     }
 
     public String getValue() {
@@ -42,12 +42,8 @@ public class Pair {
     }
 
     private void setValue(String value) {
-        if (!isValidString(value)) return;
-
-        this.value = value;
-    }
-
-    private boolean isValidString(String arg) {
-        return StringUtils.isNotBlank(arg);
+        if (StringUtils.isNotBlank(value)) {
+            this.value = value;
+        }
     }
 }

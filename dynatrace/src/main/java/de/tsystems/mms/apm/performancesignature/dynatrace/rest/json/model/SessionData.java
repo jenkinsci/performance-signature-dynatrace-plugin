@@ -33,11 +33,11 @@ import java.io.IOException;
 
 public class SessionData extends BaseReference {
     @SerializedName("storedsessiontype")
-    private final StoredsessiontypeEnum storedsessiontype = null;
+    private StoredsessiontypeEnum storedsessiontype;
     @SerializedName("sessiontype")
-    private final SessiontypeEnum sessiontype = null;
+    private SessiontypeEnum sessiontype;
     @SerializedName("systemprofile")
-    private final String systemprofile = null;
+    private String systemprofile;
 
     /**
      * Stored session type

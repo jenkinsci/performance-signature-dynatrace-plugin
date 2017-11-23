@@ -48,7 +48,7 @@ public class PerfSigTestActionTest {
         JenkinsRule.WebClient wc = j.createWebClient();
         HtmlPage testReport = wc.getPage(build, "testReport");
 
-        assertEquals(testReport.getByXPath("//*[@id=\"main-panel\"]/table[2]/tbody/tr/td[1]/div[1]/a").size(), 18);
+        assertEquals(18, testReport.getByXPath("//*[@id=\"main-panel\"]/table[2]/tbody/tr/td[1]/div[1]/a").size());
         j.assertXPath(testReport, "//*[contains(@id,\"collapseid\")]/div/table/tbody/tr[1]/td[1]/b");
         j.assertXPathValue(testReport, "//*[contains(@id,\"collapseid\")]/div/table/tbody/tr[1]/td[1]/b/text()", "PurePaths - PurePath Duration (ms)");
         j.assertXPath(testReport, "//*[contains(@id,\"collapseid\")]/div/table[1]/tbody/tr[3]/td[2]/text()");

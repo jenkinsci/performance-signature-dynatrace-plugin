@@ -34,6 +34,6 @@ public class TestDataPublisherTest {
         JSON json = new JSON();
         TestRun testRun = json.deserialize(file.readToString(), TestRun.class);
 
-        assertEquals(testRun.getTestResults().size(), 305);
+        assertEquals(305, testRun.getTestResults().size());
     }
 }

@@ -29,7 +29,7 @@ import java.util.List;
 
 public class SystemProfiles {
     @SerializedName("systemprofiles")
-    private List<SystemProfileReference> systemprofiles = null;
+    private List<SystemProfileReference> systemprofiles;
 
     public SystemProfiles systemprofiles(List<SystemProfileReference> systemprofiles) {
         this.systemprofiles = systemprofiles;

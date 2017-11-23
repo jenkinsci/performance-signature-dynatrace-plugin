@@ -51,11 +51,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ApiClient {
-    /**
-     * The datetime format to be used when <code>lenientDatetimeFormat</code> is enabled.
-     */
     public final static String API_SUFFIX = "/api/v2";
-    private String basePath = "https://localhost/api/v2";
+    private String basePath = "https://localhost" + API_SUFFIX;
     private boolean debugging = false;
     private final Map<String, String> defaultHeaderMap = new HashMap<>();
     private String tempFolderPath = null;
@@ -568,7 +565,7 @@ public class ApiClient {
             prefix = "download-";
             suffix = "";
         } else {
-            int pos = filename.lastIndexOf(".");
+            int pos = filename.lastIndexOf('.');
             if (pos == -1) {
                 prefix = filename + "-";
             } else {

@@ -29,7 +29,7 @@ import java.util.List;
 
 public class Alerts {
     @SerializedName("alerts")
-    private List<AlertReference> alerts = null;
+    private List<AlertReference> alerts;
 
     public Alerts alerts(List<AlertReference> alerts) {
         this.alerts = alerts;

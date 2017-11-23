@@ -63,7 +63,7 @@ public class ViewerStartJob extends Builder implements SimpleBuildStep {
         QueueItem queueItem = server.getQueueItem(queueRef);
 
         while (!queueItem.isCancelled() && (queueItem.getExecutable() == null || queueItem.getExecutable().getNumber() == null)) {
-            Thread.sleep(ViewerWaitForJob.waitForPollingInterval / 10);
+            Thread.sleep(ViewerWaitForJob.WAIT_FOR_POLLING_INTERVAL / 10);
             job = job.details();
             queueItem = server.getQueueItem(queueRef);
         }

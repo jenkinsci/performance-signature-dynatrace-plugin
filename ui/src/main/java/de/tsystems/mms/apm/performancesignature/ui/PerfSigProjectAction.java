@@ -89,7 +89,7 @@ public class PerfSigProjectAction extends PerfSigBaseAction implements Prominent
         return PerfSigUIUtils.class;
     }
 
-    private synchronized Map<String, JSONDashlet> getJsonDashletMap() throws InterruptedException {
+    private synchronized Map<String, JSONDashlet> getJsonDashletMap() {
         if (this.jsonDashletMap == null) {
             this.jsonDashletMap = new ConcurrentHashMap<>();
             this.jsonDashletMap.putAll(readConfiguration());
@@ -97,7 +97,7 @@ public class PerfSigProjectAction extends PerfSigBaseAction implements Prominent
         return this.jsonDashletMap;
     }
 
-    public void doSummarizerGraph(final StaplerRequest request, final StaplerResponse response) throws IOException, InterruptedException {
+    public void doSummarizerGraph(final StaplerRequest request, final StaplerResponse response) throws IOException {
         String id = request.getParameter("id");
         JSONDashlet knownJsonDashlet = getJsonDashletMap().get(id);
         final JSONDashlet jsonDashletToRender;
@@ -128,7 +128,8 @@ public class PerfSigProjectAction extends PerfSigBaseAction implements Prominent
                 String measure = jsonDashletToRender.getMeasure();
                 String buildCount = jsonDashletToRender.getCustomBuildCount();
                 String aggregation = jsonDashletToRender.getAggregation();
-                int customBuildCount = 0, i = 0;
+                int customBuildCount = 0;
+                int i = 0;
 
                 if (StringUtils.isNotBlank(buildCount)) {
                     customBuildCount = Integer.parseInt(buildCount);
@@ -157,7 +158,7 @@ public class PerfSigProjectAction extends PerfSigBaseAction implements Prominent
         graph.doPng(request, response);
     }
 
-    public void doTestRunGraph(final StaplerRequest request, final StaplerResponse response) throws InterruptedException, IOException {
+    public void doTestRunGraph(final StaplerRequest request, final StaplerResponse response) throws IOException {
         final String customName, customBuildCount;
 
         JSONDashlet jsonDashlet = getJsonDashletMap().get(UNITTEST_DASHLETNAME);
@@ -258,7 +259,7 @@ public class PerfSigProjectAction extends PerfSigBaseAction implements Prominent
     }
 
     @JavaScriptMethod
-    public String getDashboardConfiguration(final String dashboard) throws InterruptedException {
+    public String getDashboardConfiguration(final String dashboard) {
         List<JSONDashlet> jsonDashletList = new ArrayList<>();
         for (JSONDashlet jsonDashlet : getJsonDashletMap().values()) {
             if (jsonDashlet.getDashboard().equals(dashboard)) {
@@ -270,7 +271,8 @@ public class PerfSigProjectAction extends PerfSigBaseAction implements Prominent
     }
 
     private Map<String, JSONDashlet> createJSONConfiguration(final boolean useRandomId) {
-        int col = 1, row = 1;
+        int col = 1;
+        int row = 1;
 
         logger.fine(addTimeStampToLog("grid configuration generation started"));
         Map<String, JSONDashlet> newJsonDashletMap = new HashMap<>();
@@ -311,7 +313,7 @@ public class PerfSigProjectAction extends PerfSigBaseAction implements Prominent
 
     @SuppressWarnings("WeakerAccess")
     @JavaScriptMethod
-    public void setDashboardConfiguration(final String dashboard, final String data) throws InterruptedException {
+    public void setDashboardConfiguration(final String dashboard, final String data) {
         Map<String, JSONDashlet> defaultConfiguration = createJSONConfiguration(false);
         HashSet<String> idsFromJson = new HashSet<>();
 
@@ -326,52 +328,47 @@ public class PerfSigProjectAction extends PerfSigBaseAction implements Prominent
             idsFromJson.add(jsonDashlet.getId());
         }
 
-        try {
-            for (JSONDashlet jsonDashlet : getJsonDashletMap().values()) {
-                if (!jsonDashlet.getDashboard().equals(dashboard)) { //filter out dashlets from other dashboards
-                    continue;
-                }
-                if (!idsFromJson.contains(jsonDashlet.getId())) { //remove dashlet, if it's not present in gridConfiguration
-                    getJsonDashletMap().remove(jsonDashlet.getId());
-                }
+        for (JSONDashlet jsonDashlet : getJsonDashletMap().values()) {
+            if (!jsonDashlet.getDashboard().equals(dashboard)) { //filter out dashlets from other dashboards
+                continue;
             }
+            if (!idsFromJson.contains(jsonDashlet.getId())) { //remove dashlet, if it's not present in gridConfiguration
+                getJsonDashletMap().remove(jsonDashlet.getId());
+            }
+        }
 
-            for (JSONDashlet modifiedDashlet : jsonDashletList) {
-                JSONDashlet unmodifiedDashlet = defaultConfiguration.get(modifiedDashlet.getId());
-                JSONDashlet originalDashlet = getJsonDashletMap().get(modifiedDashlet.getId());
-                if (modifiedDashlet.getId().equals(UNITTEST_DASHLETNAME)) {
-                    if (originalDashlet != null) {
-                        modifiedDashlet.setCustomBuildCount(originalDashlet.getCustomBuildCount());
-                        modifiedDashlet.setCustomName(originalDashlet.getCustomName());
-                    }
-                    getJsonDashletMap().put(modifiedDashlet.getId(), modifiedDashlet);
-                } else if (unmodifiedDashlet != null) { //newly added dashlets
-                    modifiedDashlet.setDashboard(unmodifiedDashlet.getDashboard());
-                    modifiedDashlet.setChartDashlet(unmodifiedDashlet.getChartDashlet());
-                    modifiedDashlet.setMeasure(unmodifiedDashlet.getMeasure());
-                    modifiedDashlet.setDescription(unmodifiedDashlet.getDescription());
-                    modifiedDashlet.setId(modifiedDashlet.generateID());
-
-                    getJsonDashletMap().put(modifiedDashlet.getId(), modifiedDashlet);
-                } else if (originalDashlet != null) { //old dashlets
-                    modifiedDashlet.setDashboard(originalDashlet.getDashboard());
-                    modifiedDashlet.setChartDashlet(originalDashlet.getChartDashlet());
-                    modifiedDashlet.setMeasure(originalDashlet.getMeasure());
-                    modifiedDashlet.setDescription(originalDashlet.getDescription());
-                    modifiedDashlet.setAggregation(originalDashlet.getAggregation());
+        for (JSONDashlet modifiedDashlet : jsonDashletList) {
+            JSONDashlet unmodifiedDashlet = defaultConfiguration.get(modifiedDashlet.getId());
+            JSONDashlet originalDashlet = getJsonDashletMap().get(modifiedDashlet.getId());
+            if (modifiedDashlet.getId().equals(UNITTEST_DASHLETNAME)) {
+                if (originalDashlet != null) {
                     modifiedDashlet.setCustomBuildCount(originalDashlet.getCustomBuildCount());
                     modifiedDashlet.setCustomName(originalDashlet.getCustomName());
-
-                    modifiedDashlet.setId(modifiedDashlet.generateID());
-                    getJsonDashletMap().remove(originalDashlet.getId());
-                    getJsonDashletMap().put(modifiedDashlet.getId(), modifiedDashlet);
                 }
+                getJsonDashletMap().put(modifiedDashlet.getId(), modifiedDashlet);
+            } else if (unmodifiedDashlet != null) { //newly added dashlets
+                modifiedDashlet.setDashboard(unmodifiedDashlet.getDashboard());
+                modifiedDashlet.setChartDashlet(unmodifiedDashlet.getChartDashlet());
+                modifiedDashlet.setMeasure(unmodifiedDashlet.getMeasure());
+                modifiedDashlet.setDescription(unmodifiedDashlet.getDescription());
+                modifiedDashlet.setId(modifiedDashlet.generateID());
+
+                getJsonDashletMap().put(modifiedDashlet.getId(), modifiedDashlet);
+            } else if (originalDashlet != null) { //old dashlets
+                modifiedDashlet.setDashboard(originalDashlet.getDashboard());
+                modifiedDashlet.setChartDashlet(originalDashlet.getChartDashlet());
+                modifiedDashlet.setMeasure(originalDashlet.getMeasure());
+                modifiedDashlet.setDescription(originalDashlet.getDescription());
+                modifiedDashlet.setAggregation(originalDashlet.getAggregation());
+                modifiedDashlet.setCustomBuildCount(originalDashlet.getCustomBuildCount());
+                modifiedDashlet.setCustomName(originalDashlet.getCustomName());
+
+                modifiedDashlet.setId(modifiedDashlet.generateID());
+                getJsonDashletMap().remove(originalDashlet.getId());
+                getJsonDashletMap().put(modifiedDashlet.getId(), modifiedDashlet);
             }
-            writeConfiguration(getJsonDashletMap());
-        } catch (InterruptedException e) {
-            logger.log(Level.SEVERE, Messages.PerfSigProjectAction_FailedToSaveGrid(), e);
-            throw e;
         }
+        writeConfiguration(getJsonDashletMap());
     }
 
     @SuppressWarnings("WeakerAccess")
@@ -489,7 +486,8 @@ public class PerfSigProjectAction extends PerfSigBaseAction implements Prominent
             final String customMeasureName = jsonDashlet.getCustomName();
             final String aggregation = jsonDashlet.getAggregation();
 
-            String unit = "", color = "#FF5555";
+            String unit = "";
+            String color = "#FF5555";
 
             for (DashboardReport dr : getLastDashboardReports()) {
                 if (dr.getName().equals(dashboard)) {

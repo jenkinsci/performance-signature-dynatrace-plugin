@@ -19,6 +19,9 @@ package de.tsystems.mms.apm.performancesignature.dynatrace.rest.json;
 public class Configuration {
     private static ApiClient defaultApiClient = new ApiClient();
 
+    private Configuration() {
+    }
+
     /**
      * Get the default API client, which would be used when creating API
      * instances without providing an API client.

@@ -28,16 +28,16 @@ import io.swagger.annotations.ApiModelProperty;
 
 public class SystemProfile {
     @SerializedName("id")
-    private final String id = null;
+    private String id;
 
     @SerializedName("description")
-    private final String description = null;
+    private String description;
 
     @SerializedName("enabled")
-    private final Boolean enabled = false;
+    private Boolean enabled;
 
     @SerializedName("isrecording")
-    private final Boolean isrecording = false;
+    private Boolean isrecording;
 
     /**
      * System Profile id

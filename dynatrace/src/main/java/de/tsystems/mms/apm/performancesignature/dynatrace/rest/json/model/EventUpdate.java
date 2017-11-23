@@ -33,17 +33,17 @@ import static de.tsystems.mms.apm.performancesignature.dynatrace.model.Alert.Sta
 
 public class EventUpdate {
     @SerializedName("severity")
-    private final SeverityEnum severity = null;
+    private SeverityEnum severity;
     @SerializedName("state")
-    private final StateEnum state = null;
+    private StateEnum state;
     @SerializedName("message")
-    private final String message = null;
+    private String message;
     @SerializedName("description")
-    private final String description = null;
+    private String description;
     @SerializedName("start")
     private Date start;
     @SerializedName("end")
-    private final Date end;
+    private Date end;
 
     public EventUpdate(Date end) {
         this.end = end == null ? null : (Date) end.clone();

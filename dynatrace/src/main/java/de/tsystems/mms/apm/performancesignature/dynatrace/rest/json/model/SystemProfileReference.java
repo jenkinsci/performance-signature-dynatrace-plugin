@@ -27,7 +27,7 @@ import io.swagger.annotations.ApiModelProperty;
 
 public class SystemProfileReference extends BaseReference {
     @SerializedName("isrecording")
-    private final Boolean isrecording = false;
+    private Boolean isrecording;
 
     /**
      * Session recording state

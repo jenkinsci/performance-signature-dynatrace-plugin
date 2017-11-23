@@ -188,10 +188,11 @@ public class PerfSigBuildActionResultsDisplay implements ModelObject {
         }
 
         String numberString = request.getParameter("number");
-        int number = 0;
+        int number;
         try {
             number = Integer.parseInt(numberString);
         } catch (NumberFormatException ignored) {
+            number = 0;
         }
 
         FilePath filePath = PerfSigUIUtils.getReportDirectory(getBuild());

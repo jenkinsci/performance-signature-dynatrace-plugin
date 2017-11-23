@@ -62,8 +62,8 @@ public class PerfSigBuildActionResultsDisplayTest {
         wc.getPage(build);
         HtmlPage page = wc.getPage(build, "performance-signature");
         j.assertAllImageLoadSuccessfully(page);
-        assertEquals(page.getByXPath("//*[@id=\"UnitTest\"]/div/img").size(), 11);
-        assertEquals(page.getByXPath("//*[@id=\"PerfTest\"]/div/img").size(), 11);
+        assertEquals(11, page.getByXPath("//*[@id=\"UnitTest\"]/div/img").size());
+        assertEquals(11, page.getByXPath("//*[@id=\"PerfTest\"]/div/img").size());
         List<?> list = page.getByXPath("//*[@id=\"PerfTest\"]/div/table/tbody/tr/td[1]/b/text()");
         assertTrue(containsMeasure(list, "Total GC Utilization (Average) (%)"));
         assertTrue(containsMeasure(list, "WebService Count (Count) (num)"));
@@ -188,7 +188,7 @@ public class PerfSigBuildActionResultsDisplayTest {
             URL url = new URL(buildPage.getUrl() + "performance-signature/get" + type + "ReportList");
             List obj = (List) xStream.fromXML(org.apache.commons.io.IOUtils.toString(url));
             assertTrue(!obj.isEmpty());
-            assertEquals(obj.size(), 2);
+            assertEquals(2, obj.size());
         }
     }
 

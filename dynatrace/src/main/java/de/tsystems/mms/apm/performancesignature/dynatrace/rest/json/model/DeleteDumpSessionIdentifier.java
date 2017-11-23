@@ -32,11 +32,11 @@ import java.io.IOException;
 
 public class DeleteDumpSessionIdentifier {
     @SerializedName("type")
-    private final TypeEnum type = null;
+    private TypeEnum type;
     @SerializedName("id")
-    private final String id = null;
+    private String id;
     @SerializedName("systemprofile")
-    private final String systemprofile = null;
+    private String systemprofile;
 
     /**
      * Stored session type

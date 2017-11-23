@@ -26,7 +26,7 @@ import de.tsystems.mms.apm.performancesignature.util.PerfSigUIUtils;
 
 public class SystemProfileConfiguration extends BaseReference {
     @SerializedName("isactive")
-    private final Boolean isactive = false;
+    private Boolean isactive;
 
     /**
      * Get isactive

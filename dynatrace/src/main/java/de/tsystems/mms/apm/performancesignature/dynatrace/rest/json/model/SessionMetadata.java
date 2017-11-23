@@ -41,39 +41,39 @@ import static de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model
 
 public class SessionMetadata extends BaseReference {
     @SerializedName("storedsessiontype")
-    private final StoredsessiontypeEnum storedsessiontype = null;
+    private StoredsessiontypeEnum storedsessiontype;
     @SerializedName("sessiontype")
-    private final SessiontypeEnum sessiontype = null;
+    private SessiontypeEnum sessiontype;
     @SerializedName("systemprofile")
-    private final String systemprofile = null;
+    private String systemprofile;
     @SerializedName("name")
-    private final String name = null;
+    private String name;
     @SerializedName("description")
-    private final String description = null;
+    private String description;
     @SerializedName("size")
-    private final Long size = null;
+    private Long size;
     @SerializedName("deletionlocked")
-    private final Boolean deletionlocked = false;
+    private Boolean deletionlocked = false;
     @SerializedName("directorypath")
-    private final String directorypath = null;
+    private String directorypath;
     @SerializedName("state")
-    private final StateEnum state = null;
+    private StateEnum state;
     @SerializedName("capturingstart")
     private Date capturingstart;
     @SerializedName("capturingduration")
-    private final Long capturingduration = null;
+    private Long capturingduration;
     @SerializedName("version")
-    private final String version = null;
+    private String version;
     @SerializedName("recordingtype")
-    private final String recordingtype = null;
+    private String recordingtype;
     @SerializedName("agent")
-    private final String agent = null;
+    private String agent;
     @SerializedName("numberofpurepaths")
-    private final Integer numberofpurepaths = null;
+    private Integer numberofpurepaths;
     @SerializedName("continuoussession")
-    private final Boolean continuoussession = false;
+    private Boolean continuoussession = false;
     @SerializedName("labels")
-    private List<String> labels = null;
+    private List<String> labels;
 
     /**
      * Stored session type

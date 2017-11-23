@@ -28,10 +28,10 @@ import io.swagger.annotations.ApiModelProperty;
 
 public class Error {
     @SerializedName("code")
-    private final Integer code = null;
+    private Integer code;
 
     @SerializedName("message")
-    private final String message = null;
+    private String message;
 
     /**
      * HTTP error code

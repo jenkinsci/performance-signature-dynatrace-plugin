@@ -51,7 +51,7 @@ public class DashboardXMLHandlerTest {
         DashboardReport dashboardReport = (DashboardReport) jaxbUnmarshaller.unmarshal(file);
 
         //assertEquals(dashboardReport.getIncidents().size(), 2);
-        assertEquals(dashboardReport.getChartDashlets().size(), 6);
+        assertEquals(6, dashboardReport.getChartDashlets().size());
 
         assertTrue(containsMeasure(dashboardReport.getChartDashlets(), "Synthetic Web Requests by Timer Name - PurePath Response Time"));
         assertTrue(containsMeasure(dashboardReport.getChartDashlets(), "Total GC Utilization"));

@@ -28,7 +28,7 @@ import io.swagger.annotations.ApiModelProperty;
 
 public class Result {
     @SerializedName("result")
-    private final String result = null;
+    private String result;
 
     /**
      * Result value

@@ -31,7 +31,7 @@ import java.util.List;
 
 public class Sessions {
     @SerializedName("sessions")
-    private List<SessionData> sessions = null;
+    private List<SessionData> sessions;
 
     public Sessions sessions(List<SessionData> sessions) {
         this.sessions = sessions;

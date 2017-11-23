@@ -122,7 +122,7 @@ public final class PerfSigUIUtils {
      * gets removed if jenkins version hits 1.653
      */
     @Nonnull
-    public static Jenkins getInstance() throws IllegalStateException {
+    public static Jenkins getInstance() {
         Jenkins instance = Jenkins.getInstance();
         if (instance == null) {
             throw new IllegalStateException("Jenkins has not been started, or was already shut down");
@@ -140,7 +140,8 @@ public final class PerfSigUIUtils {
     }
 
     public static void handleIncidents(final Run<?, ?> run, final List<Alert> incidents, final PluginLogger logger, final int nonFunctionalFailure) {
-        int numWarning = 0, numSevere = 0;
+        int numWarning = 0;
+        int numSevere = 0;
         if (incidents != null && !incidents.isEmpty()) {
             logger.log(Messages.PerfSigUIUtils_FollowingIncidents());
             for (Alert incident : incidents) {

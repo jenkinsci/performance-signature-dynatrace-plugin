@@ -31,13 +31,13 @@ import java.util.List;
 
 public class DeletedStoredSessions {
     @SerializedName("totaldeletedbytes")
-    private final Long totaldeletedbytes = null;
+    private Long totaldeletedbytes;
 
     @SerializedName("successfullydeleted")
-    private List<DeleteDumpSessionIdentifier> successfullydeleted = null;
+    private List<DeleteDumpSessionIdentifier> successfullydeleted;
 
     @SerializedName("failedtodelete")
-    private List<SessionData> failedtodelete = null;
+    private List<SessionData> failedtodelete;
 
     /**
      * Size of deleted sessions in bytes

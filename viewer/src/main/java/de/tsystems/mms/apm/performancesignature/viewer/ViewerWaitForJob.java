@@ -42,7 +42,7 @@ import javax.annotation.Nonnull;
 import java.io.IOException;
 
 public class ViewerWaitForJob extends Builder implements SimpleBuildStep {
-    static final int waitForPollingInterval = 5000;
+    static final int WAIT_FOR_POLLING_INTERVAL = 5000;
     private final String jenkinsJob;
 
     @DataBoundConstructor
@@ -67,7 +67,7 @@ public class ViewerWaitForJob extends Builder implements SimpleBuildStep {
         logger.log(Messages.ViewerWaitForJob_WaitingForJob(job.getName(), String.valueOf(build.getNumber())));
         boolean buildFinished = build.isBuilding();
         while (buildFinished) {
-            Thread.sleep(waitForPollingInterval);
+            Thread.sleep(WAIT_FOR_POLLING_INTERVAL);
             buildFinished = build.details().isBuilding();
         }
 

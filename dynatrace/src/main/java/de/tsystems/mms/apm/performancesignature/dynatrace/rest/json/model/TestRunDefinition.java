@@ -28,21 +28,21 @@ import static de.tsystems.mms.apm.performancesignature.dynatrace.model.TestRun.C
 
 public class TestRunDefinition {
     @SerializedName("versionBuild")
-    private final String versionBuild;
+    private String versionBuild;
     @SerializedName("versionMajor")
-    private final String versionMajor = null;
+    private String versionMajor;
     @SerializedName("versionMilestone")
-    private final String versionMilestone = null;
+    private String versionMilestone;
     @SerializedName("versionMinor")
-    private final String versionMinor = null;
+    private String versionMinor;
     @SerializedName("versionRevision")
-    private final String versionRevision = null;
+    private String versionRevision;
     @SerializedName("marker")
-    private final String marker = null;
+    private String marker;
     @SerializedName("platform")
-    private final String platform = null;
+    private String platform;
     @SerializedName("category")
-    private final CategoryEnum category;
+    private CategoryEnum category;
 
     public TestRunDefinition(int versionBuild, String performance) {
         this.versionBuild = String.valueOf(versionBuild);

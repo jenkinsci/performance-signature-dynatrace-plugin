@@ -28,7 +28,7 @@ import java.util.List;
 
 public class SystemProfileConfigurations {
     @SerializedName("configurations")
-    private List<SystemProfileConfiguration> configurations = null;
+    private List<SystemProfileConfiguration> configurations;
 
     public SystemProfileConfigurations configurations(List<SystemProfileConfiguration> configurations) {
         this.configurations = configurations;

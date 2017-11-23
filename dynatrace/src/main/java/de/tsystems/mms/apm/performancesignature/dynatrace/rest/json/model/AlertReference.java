@@ -27,7 +27,7 @@ import io.swagger.annotations.ApiModelProperty;
 
 public class AlertReference extends BaseReference {
     @SerializedName("rule")
-    private final String rule = null;
+    private String rule;
 
     /**
      * Incident Rule name

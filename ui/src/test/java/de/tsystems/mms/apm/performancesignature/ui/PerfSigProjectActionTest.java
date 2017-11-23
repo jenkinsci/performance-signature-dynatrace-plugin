@@ -54,7 +54,7 @@ public class PerfSigProjectActionTest {
 
         HtmlPage projectPage = wc.getPage(proj);
         j.assertAllImageLoadSuccessfully(projectPage);
-        assertEquals(projectPage.getByXPath("//*[@id=\"tabList\"]/li/a").size(), 2); //no AJAX available :(
+        assertEquals(2, projectPage.getByXPath("//*[@id=\"tabList\"]/li/a").size()); //no AJAX available :(
 
         PerfSigProjectAction projectAction = new PerfSigProjectAction(proj);
         List<JSONDashlet> configuration = new Gson().fromJson(projectAction.getDashboardConfiguration("PerfTest"), new TypeToken<List<JSONDashlet>>() {
