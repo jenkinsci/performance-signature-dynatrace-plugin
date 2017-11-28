@@ -66,14 +66,6 @@ public class ChartDashlet implements Comparable<ChartDashlet> {
         return this.measures;
     }
 
-    public void addMeasure(final Measure tm) {
-        this.measures.add(tm);
-    }
-
-    public void setMeasures(List<Measure> measures) {
-        this.measures = measures;
-    }
-
     /**
      * Ruft den Wert der name-Eigenschaft ab.
      *

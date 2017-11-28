@@ -16,10 +16,8 @@
 
 package de.tsystems.mms.apm.performancesignature.dynatrace.configuration;
 
-import de.tsystems.mms.apm.performancesignature.dynatrace.rest.DTServerConnection;
 import de.tsystems.mms.apm.performancesignature.model.ClientLinkGenerator;
 import de.tsystems.mms.apm.performancesignature.util.PerfSigUIUtils;
-import de.tsystems.mms.apm.performancesignature.util.PerfSigUtils;
 import hudson.DescriptorExtensionList;
 import hudson.RelativePath;
 import hudson.model.AbstractProject;
@@ -127,15 +125,7 @@ public abstract class ConfigurationTestCase implements Describable<Configuration
         }
 
         public ListBoxModel doFillXmlDashboardItems(@RelativePath("..") @QueryParameter final String dynatraceProfile) {
-            DynatraceServerConfiguration serverConfiguration = PerfSigUtils.getServerConfiguration(dynatraceProfile);
-            if (serverConfiguration != null) {
-                CredProfilePair pair = serverConfiguration.getCredProfilePair(dynatraceProfile);
-                if (pair != null) {
-                    DTServerConnection connection = new DTServerConnection(serverConfiguration, pair);
-                    return PerfSigUtils.listToListBoxModel(connection.getDashboards());
-                }
-            }
-            return null;
+            return new Dashboard.DescriptorImpl().doFillDashboardItems(dynatraceProfile);
         }
     }
 }

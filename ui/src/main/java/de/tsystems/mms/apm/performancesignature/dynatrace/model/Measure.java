@@ -74,10 +74,6 @@ public class Measure extends MeasureBaseModel {
         return this.measurements;
     }
 
-    public void addMeasurement(final Measurement tm) {
-        this.measurements.add(tm);
-    }
-
     /**
      * Ruft den Wert der name-Eigenschaft ab.
      *
