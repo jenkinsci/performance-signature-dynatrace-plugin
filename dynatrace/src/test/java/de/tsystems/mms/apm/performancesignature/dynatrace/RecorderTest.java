@@ -137,21 +137,24 @@ public class RecorderTest {
     }
 
     @Test
-    public void testGetDashboardViaRest() throws Exception {
+    public void testGetDashboardViaRest() {
         List<de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.model.Dashboard> dashboardList = connection.getDashboards();
         assertTrue(!dashboardList.isEmpty());
     }
 
     @Test
-    public void testGetAgentsViaRest() throws Exception {
+    public void testGetAgentsViaRest() {
         List<Agent> agentList = connection.getAllAgents();
         assertTrue(!agentList.isEmpty());
     }
 
     @Test
-    public void testHotSensorPlacementViaRest() throws Exception {
-        Agent javaAgent = connection.getAgents().get(0);
-        assertTrue(connection.hotSensorPlacement(javaAgent.getAgentId()));
+    public void testHotSensorPlacementViaRest() {
+        for (Agent agent : connection.getAgents()) {
+            if ("java".equalsIgnoreCase(agent.getTechnologyType())) {
+                assertTrue(connection.hotSensorPlacement(agent.getAgentId()));
+            }
+        }
     }
 
     @Test

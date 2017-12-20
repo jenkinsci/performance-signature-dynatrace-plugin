@@ -16,9 +16,9 @@
 
 package de.tsystems.mms.apm.performancesignature.ui;
 
+import de.tsystems.mms.apm.performancesignature.dynatrace.model.PerfSigTestData;
 import de.tsystems.mms.apm.performancesignature.dynatrace.model.TestResult;
 import de.tsystems.mms.apm.performancesignature.dynatrace.model.TestRun;
-import de.tsystems.mms.apm.performancesignature.ui.model.PerfSigTestData;
 import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
 import hudson.tasks.junit.CaseResult;
 import hudson.tasks.junit.TestAction;
