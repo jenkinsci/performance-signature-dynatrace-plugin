@@ -19,8 +19,8 @@ package de.tsystems.mms.apm.performancesignature.dynatrace;
 import de.tsystems.mms.apm.performancesignature.dynatrace.model.TestRun;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.DTServerConnection;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.RESTErrorException;
-import de.tsystems.mms.apm.performancesignature.util.PerfSigUIUtils;
-import de.tsystems.mms.apm.performancesignature.util.PerfSigUtils;
+import de.tsystems.mms.apm.performancesignature.dynatrace.util.PerfSigUtils;
+import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
@@ -51,7 +51,7 @@ public class PerfSigStopRecording extends Builder implements SimpleBuildStep {
 
     @Override
     public void perform(@Nonnull final Run<?, ?> run, @Nonnull final FilePath workspace, @Nonnull final Launcher launcher, @Nonnull final TaskListener listener)
-            throws InterruptedException, IOException {
+            throws IOException {
         DTServerConnection connection = PerfSigUtils.createDTServerConnection(dynatraceProfile);
         final List<PerfSigEnvInvisAction> envVars = run.getActions(PerfSigEnvInvisAction.class);
 

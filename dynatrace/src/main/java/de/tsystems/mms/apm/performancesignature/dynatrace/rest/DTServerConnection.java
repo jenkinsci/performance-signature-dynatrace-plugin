@@ -32,7 +32,7 @@ import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.model.Agent;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.model.Dashboard;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.model.DashboardList;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.model.Result;
-import de.tsystems.mms.apm.performancesignature.util.PerfSigUIUtils;
+import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
 import hudson.FilePath;
 import hudson.ProxyConfiguration;
 import jenkins.model.Jenkins;

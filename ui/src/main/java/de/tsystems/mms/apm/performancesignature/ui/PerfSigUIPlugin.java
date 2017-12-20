@@ -17,8 +17,8 @@
 package de.tsystems.mms.apm.performancesignature.ui;
 
 import de.tsystems.mms.apm.performancesignature.dynatrace.model.*;
-import de.tsystems.mms.apm.performancesignature.model.PerfSigTestData;
-import de.tsystems.mms.apm.performancesignature.util.PerfSigUIUtils;
+import de.tsystems.mms.apm.performancesignature.ui.model.PerfSigTestData;
+import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
 import hudson.FilePath;
 import hudson.Plugin;
 import hudson.init.Initializer;

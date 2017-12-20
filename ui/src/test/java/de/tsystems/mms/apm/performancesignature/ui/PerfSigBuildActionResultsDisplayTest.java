@@ -21,7 +21,7 @@ import com.gargoylesoftware.htmlunit.Page;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.xml.XmlPage;
 import de.tsystems.mms.apm.performancesignature.dynatrace.model.DashboardReport;
-import de.tsystems.mms.apm.performancesignature.util.PerfSigUIUtils;
+import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
 import hudson.model.AbstractBuild;
 import hudson.model.Project;
 import hudson.model.Run;

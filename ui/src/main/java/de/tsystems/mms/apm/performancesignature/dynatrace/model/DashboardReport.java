@@ -16,7 +16,7 @@
 
 package de.tsystems.mms.apm.performancesignature.dynatrace.model;
 
-import de.tsystems.mms.apm.performancesignature.model.ClientLinkGenerator;
+import de.tsystems.mms.apm.performancesignature.ui.model.ClientLinkGenerator;
 import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
 

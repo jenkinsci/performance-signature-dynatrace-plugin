@@ -23,7 +23,7 @@ import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.*;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model.Alerts;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model.DeploymentEvent;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model.EventUpdate;
-import de.tsystems.mms.apm.performancesignature.util.PerfSigUtils;
+import de.tsystems.mms.apm.performancesignature.dynatrace.util.PerfSigUtils;
 
 import java.lang.reflect.Type;
 import java.util.*;

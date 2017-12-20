@@ -19,7 +19,7 @@ package de.tsystems.mms.apm.performancesignature.ui;
 import de.tsystems.mms.apm.performancesignature.dynatrace.model.DashboardReport;
 import de.tsystems.mms.apm.performancesignature.dynatrace.model.Measure;
 import de.tsystems.mms.apm.performancesignature.dynatrace.model.Measurement;
-import de.tsystems.mms.apm.performancesignature.util.PerfSigUIUtils;
+import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
 import hudson.FilePath;
 import hudson.model.Api;
 import hudson.model.ModelObject;

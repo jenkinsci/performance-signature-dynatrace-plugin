@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.tsystems.mms.apm.performancesignature.util;
+package de.tsystems.mms.apm.performancesignature.ui.util;
 
 import de.tsystems.mms.apm.performancesignature.dynatrace.model.Alert;
 import de.tsystems.mms.apm.performancesignature.dynatrace.model.ChartDashlet;

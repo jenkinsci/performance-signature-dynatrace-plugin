@@ -24,7 +24,6 @@ import de.tsystems.mms.apm.performancesignature.dynatrace.configuration.CredProf
 import de.tsystems.mms.apm.performancesignature.dynatrace.configuration.DynatraceServerConfiguration;
 import de.tsystems.mms.apm.performancesignature.dynatrace.configuration.DynatraceServerConfiguration.DescriptorImpl;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.DTServerConnection;
-import de.tsystems.mms.apm.performancesignature.util.PerfSigUtils;
 import hudson.util.ListBoxModel;
 import jenkins.model.Jenkins;
 

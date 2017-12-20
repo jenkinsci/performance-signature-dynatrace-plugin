@@ -17,7 +17,7 @@
 package de.tsystems.mms.apm.performancesignature.viewer.rest.model;
 
 import com.offbytwo.jenkins.client.JenkinsHttpClient;
-import de.tsystems.mms.apm.performancesignature.util.PerfSigUIUtils;
+import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
 import de.tsystems.mms.apm.performancesignature.viewer.model.CustomProxy;
 import hudson.ProxyConfiguration;
 import jenkins.model.Jenkins;
@@ -41,7 +41,6 @@ import java.net.URI;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
-import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.logging.Logger;
 
@@ -66,7 +65,7 @@ public class CustomJenkinsHttpClient extends JenkinsHttpClient {
             SSLContextBuilder builder = new SSLContextBuilder();
             try {
                 builder.loadTrustMaterial(null, new TrustStrategy() {
-                    public boolean isTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+                    public boolean isTrusted(X509Certificate[] chain, String authType) {
                         return true;
                     }
                 });

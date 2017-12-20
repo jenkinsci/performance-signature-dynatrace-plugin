@@ -23,7 +23,7 @@ import com.cloudbees.plugins.credentials.common.StandardUsernameListBoxModel;
 import com.cloudbees.plugins.credentials.common.StandardUsernamePasswordCredentials;
 import com.cloudbees.plugins.credentials.common.UsernamePasswordCredentials;
 import com.cloudbees.plugins.credentials.domains.DomainRequirement;
-import de.tsystems.mms.apm.performancesignature.util.PerfSigUIUtils;
+import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
 import de.tsystems.mms.apm.performancesignature.viewer.rest.JenkinsServerConnection;
 import de.tsystems.mms.apm.performancesignature.viewer.util.ViewerUtils;
 import hudson.Extension;

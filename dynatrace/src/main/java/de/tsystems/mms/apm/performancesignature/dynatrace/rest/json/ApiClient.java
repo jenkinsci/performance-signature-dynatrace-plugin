@@ -22,7 +22,7 @@ import com.squareup.okhttp.logging.HttpLoggingInterceptor;
 import com.squareup.okhttp.logging.HttpLoggingInterceptor.Level;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.auth.Authentication;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.auth.HttpBasicAuth;
-import de.tsystems.mms.apm.performancesignature.util.PerfSigUtils;
+import de.tsystems.mms.apm.performancesignature.dynatrace.util.PerfSigUtils;
 import okio.BufferedSink;
 import okio.Okio;
 import org.apache.commons.lang.StringUtils;
@@ -41,7 +41,6 @@ import java.lang.reflect.Type;
 import java.net.URLConnection;
 import java.security.GeneralSecurityException;
 import java.security.SecureRandom;
-import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.text.DateFormat;
 import java.util.*;
@@ -846,11 +845,11 @@ public class ApiClient {
             if (!verifyingSsl) {
                 TrustManager trustAll = new X509TrustManager() {
                     @Override
-                    public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+                    public void checkClientTrusted(X509Certificate[] chain, String authType) {
                     }
 
                     @Override
-                    public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+                    public void checkServerTrusted(X509Certificate[] chain, String authType) {
                     }
 
                     @Override

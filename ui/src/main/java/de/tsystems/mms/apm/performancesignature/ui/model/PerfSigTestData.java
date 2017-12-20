@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.tsystems.mms.apm.performancesignature.model;
+package de.tsystems.mms.apm.performancesignature.ui.model;
 
 import de.tsystems.mms.apm.performancesignature.dynatrace.model.TestRun;
 import de.tsystems.mms.apm.performancesignature.ui.PerfSigTestAction;

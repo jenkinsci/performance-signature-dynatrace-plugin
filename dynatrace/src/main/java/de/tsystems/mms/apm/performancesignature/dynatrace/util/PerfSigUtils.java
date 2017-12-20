@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.tsystems.mms.apm.performancesignature.util;
+package de.tsystems.mms.apm.performancesignature.dynatrace.util;
 
 import com.cloudbees.plugins.credentials.CredentialsMatchers;
 import com.cloudbees.plugins.credentials.CredentialsProvider;
@@ -29,6 +29,7 @@ import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.ApiResponse;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.RESTErrorException;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.model.Agent;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.model.Dashboard;
+import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
 import hudson.AbortException;
 import hudson.security.ACL;
 import hudson.util.ListBoxModel;

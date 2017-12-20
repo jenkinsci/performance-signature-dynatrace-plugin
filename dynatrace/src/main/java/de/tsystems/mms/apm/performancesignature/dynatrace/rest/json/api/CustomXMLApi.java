@@ -24,7 +24,7 @@ import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.model.Agent;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.model.AgentList;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.model.DashboardList;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.model.Result;
-import de.tsystems.mms.apm.performancesignature.util.PerfSigUtils;
+import de.tsystems.mms.apm.performancesignature.dynatrace.util.PerfSigUtils;
 
 import javax.annotation.Nonnull;
 import java.io.File;

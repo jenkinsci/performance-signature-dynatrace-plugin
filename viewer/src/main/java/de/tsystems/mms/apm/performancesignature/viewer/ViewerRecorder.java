@@ -18,7 +18,7 @@ package de.tsystems.mms.apm.performancesignature.viewer;
 
 import de.tsystems.mms.apm.performancesignature.dynatrace.model.DashboardReport;
 import de.tsystems.mms.apm.performancesignature.ui.PerfSigBuildAction;
-import de.tsystems.mms.apm.performancesignature.util.PerfSigUIUtils;
+import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
 import de.tsystems.mms.apm.performancesignature.viewer.rest.JenkinsServerConnection;
 import de.tsystems.mms.apm.performancesignature.viewer.rest.RESTErrorException;
 import de.tsystems.mms.apm.performancesignature.viewer.util.ViewerUtils;

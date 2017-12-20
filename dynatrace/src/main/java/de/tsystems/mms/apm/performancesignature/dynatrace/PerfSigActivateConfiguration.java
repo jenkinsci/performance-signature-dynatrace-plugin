@@ -20,8 +20,8 @@ import de.tsystems.mms.apm.performancesignature.dynatrace.configuration.CredProf
 import de.tsystems.mms.apm.performancesignature.dynatrace.configuration.DynatraceServerConfiguration;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.DTServerConnection;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.model.Agent;
-import de.tsystems.mms.apm.performancesignature.util.PerfSigUIUtils;
-import de.tsystems.mms.apm.performancesignature.util.PerfSigUtils;
+import de.tsystems.mms.apm.performancesignature.dynatrace.util.PerfSigUtils;
+import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
@@ -54,7 +54,7 @@ public class PerfSigActivateConfiguration extends Builder implements SimpleBuild
 
     @Override
     public void perform(@Nonnull final Run<?, ?> run, @Nonnull final FilePath workspace, @Nonnull final Launcher launcher, @Nonnull final TaskListener listener)
-            throws InterruptedException, IOException {
+            throws IOException {
         PluginLogger logger = PerfSigUIUtils.createLogger(listener.getLogger());
         DTServerConnection connection = PerfSigUtils.createDTServerConnection(dynatraceProfile);
 

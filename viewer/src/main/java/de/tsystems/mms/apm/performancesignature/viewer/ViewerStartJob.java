@@ -21,7 +21,7 @@ import com.offbytwo.jenkins.model.Build;
 import com.offbytwo.jenkins.model.JobWithDetails;
 import com.offbytwo.jenkins.model.QueueItem;
 import com.offbytwo.jenkins.model.QueueReference;
-import de.tsystems.mms.apm.performancesignature.util.PerfSigUIUtils;
+import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
 import de.tsystems.mms.apm.performancesignature.viewer.rest.JenkinsServerConnection;
 import de.tsystems.mms.apm.performancesignature.viewer.util.ViewerUtils;
 import hudson.Extension;

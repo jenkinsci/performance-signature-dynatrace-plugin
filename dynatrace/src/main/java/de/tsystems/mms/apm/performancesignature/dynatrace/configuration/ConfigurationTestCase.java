@@ -16,8 +16,8 @@
 
 package de.tsystems.mms.apm.performancesignature.dynatrace.configuration;
 
-import de.tsystems.mms.apm.performancesignature.model.ClientLinkGenerator;
-import de.tsystems.mms.apm.performancesignature.util.PerfSigUIUtils;
+import de.tsystems.mms.apm.performancesignature.ui.model.ClientLinkGenerator;
+import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
 import hudson.DescriptorExtensionList;
 import hudson.RelativePath;
 import hudson.model.AbstractProject;

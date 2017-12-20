@@ -23,7 +23,7 @@ import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model.Activa
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model.SystemProfile;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model.SystemProfileConfigurations;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model.SystemProfiles;
-import de.tsystems.mms.apm.performancesignature.util.PerfSigUtils;
+import de.tsystems.mms.apm.performancesignature.dynatrace.util.PerfSigUtils;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;

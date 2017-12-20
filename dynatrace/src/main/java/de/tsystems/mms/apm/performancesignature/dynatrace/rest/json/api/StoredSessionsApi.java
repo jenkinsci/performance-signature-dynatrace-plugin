@@ -21,7 +21,7 @@ import com.squareup.okhttp.Call;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.*;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model.SessionMetadata;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model.Sessions;
-import de.tsystems.mms.apm.performancesignature.util.PerfSigUtils;
+import de.tsystems.mms.apm.performancesignature.dynatrace.util.PerfSigUtils;
 
 import java.io.File;
 import java.lang.reflect.Type;

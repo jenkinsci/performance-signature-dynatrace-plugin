@@ -20,8 +20,8 @@ import de.tsystems.mms.apm.performancesignature.dynatrace.rest.DTServerConnectio
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model.SessionData;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.CommandExecutionException;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.RESTErrorException;
+import de.tsystems.mms.apm.performancesignature.dynatrace.util.PerfSigUtils;
 import de.tsystems.mms.apm.performancesignature.dynatrace.util.TestUtils;
-import de.tsystems.mms.apm.performancesignature.util.PerfSigUtils;
 import hudson.AbortException;
 import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;

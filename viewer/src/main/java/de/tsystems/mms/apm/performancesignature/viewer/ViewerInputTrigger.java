@@ -17,7 +17,7 @@
 package de.tsystems.mms.apm.performancesignature.viewer;
 
 import com.offbytwo.jenkins.model.JobWithDetails;
-import de.tsystems.mms.apm.performancesignature.util.PerfSigUIUtils;
+import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
 import de.tsystems.mms.apm.performancesignature.viewer.rest.JenkinsServerConnection;
 import de.tsystems.mms.apm.performancesignature.viewer.util.ViewerUtils;
 import hudson.Extension;
@@ -48,7 +48,7 @@ public class ViewerInputTrigger extends Builder implements SimpleBuildStep {
     }
 
     @Override
-    public void perform(@Nonnull Run<?, ?> run, @Nonnull FilePath workspace, @Nonnull Launcher launcher, @Nonnull TaskListener listener) throws InterruptedException, IOException {
+    public void perform(@Nonnull Run<?, ?> run, @Nonnull FilePath workspace, @Nonnull Launcher launcher, @Nonnull TaskListener listener) throws IOException {
         PluginLogger logger = PerfSigUIUtils.createLogger(listener.getLogger());
         JenkinsServerConnection serverConnection = ViewerUtils.createJenkinsServerConnection(jenkinsJob);
 

@@ -22,8 +22,8 @@ import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.api.AlertsIn
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model.DeploymentEvent;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model.EventUpdate;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.RESTErrorException;
-import de.tsystems.mms.apm.performancesignature.util.PerfSigUIUtils;
-import de.tsystems.mms.apm.performancesignature.util.PerfSigUtils;
+import de.tsystems.mms.apm.performancesignature.dynatrace.util.PerfSigUtils;
+import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
 import hudson.AbortException;
 import hudson.model.TaskListener;
 import hudson.plugins.analysis.util.PluginLogger;

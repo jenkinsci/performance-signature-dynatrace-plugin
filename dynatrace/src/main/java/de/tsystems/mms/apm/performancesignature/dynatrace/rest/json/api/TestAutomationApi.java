@@ -21,7 +21,7 @@ import com.squareup.okhttp.Call;
 import de.tsystems.mms.apm.performancesignature.dynatrace.model.TestRun;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.*;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model.TestRunDefinition;
-import de.tsystems.mms.apm.performancesignature.util.PerfSigUtils;
+import de.tsystems.mms.apm.performancesignature.dynatrace.util.PerfSigUtils;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.tsystems.mms.apm.performancesignature.model;
+package de.tsystems.mms.apm.performancesignature.ui.model;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -25,6 +25,7 @@ public class ClientLinkGenerator {
     public static final String WEBSTART = "open Webstart client";
     private final String dashboardName;
     private final String sessionName;
+    private final String target;
     @Deprecated
     private transient int port;
     @Deprecated
@@ -32,7 +33,6 @@ public class ClientLinkGenerator {
     @Deprecated
     private transient String server;
     private String serverUrl;
-    private final String target;
 
     public ClientLinkGenerator(final String serverUrl, final String dashboardName, final String sessionName, final String target) {
         this.serverUrl = serverUrl;

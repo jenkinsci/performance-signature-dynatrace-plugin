@@ -17,7 +17,7 @@
 package de.tsystems.mms.apm.performancesignature.dynatrace.model;
 
 import com.google.gson.annotations.SerializedName;
-import de.tsystems.mms.apm.performancesignature.util.PerfSigUIUtils;
+import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
 import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
 

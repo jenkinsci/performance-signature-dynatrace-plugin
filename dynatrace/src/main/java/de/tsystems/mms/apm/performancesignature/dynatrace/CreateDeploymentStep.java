@@ -17,7 +17,7 @@
 package de.tsystems.mms.apm.performancesignature.dynatrace;
 
 import com.google.common.collect.ImmutableSet;
-import de.tsystems.mms.apm.performancesignature.util.PerfSigUtils;
+import de.tsystems.mms.apm.performancesignature.dynatrace.util.PerfSigUtils;
 import hudson.Extension;
 import hudson.model.TaskListener;
 import hudson.util.ListBoxModel;
@@ -40,7 +40,7 @@ public class CreateDeploymentStep extends Step {
     }
 
     @Override
-    public StepExecution start(StepContext context) throws Exception {
+    public StepExecution start(StepContext context) {
         return new CreateDeploymentStepExecution(this, context);
     }
 
