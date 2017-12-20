@@ -400,7 +400,7 @@ public class PerfSigProjectAction extends PerfSigBaseAction implements Prominent
     }
 
     @SuppressWarnings("unused")
-    public Map<JSONDashlet, Measure> getFilteredChartDashlets(final DashboardReport dashboardReport) throws InterruptedException {
+    public Map<JSONDashlet, Measure> getFilteredChartDashlets(final DashboardReport dashboardReport) {
         Map<JSONDashlet, Measure> filteredChartDashlets = new TreeMap<>(new Comparator<JSONDashlet>() {
             @Override
             public int compare(final JSONDashlet o1, final JSONDashlet o2) {

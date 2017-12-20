@@ -175,7 +175,7 @@ public class PerfSigBuildActionResultsDisplayTest {
 
     @LocalData
     @Test
-    public void testGetReportList() throws IOException, SAXException, InterruptedException {
+    public void testGetReportList() throws IOException, SAXException {
         Project proj = (Project) j.jenkins.getItem(TEST_PROJECT_WITH_HISTORY);
         assert proj != null;
         Run<?, ?> build = proj.getBuildByNumber(11157);

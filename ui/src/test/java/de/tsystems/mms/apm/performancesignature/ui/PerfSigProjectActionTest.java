@@ -32,11 +32,11 @@ import org.junit.rules.ExpectedException;
 import org.jvnet.hudson.test.JenkinsRule;
 import org.jvnet.hudson.test.recipes.LocalData;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class PerfSigProjectActionTest {
 
@@ -141,7 +141,7 @@ public class PerfSigProjectActionTest {
 
     @LocalData
     @Test
-    public void testGridConfiguration() throws IOException, InterruptedException {
+    public void testGridConfiguration() {
         Project proj = (Project) j.jenkins.getItem(TEST_PROJECT_WITH_HISTORY);
 
         PerfSigProjectAction projectAction = new PerfSigProjectAction(proj);

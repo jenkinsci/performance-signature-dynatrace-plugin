@@ -38,7 +38,7 @@ public class Measure extends MeasureBaseModel {
     @XmlAttribute(name = "measure")
     private String name;
     @XmlElement(name = "measure")
-    private List<Measure> measures;
+    private transient List<Measure> measures;
     @XmlAttribute
     private String color;
     @XmlAttribute
