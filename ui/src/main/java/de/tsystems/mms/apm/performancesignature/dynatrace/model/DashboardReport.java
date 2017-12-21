@@ -21,6 +21,7 @@ import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
 
 import javax.xml.bind.annotation.*;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,7 +37,9 @@ public class DashboardReport {
     @XmlElement(name = "incident")
     private final List<Alert> incidents;
     private boolean unitTest;
-    private ClientLinkGenerator clientLink;
+    @Deprecated
+    private transient ClientLinkGenerator clientLink;
+    private String clientUrl;
 
     public DashboardReport(final String testCaseName) {
         this.name = testCaseName;
@@ -115,12 +118,20 @@ public class DashboardReport {
         this.unitTest = unitTest;
     }
 
-    public ClientLinkGenerator getClientLink() {
-        return clientLink;
+    public String getClientUrl() {
+        return clientUrl;
     }
 
-    public void setClientLink(final ClientLinkGenerator clientLink) {
-        this.clientLink = clientLink;
+    public void setClientUrl(String clientUrl) {
+        this.clientUrl = clientUrl;
+    }
+
+    @SuppressWarnings("deprecation")
+    protected Object readResolve() throws MalformedURLException {
+        if (clientLink != null) {
+            clientUrl = clientLink.generateLink();
+        }
+        return this;
     }
 
     public Measure getMeasure(final String chartDashlet, final String measure) {

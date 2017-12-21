@@ -51,7 +51,7 @@
                                         <h3>${%Test case:} ${dashboardReport.name}</h3>
                                     </div>
                                     <div class="col-md-4 pull-right">
-                                        <a target="_blank" href="${dashboardReport.getClientLink().generateLink()}">
+                                        <a target="_blank" href="${dashboardReport.clientUrl}">
                                             <button style="margin-top: 5px; margin-bottom: 10px;" type="button"
                                                     title="Dynatrace client must be started on local machine"
                                                     class="btn btn-success" id="editbutton">

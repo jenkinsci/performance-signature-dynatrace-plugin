@@ -176,9 +176,9 @@ public class PerfSigRecorder extends Recorder implements SimpleBuildStep {
             } else {
                 dashboardReport.getIncidents().addAll(incidents);
                 dashboardReport.setUnitTest(configurationTestCase instanceof UnitTestCase);
-                ClientLinkGenerator clientLink = new ClientLinkGenerator(serverConfiguration.getServerUrl(), configurationTestCase.getXmlDashboard(),
+                ClientLinkGenerator clientLinkGenerator = new ClientLinkGenerator(serverConfiguration.getServerUrl(), configurationTestCase.getXmlDashboard(),
                         sessionId, configurationTestCase.getClientDashboard());
-                dashboardReport.setClientLink(clientLink);
+                dashboardReport.setClientUrl(clientLinkGenerator.generateLink());
                 dashboardReports.add(dashboardReport);
 
                 PerfSigUIUtils.handleIncidents(run, dashboardReport.getIncidents(), logger, nonFunctionalFailure);
