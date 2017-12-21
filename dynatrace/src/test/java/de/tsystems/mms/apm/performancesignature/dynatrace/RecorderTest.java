@@ -27,6 +27,7 @@ import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.model.Agent;
 import de.tsystems.mms.apm.performancesignature.dynatrace.util.PerfSigUtils;
 import de.tsystems.mms.apm.performancesignature.dynatrace.util.TestUtils;
 import de.tsystems.mms.apm.performancesignature.ui.PerfSigBuildAction;
+import de.tsystems.mms.apm.performancesignature.ui.model.ClientLinkGenerator;
 import hudson.AbortException;
 import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
@@ -79,6 +80,7 @@ public class RecorderTest {
                 Collections.singletonList(new Dashboard("PerformanceSignature_singlereport")),
                 Collections.singletonList(new Dashboard("PerformanceSignature_comparisonreport")),
                 "PerformanceSignature_xml");
+        configurationTestCase.setClientDashboard(ClientLinkGenerator.PUREPATH_OVERVIEW);
 
         PerfSigRecorder recorder = new PerfSigRecorder(dynatraceConfigurations.get(0).name, Collections.singletonList(configurationTestCase));
         recorder.setExportSessions(true);
