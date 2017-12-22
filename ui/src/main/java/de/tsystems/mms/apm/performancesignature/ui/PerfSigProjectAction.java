@@ -18,7 +18,6 @@ package de.tsystems.mms.apm.performancesignature.ui;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.thoughtworks.xstream.XStream;
 import de.tsystems.mms.apm.performancesignature.dynatrace.model.ChartDashlet;
 import de.tsystems.mms.apm.performancesignature.dynatrace.model.DashboardReport;
 import de.tsystems.mms.apm.performancesignature.dynatrace.model.Measure;
@@ -62,10 +61,14 @@ public class PerfSigProjectAction extends PerfSigBaseAction implements Prominent
     static final String UNITTEST_DASHLETNAME = "unittest_overview";
     private static final String JSON_FILENAME = "gridconfig.xml";
     private static final Logger logger = Logger.getLogger(PerfSigProjectAction.class.getName());
-    private static final XStream XSTREAM = new XStream2();
+    private static final XStream2 XSTREAM2 = new XStream2();
     private static final Gson GSON = new Gson();
     private final Job<?, ?> job;
     private transient Map<String, JSONDashlet> jsonDashletMap;
+
+    static {
+        XSTREAM2.addCompatibilityAlias("de.tsystems.mms.apm.performancesignature.model.JSONDashlet", JSONDashlet.class);
+    }
 
     public PerfSigProjectAction(final Job<?, ?> job) {
         this.job = job;
@@ -436,7 +439,7 @@ public class PerfSigProjectAction extends PerfSigBaseAction implements Prominent
     }
 
     private synchronized XmlFile getConfigFile() {
-        return new XmlFile(XSTREAM, new File(job.getConfigFile().getFile().getParent(), JSON_FILENAME));
+        return new XmlFile(XSTREAM2, new File(job.getConfigFile().getFile().getParent(), JSON_FILENAME));
     }
 
     @SuppressWarnings("unchecked")
