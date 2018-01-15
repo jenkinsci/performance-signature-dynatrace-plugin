@@ -379,7 +379,7 @@ public class DTServerConnection {
         AlertsIncidentsAndEventsApi api = new AlertsIncidentsAndEventsApi(apiClient);
         try {
             List<Alert> incidents = new ArrayList<>();
-            Alerts alerts = api.getIncidents(systemProfile, null, "Created", from, to);
+            Alerts alerts = api.getIncidents(systemProfile, null, Alert.StateEnum.CREATED.getValue(), from, to);
             for (AlertReference alertReference : alerts.getAlerts()) {
                 incidents.add(api.getIncident(alertReference.getId()));
             }

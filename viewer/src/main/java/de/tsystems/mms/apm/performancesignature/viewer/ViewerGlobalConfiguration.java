@@ -40,7 +40,6 @@ public class ViewerGlobalConfiguration extends GlobalConfiguration {
     @Override
     public boolean configure(final StaplerRequest req, final JSONObject formData) {
         setConfigurations(req.bindJSONToList(JenkinsServerConfiguration.class, formData.get("configurations")));
-        save();
         return false;
     }
 
@@ -50,5 +49,6 @@ public class ViewerGlobalConfiguration extends GlobalConfiguration {
 
     public void setConfigurations(final List<JenkinsServerConfiguration> configurations) {
         this.configurations = configurations;
+        save();
     }
 }
