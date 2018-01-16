@@ -210,7 +210,7 @@ public class PerfSigBuildActionResultsDisplay implements ModelObject {
         }
         InputStream inStream = requestedFile.read();
         // gets MIME type of the file
-        String mimeType = extension.equals("pdf") ? "application/pdf" : "application/octet-stream";// set to binary type if MIME mapping not found
+        String mimeType = "pdf".equals(extension) ? "application/pdf" : "application/octet-stream";// set to binary type if MIME mapping not found
 
         try {
             // forces download
@@ -250,7 +250,7 @@ public class PerfSigBuildActionResultsDisplay implements ModelObject {
             String unit = m.getUnit();
 
             JFreeChart chart;
-            if (unit.equalsIgnoreCase("num")) {
+            if ("num".equalsIgnoreCase(unit)) {
                 chart = ChartFactory.createXYBarChart(PerfSigUIUtils.generateTitle(measure, chartDashlet, m.getAggregation()), // title
                         "time", // domain axis label
                         true,

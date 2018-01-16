@@ -496,7 +496,7 @@ public class PerfSigProjectAction extends PerfSigBaseAction implements Prominent
                 if (dr.getName().equals(dashboard)) {
                     final Measure m = dr.getMeasure(chartDashlet, measure);
                     if (m != null) {
-                        unit = "Count".equalsIgnoreCase(aggregation) ? "num" : m.getUnit();
+                        unit = m.getUnit(aggregation);
                         color = m.getColor();
                     }
                     break;

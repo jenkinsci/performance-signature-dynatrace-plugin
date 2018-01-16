@@ -549,7 +549,7 @@ public class ApiClient {
     public File prepareDownloadFile(Response response) throws IOException {
         String filename = null;
         String contentDisposition = response.header("Content-Disposition");
-        if (contentDisposition != null && !"".equals(contentDisposition)) {
+        if (StringUtils.isNotBlank(contentDisposition)) {
             // Get filename from the Content-Disposition header.
             Pattern pattern = Pattern.compile("filename=['\"]?([^'\"\\s]+)['\"]?");
             Matcher matcher = pattern.matcher(contentDisposition);

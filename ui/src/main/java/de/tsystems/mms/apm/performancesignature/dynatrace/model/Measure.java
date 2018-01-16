@@ -18,7 +18,6 @@ package de.tsystems.mms.apm.performancesignature.dynatrace.model;
 
 import com.google.gson.annotations.SerializedName;
 import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
-import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
 
@@ -126,14 +125,11 @@ public class Measure extends MeasureBaseModel {
     }
 
     public String getUnit(final String aggregation) {
-        if (StringUtils.isNotBlank(aggregation) && aggregation.equalsIgnoreCase("count")) {
-            return "num";
-        }
-        return this.unit;
+        return "count".equalsIgnoreCase(aggregation) ? "num" : this.unit;
     }
 
     private boolean isPercentile() {
-        return StringUtils.isNotBlank(this.aggregation) && this.aggregation.equalsIgnoreCase("percentiles");
+        return "percentiles".equalsIgnoreCase(this.aggregation);
     }
 
     public double getMetricValue() {
