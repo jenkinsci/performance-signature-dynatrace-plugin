@@ -18,7 +18,8 @@
     "datatables.net-bs": "^1.10.16",
     "lightbox2": "^2.9.0",
     "jquery": "latest",
-    "wurl": "^2.5.2"
+    "wurl": "^2.5.2",
+    "jquery-bridget": "latest"
   },
   "jenkinscd": {
     "import": [

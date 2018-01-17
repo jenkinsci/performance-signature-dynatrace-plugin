@@ -20,7 +20,9 @@ require('./tabhashes.js');
 var wurl = require('wurl');
 require('datatables.net-bs')(window, $);
 require('lightbox2');
-require('./jquery.gridster')(window, $);
+var jQueryBridget = require('jquery-bridget');
+var Gridster = require('./gridster/jquery.gridster');
+jQueryBridget('gridster', Gridster, $);
 
 $(document).ready(function () {
     "use strict";
