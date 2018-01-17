@@ -20,7 +20,7 @@
         <f:select/>
     </f:entry>
     <f:entry title="${%Single report dashboards}" field="singleDashboards">
-        <f:repeatable field="singleDashboards" add="${%Add dashboard}" header="${%Single report dashboard}" minimum="1">
+        <f:repeatable field="singleDashboards" add="${%Add dashboard}" header="${%Single report dashboard}">
             <br/>
             <table width="100%">
                 <f:entry field="dashboard">
@@ -35,7 +35,7 @@
         </f:repeatable>
     </f:entry>
     <f:entry title="${%Comparison report dashboards}" field="comparisonDashboards">
-        <f:repeatable field="comparisonDashboards" add="${%Add dashboard}" header="${%Comparison report dashboard}" minimum="1">
+        <f:repeatable field="comparisonDashboards" add="${%Add dashboard}" header="${%Comparison report dashboard}">
             <br/>
             <table width="100%">
                 <f:entry field="dashboard">
