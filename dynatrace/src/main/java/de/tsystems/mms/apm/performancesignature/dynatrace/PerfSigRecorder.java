@@ -53,6 +53,7 @@ public class PerfSigRecorder extends Recorder implements SimpleBuildStep {
     private final String dynatraceProfile;
     private final List<ConfigurationTestCase> configurationTestCases;
     private boolean exportSessions;
+    private boolean deleteSessions;
     private boolean removeConfidentialStrings;
     private int nonFunctionalFailure;
     private transient List<SessionData> availableSessions;
@@ -193,6 +194,15 @@ public class PerfSigRecorder extends Recorder implements SimpleBuildStep {
                     logger.log(Messages.PerfSigRecorder_SessionDownloadSuccessful());
                 }
             }
+
+            if (deleteSessions) {
+                boolean deletedSession = connection.deleteSession(sessionId);
+                if (!deletedSession) {
+                    logger.log(Messages.PerfSigRecorder_SessionDeleteError(sessionId));
+                } else {
+                    logger.log(Messages.PerfSigRecorder_SessionDeleteSuccessful(sessionId));
+                }
+            }
         }
 
         PerfSigBuildAction action = new PerfSigBuildAction(dashboardReports);
@@ -230,6 +240,15 @@ public class PerfSigRecorder extends Recorder implements SimpleBuildStep {
         this.exportSessions = exportSessions;
     }
 
+    public boolean isDeleteSessions() {
+        return deleteSessions;
+    }
+
+    @DataBoundSetter
+    public void setDeleteSessions(boolean deleteSessions) {
+        this.deleteSessions = deleteSessions;
+    }
+
     public List<ConfigurationTestCase> getConfigurationTestCases() {
         return configurationTestCases == null ? Collections.<ConfigurationTestCase>emptyList() : configurationTestCases;
     }
@@ -260,6 +279,7 @@ public class PerfSigRecorder extends Recorder implements SimpleBuildStep {
     @Extension
     public static final class DescriptorImpl extends BuildStepDescriptor<Publisher> {
         public static final boolean defaultExportSessions = true;
+        public static final boolean defaultDeleteSessions = false;
         public static final boolean defaultRemoveConfidentialStrings = true;
         public static final int defaultNonFunctionalFailure = 0;
 

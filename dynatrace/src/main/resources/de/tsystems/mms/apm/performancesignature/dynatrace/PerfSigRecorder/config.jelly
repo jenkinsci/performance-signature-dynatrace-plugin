@@ -33,9 +33,13 @@
                  description="${%Should Dynatrace sessions be exported to the workspace directory?}">
             <f:checkbox default="${descriptor.defaultExportSessions}"/>
         </f:entry>
-        <f:entry title="${%remove confidential strings}" field="removeConfidentialStrings"
+        <f:entry title="${%Remove confidential strings}" field="removeConfidentialStrings"
                  description="${%Should confidential strings be removed from Dynatrace sessions?}">
             <f:checkbox default="${descriptor.defaultRemoveConfidentialStrings}"/>
+        </f:entry>
+        <f:entry title="${%Delete sessions}" field="deleteSessions"
+                 description="${%Should Dynatrace sessions be deleted from the Dynatrace AppMon Server, after reporting and session export?}">
+            <f:checkbox default="${descriptor.defaultDeleteSessions}"/>
         </f:entry>
         <f:entry title="${%Non-functional failure behaviour}" field="nonFunctionalFailure"
                  description="${%Should the plugin modify the build result in case of any Dynatrace incidents?}">

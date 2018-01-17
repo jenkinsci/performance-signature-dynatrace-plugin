@@ -303,6 +303,16 @@ public class DTServerConnection {
         }
     }
 
+    public boolean deleteSession(final String sessionId) {
+        StoredSessionsApi api = new StoredSessionsApi(apiClient);
+        try {
+            api.deleteStoredSession(sessionId);
+            return true;
+        } catch (Exception ex) {
+            throw new CommandExecutionException("error while deleting session: " + ex.getMessage(), ex);
+        }
+    }
+
     public String threadDump(final String agentName, final String hostName, final int processId, final boolean sessionLocked) {
         CustomXMLApi api = new CustomXMLApi(apiClient);
         try {

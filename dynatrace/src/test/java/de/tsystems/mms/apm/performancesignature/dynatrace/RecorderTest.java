@@ -84,6 +84,7 @@ public class RecorderTest {
 
         PerfSigRecorder recorder = new PerfSigRecorder(dynatraceConfigurations.get(0).name, Collections.singletonList(configurationTestCase));
         recorder.setExportSessions(true);
+        recorder.setDeleteSessions(true);
         project.getPublishersList().add(recorder);
         FreeStyleBuild build = j.assertBuildStatusSuccess(project.scheduleBuild2(0));
 
@@ -92,6 +93,7 @@ public class RecorderTest {
         assertTrue(s.contains("getting PDF report: Singlereport")); //no Comparisonreport available
         assertTrue(s.contains("parsing XML report"));
         assertTrue(s.contains("session successfully downloaded"));
+        assertTrue(s.contains("successfully deleted"));
 
         PerfSigBuildAction buildAction = build.getAction(PerfSigBuildAction.class);
         assertNotNull(buildAction);
