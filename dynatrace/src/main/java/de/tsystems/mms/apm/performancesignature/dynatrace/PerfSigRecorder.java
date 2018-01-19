@@ -39,6 +39,7 @@ import hudson.tasks.Publisher;
 import hudson.tasks.Recorder;
 import hudson.util.ListBoxModel;
 import jenkins.tasks.SimpleBuildStep;
+import org.apache.commons.lang.StringUtils;
 import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
@@ -134,17 +135,17 @@ public class PerfSigRecorder extends Recorder implements SimpleBuildStep {
 
             availableSessions = connection.getSessions().getSessions();
             int retryCount = 0;
-            while ((!validateSessionName(sessionId)) && (retryCount < serverConfiguration.getRetryCount())) {
+            while ((!validateSessionId(sessionId)) && (retryCount < serverConfiguration.getRetryCount())) {
                 retryCount++;
                 availableSessions = connection.getSessions().getSessions();
                 logger.log(Messages.PerfSigRecorder_WaitingForSession(retryCount, serverConfiguration.getRetryCount()));
                 Thread.sleep(10000L);
             }
 
-            if (!validateSessionName(sessionId)) {
+            if (!validateSessionId(sessionId)) {
                 throw new RESTErrorException(Messages.PerfSigRecorder_SessionNotAvailable(sessionId));
             }
-            if (comparisonBuildNumber != 0 && !validateSessionName(comparisonSessionId)) {
+            if (!validateSessionId(comparisonSessionId)) {
                 logger.log(Messages.PerfSigRecorder_ComparisonNotPossible(comparisonSessionId));
             }
 
@@ -158,7 +159,7 @@ public class PerfSigRecorder extends Recorder implements SimpleBuildStep {
                 }
             }
             for (Dashboard comparisonDashboard : configurationTestCase.getComparisonDashboards()) {
-                if (comparisonBuildNumber != 0 && comparisonSessionId != null && comparisonSessionName != null) {
+                if (comparisonSessionId != null && comparisonSessionName != null && validateSessionId(comparisonSessionId)) {
                     comparisonFilename = "Comparisonreport_" + comparisonSessionName.replace(comparisonBuildNumber + "_",
                             buildNumber + "_" + comparisonBuildNumber + "_") + "_" + comparisonDashboard.getName() + ".pdf";
                     logger.log(Messages.PerfSigRecorder_GettingPDFReport() + " " + comparisonFilename);
@@ -195,12 +196,12 @@ public class PerfSigRecorder extends Recorder implements SimpleBuildStep {
                 }
             }
 
-            if (deleteSessions) {
-                boolean deletedSession = connection.deleteSession(sessionId);
+            if (deleteSessions && validateSessionId(comparisonSessionId)) {
+                boolean deletedSession = connection.deleteSession(comparisonSessionId);
                 if (!deletedSession) {
-                    logger.log(Messages.PerfSigRecorder_SessionDeleteError(sessionId));
+                    logger.log(Messages.PerfSigRecorder_SessionDeleteError(comparisonSessionId));
                 } else {
-                    logger.log(Messages.PerfSigRecorder_SessionDeleteSuccessful(sessionId));
+                    logger.log(Messages.PerfSigRecorder_SessionDeleteSuccessful(comparisonSessionId));
                 }
             }
         }
@@ -218,9 +219,10 @@ public class PerfSigRecorder extends Recorder implements SimpleBuildStep {
         return null;
     }
 
-    private boolean validateSessionName(final String name) {
+    private boolean validateSessionId(final String id) {
+        if (StringUtils.isBlank(id)) return false;
         for (SessionData session : availableSessions) {
-            if (session.getId().equalsIgnoreCase(name)) {
+            if (session.getId().equalsIgnoreCase(id)) {
                 return true;
             }
         }
