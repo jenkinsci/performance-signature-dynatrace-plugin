@@ -53,20 +53,19 @@ public class PerfSigStopRecording extends Builder implements SimpleBuildStep {
     public void perform(@Nonnull final Run<?, ?> run, @Nonnull final FilePath workspace, @Nonnull final Launcher launcher, @Nonnull final TaskListener listener)
             throws IOException {
         DTServerConnection connection = PerfSigUtils.createDTServerConnection(dynatraceProfile);
-        final List<PerfSigEnvInvisAction> envVars = run.getActions(PerfSigEnvInvisAction.class);
+        final List<PerfSigEnvInvisAction> actions = run.getActions(PerfSigEnvInvisAction.class);
 
-        PerfSigEnvInvisAction buildEnvVars = null;
-        String sessionId = null;
+        PerfSigEnvInvisAction perfSigAction = null;
+        String sessionId;
         String testRunId = null;
         Date timeframeStop = new Date();
         PluginLogger logger = PerfSigUIUtils.createLogger(listener.getLogger());
 
         logger.log(Messages.PerfSigStopRecording_StoppingSessionRecording());
-        if (!envVars.isEmpty()) {
-            buildEnvVars = envVars.get(envVars.size() - 1);
-            buildEnvVars.setTimeframeStop(timeframeStop);
-            sessionId = buildEnvVars.getSessionId();
-            testRunId = buildEnvVars.getTestRunId();
+        if (!actions.isEmpty()) {
+            perfSigAction = actions.get(actions.size() - 1); //get the last PerfSigAction
+            perfSigAction.setTimeframeStop(timeframeStop);
+            testRunId = perfSigAction.getTestRunId();
         }
 
         if (testRunId != null) {
@@ -74,13 +73,13 @@ public class PerfSigStopRecording extends Builder implements SimpleBuildStep {
             logger.log("finished test run " + testRun.getId());
         }
 
-        if (buildEnvVars != null && sessionId == null) {
-            Date timeframeStart = buildEnvVars.getTimeframeStart();
+        if (perfSigAction != null && perfSigAction.isContinuousRecording()) {
+            Date timeframeStart = perfSigAction.getTimeframeStart();
             logger.log(Messages.PerfSigStopRecording_TimeframeStart(timeframeStart));
             logger.log(Messages.PerfSigStopRecording_TimeframeStop(timeframeStop));
-            sessionId = connection.storeSession(buildEnvVars.getSessionName(), timeframeStart, timeframeStop,
+            sessionId = connection.storeSession(perfSigAction.getSessionName(), timeframeStart, timeframeStop,
                     PerfSigStartRecording.DescriptorImpl.defaultRecordingOption, PerfSigStartRecording.DescriptorImpl.defaultLockSession, false);
-            buildEnvVars.setSessionId(sessionId);
+            perfSigAction.setSessionId(sessionId);
         } else {
             sessionId = connection.stopRecording();
         }
@@ -89,7 +88,7 @@ public class PerfSigStopRecording extends Builder implements SimpleBuildStep {
             throw new RESTErrorException(Messages.PerfSigStopRecording_InternalError());
         }
         logger.log(Messages.PerfSigStopRecording_StoppedSessionRecording(connection.getCredProfilePair().getProfile(),
-                buildEnvVars != null ? buildEnvVars.getSessionName() : sessionId));
+                perfSigAction != null ? perfSigAction.getSessionName() : sessionId));
     }
 
     public String getDynatraceProfile() {

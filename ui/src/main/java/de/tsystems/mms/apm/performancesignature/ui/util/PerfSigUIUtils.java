@@ -22,14 +22,12 @@ import hudson.FilePath;
 import hudson.model.Result;
 import hudson.model.Run;
 import hudson.plugins.analysis.util.PluginLogger;
-import jenkins.model.Jenkins;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.filefilter.RegexFileFilter;
 import org.apache.commons.lang.CharEncoding;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 
-import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -116,19 +114,6 @@ public final class PerfSigUIUtils {
         int minutes = (int) ((seconds % 3600) / 60);
         float rest = seconds % 60;
         return minutes + " min " + (int) rest + " s";
-    }
-
-    /**
-     * gets removed if jenkins version hits 1.653
-     */
-    @Nonnull
-    public static Jenkins getInstance() {
-        Jenkins instance = Jenkins.getInstance();
-        if (instance == null) {
-            throw new IllegalStateException("Jenkins has not been started, or was already shut down");
-        } else {
-            return instance;
-        }
     }
 
     /**

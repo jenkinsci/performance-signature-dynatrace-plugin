@@ -66,6 +66,10 @@ public class PerfSigEnvInvisAction extends InvisibleAction {
         return timeframeStop == null ? null : (Date) timeframeStop.clone();
     }
 
+    public boolean isContinuousRecording() {
+        return (sessionId == null);
+    }
+
     void setTimeframeStop(Date timeframeStop) {
         this.timeframeStop = timeframeStop;
     }

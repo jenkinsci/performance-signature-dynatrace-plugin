@@ -71,14 +71,14 @@ public class CredProfilePair extends AbstractDescribableImpl<CredProfilePair> {
         }
 
         public ListBoxModel doFillCredentialsIdItems(@QueryParameter String credentialsId) {
-            if (!PerfSigUIUtils.getInstance().hasPermission(Jenkins.ADMINISTER)) {
+            if (!Jenkins.getActiveInstance().hasPermission(Jenkins.ADMINISTER)) {
                 return new StandardListBoxModel().includeCurrentValue(credentialsId);
             }
             return new StandardUsernameListBoxModel()
                     .includeEmptyValue()
                     .includeMatchingAs(
                             ACL.SYSTEM,
-                            PerfSigUIUtils.getInstance(),
+                            Jenkins.getActiveInstance(),
                             StandardUsernamePasswordCredentials.class,
                             Collections.<DomainRequirement>emptyList(),
                             CredentialsMatchers.always())
@@ -86,7 +86,7 @@ public class CredProfilePair extends AbstractDescribableImpl<CredProfilePair> {
         }
 
         public FormValidation doCheckCredentialsId(@QueryParameter String value) {
-            if (!PerfSigUIUtils.getInstance().hasPermission(Jenkins.ADMINISTER)) {
+            if (!Jenkins.getActiveInstance().hasPermission(Jenkins.ADMINISTER)) {
                 return FormValidation.ok();
             }
             for (ListBoxModel.Option o : CredentialsProvider.listCredentials(StandardUsernamePasswordCredentials.class,

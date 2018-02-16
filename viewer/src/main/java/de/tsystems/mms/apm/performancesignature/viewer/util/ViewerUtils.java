@@ -20,7 +20,6 @@ import com.cloudbees.plugins.credentials.CredentialsMatchers;
 import com.cloudbees.plugins.credentials.CredentialsProvider;
 import com.cloudbees.plugins.credentials.common.UsernamePasswordCredentials;
 import com.cloudbees.plugins.credentials.domains.DomainRequirement;
-import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
 import de.tsystems.mms.apm.performancesignature.viewer.Messages;
 import de.tsystems.mms.apm.performancesignature.viewer.ViewerGlobalConfiguration;
 import de.tsystems.mms.apm.performancesignature.viewer.model.CredJobPair;
@@ -30,6 +29,7 @@ import de.tsystems.mms.apm.performancesignature.viewer.rest.RESTErrorException;
 import hudson.AbortException;
 import hudson.security.ACL;
 import hudson.util.ListBoxModel;
+import jenkins.model.Jenkins;
 import org.apache.commons.collections.CollectionUtils;
 
 import java.util.Collections;
@@ -74,7 +74,7 @@ public final class ViewerUtils {
     //duplicated method @PerfSigUtils
     public static UsernamePasswordCredentials getCredentials(final String credsId) {
         return (credsId == null) ? null : CredentialsMatchers.firstOrNull(
-                CredentialsProvider.lookupCredentials(UsernamePasswordCredentials.class, PerfSigUIUtils.getInstance(), ACL.SYSTEM,
+                CredentialsProvider.lookupCredentials(UsernamePasswordCredentials.class, Jenkins.getActiveInstance(), ACL.SYSTEM,
                         Collections.<DomainRequirement>emptyList()), CredentialsMatchers.withId(credsId));
     }
 

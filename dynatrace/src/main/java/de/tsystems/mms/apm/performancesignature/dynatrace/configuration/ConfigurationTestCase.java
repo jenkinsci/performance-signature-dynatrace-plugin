@@ -17,13 +17,13 @@
 package de.tsystems.mms.apm.performancesignature.dynatrace.configuration;
 
 import de.tsystems.mms.apm.performancesignature.ui.model.ClientLinkGenerator;
-import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
 import hudson.DescriptorExtensionList;
 import hudson.RelativePath;
 import hudson.model.AbstractProject;
 import hudson.model.Describable;
 import hudson.model.Descriptor;
 import hudson.util.ListBoxModel;
+import jenkins.model.Jenkins;
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.QueryParameter;
 
@@ -87,7 +87,7 @@ public abstract class ConfigurationTestCase implements Describable<Configuration
     }
 
     public ConfigurationTestCaseDescriptor getDescriptor() {
-        return (ConfigurationTestCaseDescriptor) PerfSigUIUtils.getInstance().getDescriptorOrDie(getClass());
+        return (ConfigurationTestCaseDescriptor) Jenkins.getActiveInstance().getDescriptorOrDie(getClass());
     }
 
     public abstract static class ConfigurationTestCaseDescriptor extends Descriptor<ConfigurationTestCase> {
@@ -101,7 +101,7 @@ public abstract class ConfigurationTestCase implements Describable<Configuration
         }
 
         public static DescriptorExtensionList<ConfigurationTestCase, Descriptor<ConfigurationTestCase>> all() {
-            return PerfSigUIUtils.getInstance().getDescriptorList(ConfigurationTestCase.class);
+            return Jenkins.getActiveInstance().getDescriptorList(ConfigurationTestCase.class);
         }
 
         public boolean isApplicable(final Class<? extends AbstractProject<?, ?>> jobType) {

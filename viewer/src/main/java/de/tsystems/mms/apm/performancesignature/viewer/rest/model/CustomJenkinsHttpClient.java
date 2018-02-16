@@ -17,7 +17,6 @@
 package de.tsystems.mms.apm.performancesignature.viewer.rest.model;
 
 import com.offbytwo.jenkins.client.JenkinsHttpClient;
-import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
 import de.tsystems.mms.apm.performancesignature.viewer.model.CustomProxy;
 import hudson.ProxyConfiguration;
 import jenkins.model.Jenkins;
@@ -76,7 +75,7 @@ public class CustomJenkinsHttpClient extends JenkinsHttpClient {
 
         }
         if (customProxy != null) {
-            Jenkins jenkins = PerfSigUIUtils.getInstance();
+            Jenkins jenkins = Jenkins.getActiveInstance();
             if (customProxy.isUseJenkinsProxy() && jenkins.proxy != null) {
                 final ProxyConfiguration proxyConfiguration = jenkins.proxy;
                 if (StringUtils.isNotBlank(proxyConfiguration.name) && proxyConfiguration.port > 0) {
