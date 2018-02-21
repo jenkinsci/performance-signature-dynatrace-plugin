@@ -199,9 +199,9 @@ public class PerfSigRecorder extends Recorder implements SimpleBuildStep {
             if (deleteSessions && validateSessionId(comparisonSessionId)) {
                 boolean deletedSession = connection.deleteSession(comparisonSessionId);
                 if (!deletedSession) {
-                    logger.log(Messages.PerfSigRecorder_SessionDeleteError(comparisonSessionId));
+                    logger.log(Messages.PerfSigRecorder_SessionDeleteError(comparisonSessionName));
                 } else {
-                    logger.log(Messages.PerfSigRecorder_SessionDeleteSuccessful(comparisonSessionId));
+                    logger.log(Messages.PerfSigRecorder_SessionDeleteSuccessful(comparisonSessionName));
                 }
             }
         }
