@@ -71,7 +71,6 @@ public class PerfSigStopRecording extends Builder implements SimpleBuildStep {
         if (testRunId != null) {
             TestRun testRun = connection.finishTestRun(testRunId);
             logger.log("finished test run " + testRun.getId());
-            logger.log("DEBUG: test run contains session " + testRun.getSession() + " (" + testRun.getSessionId() + ")");
         }
 
         if (perfSigAction != null && perfSigAction.isContinuousRecording()) {
