@@ -269,7 +269,15 @@ public class PerfSigProjectAction extends PerfSigBaseAction implements Prominent
                 jsonDashletList.add(jsonDashlet);
             }
         }
-
+        Collections.sort(jsonDashletList, new Comparator<JSONDashlet>() {
+            @Override
+            public int compare(JSONDashlet a, JSONDashlet b) {
+                if (a.getRow() > b.getRow() || a.getRow() == b.getRow() && a.getCol() > b.getCol()) {
+                    return 1;
+                }
+                return -1;
+            }
+        });
         return GSON.toJson(jsonDashletList);
     }
 
