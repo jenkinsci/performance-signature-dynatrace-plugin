@@ -16,9 +16,10 @@
 
 package de.tsystems.mms.apm.performancesignature.ui.model;
 
+import java.io.Serializable;
 import java.util.Comparator;
 
-public class JSONDashletComparator implements Comparator<JSONDashlet> {
+public class JSONDashletComparator implements Comparator<JSONDashlet>, Serializable {
     @Override
     public int compare(final JSONDashlet a, final JSONDashlet b) {
         if (a.getRow() > b.getRow() || a.getRow() == b.getRow() && a.getCol() > b.getCol()) {
