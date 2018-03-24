@@ -340,11 +340,9 @@ public class PerfSigProjectAction extends PerfSigBaseAction implements Prominent
         }
 
         for (JSONDashlet jsonDashlet : getJsonDashletMap().values()) {
-            if (!jsonDashlet.getDashboard().equals(dashboard)) { //filter out dashlets from other dashboards
-                continue;
-            }
-            if (!idsFromJson.contains(jsonDashlet.getId())) { //remove dashlet, if it's not present in gridConfiguration
-                getJsonDashletMap().remove(jsonDashlet.getId());
+            //filter out dashlets from other dashboards
+            if (jsonDashlet.getDashboard().equals(dashboard) && !idsFromJson.contains(jsonDashlet.getId())) {
+                getJsonDashletMap().remove(jsonDashlet.getId()); //remove dashlet, if it's not present in gridConfiguration
             }
         }
 
