@@ -23,6 +23,7 @@ import de.tsystems.mms.apm.performancesignature.dynatrace.model.DashboardReport;
 import de.tsystems.mms.apm.performancesignature.dynatrace.model.Measure;
 import de.tsystems.mms.apm.performancesignature.dynatrace.model.TestRun;
 import de.tsystems.mms.apm.performancesignature.ui.model.JSONDashlet;
+import de.tsystems.mms.apm.performancesignature.ui.model.JSONDashletComparator;
 import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
 import hudson.XmlFile;
 import hudson.model.Job;
@@ -269,15 +270,7 @@ public class PerfSigProjectAction extends PerfSigBaseAction implements Prominent
                 jsonDashletList.add(jsonDashlet);
             }
         }
-        Collections.sort(jsonDashletList, new Comparator<JSONDashlet>() {
-            @Override
-            public int compare(JSONDashlet a, JSONDashlet b) {
-                if (a.getRow() > b.getRow() || a.getRow() == b.getRow() && a.getCol() > b.getCol()) {
-                    return 1;
-                }
-                return -1;
-            }
-        });
+        Collections.sort(jsonDashletList, new JSONDashletComparator());
         return GSON.toJson(jsonDashletList);
     }
 
@@ -410,15 +403,7 @@ public class PerfSigProjectAction extends PerfSigBaseAction implements Prominent
 
     @SuppressWarnings("unused")
     public Map<JSONDashlet, Measure> getFilteredChartDashlets(final DashboardReport dashboardReport) {
-        Map<JSONDashlet, Measure> filteredChartDashlets = new TreeMap<>(new Comparator<JSONDashlet>() {
-            @Override
-            public int compare(final JSONDashlet o1, final JSONDashlet o2) {
-                if (o1.getRow() > o2.getRow() || o1.getRow() == o2.getRow() && o1.getCol() > o2.getCol()) {
-                    return 1;
-                }
-                return -1;
-            }
-        });
+        Map<JSONDashlet, Measure> filteredChartDashlets = new TreeMap<>(new JSONDashletComparator());
 
         for (JSONDashlet jsonDashlet : getJsonDashletMap().values()) {
             if (!jsonDashlet.getDashboard().equals(dashboardReport.getName())) {
