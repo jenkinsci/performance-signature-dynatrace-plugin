@@ -111,16 +111,13 @@ public class EventUpdate {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("class EventUpdate {\n");
-
-        sb.append("    severity: ").append(PerfSigUIUtils.toIndentedString(severity)).append("\n");
-        sb.append("    state: ").append(PerfSigUIUtils.toIndentedString(state)).append("\n");
-        sb.append("    message: ").append(PerfSigUIUtils.toIndentedString(message)).append("\n");
-        sb.append("    description: ").append(PerfSigUIUtils.toIndentedString(description)).append("\n");
-        sb.append("    start: ").append(PerfSigUIUtils.toIndentedString(start)).append("\n");
-        sb.append("    end: ").append(PerfSigUIUtils.toIndentedString(end)).append("\n");
-        sb.append("}");
-        return sb.toString();
+        return "class EventUpdate {\n" +
+                "    severity: " + PerfSigUIUtils.toIndentedString(severity) + "\n" +
+                "    state: " + PerfSigUIUtils.toIndentedString(state) + "\n" +
+                "    message: " + PerfSigUIUtils.toIndentedString(message) + "\n" +
+                "    description: " + PerfSigUIUtils.toIndentedString(description) + "\n" +
+                "    start: " + PerfSigUIUtils.toIndentedString(start) + "\n" +
+                "    end: " + PerfSigUIUtils.toIndentedString(end) + "\n" +
+                "}";
     }
 }

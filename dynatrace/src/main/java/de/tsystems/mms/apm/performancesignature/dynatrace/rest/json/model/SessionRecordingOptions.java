@@ -102,16 +102,13 @@ public class SessionRecordingOptions {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("class SessionRecordingOptions {\n");
-
-        sb.append("    sessionname: ").append(PerfSigUIUtils.toIndentedString(sessionname)).append("\n");
-        sb.append("    description: ").append(PerfSigUIUtils.toIndentedString(description)).append("\n");
-        sb.append("    appendtimestamp: ").append(PerfSigUIUtils.toIndentedString(appendtimestamp)).append("\n");
-        sb.append("    recordingoption: ").append(PerfSigUIUtils.toIndentedString(recordingoption)).append("\n");
-        sb.append("    locksession: ").append(PerfSigUIUtils.toIndentedString(locksession)).append("\n");
-        sb.append("}");
-        return sb.toString();
+        return "class SessionRecordingOptions {\n" +
+                "    sessionname: " + PerfSigUIUtils.toIndentedString(sessionname) + "\n" +
+                "    description: " + PerfSigUIUtils.toIndentedString(description) + "\n" +
+                "    appendtimestamp: " + PerfSigUIUtils.toIndentedString(appendtimestamp) + "\n" +
+                "    recordingoption: " + PerfSigUIUtils.toIndentedString(recordingoption) + "\n" +
+                "    locksession: " + PerfSigUIUtils.toIndentedString(locksession) + "\n" +
+                "}";
     }
 
     /**

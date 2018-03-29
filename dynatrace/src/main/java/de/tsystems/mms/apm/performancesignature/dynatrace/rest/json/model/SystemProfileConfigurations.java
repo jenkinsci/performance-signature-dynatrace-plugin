@@ -59,11 +59,8 @@ public class SystemProfileConfigurations {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("class SystemProfileConfigurations {\n");
-
-        sb.append("    configurations: ").append(PerfSigUIUtils.toIndentedString(configurations)).append("\n");
-        sb.append("}");
-        return sb.toString();
+        return "class SystemProfileConfigurations {\n" +
+                "    configurations: " + PerfSigUIUtils.toIndentedString(configurations) + "\n" +
+                "}";
     }
 }

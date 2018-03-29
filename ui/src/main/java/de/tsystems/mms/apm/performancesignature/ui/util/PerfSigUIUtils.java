@@ -38,6 +38,8 @@ import java.util.Collections;
 import java.util.List;
 
 public final class PerfSigUIUtils {
+    private static final String PLUGIN_SHORT_NAME = "[PERFSIG] ";
+
     private PerfSigUIUtils() {
     }
 
@@ -70,7 +72,7 @@ public final class PerfSigUIUtils {
     }
 
     public static PluginLogger createLogger(final PrintStream printStream) {
-        return new PluginLogger(printStream, "[PERFSIG] ");
+        return new PluginLogger(printStream, PLUGIN_SHORT_NAME);
     }
 
     public static String removeExtension(final String fileName) {
@@ -175,12 +177,10 @@ public final class PerfSigUIUtils {
     }
 
     private static String printIncident(Alert incident) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("[PERFSIG] ").append(incident.getSeverity()).append(" incident: \n");
-        sb.append("[PERFSIG]    rule: ").append(toIndentedString(incident.getRule())).append("\n");
-        sb.append("[PERFSIG]    message: ").append(toIndentedString(incident.getMessage())).append("\n");
-        sb.append("[PERFSIG]    description: ").append(toIndentedString(incident.getDescription())).append("\n");
-        return sb.toString();
+        return PLUGIN_SHORT_NAME + incident.getSeverity() + " incident: \n" +
+                PLUGIN_SHORT_NAME + "    rule: " + toIndentedString(incident.getRule()) + "\n" +
+                PLUGIN_SHORT_NAME + "    message: " + toIndentedString(incident.getMessage()) + "\n" +
+                PLUGIN_SHORT_NAME + "    description: " + toIndentedString(incident.getDescription()) + "\n";
     }
 
     public static boolean checkNotNullOrEmpty(final String string) {

@@ -44,11 +44,8 @@ public class RecordingStatus {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("class RecordingStatus {\n");
-
-        sb.append("    recording: ").append(PerfSigUIUtils.toIndentedString(recording)).append("\n");
-        sb.append("}");
-        return sb.toString();
+        return "class RecordingStatus {\n" +
+                "    recording: " + PerfSigUIUtils.toIndentedString(recording) + "\n" +
+                "}";
     }
 }

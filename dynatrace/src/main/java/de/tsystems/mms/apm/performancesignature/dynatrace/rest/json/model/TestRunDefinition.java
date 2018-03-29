@@ -126,18 +126,15 @@ public class TestRunDefinition {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("class TestRunDefinition {\n");
-
-        sb.append("    versionBuild: ").append(PerfSigUIUtils.toIndentedString(versionBuild)).append("\n");
-        sb.append("    versionMajor: ").append(PerfSigUIUtils.toIndentedString(versionMajor)).append("\n");
-        sb.append("    versionMilestone: ").append(PerfSigUIUtils.toIndentedString(versionMilestone)).append("\n");
-        sb.append("    versionMinor: ").append(PerfSigUIUtils.toIndentedString(versionMinor)).append("\n");
-        sb.append("    versionRevision: ").append(PerfSigUIUtils.toIndentedString(versionRevision)).append("\n");
-        sb.append("    marker: ").append(PerfSigUIUtils.toIndentedString(marker)).append("\n");
-        sb.append("    platform: ").append(PerfSigUIUtils.toIndentedString(platform)).append("\n");
-        sb.append("    category: ").append(PerfSigUIUtils.toIndentedString(category)).append("\n");
-        sb.append("}");
-        return sb.toString();
+        return "class TestRunDefinition {\n" +
+                "    versionBuild: " + PerfSigUIUtils.toIndentedString(versionBuild) + "\n" +
+                "    versionMajor: " + PerfSigUIUtils.toIndentedString(versionMajor) + "\n" +
+                "    versionMilestone: " + PerfSigUIUtils.toIndentedString(versionMilestone) + "\n" +
+                "    versionMinor: " + PerfSigUIUtils.toIndentedString(versionMinor) + "\n" +
+                "    versionRevision: " + PerfSigUIUtils.toIndentedString(versionRevision) + "\n" +
+                "    marker: " + PerfSigUIUtils.toIndentedString(marker) + "\n" +
+                "    platform: " + PerfSigUIUtils.toIndentedString(platform) + "\n" +
+                "    category: " + PerfSigUIUtils.toIndentedString(category) + "\n" +
+                "}";
     }
 }

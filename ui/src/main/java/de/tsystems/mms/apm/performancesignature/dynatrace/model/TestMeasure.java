@@ -107,16 +107,13 @@ public class TestMeasure {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("class TestMeasure {\n");
-
-        sb.append("    name: ").append(PerfSigUIUtils.toIndentedString(name)).append("\n");
-        sb.append("    metricGroup: ").append(PerfSigUIUtils.toIndentedString(metricGroup)).append("\n");
-        sb.append("    value: ").append(PerfSigUIUtils.toIndentedString(value)).append("\n");
-        sb.append("    unit: ").append(PerfSigUIUtils.toIndentedString(unit)).append("\n");
-        sb.append("    expectedMin: ").append(PerfSigUIUtils.toIndentedString(expectedMin)).append("\n");
-        sb.append("    expectedMax: ").append(PerfSigUIUtils.toIndentedString(expectedMax)).append("\n");
-        sb.append("}");
-        return sb.toString();
+        return "class TestMeasure {\n" +
+                "    name: " + PerfSigUIUtils.toIndentedString(name) + "\n" +
+                "    metricGroup: " + PerfSigUIUtils.toIndentedString(metricGroup) + "\n" +
+                "    value: " + PerfSigUIUtils.toIndentedString(value) + "\n" +
+                "    unit: " + PerfSigUIUtils.toIndentedString(unit) + "\n" +
+                "    expectedMin: " + PerfSigUIUtils.toIndentedString(expectedMin) + "\n" +
+                "    expectedMax: " + PerfSigUIUtils.toIndentedString(expectedMax) + "\n" +
+                "}";
     }
 }

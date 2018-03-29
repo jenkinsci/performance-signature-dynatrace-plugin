@@ -81,14 +81,11 @@ public class SystemProfile {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("class SystemProfile {\n");
-
-        sb.append("    id: ").append(PerfSigUIUtils.toIndentedString(id)).append("\n");
-        sb.append("    description: ").append(PerfSigUIUtils.toIndentedString(description)).append("\n");
-        sb.append("    enabled: ").append(PerfSigUIUtils.toIndentedString(enabled)).append("\n");
-        sb.append("    isrecording: ").append(PerfSigUIUtils.toIndentedString(isrecording)).append("\n");
-        sb.append("}");
-        return sb.toString();
+        return "class SystemProfile {\n" +
+                "    id: " + PerfSigUIUtils.toIndentedString(id) + "\n" +
+                "    description: " + PerfSigUIUtils.toIndentedString(description) + "\n" +
+                "    enabled: " + PerfSigUIUtils.toIndentedString(enabled) + "\n" +
+                "    isrecording: " + PerfSigUIUtils.toIndentedString(isrecording) + "\n" +
+                "}";
     }
 }

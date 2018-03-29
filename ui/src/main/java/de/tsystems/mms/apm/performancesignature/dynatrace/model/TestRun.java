@@ -277,32 +277,29 @@ public class TestRun extends BaseReference {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("class TestRun {\n");
-
-        sb.append("    id: ").append(PerfSigUIUtils.toIndentedString(super.getId())).append("\n");
-        sb.append("    category: ").append(PerfSigUIUtils.toIndentedString(category)).append("\n");
-        sb.append("    versionBuild: ").append(PerfSigUIUtils.toIndentedString(versionBuild)).append("\n");
-        sb.append("    versionMajor: ").append(PerfSigUIUtils.toIndentedString(versionMajor)).append("\n");
-        sb.append("    versionMilestone: ").append(PerfSigUIUtils.toIndentedString(versionMilestone)).append("\n");
-        sb.append("    versionMinor: ").append(PerfSigUIUtils.toIndentedString(versionMinor)).append("\n");
-        sb.append("    versionRevision: ").append(PerfSigUIUtils.toIndentedString(versionRevision)).append("\n");
-        sb.append("    platform: ").append(PerfSigUIUtils.toIndentedString(platform)).append("\n");
-        sb.append("    startTime: ").append(PerfSigUIUtils.toIndentedString(startTime)).append("\n");
-        sb.append("    sessionId: ").append(PerfSigUIUtils.toIndentedString(sessionId)).append("\n");
-        sb.append("    session: ").append(PerfSigUIUtils.toIndentedString(session)).append("\n");
-        sb.append("    message: ").append(PerfSigUIUtils.toIndentedString(message)).append("\n");
-        sb.append("    href: ").append(PerfSigUIUtils.toIndentedString(super.getHref())).append("\n");
-        sb.append("    numDegraded: ").append(PerfSigUIUtils.toIndentedString(numDegraded)).append("\n");
-        sb.append("    numFailed: ").append(PerfSigUIUtils.toIndentedString(numFailed)).append("\n");
-        sb.append("    numImproved: ").append(PerfSigUIUtils.toIndentedString(numImproved)).append("\n");
-        sb.append("    numInvalidated: ").append(PerfSigUIUtils.toIndentedString(numInvalidated)).append("\n");
-        sb.append("    numPassed: ").append(PerfSigUIUtils.toIndentedString(numPassed)).append("\n");
-        sb.append("    numVolatile: ").append(PerfSigUIUtils.toIndentedString(numVolatile)).append("\n");
-        sb.append("    finished: ").append(PerfSigUIUtils.toIndentedString(finished)).append("\n");
-        sb.append("    testResults: ").append(PerfSigUIUtils.toIndentedString(testResults)).append("\n");
-        sb.append("}");
-        return sb.toString();
+        return "class TestRun {\n" +
+                "    id: " + PerfSigUIUtils.toIndentedString(super.getId()) + "\n" +
+                "    category: " + PerfSigUIUtils.toIndentedString(category) + "\n" +
+                "    versionBuild: " + PerfSigUIUtils.toIndentedString(versionBuild) + "\n" +
+                "    versionMajor: " + PerfSigUIUtils.toIndentedString(versionMajor) + "\n" +
+                "    versionMilestone: " + PerfSigUIUtils.toIndentedString(versionMilestone) + "\n" +
+                "    versionMinor: " + PerfSigUIUtils.toIndentedString(versionMinor) + "\n" +
+                "    versionRevision: " + PerfSigUIUtils.toIndentedString(versionRevision) + "\n" +
+                "    platform: " + PerfSigUIUtils.toIndentedString(platform) + "\n" +
+                "    startTime: " + PerfSigUIUtils.toIndentedString(startTime) + "\n" +
+                "    sessionId: " + PerfSigUIUtils.toIndentedString(sessionId) + "\n" +
+                "    session: " + PerfSigUIUtils.toIndentedString(session) + "\n" +
+                "    message: " + PerfSigUIUtils.toIndentedString(message) + "\n" +
+                "    href: " + PerfSigUIUtils.toIndentedString(super.getHref()) + "\n" +
+                "    numDegraded: " + PerfSigUIUtils.toIndentedString(numDegraded) + "\n" +
+                "    numFailed: " + PerfSigUIUtils.toIndentedString(numFailed) + "\n" +
+                "    numImproved: " + PerfSigUIUtils.toIndentedString(numImproved) + "\n" +
+                "    numInvalidated: " + PerfSigUIUtils.toIndentedString(numInvalidated) + "\n" +
+                "    numPassed: " + PerfSigUIUtils.toIndentedString(numPassed) + "\n" +
+                "    numVolatile: " + PerfSigUIUtils.toIndentedString(numVolatile) + "\n" +
+                "    finished: " + PerfSigUIUtils.toIndentedString(finished) + "\n" +
+                "    testResults: " + PerfSigUIUtils.toIndentedString(testResults) + "\n" +
+                "}";
     }
 
     /**

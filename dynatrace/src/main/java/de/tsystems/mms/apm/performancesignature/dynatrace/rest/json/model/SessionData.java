@@ -71,16 +71,13 @@ public class SessionData extends BaseReference {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("class SessionData {\n");
-
-        sb.append("    id: ").append(PerfSigUIUtils.toIndentedString(super.getId())).append("\n");
-        sb.append("    storedsessiontype: ").append(PerfSigUIUtils.toIndentedString(storedsessiontype)).append("\n");
-        sb.append("    sessiontype: ").append(PerfSigUIUtils.toIndentedString(sessiontype)).append("\n");
-        sb.append("    systemprofile: ").append(PerfSigUIUtils.toIndentedString(systemprofile)).append("\n");
-        sb.append("    href: ").append(PerfSigUIUtils.toIndentedString(super.getHref())).append("\n");
-        sb.append("}");
-        return sb.toString();
+        return "class SessionData {\n" +
+                "    id: " + PerfSigUIUtils.toIndentedString(super.getId()) + "\n" +
+                "    storedsessiontype: " + PerfSigUIUtils.toIndentedString(storedsessiontype) + "\n" +
+                "    sessiontype: " + PerfSigUIUtils.toIndentedString(sessiontype) + "\n" +
+                "    systemprofile: " + PerfSigUIUtils.toIndentedString(systemprofile) + "\n" +
+                "    href: " + PerfSigUIUtils.toIndentedString(super.getHref()) + "\n" +
+                "}";
     }
 
     /**

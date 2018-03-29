@@ -52,12 +52,9 @@ public class ActivationStatus {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("class ActivationStatus {\n");
-
-        sb.append("    status: ").append(PerfSigUIUtils.toIndentedString(status)).append("\n");
-        sb.append("}");
-        return sb.toString();
+        return "class ActivationStatus {\n" +
+                "    status: " + PerfSigUIUtils.toIndentedString(status) + "\n" +
+                "}";
     }
 
     /**

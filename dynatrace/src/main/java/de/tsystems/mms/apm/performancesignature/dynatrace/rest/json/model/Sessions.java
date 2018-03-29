@@ -62,11 +62,8 @@ public class Sessions {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("class Sessions {\n");
-
-        sb.append("    sessions: ").append(PerfSigUIUtils.toIndentedString(sessions)).append("\n");
-        sb.append("}");
-        return sb.toString();
+        return "class Sessions {\n" +
+                "    sessions: " + PerfSigUIUtils.toIndentedString(sessions) + "\n" +
+                "}";
     }
 }

@@ -58,12 +58,9 @@ public abstract class BaseReference {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("class BaseReference {\n");
-
-        sb.append("    id: ").append(PerfSigUIUtils.toIndentedString(id)).append("\n");
-        sb.append("    href: ").append(PerfSigUIUtils.toIndentedString(href)).append("\n");
-        sb.append("}");
-        return sb.toString();
+        return "class BaseReference {\n" +
+                "    id: " + PerfSigUIUtils.toIndentedString(id) + "\n" +
+                "    href: " + PerfSigUIUtils.toIndentedString(href) + "\n" +
+                "}";
     }
 }

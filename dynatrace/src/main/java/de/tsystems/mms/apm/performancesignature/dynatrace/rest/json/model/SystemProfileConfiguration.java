@@ -40,13 +40,10 @@ public class SystemProfileConfiguration extends BaseReference {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("class SystemProfileConfiguration {\n");
-
-        sb.append("    id: ").append(PerfSigUIUtils.toIndentedString(super.getId())).append("\n");
-        sb.append("    href: ").append(PerfSigUIUtils.toIndentedString(super.getHref())).append("\n");
-        sb.append("    isactive: ").append(PerfSigUIUtils.toIndentedString(isactive)).append("\n");
-        sb.append("}");
-        return sb.toString();
+        return "class SystemProfileConfiguration {\n" +
+                "    id: " + PerfSigUIUtils.toIndentedString(super.getId()) + "\n" +
+                "    href: " + PerfSigUIUtils.toIndentedString(super.getHref()) + "\n" +
+                "    isactive: " + PerfSigUIUtils.toIndentedString(isactive) + "\n" +
+                "}";
     }
 }

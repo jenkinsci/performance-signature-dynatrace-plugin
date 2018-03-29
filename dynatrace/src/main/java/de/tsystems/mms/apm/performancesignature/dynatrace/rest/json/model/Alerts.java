@@ -61,12 +61,9 @@ public class Alerts {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("class Alerts {\n");
-
-        sb.append("    alerts: ").append(PerfSigUIUtils.toIndentedString(alerts)).append("\n");
-        sb.append("}");
-        return sb.toString();
+        return "class Alerts {\n" +
+                "    alerts: " + PerfSigUIUtils.toIndentedString(alerts) + "\n" +
+                "}";
     }
 }
 

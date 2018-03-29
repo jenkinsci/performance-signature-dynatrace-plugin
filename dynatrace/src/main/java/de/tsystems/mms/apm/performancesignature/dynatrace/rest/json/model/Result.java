@@ -42,11 +42,8 @@ public class Result {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("class Result {\n");
-
-        sb.append("    result: ").append(PerfSigUIUtils.toIndentedString(result)).append("\n");
-        sb.append("}");
-        return sb.toString();
+        return "class Result {\n" +
+                "    result: " + PerfSigUIUtils.toIndentedString(result) + "\n" +
+                "}";
     }
 }

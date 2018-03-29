@@ -41,13 +41,10 @@ public class SystemProfileReference extends BaseReference {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("class SystemProfileReference {\n");
-
-        sb.append("    id: ").append(PerfSigUIUtils.toIndentedString(super.getId())).append("\n");
-        sb.append("    isrecording: ").append(PerfSigUIUtils.toIndentedString(isrecording)).append("\n");
-        sb.append("    href: ").append(PerfSigUIUtils.toIndentedString(super.getHref())).append("\n");
-        sb.append("}");
-        return sb.toString();
+        return "class SystemProfileReference {\n" +
+                "    id: " + PerfSigUIUtils.toIndentedString(super.getId()) + "\n" +
+                "    isrecording: " + PerfSigUIUtils.toIndentedString(isrecording) + "\n" +
+                "    href: " + PerfSigUIUtils.toIndentedString(super.getHref()) + "\n" +
+                "}";
     }
 }

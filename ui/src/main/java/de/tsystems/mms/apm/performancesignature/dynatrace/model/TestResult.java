@@ -177,17 +177,14 @@ public class TestResult {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("class TestResult {\n");
-
-        sb.append("    name: ").append(PerfSigUIUtils.toIndentedString(name)).append("\n");
-        sb.append("    status: ").append(PerfSigUIUtils.toIndentedString(status)).append("\n");
-        sb.append("    exectime: ").append(PerfSigUIUtils.toIndentedString(exectime)).append("\n");
-        sb.append("    _package: ").append(PerfSigUIUtils.toIndentedString(packageName)).append("\n");
-        sb.append("    platform: ").append(PerfSigUIUtils.toIndentedString(platform)).append("\n");
-        sb.append("    measures: ").append(PerfSigUIUtils.toIndentedString(measures)).append("\n");
-        sb.append("}");
-        return sb.toString();
+        return "class TestResult {\n" +
+                "    name: " + PerfSigUIUtils.toIndentedString(name) + "\n" +
+                "    status: " + PerfSigUIUtils.toIndentedString(status) + "\n" +
+                "    exectime: " + PerfSigUIUtils.toIndentedString(exectime) + "\n" +
+                "    _package: " + PerfSigUIUtils.toIndentedString(packageName) + "\n" +
+                "    platform: " + PerfSigUIUtils.toIndentedString(platform) + "\n" +
+                "    measures: " + PerfSigUIUtils.toIndentedString(measures) + "\n" +
+                "}";
     }
     /**
      * Gets or Sets category

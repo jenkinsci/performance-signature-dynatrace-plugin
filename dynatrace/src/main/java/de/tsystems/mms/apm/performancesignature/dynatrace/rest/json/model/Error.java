@@ -55,12 +55,9 @@ public class Error {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("class Error {\n");
-
-        sb.append("    code: ").append(PerfSigUIUtils.toIndentedString(code)).append("\n");
-        sb.append("    message: ").append(PerfSigUIUtils.toIndentedString(message)).append("\n");
-        sb.append("}");
-        return sb.toString();
+        return "class Error {\n" +
+                "    code: " + PerfSigUIUtils.toIndentedString(code) + "\n" +
+                "    message: " + PerfSigUIUtils.toIndentedString(message) + "\n" +
+                "}";
     }
 }

@@ -81,8 +81,7 @@ public class CustomXMLApi {
         }
 
         String localVarPath = "/rest/management/dashboard/" + PerfSigUtils.escapeString(dashboard);
-        List<Pair> localVarQueryParams = new ArrayList<>();
-        localVarQueryParams.addAll(apiClient.parameterToPair("source", "stored:" + source));
+        List<Pair> localVarQueryParams = new ArrayList<>(apiClient.parameterToPair("source", "stored:" + source));
 
         return getXmlCall(localVarPath, localVarQueryParams);
     }

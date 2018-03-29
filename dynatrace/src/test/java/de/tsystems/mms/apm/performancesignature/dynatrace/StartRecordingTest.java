@@ -55,7 +55,7 @@ public class StartRecordingTest {
     }
 
     @Test
-    public void testSessionRecording() throws IOException {
+    public void testSessionRecording() {
         String result = connection.startRecording("testContinuousSessionRecording", "triggered by UnitTest",
                 PerfSigStartRecording.DescriptorImpl.defaultRecordingOption, false, false);
         assertNotNull(result);
@@ -82,11 +82,11 @@ public class StartRecordingTest {
 
         PerfSigEnvInvisAction invisAction = build.getAction(PerfSigEnvInvisAction.class);
 
-        assertTrue(invisAction != null);
+        assertNotNull(invisAction);
         assertTrue(invisAction.getSessionName().matches("easy Travel_test0_Build-\\d+_unittest"));
-        assertTrue(invisAction.getTestCase().equals(testCase));
+        assertEquals(invisAction.getTestCase(), testCase);
         assertFalse(invisAction.getTestRunId().isEmpty());
-        assertTrue(invisAction.getTimeframeStart() != null);
+        assertNotNull(invisAction.getTimeframeStart());
     }
 
     @Test
@@ -99,10 +99,10 @@ public class StartRecordingTest {
 
         PerfSigEnvInvisAction invisAction = build.getAction(PerfSigEnvInvisAction.class);
 
-        assertTrue(invisAction != null);
-        assertTrue(invisAction.getSessionId() == null);
-        assertTrue(invisAction.getTestCase().equals(testCase));
+        assertNotNull(invisAction);
+        assertNull(invisAction.getSessionId());
+        assertEquals(invisAction.getTestCase(), testCase);
         assertNull(invisAction.getTestRunId());
-        assertTrue(invisAction.getTimeframeStart() != null);
+        assertNotNull(invisAction.getTimeframeStart());
     }
 }

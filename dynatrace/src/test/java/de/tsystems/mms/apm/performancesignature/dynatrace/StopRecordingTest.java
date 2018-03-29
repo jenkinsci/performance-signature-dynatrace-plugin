@@ -35,7 +35,6 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.jvnet.hudson.test.JenkinsRule;
 
-import java.io.IOException;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -60,12 +59,12 @@ public class StopRecordingTest {
     }
 
     @Test
-    public void testStopSessionRecording1() throws IOException {
+    public void testStopSessionRecording1() {
         assertNull(connection.stopRecording());
     }
 
     @Test
-    public void testStopSessionRecording2() throws IOException {
+    public void testStopSessionRecording2() {
         String result = connection.startRecording("testSessionRecording", "triggered by UnitTest",
                 PerfSigStartRecording.DescriptorImpl.defaultRecordingOption, false, true);
 
@@ -88,22 +87,22 @@ public class StopRecordingTest {
     public void testJenkinsConfiguration() throws Exception {
         PerfSigEnvInvisAction invisAction = createTestProject(0);
 
-        assertTrue(invisAction != null);
+        assertNotNull(invisAction);
         assertTrue(invisAction.getSessionName().matches("easy Travel_test0_Build-\\d+_unittest.*"));
-        assertTrue(invisAction.getTestCase().equals(testCase));
+        assertEquals(invisAction.getTestCase(), testCase);
         assertFalse(invisAction.getTestRunId().isEmpty());
-        assertTrue(invisAction.getTimeframeStart() != null);
+        assertNotNull(invisAction.getTimeframeStart());
     }
 
     @Test
     public void testJenkinsConfiguration2() throws Exception {
         PerfSigEnvInvisAction invisAction = createTestProject(1);
 
-        assertTrue(invisAction != null);
+        assertNotNull(invisAction);
         assertTrue(invisAction.getSessionName().matches("easy Travel_test0_Build-\\d+_unittest.*"));
-        assertTrue(invisAction.getTestCase().equals(testCase));
+        assertEquals(invisAction.getTestCase(), testCase);
         assertNull(invisAction.getTestRunId());
-        assertTrue(invisAction.getTimeframeStart() != null);
+        assertNotNull(invisAction.getTimeframeStart());
     }
 
     private PerfSigEnvInvisAction createTestProject(int id) throws Exception {

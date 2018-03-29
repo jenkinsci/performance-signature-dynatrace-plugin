@@ -42,14 +42,11 @@ public class AlertReference extends BaseReference {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("class AlertReference {\n");
-
-        sb.append("    id: ").append(PerfSigUIUtils.toIndentedString(super.getId())).append("\n");
-        sb.append("    href: ").append(PerfSigUIUtils.toIndentedString(super.getHref())).append("\n");
-        sb.append("    rule: ").append(PerfSigUIUtils.toIndentedString(rule)).append("\n");
-        sb.append("}");
-        return sb.toString();
+        return "class AlertReference {\n" +
+                "    id: " + PerfSigUIUtils.toIndentedString(super.getId()) + "\n" +
+                "    href: " + PerfSigUIUtils.toIndentedString(super.getHref()) + "\n" +
+                "    rule: " + PerfSigUIUtils.toIndentedString(rule) + "\n" +
+                "}";
     }
 }
 

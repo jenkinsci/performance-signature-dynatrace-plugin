@@ -264,30 +264,27 @@ public class SessionMetadata extends BaseReference {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("class SessionMetadata {\n");
-
-        sb.append("    id: ").append(PerfSigUIUtils.toIndentedString(super.getId())).append("\n");
-        sb.append("    storedsessiontype: ").append(PerfSigUIUtils.toIndentedString(storedsessiontype)).append("\n");
-        sb.append("    sessiontype: ").append(PerfSigUIUtils.toIndentedString(sessiontype)).append("\n");
-        sb.append("    systemprofile: ").append(PerfSigUIUtils.toIndentedString(systemprofile)).append("\n");
-        sb.append("    href: ").append(PerfSigUIUtils.toIndentedString(super.getHref())).append("\n");
-        sb.append("    name: ").append(PerfSigUIUtils.toIndentedString(name)).append("\n");
-        sb.append("    description: ").append(PerfSigUIUtils.toIndentedString(description)).append("\n");
-        sb.append("    size: ").append(PerfSigUIUtils.toIndentedString(size)).append("\n");
-        sb.append("    deletionlocked: ").append(PerfSigUIUtils.toIndentedString(deletionlocked)).append("\n");
-        sb.append("    directorypath: ").append(PerfSigUIUtils.toIndentedString(directorypath)).append("\n");
-        sb.append("    state: ").append(PerfSigUIUtils.toIndentedString(state)).append("\n");
-        sb.append("    capturingstart: ").append(PerfSigUIUtils.toIndentedString(capturingstart)).append("\n");
-        sb.append("    capturingduration: ").append(PerfSigUIUtils.toIndentedString(capturingduration)).append("\n");
-        sb.append("    version: ").append(PerfSigUIUtils.toIndentedString(version)).append("\n");
-        sb.append("    labels: ").append(PerfSigUIUtils.toIndentedString(labels)).append("\n");
-        sb.append("    recordingtype: ").append(PerfSigUIUtils.toIndentedString(recordingtype)).append("\n");
-        sb.append("    agent: ").append(PerfSigUIUtils.toIndentedString(agent)).append("\n");
-        sb.append("    numberofpurepaths: ").append(PerfSigUIUtils.toIndentedString(numberofpurepaths)).append("\n");
-        sb.append("    continuoussession: ").append(PerfSigUIUtils.toIndentedString(continuoussession)).append("\n");
-        sb.append("}");
-        return sb.toString();
+        return "class SessionMetadata {\n" +
+                "    id: " + PerfSigUIUtils.toIndentedString(super.getId()) + "\n" +
+                "    storedsessiontype: " + PerfSigUIUtils.toIndentedString(storedsessiontype) + "\n" +
+                "    sessiontype: " + PerfSigUIUtils.toIndentedString(sessiontype) + "\n" +
+                "    systemprofile: " + PerfSigUIUtils.toIndentedString(systemprofile) + "\n" +
+                "    href: " + PerfSigUIUtils.toIndentedString(super.getHref()) + "\n" +
+                "    name: " + PerfSigUIUtils.toIndentedString(name) + "\n" +
+                "    description: " + PerfSigUIUtils.toIndentedString(description) + "\n" +
+                "    size: " + PerfSigUIUtils.toIndentedString(size) + "\n" +
+                "    deletionlocked: " + PerfSigUIUtils.toIndentedString(deletionlocked) + "\n" +
+                "    directorypath: " + PerfSigUIUtils.toIndentedString(directorypath) + "\n" +
+                "    state: " + PerfSigUIUtils.toIndentedString(state) + "\n" +
+                "    capturingstart: " + PerfSigUIUtils.toIndentedString(capturingstart) + "\n" +
+                "    capturingduration: " + PerfSigUIUtils.toIndentedString(capturingduration) + "\n" +
+                "    version: " + PerfSigUIUtils.toIndentedString(version) + "\n" +
+                "    labels: " + PerfSigUIUtils.toIndentedString(labels) + "\n" +
+                "    recordingtype: " + PerfSigUIUtils.toIndentedString(recordingtype) + "\n" +
+                "    agent: " + PerfSigUIUtils.toIndentedString(agent) + "\n" +
+                "    numberofpurepaths: " + PerfSigUIUtils.toIndentedString(numberofpurepaths) + "\n" +
+                "    continuoussession: " + PerfSigUIUtils.toIndentedString(continuoussession) + "\n" +
+                "}";
     }
 
     /**
