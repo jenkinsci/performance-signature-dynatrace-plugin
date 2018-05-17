@@ -70,7 +70,7 @@ public class DTServerConnection {
         apiClient.setBasePath(serverUrl);
         apiClient.setUsername(pair.getCredentials().getUsername());
         apiClient.setPassword(pair.getCredentials().getPassword().getPlainText());
-        //apiClient.setDebugging(true);
+        apiClient.setDebugging(true);
         apiClient.getHttpClient().setReadTimeout(readTimeout == 0 ? DescriptorImpl.defaultReadTimeout : readTimeout, TimeUnit.SECONDS);
 
         Proxy proxy = Proxy.NO_PROXY;
