@@ -46,7 +46,6 @@ import java.text.DateFormat;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -64,7 +63,6 @@ public class ApiClient {
     private JSON json;
 
     private HttpLoggingInterceptor loggingInterceptor;
-    private static final Logger LOGGER = Logger.getLogger(ApiClient.class.getName());
 
     /*
      * Constructor for ApiClient
@@ -280,14 +278,8 @@ public class ApiClient {
     public ApiClient setDebugging(boolean debugging) {
         if (debugging != this.debugging) {
             if (debugging) {
-                HttpLoggingInterceptor.Logger custom = new HttpLoggingInterceptor.Logger() {
-                    public void log(String message) {
-                        LOGGER.fine(this.getClass().toString() + "@" + String.valueOf(this.hashCode()));
-                        LOGGER.fine(message);
-                    }
-                };
-                loggingInterceptor = new HttpLoggingInterceptor(custom);
-                loggingInterceptor.setLevel(Level.BASIC);
+                loggingInterceptor = new HttpLoggingInterceptor();
+                loggingInterceptor.setLevel(Level.BODY);
                 httpClient.interceptors().add(loggingInterceptor);
             } else {
                 httpClient.interceptors().remove(loggingInterceptor);
