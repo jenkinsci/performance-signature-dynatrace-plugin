@@ -21,9 +21,12 @@ import hudson.Extension;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
 import hudson.util.FormValidation;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 public class DynatraceServerConfiguration extends AbstractDescribableImpl<DynatraceServerConfiguration> {
@@ -106,6 +109,8 @@ public class DynatraceServerConfiguration extends AbstractDescribableImpl<Dynatr
     }
 
     @SuppressWarnings("deprecation")
+    @Restricted(NoExternalUse.class)
+    @Nonnull
     protected Object readResolve() {
         if (protocol != null && host != null && port != 0 && serverUrl == null) {
             serverUrl = protocol + "://" + host + ":" + port;

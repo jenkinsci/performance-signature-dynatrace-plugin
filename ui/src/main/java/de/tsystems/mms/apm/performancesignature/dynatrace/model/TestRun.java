@@ -23,8 +23,11 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
 import io.swagger.annotations.ApiModelProperty;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
 import org.kohsuke.stapler.export.Exported;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -316,6 +319,8 @@ public class TestRun extends BaseReference {
     }
 
     @SuppressWarnings("deprecation")
+    @Restricted(NoExternalUse.class)
+    @Nonnull
     protected Object readResolve() {
         if (timestamp != null) {
             startTime = timestamp;

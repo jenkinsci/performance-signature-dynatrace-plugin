@@ -17,7 +17,10 @@
 package de.tsystems.mms.apm.performancesignature.dynatrace;
 
 import hudson.model.InvisibleAction;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
 
+import javax.annotation.Nonnull;
 import java.util.Date;
 
 public class PerfSigEnvInvisAction extends InvisibleAction {
@@ -75,6 +78,8 @@ public class PerfSigEnvInvisAction extends InvisibleAction {
     }
 
     @SuppressWarnings("deprecation")
+    @Restricted(NoExternalUse.class)
+    @Nonnull
     protected Object readResolve() {
         if (testRunID != null) {
             testRunId = testRunID;

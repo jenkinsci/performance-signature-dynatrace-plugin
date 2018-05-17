@@ -16,6 +16,10 @@
 
 package de.tsystems.mms.apm.performancesignature.ui.model;
 
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
+
+import javax.annotation.Nonnull;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -58,6 +62,8 @@ public class ClientLinkGenerator {
     }
 
     @SuppressWarnings("deprecation")
+    @Restricted(NoExternalUse.class)
+    @Nonnull
     protected Object readResolve() {
         if (protocol != null && server != null && port != 0 && serverUrl == null) {
             serverUrl = protocol + "://" + server + ":" + port;

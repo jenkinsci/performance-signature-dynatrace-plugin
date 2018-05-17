@@ -17,9 +17,12 @@
 package de.tsystems.mms.apm.performancesignature.dynatrace.model;
 
 import de.tsystems.mms.apm.performancesignature.ui.model.ClientLinkGenerator;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
 import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
 
+import javax.annotation.Nonnull;
 import javax.xml.bind.annotation.*;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
@@ -127,6 +130,8 @@ public class DashboardReport {
     }
 
     @SuppressWarnings("deprecation")
+    @Restricted(NoExternalUse.class)
+    @Nonnull
     protected Object readResolve() throws MalformedURLException {
         if (clientLink != null) {
             clientUrl = clientLink.generateLink();
