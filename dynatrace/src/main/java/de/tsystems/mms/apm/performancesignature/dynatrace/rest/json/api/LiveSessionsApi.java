@@ -18,7 +18,10 @@ package de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.api;
 
 import com.google.gson.reflect.TypeToken;
 import com.squareup.okhttp.Call;
-import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.*;
+import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.ApiClient;
+import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.ApiException;
+import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.ApiResponse;
+import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.Pair;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model.RecordingStatus;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model.SessionRecordingOptions;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model.SessionStoringOptions;
@@ -32,10 +35,6 @@ import java.util.Map;
 
 public class LiveSessionsApi {
     private ApiClient apiClient;
-
-    public LiveSessionsApi() {
-        this(Configuration.getDefaultApiClient());
-    }
 
     public LiveSessionsApi(ApiClient apiClient) {
         this.apiClient = apiClient;

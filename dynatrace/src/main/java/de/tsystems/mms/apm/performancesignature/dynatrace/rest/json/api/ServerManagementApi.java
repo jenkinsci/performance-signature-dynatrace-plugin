@@ -18,7 +18,10 @@ package de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.api;
 
 import com.google.gson.reflect.TypeToken;
 import com.squareup.okhttp.Call;
-import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.*;
+import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.ApiClient;
+import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.ApiException;
+import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.ApiResponse;
+import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.Pair;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model.Result;
 
 import java.lang.reflect.Type;
@@ -29,10 +32,6 @@ import java.util.Map;
 
 public class ServerManagementApi {
     private ApiClient apiClient;
-
-    public ServerManagementApi() {
-        this(Configuration.getDefaultApiClient());
-    }
 
     public ServerManagementApi(ApiClient apiClient) {
         this.apiClient = apiClient;

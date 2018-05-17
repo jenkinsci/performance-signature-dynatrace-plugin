@@ -19,7 +19,10 @@ package de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.api;
 import com.google.gson.reflect.TypeToken;
 import com.squareup.okhttp.Call;
 import de.tsystems.mms.apm.performancesignature.dynatrace.model.Alert;
-import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.*;
+import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.ApiClient;
+import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.ApiException;
+import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.ApiResponse;
+import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.Pair;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model.Alerts;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model.DeploymentEvent;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model.EventUpdate;
@@ -30,10 +33,6 @@ import java.util.*;
 
 public class AlertsIncidentsAndEventsApi {
     private ApiClient apiClient;
-
-    public AlertsIncidentsAndEventsApi() {
-        this(Configuration.getDefaultApiClient());
-    }
 
     public AlertsIncidentsAndEventsApi(ApiClient apiClient) {
         this.apiClient = apiClient;

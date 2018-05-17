@@ -23,7 +23,6 @@ import de.tsystems.mms.apm.performancesignature.dynatrace.configuration.Dynatrac
 import de.tsystems.mms.apm.performancesignature.dynatrace.model.*;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.ApiClient;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.ApiException;
-import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.Configuration;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.api.*;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model.*;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.CommandExecutionException;
@@ -65,7 +64,7 @@ public class DTServerConnection {
         this.systemProfile = pair.getProfile();
         this.credProfilePair = pair;
 
-        this.apiClient = Configuration.getDefaultApiClient();
+        this.apiClient = new ApiClient();
         apiClient.setVerifyingSsl(verifyCertificate);
         apiClient.setBasePath(serverUrl);
         apiClient.setUsername(pair.getCredentials().getUsername());

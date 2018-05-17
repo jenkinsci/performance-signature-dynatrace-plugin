@@ -19,7 +19,10 @@ package de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.api;
 import com.google.gson.reflect.TypeToken;
 import com.squareup.okhttp.Call;
 import de.tsystems.mms.apm.performancesignature.dynatrace.model.DashboardReport;
-import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.*;
+import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.ApiClient;
+import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.ApiException;
+import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.ApiResponse;
+import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.Pair;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.model.Agent;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.model.AgentList;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.model.DashboardList;
@@ -36,10 +39,6 @@ import java.util.Map;
 
 public class CustomXMLApi {
     private ApiClient apiClient;
-
-    public CustomXMLApi() {
-        this(Configuration.getDefaultApiClient());
-    }
 
     public CustomXMLApi(ApiClient apiClient) {
         this.apiClient = apiClient;

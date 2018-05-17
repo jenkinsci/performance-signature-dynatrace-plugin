@@ -282,11 +282,12 @@ public class ApiClient {
             if (debugging) {
                 HttpLoggingInterceptor.Logger custom = new HttpLoggingInterceptor.Logger() {
                     public void log(String message) {
+                        LOGGER.fine(this.getClass().toString() + "@" + String.valueOf(this.hashCode()));
                         LOGGER.fine(message);
                     }
                 };
                 loggingInterceptor = new HttpLoggingInterceptor(custom);
-                loggingInterceptor.setLevel(Level.BODY);
+                loggingInterceptor.setLevel(Level.BASIC);
                 httpClient.interceptors().add(loggingInterceptor);
             } else {
                 httpClient.interceptors().remove(loggingInterceptor);
