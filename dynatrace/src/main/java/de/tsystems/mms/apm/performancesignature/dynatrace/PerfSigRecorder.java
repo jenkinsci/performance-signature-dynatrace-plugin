@@ -122,7 +122,7 @@ public class PerfSigRecorder extends Recorder implements SimpleBuildStep {
             if (buildEnvVars != null) {
                 sessionId = buildEnvVars.getSessionId();
             } else {
-                throw new RESTErrorException(Messages.PerfSigRecorder_NoSessionNameFound());
+                throw new AbortException(Messages.PerfSigRecorder_NoSessionNameFound());
             }
 
             if (comparisonBuildNumber != 0) {
@@ -143,7 +143,7 @@ public class PerfSigRecorder extends Recorder implements SimpleBuildStep {
             }
 
             if (!validateSessionId(sessionId)) {
-                throw new RESTErrorException(Messages.PerfSigRecorder_SessionNotAvailable(sessionId));
+                throw new AbortException(Messages.PerfSigRecorder_SessionNotAvailable(sessionId));
             }
             if (!validateSessionId(comparisonSessionId)) {
                 logger.log(Messages.PerfSigRecorder_ComparisonNotPossible(comparisonSessionId));
