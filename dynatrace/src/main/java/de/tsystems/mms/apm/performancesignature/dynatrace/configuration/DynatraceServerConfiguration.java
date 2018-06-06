@@ -134,6 +134,7 @@ public class DynatraceServerConfiguration extends AbstractDescribableImpl<Dynatr
             return "";
         }
 
+        @Restricted(NoExternalUse.class)
         public FormValidation doCheckServerUrl(@QueryParameter final String serverUrl) {
             if (PerfSigUIUtils.checkNotNullOrEmpty(serverUrl) && (serverUrl.charAt(serverUrl.length() - 1) != '/')) {
                 return FormValidation.ok();
@@ -142,6 +143,7 @@ public class DynatraceServerConfiguration extends AbstractDescribableImpl<Dynatr
             }
         }
 
+        @Restricted(NoExternalUse.class)
         public FormValidation doCheckDelay(@QueryParameter final String delay) {
             if (PerfSigUIUtils.checkNotEmptyAndIsNumber(delay)) {
                 return FormValidation.ok();
@@ -150,6 +152,7 @@ public class DynatraceServerConfiguration extends AbstractDescribableImpl<Dynatr
             }
         }
 
+        @Restricted(NoExternalUse.class)
         public FormValidation doCheckRetryCount(@QueryParameter final String retryCount) {
             if (PerfSigUIUtils.checkNotEmptyAndIsNumber(retryCount)) {
                 return FormValidation.ok();

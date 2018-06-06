@@ -38,6 +38,8 @@ import jenkins.model.Jenkins;
 import jenkins.tasks.SimpleBuildStep;
 import org.apache.commons.lang.StringUtils;
 import org.jenkinsci.Symbol;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
@@ -137,10 +139,13 @@ public class PerfSigStartRecording extends Builder implements SimpleBuildStep {
         public static final boolean defaultLockSession = false;
         public static final String defaultRecordingOption = "all";
 
+        @Restricted(NoExternalUse.class)
+        @Nonnull
         public ListBoxModel doFillRecordingOptionItems() {
             return new ListBoxModel(new ListBoxModel.Option("all"), new ListBoxModel.Option("violations"), new ListBoxModel.Option("timeseries"));
         }
 
+        @Restricted(NoExternalUse.class)
         public FormValidation doCheckTestCase(@QueryParameter final String testCase) {
             try {
                 Jenkins.checkGoodName(testCase);
@@ -151,6 +156,8 @@ public class PerfSigStartRecording extends Builder implements SimpleBuildStep {
             }
         }
 
+        @Restricted(NoExternalUse.class)
+        @Nonnull
         public ListBoxModel doFillDynatraceProfileItems() {
             return PerfSigUtils.listToListBoxModel(PerfSigUtils.getDTConfigurations());
         }

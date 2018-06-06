@@ -36,6 +36,8 @@ import hudson.util.ListBoxModel;
 import jenkins.tasks.SimpleBuildStep;
 import org.apache.commons.lang.StringUtils;
 import org.jenkinsci.Symbol;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 
@@ -83,6 +85,7 @@ public class PerfSigActivateConfiguration extends Builder implements SimpleBuild
     @Symbol("activateDTConfiguration")
     @Extension
     public static final class DescriptorImpl extends BuildStepDescriptor<Builder> {
+        @Restricted(NoExternalUse.class)
         public FormValidation doCheckConfiguration(@QueryParameter final String configuration) {
             FormValidation validationResult;
             if (StringUtils.isNotBlank(configuration)) {
@@ -97,6 +100,8 @@ public class PerfSigActivateConfiguration extends Builder implements SimpleBuild
             return PerfSigUtils.listToListBoxModel(PerfSigUtils.getDTConfigurations());
         }
 
+        @Restricted(NoExternalUse.class)
+        @Nonnull
         public ListBoxModel doFillConfigurationItems(@QueryParameter final String dynatraceProfile) {
             DynatraceServerConfiguration serverConfiguration = PerfSigUtils.getServerConfiguration(dynatraceProfile);
             if (serverConfiguration != null) {
@@ -106,7 +111,7 @@ public class PerfSigActivateConfiguration extends Builder implements SimpleBuild
                     return PerfSigUtils.listToListBoxModel(connection.getProfileConfigurations());
                 }
             }
-            return null;
+            return new ListBoxModel();
         }
 
         public boolean isApplicable(final Class<? extends AbstractProject> aClass) {

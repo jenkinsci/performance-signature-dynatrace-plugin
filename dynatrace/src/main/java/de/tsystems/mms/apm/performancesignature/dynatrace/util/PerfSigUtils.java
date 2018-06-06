@@ -109,7 +109,7 @@ public final class PerfSigUtils {
                 return listToListBoxModel(connection.getAgents());
             }
         }
-        return null;
+        return new ListBoxModel();
     }
 
     public static ListBoxModel fillHostItems(final String dynatraceProfile, final String agent) {
@@ -128,7 +128,7 @@ public final class PerfSigUtils {
                 return hosts;
             }
         }
-        return null;
+        return new ListBoxModel();
     }
 
     public static DTServerConnection createDTServerConnection(final String dynatraceConfiguration) throws AbortException, RESTErrorException {

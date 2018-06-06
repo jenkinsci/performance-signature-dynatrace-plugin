@@ -36,9 +36,12 @@ import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
 import jenkins.model.Jenkins;
 import org.apache.commons.lang.StringUtils;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 
+import javax.annotation.Nonnull;
 import java.util.Collections;
 
 public class CredProfilePair extends AbstractDescribableImpl<CredProfilePair> {
@@ -70,6 +73,8 @@ public class CredProfilePair extends AbstractDescribableImpl<CredProfilePair> {
             return "";
         }
 
+        @Restricted(NoExternalUse.class)
+        @Nonnull
         public ListBoxModel doFillCredentialsIdItems(@QueryParameter String credentialsId) {
             if (!Jenkins.getActiveInstance().hasPermission(Jenkins.ADMINISTER)) {
                 return new StandardListBoxModel().includeCurrentValue(credentialsId);
@@ -85,6 +90,7 @@ public class CredProfilePair extends AbstractDescribableImpl<CredProfilePair> {
                     .includeCurrentValue(credentialsId);
         }
 
+        @Restricted(NoExternalUse.class)
         public FormValidation doCheckCredentialsId(@QueryParameter String value) {
             if (!Jenkins.getActiveInstance().hasPermission(Jenkins.ADMINISTER)) {
                 return FormValidation.ok();
@@ -101,6 +107,8 @@ public class CredProfilePair extends AbstractDescribableImpl<CredProfilePair> {
             return FormValidation.error("The selected credentials cannot be found");
         }
 
+        @Restricted(NoExternalUse.class)
+        @Nonnull
         public ListBoxModel doFillProfileItems(@RelativePath("..") @QueryParameter final String serverUrl, @QueryParameter final String credentialsId,
                                                @RelativePath("..") @QueryParameter final boolean verifyCertificate, @RelativePath("..") @QueryParameter final boolean proxy,
                                                @RelativePath("..") @QueryParameter final String proxyServer, @RelativePath("..") @QueryParameter final int proxyPort,
@@ -122,6 +130,7 @@ public class CredProfilePair extends AbstractDescribableImpl<CredProfilePair> {
             }
         }
 
+        @Restricted(NoExternalUse.class)
         public FormValidation doCheckProfile(@QueryParameter final String profile) {
             FormValidation validationResult;
             if (PerfSigUIUtils.checkNotNullOrEmpty(profile)) {
@@ -132,6 +141,7 @@ public class CredProfilePair extends AbstractDescribableImpl<CredProfilePair> {
             return validationResult;
         }
 
+        @Restricted(NoExternalUse.class)
         public FormValidation doTestDynaTraceConnection(@QueryParameter final String serverUrl, @QueryParameter final String credentialsId,
                                                         @QueryParameter final boolean verifyCertificate, @QueryParameter final boolean proxy,
                                                         @QueryParameter final String proxyServer, @QueryParameter final int proxyPort,

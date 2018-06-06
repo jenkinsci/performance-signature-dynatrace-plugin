@@ -36,6 +36,8 @@ import hudson.util.ListBoxModel;
 import jenkins.tasks.SimpleBuildStep;
 import org.apache.commons.lang.StringUtils;
 import org.jenkinsci.Symbol;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
@@ -119,6 +121,7 @@ public class PerfSigThreadDump extends Builder implements SimpleBuildStep {
     public static final class DescriptorImpl extends BuildStepDescriptor<Builder> {
         public static final boolean defaultLockSession = false;
 
+        @Restricted(NoExternalUse.class)
         public FormValidation doCheckAgent(@QueryParameter final String agent) {
             FormValidation validationResult;
             if (StringUtils.isNotBlank(agent)) {
@@ -129,6 +132,7 @@ public class PerfSigThreadDump extends Builder implements SimpleBuildStep {
             return validationResult;
         }
 
+        @Restricted(NoExternalUse.class)
         public FormValidation doCheckHost(@QueryParameter final String host) {
             FormValidation validationResult;
             if (StringUtils.isNotBlank(host)) {
@@ -139,14 +143,20 @@ public class PerfSigThreadDump extends Builder implements SimpleBuildStep {
             return validationResult;
         }
 
+        @Restricted(NoExternalUse.class)
+        @Nonnull
         public ListBoxModel doFillDynatraceProfileItems() {
             return PerfSigUtils.listToListBoxModel(PerfSigUtils.getDTConfigurations());
         }
 
+        @Restricted(NoExternalUse.class)
+        @Nonnull
         public ListBoxModel doFillAgentItems(@QueryParameter final String dynatraceProfile) {
             return PerfSigUtils.fillAgentItems(dynatraceProfile);
         }
 
+        @Restricted(NoExternalUse.class)
+        @Nonnull
         public ListBoxModel doFillHostItems(@QueryParameter final String dynatraceProfile, @QueryParameter final String agent) {
             return PerfSigUtils.fillHostItems(dynatraceProfile, agent);
         }
