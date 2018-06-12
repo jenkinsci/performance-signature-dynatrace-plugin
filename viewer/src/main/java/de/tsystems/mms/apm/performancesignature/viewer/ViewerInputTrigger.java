@@ -16,39 +16,39 @@
 
 package de.tsystems.mms.apm.performancesignature.viewer;
 
-import com.offbytwo.jenkins.model.JobWithDetails;
-import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
-import de.tsystems.mms.apm.performancesignature.viewer.rest.JenkinsServerConnection;
-import de.tsystems.mms.apm.performancesignature.viewer.util.ViewerUtils;
 import hudson.Extension;
-import hudson.FilePath;
-import hudson.Launcher;
-import hudson.model.AbstractProject;
-import hudson.model.Run;
-import hudson.model.TaskListener;
-import hudson.plugins.analysis.util.PluginLogger;
-import hudson.tasks.BuildStepDescriptor;
-import hudson.tasks.Builder;
+import hudson.ExtensionList;
+import hudson.model.Descriptor;
+import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
-import jenkins.tasks.SimpleBuildStep;
-import org.jenkinsci.Symbol;
+import org.jenkinsci.plugins.ParameterizedRemoteTrigger.RemoteBuildConfiguration;
+import org.jenkinsci.plugins.ParameterizedRemoteTrigger.pipeline.Handle;
+import org.jenkinsci.plugins.ParameterizedRemoteTrigger.utils.FormValidationUtils;
+import org.jenkinsci.plugins.workflow.steps.*;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.QueryParameter;
 
 import javax.annotation.Nonnull;
-import java.io.IOException;
+import java.util.Set;
 
-public class ViewerInputTrigger extends Builder implements SimpleBuildStep {
-    private final String jenkinsJob;
+public class ViewerInputTrigger extends Step {
+    private final RemoteBuildConfiguration remoteBuildConfig;
+    private final Handle handle;
+    private final String remoteJenkinsName;
     private final String triggerId;
 
     @DataBoundConstructor
-    public ViewerInputTrigger(final String jenkinsJob, final String triggerId) {
-        this.jenkinsJob = jenkinsJob;
+    public ViewerInputTrigger(final Handle handle, final String remoteJenkinsName, final String triggerId) {
+        this.remoteBuildConfig = new RemoteBuildConfiguration();
+
+        this.handle = handle;
+        this.remoteJenkinsName = remoteJenkinsName;
         this.triggerId = triggerId;
     }
 
-    @Override
-    public void perform(@Nonnull Run<?, ?> run, @Nonnull FilePath workspace, @Nonnull Launcher launcher, @Nonnull TaskListener listener) throws IOException {
+    /*public void perform(@Nonnull Run<?, ?> run, @Nonnull FilePath workspace, @Nonnull Launcher launcher, @Nonnull TaskListener listener) throws IOException {
         PluginLogger logger = PerfSigUIUtils.createLogger(listener.getLogger());
         JenkinsServerConnection serverConnection = ViewerUtils.createJenkinsServerConnection(jenkinsJob);
 
@@ -64,29 +64,82 @@ public class ViewerInputTrigger extends Builder implements SimpleBuildStep {
         logger.log(Messages.ViewerInputTrigger_TriggerInputStep(perfSigJob.getName(), buildNumber));
         serverConnection.triggerInputStep(buildNumber, getTriggerId());
         logger.log(Messages.ViewerInputTrigger_TriggeredInputStep(perfSigJob.getName(), buildNumber));
+    }*/
+
+    public Handle getHandle() {
+        return handle;
     }
 
-    public String getJenkinsJob() {
-        return jenkinsJob;
+    public String getRemoteJenkinsName() {
+        return remoteJenkinsName;
     }
 
     public String getTriggerId() {
         return triggerId;
     }
 
-    @Symbol("triggerInputStep")
+    @Override
+    public StepExecution start(StepContext context) throws Exception {
+        return new Execution(context, remoteBuildConfig);
+    }
+
     @Extension
-    public static final class DescriptorImpl extends BuildStepDescriptor<Builder> {
-        public ListBoxModel doFillJenkinsJobItems() {
-            return ViewerUtils.listToListBoxModel(ViewerUtils.getJenkinsConfigurations());
+    public static final class DescriptorImpl extends StepDescriptor {
+        @Restricted(NoExternalUse.class)
+        @Nonnull
+        public ListBoxModel doFillRemoteJenkinsNameItems() {
+            RemoteBuildConfiguration.DescriptorImpl descriptor = Descriptor.findByDescribableClassName(
+                    ExtensionList.lookup(RemoteBuildConfiguration.DescriptorImpl.class), RemoteBuildConfiguration.class.getName());
+            if (descriptor == null) throw new RuntimeException("Could not get descriptor for RemoteBuildConfiguration");
+            return descriptor.doFillRemoteJenkinsNameItems();
         }
 
-        public boolean isApplicable(final Class<? extends AbstractProject> aClass) {
-            return true;
+        @Restricted(NoExternalUse.class)
+        public FormValidation doCheckRemoteJenkinsName(
+                @QueryParameter("remoteJenkinsName") final String value,
+                @QueryParameter("remoteJenkinsUrl") final String remoteJenkinsUrl,
+                @QueryParameter("job") final String job) {
+            FormValidationUtils.RemoteURLCombinationsResult result = FormValidationUtils.checkRemoteURLCombinations(remoteJenkinsUrl, value, job);
+            if (result.isAffected(FormValidationUtils.AffectedField.REMOTE_JENKINS_NAME)) return result.formValidation;
+            return FormValidation.ok();
         }
 
+        @Override
         public String getDisplayName() {
             return Messages.ViewerInputTrigger_DisplayName();
+        }
+
+        @Override
+        public Set<? extends Class<?>> getRequiredContext() {
+            return null;
+        }
+
+        @Override
+        public String getFunctionName() {
+            return "triggerInputStep";
+        }
+    }
+    /*
+    public void triggerInputStep(final int buildNumber, final String triggerId) {
+        try {
+            String url = getJenkinsJob().getUrl() + buildNumber + "/input/" + triggerId + "/proceedEmpty";
+            getJenkinsJob().getClient().post(url, true);
+            getJenkinsJob().getClient().get("url");
+        } catch (IOException e) {
+            throw new CommandExecutionException("error triggering input step: " + e.getMessage(), e);
+        }
+    }*/
+
+    private class Execution extends SynchronousNonBlockingStepExecution<Void> {
+        public Execution(StepContext context, RemoteBuildConfiguration remoteBuildConfig) {
+            super(context);
+        }
+
+
+        @Override
+        protected Void run() throws Exception {
+
+            return null;
         }
     }
 }

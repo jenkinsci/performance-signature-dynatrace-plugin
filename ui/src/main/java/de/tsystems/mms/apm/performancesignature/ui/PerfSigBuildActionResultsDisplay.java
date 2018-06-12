@@ -178,6 +178,8 @@ public class PerfSigBuildActionResultsDisplay implements ModelObject {
             fileNames.add(PerfSigUIUtils.removeExtension(fp.getName()));
         }
         XStream2 xstream = new XStream2();
+        //Gson gson = new Gson();
+        //gson.toJson(fileNames, response.getOutputStream());
         xstream.toXMLUTF8(fileNames, response.getOutputStream());
     }
 

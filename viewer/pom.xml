@@ -20,12 +20,12 @@
         <dependency>
             <groupId>org.jenkins-ci.plugins</groupId>
             <artifactId>credentials</artifactId>
-            <version>2.1.0</version>
+            <version>2.1.16</version>
         </dependency>
         <dependency>
-            <groupId>com.offbytwo.jenkins</groupId>
-            <artifactId>jenkins-client</artifactId>
-            <version>0.3.7</version>
+            <groupId>org.jenkins-ci.plugins</groupId>
+            <artifactId>Parameterized-Remote-Trigger</artifactId>
+            <version>3.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>

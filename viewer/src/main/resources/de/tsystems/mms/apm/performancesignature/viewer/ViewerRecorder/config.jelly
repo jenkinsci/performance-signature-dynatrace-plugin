@@ -16,14 +16,19 @@
 
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
-    <f:entry title="${%Jenkins job}" field="jenkinsJob" description="${%description(rootURL)}">
+    <f:entry title="variable name of the handle element" field="handle">
+        <f:textbox/>
+    </f:entry>
+    <f:entry title="${%Select a remote host}" field="remoteJenkinsName"
+             description="${%description(rootURL)}">
         <f:select/>
     </f:entry>
 
     <f:advanced>
         <f:entry title="${%Non-functional failure behaviour}" field="nonFunctionalFailure"
                  description="${%Should the plugin modify the build result in case of any Dynatrace incidents?}">
-            <f:radio name="nonFunctionalFailure" value="0" checked="${instance.nonFunctionalFailure == 0 || instance.nonFunctionalFailure == null}"
+            <f:radio name="nonFunctionalFailure" value="0"
+                     checked="${instance.nonFunctionalFailure == 0 || instance.nonFunctionalFailure == null}"
                      title="do nothing"/>
             <br/>
             <f:radio name="nonFunctionalFailure" value="1" checked="${instance.nonFunctionalFailure == 1}"
