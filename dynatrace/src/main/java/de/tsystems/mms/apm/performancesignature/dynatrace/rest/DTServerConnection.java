@@ -31,6 +31,7 @@ import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.model.Agent;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.model.Dashboard;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.model.DashboardList;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.model.Result;
+import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
 import hudson.FilePath;
 import hudson.ProxyConfiguration;
 import jenkins.model.Jenkins;
@@ -77,7 +78,7 @@ public class DTServerConnection {
             Jenkins jenkins = Jenkins.getActiveInstance();
             ProxyConfiguration proxyConfiguration = jenkins.proxy;
             if (customProxy.isUseJenkinsProxy() && proxyConfiguration != null) {
-                proxy = createProxy(proxyConfiguration.name, proxyConfiguration.port, proxyConfiguration.getUserName(), proxyConfiguration.getPassword());
+                proxy = proxyConfiguration.createProxy(PerfSigUIUtils.getHostFromUrl(serverUrl));
             } else {
                 proxy = createProxy(customProxy.getProxyServer(), customProxy.getProxyPort(), customProxy.getProxyUser(), customProxy.getProxyPassword());
             }

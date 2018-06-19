@@ -33,6 +33,8 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.net.URLEncoder;
 import java.util.Collections;
 import java.util.List;
@@ -189,5 +191,13 @@ public final class PerfSigUIUtils {
 
     public static boolean checkNotEmptyAndIsNumber(final String number) {
         return StringUtils.isNotBlank(number) && NumberUtils.isNumber(number);
+    }
+
+    public static String getHostFromUrl(String url) {
+        try {
+            return new URL(url).getHost();
+        } catch (MalformedURLException e) {
+            return null;
+        }
     }
 }
