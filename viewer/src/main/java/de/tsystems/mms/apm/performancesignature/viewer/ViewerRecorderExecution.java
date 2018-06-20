@@ -99,7 +99,8 @@ public class ViewerRecorderExecution extends SynchronousNonBlockingStepExecution
         return null;
     }
 
-    private List<DashboardReport> getMeasureDataFromJSON(final BuildContext context, final Handle handle) {
+    private List<DashboardReport> getMeasureDataFromJSON(final BuildContext context, final Handle handle)
+            throws InterruptedException {
         try {
             URL url = new URL(handle.getBuildUrl() + "/performance-signature/api/json?depth=10");
             ConnectionHelper connectionHelper = new ConnectionHelper(handle);
@@ -112,7 +113,8 @@ public class ViewerRecorderExecution extends SynchronousNonBlockingStepExecution
         }
     }
 
-    private List getReportList(final BuildContext context, final Handle handle, final ReportType type) throws IOException {
+    private List getReportList(final BuildContext context, final Handle handle, final ReportType type)
+            throws IOException, InterruptedException {
         URL url = new URL(handle.getBuildUrl() + "/performance-signature/get" + type + "ReportList");
         ConnectionHelper connectionHelper = new ConnectionHelper(handle);
         String xml = connectionHelper.getStringFromUrl(url, context);
@@ -121,7 +123,8 @@ public class ViewerRecorderExecution extends SynchronousNonBlockingStepExecution
         return obj != null ? obj : Collections.emptyList();
     }
 
-    private boolean downloadPDFReports(final BuildContext context, final Handle handle, final FilePath dir, final PluginLogger logger) {
+    private boolean downloadPDFReports(final BuildContext context, final Handle handle, final FilePath dir, final PluginLogger logger)
+            throws InterruptedException {
         boolean result = true;
         try {
             for (ReportType reportType : ReportType.values()) {
@@ -139,7 +142,7 @@ public class ViewerRecorderExecution extends SynchronousNonBlockingStepExecution
     }
 
     private boolean downloadSession(final BuildContext context, final Handle handle, final FilePath dir,
-                                    final String testCase, final PluginLogger logger) {
+                                    final String testCase, final PluginLogger logger) throws InterruptedException {
         try {
             URL url = new URL(handle.getBuildUrl() + "/performance-signature/getSession?testCase=" + testCase);
             String sessionFileName = handle.getJobName() + "_Build_" + handle.getBuildNumber() + "_" + testCase + ".dts";
