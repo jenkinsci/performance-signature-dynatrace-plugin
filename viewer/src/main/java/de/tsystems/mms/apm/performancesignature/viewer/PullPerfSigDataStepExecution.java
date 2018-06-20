@@ -26,6 +26,8 @@ import de.tsystems.mms.apm.performancesignature.viewer.rest.CommandExecutionExce
 import de.tsystems.mms.apm.performancesignature.viewer.rest.ConnectionHelper;
 import de.tsystems.mms.apm.performancesignature.viewer.rest.ContentRetrievalException;
 import de.tsystems.mms.apm.performancesignature.viewer.rest.RESTErrorException;
+import de.tsystems.mms.apm.performancesignature.viewer.rest.model.Artifact;
+import de.tsystems.mms.apm.performancesignature.viewer.rest.model.BuildData;
 import de.tsystems.mms.apm.performancesignature.viewer.rest.model.RootElement;
 import hudson.AbortException;
 import hudson.FilePath;
@@ -46,15 +48,16 @@ import java.net.URL;
 import java.util.Collections;
 import java.util.List;
 
-public class ViewerRecorderExecution extends SynchronousNonBlockingStepExecution<Void> {
-    private static final long serialVersionUID = 5339071627093320735L;
-    private final Handle handle;
-    private int nonFunctionalFailure;
+public class PullPerfSigDataStepExecution extends SynchronousNonBlockingStepExecution<Void> {
+    private static final long serialVersionUID = 1L;
+    private transient final PullPerfSigDataStep step;
 
-    ViewerRecorderExecution(final StepContext context, final Handle handle, final int nonFunctionalFailure) {
+    PullPerfSigDataStepExecution(final PullPerfSigDataStep step, final StepContext context) throws AbortException {
         super(context);
-        this.handle = handle;
-        this.nonFunctionalFailure = nonFunctionalFailure;
+        if (step.getHandle() == null) {
+            throw new AbortException("'handle' has not been defined for this 'pullPerfSigReports' step");
+        }
+        this.step = step;
     }
 
     @Override
@@ -70,32 +73,42 @@ public class ViewerRecorderExecution extends SynchronousNonBlockingStepExecution
         PluginLogger logger = PerfSigUIUtils.createLogger(listener.getLogger());
         BuildContext context = new BuildContext(run, workspace, listener, listener.getLogger(), new RemoteJenkinsServer());
 
-        logger.log("parsing xml data from job " + handle.getJobName() + " #" + handle.getBuildNumber());
-        final List<DashboardReport> dashboardReports = getMeasureDataFromJSON(context, handle);
-        if (dashboardReports == null) {
-            throw new RESTErrorException(Messages.ViewerRecorder_XMLReportError());
-        }
-
-        for (DashboardReport dashboardReport : dashboardReports) {
-            boolean exportedSession = downloadSession(context, handle, PerfSigUIUtils.getReportDirectory(run), dashboardReport.getName(), logger);
-            if (!exportedSession) {
-                logger.log(Messages.ViewerRecorder_SessionDownloadError(dashboardReport.getName()));
-            } else {
-                logger.log(Messages.ViewerRecorder_SessionDownloadSuccessful(dashboardReport.getName()));
+        if (!step.isIgnorePerfSigData()) {
+            logger.log("parsing Performance Signature data from job " + step.getHandle().getJobName() + " #" + step.getHandle().getBuildNumber());
+            final List<DashboardReport> dashboardReports = getMeasureDataFromJSON(context, step.getHandle());
+            if (dashboardReports == null) {
+                throw new RESTErrorException(Messages.PullPerfSigDataStep_JSONReportError());
             }
 
-            PerfSigUIUtils.handleIncidents(run, dashboardReport.getIncidents(), logger, nonFunctionalFailure);
+            for (DashboardReport dashboardReport : dashboardReports) {
+                boolean exportedSession = downloadSession(context, PerfSigUIUtils.getReportDirectory(run), dashboardReport.getName(), logger);
+                if (!exportedSession) {
+                    logger.log(Messages.PullPerfSigDataStep_SessionDownloadError(dashboardReport.getName()));
+                } else {
+                    logger.log(Messages.PullPerfSigDataStep_SessionDownloadSuccessful(dashboardReport.getName()));
+                }
+
+                PerfSigUIUtils.handleIncidents(run, dashboardReport.getIncidents(), logger, step.getNonFunctionalFailure());
+            }
+
+            boolean exportedPDFReports = downloadPDFReports(context, PerfSigUIUtils.getReportDirectory(run), logger);
+            if (!exportedPDFReports) {
+                logger.log(Messages.PullPerfSigDataStep_ReportDownloadError());
+            } else {
+                logger.log(Messages.PullPerfSigDataStep_ReportDownloadSuccessful());
+            }
+
+            PerfSigBuildAction action = new PerfSigBuildAction(dashboardReports);
+            run.addAction(action);
         }
 
-        boolean exportedPDFReports = downloadPDFReports(context, handle, PerfSigUIUtils.getReportDirectory(run), logger);
-        if (!exportedPDFReports) {
-            logger.log(Messages.ViewerRecorder_ReportDownloadError());
+        boolean downloadedArtifacts = downloadArtifacts(context, PerfSigUIUtils.getReportDirectory(run), logger);
+        if (!downloadedArtifacts) {
+            logger.log(Messages.PullPerfSigDataStep_ArtifactDownloadError());
         } else {
-            logger.log(Messages.ViewerRecorder_ReportDownloadSuccessful());
+            logger.log(Messages.PullPerfSigDataStep_ArtifactDownloadSuccessful());
         }
 
-        PerfSigBuildAction action = new PerfSigBuildAction(dashboardReports);
-        run.addAction(action);
         return null;
     }
 
@@ -113,10 +126,10 @@ public class ViewerRecorderExecution extends SynchronousNonBlockingStepExecution
         }
     }
 
-    private List<String> getReportList(final BuildContext context, final Handle handle, final ReportType type)
+    private List<String> getReportList(final BuildContext context, final ReportType type)
             throws IOException, InterruptedException {
-        URL url = new URL(handle.getBuildUrl() + "/performance-signature/get" + type + "ReportList");
-        ConnectionHelper connectionHelper = new ConnectionHelper(handle);
+        URL url = new URL(step.getHandle().getBuildUrl() + "/performance-signature/get" + type + "ReportList");
+        ConnectionHelper connectionHelper = new ConnectionHelper(step.getHandle());
         String json = connectionHelper.getStringFromUrl(url, context);
         Gson gson = new Gson();
         List<String> obj = gson.fromJson(json, new TypeToken<List<String>>() {
@@ -124,14 +137,39 @@ public class ViewerRecorderExecution extends SynchronousNonBlockingStepExecution
         return obj != null ? obj : Collections.<String>emptyList();
     }
 
-    private boolean downloadPDFReports(final BuildContext context, final Handle handle, final FilePath dir, final PluginLogger logger)
+    private List<Artifact> getArtifactsList(final BuildContext context) throws IOException, InterruptedException {
+        URL url = new URL(step.getHandle().getBuildUrl() + "/api/json");
+        ConnectionHelper connectionHelper = new ConnectionHelper(step.getHandle());
+        String json = connectionHelper.getStringFromUrl(url, context);
+        Gson gson = new Gson();
+        BuildData artifacts = gson.fromJson(json, new TypeToken<BuildData>() {
+        }.getType());
+        return artifacts != null ? artifacts.getArtifacts() : Collections.<Artifact>emptyList();
+    }
+
+    private boolean downloadArtifacts(final BuildContext context, final FilePath dir, final PluginLogger logger)
+            throws InterruptedException {
+        boolean result = true;
+        try {
+            List<Artifact> artifactsList = getArtifactsList(context);
+            for (Artifact artifact : artifactsList) {
+                URL url = new URL(step.getHandle().getBuildUrl() + "/artifact/" + artifact.getRelativePath());
+                result &= downloadArtifact(context, new FilePath(dir, artifact.getFileName()), url, logger);
+            }
+            return result;
+        } catch (IOException e) {
+            throw new CommandExecutionException("error downloading Artifacts: " + e.getMessage(), e);
+        }
+    }
+
+    private boolean downloadPDFReports(final BuildContext context, final FilePath dir, final PluginLogger logger)
             throws InterruptedException {
         boolean result = true;
         try {
             for (ReportType reportType : ReportType.values()) {
-                List reportlist = getReportList(context, handle, reportType);
+                List reportlist = getReportList(context, reportType);
                 for (Object report : reportlist) {
-                    URL url = new URL(handle.getBuildUrl() + "/performance-signature/get" + reportType + "Report?number="
+                    URL url = new URL(step.getHandle().getBuildUrl() + "/performance-signature/get" + reportType + "Report?number="
                             + reportlist.indexOf(report));
                     result &= downloadArtifact(context, new FilePath(dir, report + ".pdf"), url, logger);
                 }
@@ -142,11 +180,11 @@ public class ViewerRecorderExecution extends SynchronousNonBlockingStepExecution
         }
     }
 
-    private boolean downloadSession(final BuildContext context, final Handle handle, final FilePath dir,
+    private boolean downloadSession(final BuildContext context, final FilePath dir,
                                     final String testCase, final PluginLogger logger) throws InterruptedException {
         try {
-            URL url = new URL(handle.getBuildUrl() + "/performance-signature/getSession?testCase=" + testCase);
-            String sessionFileName = handle.getJobName() + "_Build_" + handle.getBuildNumber() + "_" + testCase + ".dts";
+            URL url = new URL(step.getHandle().getBuildUrl() + "/performance-signature/getSession?testCase=" + testCase);
+            String sessionFileName = step.getHandle().getJobName() + "_Build_" + step.getHandle().getBuildNumber() + "_" + testCase + ".dts";
             return downloadArtifact(context, new FilePath(dir, sessionFileName), url, logger);
         } catch (IOException e) {
             throw new CommandExecutionException("error downloading sessions: " + e.getMessage(), e);
@@ -155,7 +193,7 @@ public class ViewerRecorderExecution extends SynchronousNonBlockingStepExecution
 
     private boolean downloadArtifact(final BuildContext context, final FilePath file, final URL url, final PluginLogger logger) {
         try {
-            ConnectionHelper connectionHelper = new ConnectionHelper(handle);
+            ConnectionHelper connectionHelper = new ConnectionHelper(step.getHandle());
             InputStream inputStream = connectionHelper.getInputStreamFromUrl(url, context);
             file.copyFrom(inputStream);
             return true;

@@ -16,9 +16,18 @@
 
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
-    <f:entry title="${%Jenkins job}" field="jenkinsJob" description="${%description(rootURL)}">
-        <f:select/>
-    </f:entry>
+    <f:block>
+        <p>
+            Currently no visual configuration.
+            Always pass a Handle object from the <i>triggerRemoteJob</i> Step to the pullPerfSigReports step.
+            e.g.
+        </p>
+        <pre>def handle = triggerRemoteJob job: 'demoJob', remoteJenkinsName: 'myJenkins'
+            pullPerfSigReports handle: handle
+        </pre>
+        <br/>
+    </f:block>
+
     <f:entry title="${%Input trigger id}" field="triggerId" description="${%used input trigger id}">
         <f:textbox/>
     </f:entry>

@@ -17,65 +17,77 @@
 package de.tsystems.mms.apm.performancesignature.viewer;
 
 import com.google.common.collect.ImmutableSet;
+import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
 import hudson.model.Run;
 import hudson.model.TaskListener;
+import hudson.util.FormValidation;
 import org.jenkinsci.plugins.ParameterizedRemoteTrigger.pipeline.Handle;
 import org.jenkinsci.plugins.workflow.steps.Step;
 import org.jenkinsci.plugins.workflow.steps.StepContext;
 import org.jenkinsci.plugins.workflow.steps.StepDescriptor;
 import org.jenkinsci.plugins.workflow.steps.StepExecution;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
+import org.kohsuke.stapler.QueryParameter;
 
 import java.util.Set;
 
-public class ViewerRecorder extends Step {
-    private final Handle handle;
-    private int nonFunctionalFailure;
+public class InputTriggerStep extends Step {
+    private Handle handle;
+    private final String triggerId;
 
     @DataBoundConstructor
-    public ViewerRecorder(final Handle handle) {
-        this.handle = handle;
+    public InputTriggerStep(final String triggerId) {
+        this.triggerId = triggerId;
     }
 
-    public String getHandle() {
-        return handle.toString();
-    }
-
-    public int getNonFunctionalFailure() {
-        return nonFunctionalFailure;
+    public Handle getHandle() {
+        return handle;
     }
 
     @DataBoundSetter
-    public void setNonFunctionalFailure(final int nonFunctionalFailure) {
-        this.nonFunctionalFailure = nonFunctionalFailure < 0 ? DescriptorImpl.defaultNonFunctionalFailure : nonFunctionalFailure;
+    public void setHandle(final Handle handle) {
+        this.handle = handle;
+    }
+
+    public String getTriggerId() {
+        return triggerId;
     }
 
     @Override
-    public StepExecution start(final StepContext stepContext) throws Exception {
-        return new ViewerRecorderExecution(stepContext, handle, nonFunctionalFailure);
+    public StepExecution start(final StepContext context) throws Exception {
+        return new InputTriggerStepExecution(this, context);
     }
 
     @Extension
     public static final class DescriptorImpl extends StepDescriptor {
-        public static final int defaultNonFunctionalFailure = 0;
-
-        @Override
-        public String getFunctionName() {
-            return "pullPerfSigReports";
+        @Restricted(NoExternalUse.class)
+        public FormValidation doCheckTriggerId(@QueryParameter("triggerId") final String value) {
+            if (PerfSigUIUtils.checkNotNullOrEmpty(value)) {
+                return FormValidation.ok();
+            } else {
+                return FormValidation.error("empty triggerId");
+            }
         }
 
         @Override
         public String getDisplayName() {
-            return Messages.ViewerRecorder_DisplayName();
+            return Messages.InputTriggerStep_DisplayName();
         }
 
         @Override
         public Set<? extends Class<?>> getRequiredContext() {
             return ImmutableSet.of(Run.class, FilePath.class, Launcher.class, TaskListener.class);
+        }
+
+        @Override
+        public String getFunctionName() {
+            return "triggerInputStep";
         }
     }
 }

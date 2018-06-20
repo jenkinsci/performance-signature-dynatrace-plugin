@@ -34,22 +34,18 @@ import java.io.IOException;
 import java.net.URL;
 
 
-public class ViewerInputTriggerExecution extends SynchronousNonBlockingStepExecution<Void> {
-    private final Handle handle;
-    private final String triggerId;
+public class InputTriggerStepExecution extends SynchronousNonBlockingStepExecution<Void> {
+    private static final long serialVersionUID = 1L;
+    private transient final InputTriggerStep step;
 
-    public ViewerInputTriggerExecution(final StepContext context, final Handle handle, final String triggerId) {
+    InputTriggerStepExecution(final InputTriggerStep step, final StepContext context) throws AbortException {
         super(context);
-        this.handle = handle;
-        this.triggerId = triggerId;
-    }
-
-    public Handle getHandle() {
-        return handle;
-    }
-
-    public String getTriggerId() {
-        return triggerId;
+        if (step.getHandle() == null) {
+            throw new AbortException("'handle' has not been defined for this 'triggerInputStep' step");
+        } else if (step.getTriggerId() == null) {
+            throw new AbortException("'triggerId' has not been defined for this 'triggerInputStep' step");
+        }
+        this.step = step;
     }
 
     @Override
@@ -65,10 +61,10 @@ public class ViewerInputTriggerExecution extends SynchronousNonBlockingStepExecu
         PluginLogger logger = PerfSigUIUtils.createLogger(listener.getLogger());
         BuildContext context = new BuildContext(run, workspace, listener, listener.getLogger(), new RemoteJenkinsServer());
 
-        int buildNumber = handle.getBuildNumber();
-        logger.log(Messages.ViewerInputTrigger_TriggerInputStep(handle.getJobName(), buildNumber));
-        triggerInputStep(context, handle, getTriggerId());
-        logger.log(Messages.ViewerInputTrigger_TriggeredInputStep(handle.getJobName(), buildNumber));
+        int buildNumber = step.getHandle().getBuildNumber();
+        logger.log(Messages.InputTriggerStep_TriggerInputStep(step.getHandle().getJobName(), buildNumber));
+        triggerInputStep(context, step.getHandle(), step.getTriggerId());
+        logger.log(Messages.InputTriggerStep_TriggeredInputStep(step.getHandle().getJobName(), buildNumber));
         return null;
     }
 

@@ -24,9 +24,9 @@ import static org.apache.commons.lang.StringUtils.isEmpty;
 import static org.jenkinsci.plugins.ParameterizedRemoteTrigger.utils.StringTools.NL;
 
 public class ConnectionHelper {
-    private static final int DEFAULT_POLLINTERVALL = 10;
-    private static final int DEFAULT_NUMBEROFATTEMPTS = 5;
-    private static final int connectionRetryLimit = 5;
+    private static final int POLLINTERVAL = 10;
+    private static final int NUMBEROFATTEMPTS = 5;
+    private static final int CONNECTIONRETRYLIMIT = 5;
 
     private final Handle handle;
 
@@ -104,15 +104,15 @@ public class ConnectionHelper {
     }
 
     public String getStringFromUrl(final URL url, final BuildContext context) throws IOException {
-        return new String(sendHTTPCall(url, "GET", context, DEFAULT_NUMBEROFATTEMPTS), StandardCharsets.UTF_8);
+        return new String(sendHTTPCall(url, "GET", context, NUMBEROFATTEMPTS), StandardCharsets.UTF_8);
     }
 
     public InputStream getInputStreamFromUrl(final URL url, final BuildContext context) throws IOException {
-        return new ByteArrayInputStream(sendHTTPCall(url, "GET", context, DEFAULT_NUMBEROFATTEMPTS));
+        return new ByteArrayInputStream(sendHTTPCall(url, "GET", context, NUMBEROFATTEMPTS));
     }
 
     public void postToUrl(final URL url, final BuildContext context) throws IOException {
-        sendHTTPCall(url, "POST", context, DEFAULT_NUMBEROFATTEMPTS);
+        sendHTTPCall(url, "POST", context, NUMBEROFATTEMPTS);
     }
 
     /**
@@ -167,23 +167,22 @@ public class ConnectionHelper {
             String hintsString = (hints != null && hints.size() > 0) ? " - " + hints.toString() : "";
 
             context.logger.println(e.getMessage() + hintsString);
-            //If we have connectionRetryLimit set to > 0 then retry that many times.
-            if (numberOfAttempts <= connectionRetryLimit) {
+            //If we have CONNECTIONRETRYLIMIT set to > 0 then retry that many times.
+            if (numberOfAttempts <= CONNECTIONRETRYLIMIT) {
                 context.logger.println(String.format(
                         "Connection to remote server failed %s, waiting for to retry - %s seconds until next attempt. URL: %s",
-                        "[" + responseCode + "]", DEFAULT_POLLINTERVALL, url));
-                e.printStackTrace();
+                        "[" + responseCode + "]", POLLINTERVAL, url));
 
                 // Sleep for 'pollInterval' seconds.
                 // Sleep takes miliseconds so need to convert this.pollInterval to milisecopnds (x 1000)
                 try {
                     // Could do with a better way of sleeping...
-                    Thread.sleep(DEFAULT_POLLINTERVALL * 1000);
+                    Thread.sleep(POLLINTERVAL * 1000L);
                 } catch (InterruptedException ex) {
                     this.failBuild(ex, context.logger);
                 }
 
-                context.logger.println("Retry attempt #" + numberOfAttempts + " out of " + connectionRetryLimit);
+                context.logger.println("Retry attempt #" + numberOfAttempts + " out of " + CONNECTIONRETRYLIMIT);
                 numberOfAttempts++;
                 response = sendHTTPCall(url, requestType, context, numberOfAttempts);
             } else {

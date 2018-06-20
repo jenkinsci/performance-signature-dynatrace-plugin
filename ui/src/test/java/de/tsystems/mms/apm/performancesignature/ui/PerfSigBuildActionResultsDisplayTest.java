@@ -20,12 +20,13 @@ import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.Page;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.xml.XmlPage;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import de.tsystems.mms.apm.performancesignature.dynatrace.model.DashboardReport;
 import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
 import hudson.model.AbstractBuild;
 import hudson.model.Project;
 import hudson.model.Run;
-import hudson.util.XStream2;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -182,11 +183,12 @@ public class PerfSigBuildActionResultsDisplayTest {
 
         JenkinsRule.WebClient wc = j.createWebClient();
         HtmlPage buildPage = wc.getPage(build);
-        XStream2 xStream = new XStream2();
+        Gson gson = new Gson();
 
         for (ReportType type : ReportType.values()) {
             URL url = new URL(buildPage.getUrl() + "performance-signature/get" + type + "ReportList");
-            List obj = (List) xStream.fromXML(org.apache.commons.io.IOUtils.toString(url));
+            List<String> obj = gson.fromJson(org.apache.commons.io.IOUtils.toString(url), new TypeToken<List<String>>() {
+            }.getType());
             assertTrue(!obj.isEmpty());
             assertEquals(2, obj.size());
         }
