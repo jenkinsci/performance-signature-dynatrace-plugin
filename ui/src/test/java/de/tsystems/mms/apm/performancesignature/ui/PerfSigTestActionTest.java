@@ -31,7 +31,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 public class PerfSigTestActionTest {
-    private final String TEST_PROJECT_WITH_HISTORY = "projectAction";
+    private final static String TEST_PROJECT_WITH_HISTORY = "projectAction";
     @Rule
     public JenkinsRule j = new JenkinsRule();
     @Rule

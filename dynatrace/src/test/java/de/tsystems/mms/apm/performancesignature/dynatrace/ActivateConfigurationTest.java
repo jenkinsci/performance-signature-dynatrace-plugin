@@ -32,7 +32,7 @@ import static org.junit.Assert.*;
 public class ActivateConfigurationTest {
 
     @ClassRule
-    public static JenkinsRule j = new JenkinsRule();
+    public static final JenkinsRule j = new JenkinsRule();
     private static ListBoxModel dynatraceConfigurations;
 
     @BeforeClass

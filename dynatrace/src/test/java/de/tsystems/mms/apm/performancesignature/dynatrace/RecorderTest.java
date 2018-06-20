@@ -50,7 +50,7 @@ import static org.junit.Assert.*;
 public class RecorderTest {
 
     @ClassRule
-    public static JenkinsRule j = new JenkinsRule();
+    public static final JenkinsRule j = new JenkinsRule();
     private static ListBoxModel dynatraceConfigurations;
     private DTServerConnection connection;
 

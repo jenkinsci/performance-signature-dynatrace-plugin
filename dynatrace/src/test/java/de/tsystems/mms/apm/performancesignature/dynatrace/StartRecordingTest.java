@@ -39,7 +39,7 @@ import static org.junit.Assert.*;
 public class StartRecordingTest {
 
     @ClassRule
-    public static JenkinsRule j = new JenkinsRule();
+    public static final JenkinsRule j = new JenkinsRule();
     @Rule
     public ExpectedException exception = ExpectedException.none();
     private static ListBoxModel dynatraceConfigurations;

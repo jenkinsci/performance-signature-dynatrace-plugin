@@ -42,11 +42,11 @@ import static org.junit.Assert.*;
 public class StopRecordingTest {
 
     @ClassRule
-    public static JenkinsRule j = new JenkinsRule();
+    public static final JenkinsRule j = new JenkinsRule();
     private static ListBoxModel dynatraceConfigurations;
     @Rule
     public ExpectedException exception = ExpectedException.none();
-    private final String testCase = "unittest";
+    private final static String testCase = "unittest";
     private DTServerConnection connection;
 
     @BeforeClass

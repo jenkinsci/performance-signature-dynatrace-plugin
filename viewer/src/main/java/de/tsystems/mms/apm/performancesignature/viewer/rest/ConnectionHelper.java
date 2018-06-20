@@ -16,6 +16,7 @@ import javax.annotation.CheckForNull;
 import javax.annotation.Nullable;
 import java.io.*;
 import java.net.*;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
@@ -24,6 +25,7 @@ import static org.jenkinsci.plugins.ParameterizedRemoteTrigger.utils.StringTools
 
 public class ConnectionHelper {
     private static final int DEFAULT_POLLINTERVALL = 10;
+    private static final int DEFAULT_NUMBEROFATTEMPTS = 5;
     private static final int connectionRetryLimit = 5;
 
     private final Handle handle;
@@ -76,7 +78,7 @@ public class ConnectionHelper {
                 return new JenkinsCrumb();
             } else if (responseCode == 200) {
                 context.logger.println("CSRF protection is enabled on the remote server.");
-                String response = new String(readInputStream(connection));
+                String response = new String(readInputStream(connection), StandardCharsets.UTF_8);
                 String[] split = response.split(":");
                 return new JenkinsCrumb(split[0], split[1]);
             } else {
@@ -102,15 +104,15 @@ public class ConnectionHelper {
     }
 
     public String getStringFromUrl(final URL url, final BuildContext context) throws IOException {
-        return new String(sendHTTPCall(url, "GET", context));
+        return new String(sendHTTPCall(url, "GET", context, DEFAULT_NUMBEROFATTEMPTS), StandardCharsets.UTF_8);
     }
 
     public InputStream getInputStreamFromUrl(final URL url, final BuildContext context) throws IOException {
-        return new ByteArrayInputStream(sendHTTPCall(url, "GET", context));
+        return new ByteArrayInputStream(sendHTTPCall(url, "GET", context, DEFAULT_NUMBEROFATTEMPTS));
     }
 
     public void postToUrl(final URL url, final BuildContext context) throws IOException {
-        sendHTTPCall(url, "POST", context);
+        sendHTTPCall(url, "POST", context, DEFAULT_NUMBEROFATTEMPTS);
     }
 
     /**
@@ -118,9 +120,10 @@ public class ConnectionHelper {
      * method has been called).
      * In the case of a failed connection, the method calls it self recursively and increments the number of attempts.
      *
-     * @param url         the URL that needs to be called.
-     * @param requestType the type of request (GET, POST, etc).
-     * @param context     the context of this Builder/BuildStep.
+     * @param url              the URL that needs to be called.
+     * @param requestType      the type of request (GET, POST, etc).
+     * @param context          the context of this Builder/BuildStep.
+     * @param numberOfAttempts number of time that the connection has been attempted.
      * @return {@link ConnectionResponse}
      * the response to the HTTP request.
      * @throws IOException if there is an error identifying the remote host, or
@@ -128,13 +131,12 @@ public class ConnectionHelper {
      *                     if the request fails due to an unknown host or unauthorized credentials, or
      *                     if the request fails due to another reason and the number of attempts is exceeded.
      */
-    private byte[] sendHTTPCall(final URL url, final String requestType, final BuildContext context)
+    private byte[] sendHTTPCall(final URL url, final String requestType, final BuildContext context, int numberOfAttempts)
             throws IOException {
 
         byte[] response = null;
         Map<String, List<String>> responseHeader = null;
         int responseCode = 0;
-        int numberOfAttempts = 0;
 
         HttpURLConnection connection = getAuthorizedConnection(context, url);
 
@@ -183,13 +185,10 @@ public class ConnectionHelper {
 
                 context.logger.println("Retry attempt #" + numberOfAttempts + " out of " + connectionRetryLimit);
                 numberOfAttempts++;
-                response = sendHTTPCall(url, requestType, context);
-            } else if (numberOfAttempts > connectionRetryLimit) {
+                response = sendHTTPCall(url, requestType, context, numberOfAttempts);
+            } else {
                 //reached the maximum number of retries, time to fail
                 this.failBuild(new Exception("Max number of connection retries have been exceeded."), context.logger);
-            } else {
-                //something failed with the connection and we retried the max amount of times... so throw an exception to mark the build as failed.
-                this.failBuild(e, context.logger);
             }
 
         } finally {
