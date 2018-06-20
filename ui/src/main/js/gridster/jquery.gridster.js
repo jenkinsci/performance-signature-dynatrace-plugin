@@ -2357,9 +2357,7 @@
      */
     fn.is_empty = function (col, row) {
         if (typeof this.gridmap[col] !== 'undefined') {
-            return typeof this.gridmap[col][row] !== 'undefined' &&
-                this.gridmap[col][row] === false;
-
+            return !this.gridmap[col][row];
         }
         return true;
     };
