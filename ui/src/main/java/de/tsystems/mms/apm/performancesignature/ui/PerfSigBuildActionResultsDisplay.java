@@ -16,6 +16,7 @@
 
 package de.tsystems.mms.apm.performancesignature.ui;
 
+import com.google.gson.Gson;
 import de.tsystems.mms.apm.performancesignature.dynatrace.model.DashboardReport;
 import de.tsystems.mms.apm.performancesignature.dynatrace.model.Measure;
 import de.tsystems.mms.apm.performancesignature.dynatrace.model.Measurement;
@@ -25,7 +26,6 @@ import hudson.model.Api;
 import hudson.model.ModelObject;
 import hudson.model.Run;
 import hudson.util.Graph;
-import hudson.util.XStream2;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.filefilter.RegexFileFilter;
 import org.apache.commons.lang.StringUtils;
@@ -50,6 +50,7 @@ import javax.servlet.ServletException;
 import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -177,10 +178,9 @@ public class PerfSigBuildActionResultsDisplay implements ModelObject {
         for (FilePath fp : files) {
             fileNames.add(PerfSigUIUtils.removeExtension(fp.getName()));
         }
-        XStream2 xstream = new XStream2();
-        //Gson gson = new Gson();
-        //gson.toJson(fileNames, response.getOutputStream());
-        xstream.toXMLUTF8(fileNames, response.getOutputStream());
+        Gson gson = new Gson();
+        String output = gson.toJson(fileNames);
+        IOUtils.write(output, response.getOutputStream(), StandardCharsets.UTF_8);
     }
 
     private void serveFile(final String type, final StaplerRequest request, final StaplerResponse response) throws IOException, InterruptedException {

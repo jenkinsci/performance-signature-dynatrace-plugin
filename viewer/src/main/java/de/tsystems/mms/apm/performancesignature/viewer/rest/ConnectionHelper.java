@@ -171,7 +171,7 @@ public class ConnectionHelper {
             if (numberOfAttempts <= connectionRetryLimit) {
                 context.logger.println(String.format(
                         "Connection to remote server failed %s, waiting for to retry - %s seconds until next attempt. URL: %s",
-                        (responseCode == 0 ? "" : "[" + responseCode + "]"), DEFAULT_POLLINTERVALL, url));
+                        "[" + responseCode + "]", DEFAULT_POLLINTERVALL, url));
                 e.printStackTrace();
 
                 // Sleep for 'pollInterval' seconds.

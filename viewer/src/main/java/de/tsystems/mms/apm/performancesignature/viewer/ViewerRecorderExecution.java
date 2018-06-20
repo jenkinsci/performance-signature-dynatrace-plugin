@@ -18,6 +18,7 @@ package de.tsystems.mms.apm.performancesignature.viewer;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
+import com.google.gson.reflect.TypeToken;
 import de.tsystems.mms.apm.performancesignature.dynatrace.model.DashboardReport;
 import de.tsystems.mms.apm.performancesignature.ui.PerfSigBuildAction;
 import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
@@ -31,7 +32,6 @@ import hudson.FilePath;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.plugins.analysis.util.PluginLogger;
-import hudson.util.XStream2;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.jenkinsci.plugins.ParameterizedRemoteTrigger.BuildContext;
@@ -113,14 +113,15 @@ public class ViewerRecorderExecution extends SynchronousNonBlockingStepExecution
         }
     }
 
-    private List getReportList(final BuildContext context, final Handle handle, final ReportType type)
+    private List<String> getReportList(final BuildContext context, final Handle handle, final ReportType type)
             throws IOException, InterruptedException {
         URL url = new URL(handle.getBuildUrl() + "/performance-signature/get" + type + "ReportList");
         ConnectionHelper connectionHelper = new ConnectionHelper(handle);
-        String xml = connectionHelper.getStringFromUrl(url, context);
-        XStream2 xStream = new XStream2();
-        List obj = (List) xStream.fromXML(xml);
-        return obj != null ? obj : Collections.emptyList();
+        String json = connectionHelper.getStringFromUrl(url, context);
+        Gson gson = new Gson();
+        List<String> obj = gson.fromJson(json, new TypeToken<List<String>>() {
+        }.getType());
+        return obj != null ? obj : Collections.<String>emptyList();
     }
 
     private boolean downloadPDFReports(final BuildContext context, final Handle handle, final FilePath dir, final PluginLogger logger)
