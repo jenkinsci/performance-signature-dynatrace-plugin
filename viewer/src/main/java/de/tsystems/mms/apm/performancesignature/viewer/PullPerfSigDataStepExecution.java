@@ -102,7 +102,7 @@ public class PullPerfSigDataStepExecution extends SynchronousNonBlockingStepExec
             run.addAction(action);
         }
 
-        boolean downloadedArtifacts = downloadArtifacts(context, PerfSigUIUtils.getReportDirectory(run), logger);
+        boolean downloadedArtifacts = downloadArtifacts(context, workspace, logger);
         if (!downloadedArtifacts) {
             logger.log(Messages.PullPerfSigDataStep_ArtifactDownloadError());
         } else {
