@@ -115,7 +115,7 @@ public class PullPerfSigDataStepExecution extends SynchronousNonBlockingStepExec
     private List<DashboardReport> getMeasureDataFromJSON(final BuildContext context, final Handle handle)
             throws InterruptedException {
         try {
-            URL url = new URL(handle.getBuildUrl() + "/performance-signature/api/json?depth=10");
+            URL url = new URL(handle.getBuildUrl() + "performance-signature/api/json?depth=10");
             ConnectionHelper connectionHelper = new ConnectionHelper(handle);
             String json = connectionHelper.getStringFromUrl(url, context);
 
@@ -128,7 +128,7 @@ public class PullPerfSigDataStepExecution extends SynchronousNonBlockingStepExec
 
     private List<String> getReportList(final BuildContext context, final ReportType type)
             throws IOException, InterruptedException {
-        URL url = new URL(step.getHandle().getBuildUrl() + "/performance-signature/get" + type + "ReportList");
+        URL url = new URL(step.getHandle().getBuildUrl() + "performance-signature/get" + type + "ReportList");
         ConnectionHelper connectionHelper = new ConnectionHelper(step.getHandle());
         String json = connectionHelper.getStringFromUrl(url, context);
         Gson gson = new Gson();
@@ -138,7 +138,7 @@ public class PullPerfSigDataStepExecution extends SynchronousNonBlockingStepExec
     }
 
     private List<Artifact> getArtifactsList(final BuildContext context) throws IOException, InterruptedException {
-        URL url = new URL(step.getHandle().getBuildUrl() + "/api/json");
+        URL url = new URL(step.getHandle().getBuildUrl() + "api/json");
         ConnectionHelper connectionHelper = new ConnectionHelper(step.getHandle());
         String json = connectionHelper.getStringFromUrl(url, context);
         Gson gson = new Gson();
@@ -153,7 +153,7 @@ public class PullPerfSigDataStepExecution extends SynchronousNonBlockingStepExec
         try {
             List<Artifact> artifactsList = getArtifactsList(context);
             for (Artifact artifact : artifactsList) {
-                URL url = new URL(step.getHandle().getBuildUrl() + "/artifact/" + artifact.getRelativePath());
+                URL url = new URL(step.getHandle().getBuildUrl() + "artifact/" + artifact.getRelativePath());
                 result &= downloadArtifact(context, new FilePath(dir, artifact.getFileName()), url, logger);
             }
             return result;
@@ -169,7 +169,7 @@ public class PullPerfSigDataStepExecution extends SynchronousNonBlockingStepExec
             for (ReportType reportType : ReportType.values()) {
                 List reportlist = getReportList(context, reportType);
                 for (Object report : reportlist) {
-                    URL url = new URL(step.getHandle().getBuildUrl() + "/performance-signature/get" + reportType + "Report?number="
+                    URL url = new URL(step.getHandle().getBuildUrl() + "performance-signature/get" + reportType + "Report?number="
                             + reportlist.indexOf(report));
                     result &= downloadArtifact(context, new FilePath(dir, report + ".pdf"), url, logger);
                 }
@@ -183,7 +183,7 @@ public class PullPerfSigDataStepExecution extends SynchronousNonBlockingStepExec
     private boolean downloadSession(final BuildContext context, final FilePath dir,
                                     final String testCase, final PluginLogger logger) throws InterruptedException {
         try {
-            URL url = new URL(step.getHandle().getBuildUrl() + "/performance-signature/getSession?testCase=" + testCase);
+            URL url = new URL(step.getHandle().getBuildUrl() + "performance-signature/getSession?testCase=" + testCase);
             String sessionFileName = step.getHandle().getJobName() + "_Build_" + step.getHandle().getBuildNumber() + "_" + testCase + ".dts";
             return downloadArtifact(context, new FilePath(dir, sessionFileName), url, logger);
         } catch (IOException e) {
