@@ -20,7 +20,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
-import static org.apache.commons.lang.StringUtils.isEmpty;
+import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.jenkinsci.plugins.ParameterizedRemoteTrigger.utils.StringTools.NL;
 
 public class ConnectionHelper {
@@ -45,7 +45,7 @@ public class ConnectionHelper {
      * @param logger build listener.
      * @throws IOException if the build fails and <code>shouldNotFailBuild</code> is not set.
      */
-    protected void failBuild(final Exception e, final PrintStream logger) throws IOException {
+    private void failBuild(final Exception e, final PrintStream logger) throws IOException {
         StringBuilder msg = new StringBuilder();
         if (e instanceof InterruptedException) {
             Thread current = Thread.currentThread();
@@ -231,19 +231,18 @@ public class ConnectionHelper {
     /**
      * Lookup up the globally configured Remote Jenkins Server based on display name
      *
-     * @param serverUrl Name of the configuration you are looking for
+     * @param serverHost Name of the configuration you are looking for
      * @return A deep-copy of the RemoteJenkinsServer object configured globally
      */
     @Nullable
     @CheckForNull
-    private RemoteJenkinsServer findRemoteHost(final String serverUrl) {
-        if (isEmpty(serverUrl)) return null;
+    private RemoteJenkinsServer findRemoteHost(final String serverHost) {
+        if (isBlank(serverHost)) return null;
         RemoteBuildConfiguration.DescriptorImpl descriptor = (RemoteBuildConfiguration.DescriptorImpl)
                 Jenkins.getActiveInstance().getDescriptorOrDie(RemoteBuildConfiguration.class);
         for (RemoteJenkinsServer host : descriptor.getRemoteSites()) {
-            String server = PerfSigUIUtils.getHostFromUrl(serverUrl);
             String hostname = PerfSigUIUtils.getHostFromUrl(host.getAddress());
-            if (server != null && server.equals(hostname)) {
+            if (serverHost.equals(hostname)) {
                 return host;
             }
         }
