@@ -5,6 +5,7 @@ import com.cloudbees.plugins.credentials.NameWith;
 import com.cloudbees.plugins.credentials.common.StandardCredentials;
 import hudson.Util;
 import hudson.util.Secret;
+import org.apache.commons.lang.StringUtils;
 
 import javax.annotation.Nonnull;
 
@@ -17,7 +18,7 @@ public interface DynatraceApiToken extends StandardCredentials {
         @Override
         public String getName(@Nonnull DynatraceApiToken c) {
             String description = Util.fixEmptyAndTrim(c.getDescription());
-            return Messages.DynatraceApiToken_name() + (description != null ? " (" + description + ")" : "");
+            return StringUtils.isBlank(description) ? Messages.DynatraceApiToken_name() : Messages.DynatraceApiToken_name() + (" (" + description + ")");
         }
     }
 }

@@ -688,7 +688,7 @@ public class ApiClient {
      * @throws ApiException If fail to serialize the request body object
      */
     public Request buildRequest(String path, String method, List<Pair> queryParams, Object body, Map<String, String> headerParams, Map<String, Object> formParams) throws ApiException {
-        updateParamsForAuth(new String[]{"basicAuth"}, queryParams, headerParams);
+        updateParamsForAuth(new String[]{"apiKeyAuth"}, queryParams, headerParams);
 
         final String url = buildUrl(path, queryParams);
         final Request.Builder reqBuilder = new Request.Builder().url(url);

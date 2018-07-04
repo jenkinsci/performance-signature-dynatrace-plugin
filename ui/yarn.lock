@@ -8,9 +8,9 @@
   dependencies:
     eslint-config-airbnb "6.0.2"
 
-"@jenkins-cd/js-builder@0.0.62":
-  version "0.0.62"
-  resolved "https://registry.yarnpkg.com/@jenkins-cd/js-builder/-/js-builder-0.0.62.tgz#06db77770f412f81252a5249c1df30f2b6a7bf72"
+"@jenkins-cd/js-builder@0.0.63":
+  version "0.0.63"
+  resolved "https://registry.yarnpkg.com/@jenkins-cd/js-builder/-/js-builder-0.0.63.tgz#604c2debb3dbdee34258cef56d0dc05975db2832"
   dependencies:
     "@jenkins-cd/eslint-config-jenkins" "0.0.2"
     babel-preset-es2015 "^6.5.0"
@@ -1236,16 +1236,16 @@ d@1:
   dependencies:
     es5-ext "^0.10.9"
 
-datatables.net-bs@^1.10.16:
-  version "1.10.18"
-  resolved "https://registry.yarnpkg.com/datatables.net-bs/-/datatables.net-bs-1.10.18.tgz#72c9ebe926f9189f891d4c474a629defc99753e6"
+datatables.net-bs@^1.10.19:
+  version "1.10.19"
+  resolved "https://registry.yarnpkg.com/datatables.net-bs/-/datatables.net-bs-1.10.19.tgz#08763b4e4d0cef1a427d019dc15e717c7ed67a4d"
   dependencies:
-    datatables.net "1.10.18"
+    datatables.net "1.10.19"
     jquery ">=1.7"
 
-datatables.net@1.10.18, datatables.net@^1.10.16:
-  version "1.10.18"
-  resolved "https://registry.yarnpkg.com/datatables.net/-/datatables.net-1.10.18.tgz#b6f045aa533101bcd33714e5338da8f905d3ef09"
+datatables.net@1.10.19, datatables.net@^1.10.19:
+  version "1.10.19"
+  resolved "https://registry.yarnpkg.com/datatables.net/-/datatables.net-1.10.19.tgz#97a1ed41c85e62d61040603481b59790a172dd1f"
   dependencies:
     jquery ">=1.7"
 
@@ -2668,7 +2668,7 @@ liftoff@^2.1.0:
     rechoir "^0.6.2"
     resolve "^1.1.7"
 
-lightbox2@^2.9.0:
+lightbox2@^2.10.0:
   version "2.10.0"
   resolved "https://registry.yarnpkg.com/lightbox2/-/lightbox2-2.10.0.tgz#06b3f7b7bd7c1332c20d037602d9657542fd7de4"
 
@@ -4391,7 +4391,7 @@ write@^0.2.1:
   dependencies:
     mkdirp "^0.5.1"
 
-wurl@^2.5.2:
+wurl@^2.5.3:
   version "2.5.3"
   resolved "https://registry.yarnpkg.com/wurl/-/wurl-2.5.3.tgz#79ff7c4d8c6584cb46d239517ecac334380af7fd"
 
