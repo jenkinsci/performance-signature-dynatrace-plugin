@@ -27,7 +27,7 @@ import javax.xml.bind.annotation.XmlTransient;
 @ExportedBean
 public abstract class MeasureBaseModel {
     @XmlAttribute
-    private double avg;
+    protected double avg;
     @XmlAttribute
     private double min;
     @XmlAttribute

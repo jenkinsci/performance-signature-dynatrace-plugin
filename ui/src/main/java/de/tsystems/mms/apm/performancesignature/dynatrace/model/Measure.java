@@ -45,6 +45,13 @@ public class Measure extends MeasureBaseModel {
     @XmlAttribute
     private String unit;
 
+    public Measure(String name) {
+        this.name = name;
+    }
+
+    public Measure() {
+    }
+
     /**
      * Gets the value of the measurement property.
      * <p>

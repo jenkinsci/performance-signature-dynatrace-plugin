@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.tsystems.mms.apm.performancesignature.dynatrace.rest.json;
+package de.tsystems.mms.apm.performancesignature.dynatracesaas.rest;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -37,12 +37,12 @@ import java.util.Date;
 import java.util.TimeZone;
 
 public class JSON {
-    private Gson gson;
-    private boolean isLenientOnJson = false;
     private final DateTypeAdapter dateTypeAdapter = new DateTypeAdapter();
     private final SqlDateTypeAdapter sqlDateTypeAdapter = new SqlDateTypeAdapter();
     private final OffsetDateTimeTypeAdapter offsetDateTimeTypeAdapter = new OffsetDateTimeTypeAdapter();
     private final LocalDateTypeAdapter localDateTypeAdapter = new LocalDateTypeAdapter();
+    private Gson gson;
+    private boolean isLenientOnJson = false;
 
     public JSON() {
         gson = new GsonBuilder()

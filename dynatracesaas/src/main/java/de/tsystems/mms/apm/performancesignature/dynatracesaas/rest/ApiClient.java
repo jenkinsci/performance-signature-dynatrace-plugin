@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package de.tsystems.mms.apm.performancesignature.dynatrace.rest.json;
+package de.tsystems.mms.apm.performancesignature.dynatracesaas.rest;
 
 import com.squareup.okhttp.*;
 import com.squareup.okhttp.internal.http.HttpMethod;
 import com.squareup.okhttp.logging.HttpLoggingInterceptor;
 import com.squareup.okhttp.logging.HttpLoggingInterceptor.Level;
-import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.auth.Authentication;
-import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.auth.HttpBasicAuth;
-import de.tsystems.mms.apm.performancesignature.dynatrace.util.PerfSigUtils;
+import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.auth.ApiKeyAuth;
+import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.auth.Authentication;
+import de.tsystems.mms.apm.performancesignature.dynatracesaas.util.DynatraceUtils;
 import okio.BufferedSink;
 import okio.Okio;
 import org.apache.commons.lang.StringUtils;
@@ -53,10 +53,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ApiClient {
-    public final static String API_SUFFIX = "/api/v2";
+    public final static String API_SUFFIX = "/api/v1";
+    private final Map<String, String> defaultHeaderMap = new HashMap<>();
     private String basePath = "https://localhost" + API_SUFFIX;
     private boolean debugging = false;
-    private final Map<String, String> defaultHeaderMap = new HashMap<>();
     private String tempFolderPath = null;
 
     private Map<String, Authentication> authentications;
@@ -78,7 +78,7 @@ public class ApiClient {
         json = new JSON();
         // Setup authentications (key: authentication name, value: authentication).
         authentications = new HashMap<>();
-        authentications.put("basicAuth", new HttpBasicAuth());
+        authentications.put("apiKeyAuth", new ApiKeyAuth("header", "Authorization"));
         // Prevent the authentications from being modified.
         authentications = Collections.unmodifiableMap(authentications);
     }
@@ -211,33 +211,33 @@ public class ApiClient {
     }
 
     /**
-     * Helper method to set username for the first HTTP basic authentication.
+     * Helper method to set API key value for the first API key authentication.
      *
-     * @param username Username
+     * @param apiKey API key
      */
-    public void setUsername(String username) {
+    public void setApiKey(String apiKey) {
         for (Authentication auth : authentications.values()) {
-            if (auth instanceof HttpBasicAuth) {
-                ((HttpBasicAuth) auth).setUsername(username);
+            if (auth instanceof ApiKeyAuth) {
+                ((ApiKeyAuth) auth).setApiKey(apiKey);
                 return;
             }
         }
-        throw new RuntimeException("No HTTP basic authentication configured!");
+        throw new RuntimeException("No API key authentication configured!");
     }
 
     /**
-     * Helper method to set password for the first HTTP basic authentication.
+     * Helper method to set API key prefix for the first API key authentication.
      *
-     * @param password Password
+     * @param apiKeyPrefix API key prefix
      */
-    public void setPassword(String password) {
+    public void setApiKeyPrefix(String apiKeyPrefix) {
         for (Authentication auth : authentications.values()) {
-            if (auth instanceof HttpBasicAuth) {
-                ((HttpBasicAuth) auth).setPassword(password);
+            if (auth instanceof ApiKeyAuth) {
+                ((ApiKeyAuth) auth).setApiKeyPrefix(apiKeyPrefix);
                 return;
             }
         }
-        throw new RuntimeException("No HTTP basic authentication configured!");
+        throw new RuntimeException("No API key authentication configured!");
     }
 
     /**
@@ -745,7 +745,7 @@ public class ApiClient {
                         url.append("&");
                     }
                     String value = parameterToString(param.getValue());
-                    url.append(PerfSigUtils.escapeString(param.getName())).append("=").append(PerfSigUtils.escapeString(value));
+                    url.append(DynatraceUtils.escapeString(param.getName())).append("=").append(DynatraceUtils.escapeString(value));
                 }
             }
         }

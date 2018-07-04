@@ -19,7 +19,6 @@ package de.tsystems.mms.apm.performancesignature.dynatrace.util;
 import com.cloudbees.plugins.credentials.CredentialsMatchers;
 import com.cloudbees.plugins.credentials.CredentialsProvider;
 import com.cloudbees.plugins.credentials.common.UsernamePasswordCredentials;
-import com.cloudbees.plugins.credentials.domains.DomainRequirement;
 import de.tsystems.mms.apm.performancesignature.dynatrace.PerfSigGlobalConfiguration;
 import de.tsystems.mms.apm.performancesignature.dynatrace.configuration.CredProfilePair;
 import de.tsystems.mms.apm.performancesignature.dynatrace.configuration.DynatraceServerConfiguration;
@@ -39,7 +38,6 @@ import org.apache.commons.collections.CollectionUtils;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 public final class PerfSigUtils {
@@ -71,12 +69,7 @@ public final class PerfSigUtils {
     }
 
     private static ListBoxModel sortListBoxModel(final ListBoxModel list) {
-        Collections.sort(list, new Comparator<ListBoxModel.Option>() {
-            @Override
-            public int compare(final ListBoxModel.Option o1, final ListBoxModel.Option o2) {
-                return o1.name.compareToIgnoreCase(o2.name);
-            }
-        });
+        list.sort((o1, o2) -> o1.name.compareToIgnoreCase(o2.name));
         return list;
     }
 
@@ -96,8 +89,8 @@ public final class PerfSigUtils {
 
     public static UsernamePasswordCredentials getCredentials(final String credsId) {
         return (credsId == null) ? null : CredentialsMatchers.firstOrNull(
-                CredentialsProvider.lookupCredentials(UsernamePasswordCredentials.class, Jenkins.getActiveInstance(), ACL.SYSTEM,
-                        Collections.<DomainRequirement>emptyList()), CredentialsMatchers.withId(credsId));
+                CredentialsProvider.lookupCredentials(UsernamePasswordCredentials.class, Jenkins.getInstance(), ACL.SYSTEM,
+                        Collections.emptyList()), CredentialsMatchers.withId(credsId));
     }
 
     public static ListBoxModel fillAgentItems(final String dynatraceProfile) {
@@ -160,7 +153,6 @@ public final class PerfSigUtils {
         String location = locationUrl.substring(locationUrl.lastIndexOf('/') + 1);
         return unescapeString(location);
     }
-
 
     /**
      * Escape the given string to be used as URL query value.

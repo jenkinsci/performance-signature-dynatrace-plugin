@@ -143,7 +143,7 @@ public class PerfSigBuildActionResultsDisplayTest {
         j.assertXPath(xmlProjectPage, "/perfSigBuildActionResultsDisplay/dashboardReport/chartDashlet");
         j.assertXPathValue(xmlProjectPage, "/perfSigBuildActionResultsDisplay/dashboardReport/chartDashlet/measure/measure/text()", "Number of Requests");
         j.assertXPathValue(xmlProjectPage, "/perfSigBuildActionResultsDisplay/dashboardReport/chartDashlet/measure/count", "1485");
-        assertEquals(14.0, xmlProjectPage.getFirstByXPath("count(/perfSigBuildActionResultsDisplay/dashboardReport/chartDashlet)"));
+        assertEquals(14.0, xmlProjectPage.getFirstByXPath("count(/perfSigBuildActionResultsDisplay/dashboardReport/chartDashlet)"), 0);
 
         Run<?, ?> build = proj.getBuildByNumber(11157);
         exception.expect(FailingHttpStatusCodeException.class);

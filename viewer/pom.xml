@@ -10,11 +10,9 @@
     </parent>
 
     <artifactId>performance-signature-viewer</artifactId>
-    <version>2.5.9-SNAPSHOT</version>
     <packaging>hpi</packaging>
 
     <name>Performance Signature: Viewer</name>
-    <url>https://wiki.jenkins-ci.org/display/JENKINS/Performance+Signature+with+Dynatrace+Plugin</url>
 
     <dependencies>
         <dependency>

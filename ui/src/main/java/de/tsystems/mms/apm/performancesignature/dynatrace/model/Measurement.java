@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.util.Map;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement
@@ -30,6 +31,14 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class Measurement extends MeasureBaseModel {
     @XmlAttribute
     private long timestamp;
+
+    public Measurement(Map.Entry<Long, Double> entry) {
+        this.timestamp = entry.getKey();
+        this.avg = entry.getValue();
+    }
+
+    public Measurement() {
+    }
 
     /**
      * Ruft den Wert der timestamp-Eigenschaft ab.
