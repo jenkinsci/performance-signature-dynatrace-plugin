@@ -19,11 +19,6 @@
     <dependencies>
         <dependency>
             <groupId>org.jenkins-ci.plugins</groupId>
-            <artifactId>credentials</artifactId>
-            <version>2.1.17</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jenkins-ci.plugins</groupId>
             <artifactId>Parameterized-Remote-Trigger</artifactId>
             <version>3.0.0</version>
         </dependency>

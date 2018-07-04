@@ -17,10 +17,6 @@ public class BuildData {
         return artifacts;
     }
 
-    public void setArtifacts(List<Artifact> artifacts) {
-        this.artifacts = artifacts;
-    }
-
     @Override
     public String toString() {
         return new ToStringBuilder(this).append("artifacts", artifacts).toString();
