@@ -75,7 +75,7 @@ public class DTServerConnection {
 
         Proxy proxy = Proxy.NO_PROXY;
         if (customProxy != null) {
-            Jenkins jenkins = Jenkins.getActiveInstance();
+            Jenkins jenkins = Jenkins.getInstance();
             ProxyConfiguration proxyConfiguration = jenkins.proxy;
             if (customProxy.isUseJenkinsProxy() && proxyConfiguration != null) {
                 proxy = proxyConfiguration.createProxy(PerfSigUIUtils.getHostFromUrl(serverUrl));

@@ -239,7 +239,7 @@ public class ConnectionHelper {
     private RemoteJenkinsServer findRemoteHost(final String serverHost) {
         if (isBlank(serverHost)) return null;
         RemoteBuildConfiguration.DescriptorImpl descriptor = (RemoteBuildConfiguration.DescriptorImpl)
-                Jenkins.getActiveInstance().getDescriptorOrDie(RemoteBuildConfiguration.class);
+                Jenkins.getInstance().getDescriptorOrDie(RemoteBuildConfiguration.class);
         for (RemoteJenkinsServer host : descriptor.getRemoteSites()) {
             String hostname = PerfSigUIUtils.getHostFromUrl(host.getAddress());
             if (serverHost.equals(hostname)) {

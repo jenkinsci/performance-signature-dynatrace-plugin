@@ -45,9 +45,9 @@ public class PerfSigBuildActionResultsDisplayTest {
 
     private final String TEST_PROJECT_WITH_HISTORY = "projectAction";
     @Rule
-    public JenkinsRule j = new JenkinsRule();
+    public final JenkinsRule j = new JenkinsRule();
     @Rule
-    public ExpectedException exception = ExpectedException.none();
+    public final ExpectedException exception = ExpectedException.none();
 
     @LocalData
     @Test

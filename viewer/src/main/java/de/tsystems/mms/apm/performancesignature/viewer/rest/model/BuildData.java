@@ -11,7 +11,7 @@ public class BuildData {
 
     @SerializedName("artifacts")
     @Expose
-    private List<Artifact> artifacts = new ArrayList<>();
+    private final List<Artifact> artifacts = new ArrayList<>();
 
     public List<Artifact> getArtifacts() {
         return artifacts;

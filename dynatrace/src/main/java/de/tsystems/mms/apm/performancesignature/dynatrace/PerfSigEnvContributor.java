@@ -24,7 +24,6 @@ import hudson.model.TaskListener;
 import org.apache.commons.lang.StringUtils;
 
 import javax.annotation.Nonnull;
-import java.io.IOException;
 import java.util.List;
 
 @Extension
@@ -32,8 +31,7 @@ public class PerfSigEnvContributor extends EnvironmentContributor {
     static final String TESTRUN_ID_KEY = "DYNATRACE_TESTRUN_ID";
 
     @Override
-    public void buildEnvironmentFor(@Nonnull final Run r, @Nonnull final EnvVars envs, @Nonnull final TaskListener listener)
-            throws IOException, InterruptedException {
+    public void buildEnvironmentFor(@Nonnull final Run r, @Nonnull final EnvVars envs, @Nonnull final TaskListener listener) {
 
         List<PerfSigEnvInvisAction> envActions = r.getActions(PerfSigEnvInvisAction.class);
         if (envActions.isEmpty()) {

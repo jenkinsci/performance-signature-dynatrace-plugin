@@ -41,7 +41,7 @@ public class StartRecordingTest {
     @ClassRule
     public static final JenkinsRule j = new JenkinsRule();
     @Rule
-    public ExpectedException exception = ExpectedException.none();
+    public final ExpectedException exception = ExpectedException.none();
     private static ListBoxModel dynatraceConfigurations;
     private DTServerConnection connection;
 

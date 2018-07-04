@@ -43,7 +43,7 @@ public class EventUpdate {
     @SerializedName("start")
     private Date start;
     @SerializedName("end")
-    private Date end;
+    private final Date end;
 
     public EventUpdate(Date end) {
         this.end = end == null ? null : (Date) end.clone();

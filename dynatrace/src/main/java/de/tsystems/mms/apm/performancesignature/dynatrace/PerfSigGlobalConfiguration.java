@@ -38,7 +38,7 @@ public class PerfSigGlobalConfiguration extends GlobalConfiguration {
     }
 
     @Override
-    public boolean configure(final StaplerRequest req, final JSONObject formData) throws FormException {
+    public boolean configure(final StaplerRequest req, final JSONObject formData) {
         setConfigurations(req.bindJSONToList(DynatraceServerConfiguration.class, formData.get("configurations")));
         return false;
     }

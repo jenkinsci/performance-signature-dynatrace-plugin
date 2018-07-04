@@ -53,7 +53,7 @@ public class SessionMetadata extends BaseReference {
     @SerializedName("size")
     private Long size;
     @SerializedName("deletionlocked")
-    private Boolean deletionlocked = false;
+    private final Boolean deletionlocked = false;
     @SerializedName("directorypath")
     private String directorypath;
     @SerializedName("state")
@@ -71,7 +71,7 @@ public class SessionMetadata extends BaseReference {
     @SerializedName("numberofpurepaths")
     private Integer numberofpurepaths;
     @SerializedName("continuoussession")
-    private Boolean continuoussession = false;
+    private final Boolean continuoussession = false;
     @SerializedName("labels")
     private List<String> labels;
 

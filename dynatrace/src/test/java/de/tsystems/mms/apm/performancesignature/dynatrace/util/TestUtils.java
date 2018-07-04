@@ -56,7 +56,7 @@ public class TestUtils {
         SystemCredentialsProvider.getInstance().save();
 
         PerfSigGlobalConfiguration.get().setConfigurations(configurations);
-        Jenkins.getActiveInstance().save();
+        Jenkins.getInstance().save();
 
         for (ListBoxModel.Option option : PerfSigUtils.listToListBoxModel(PerfSigUtils.getDTConfigurations())) {
             System.out.println(option.name);

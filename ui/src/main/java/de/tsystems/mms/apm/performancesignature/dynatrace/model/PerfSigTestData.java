@@ -34,7 +34,7 @@ public class PerfSigTestData extends TestResultAction.Data {
     }
 
     public List<TestRun> getTestRuns() {
-        return testRuns == null ? Collections.<TestRun>emptyList() : testRuns;
+        return testRuns == null ? Collections.emptyList() : testRuns;
     }
 
     @Override

@@ -8,7 +8,7 @@ import org.kohsuke.stapler.DataBoundConstructor;
 
 public final class DynatraceApiTokenImpl extends BaseStandardCredentials implements DynatraceApiToken {
 
-    private Secret apiToken;
+    private final Secret apiToken;
 
     @DataBoundConstructor
     public DynatraceApiTokenImpl(CredentialsScope scope, String id, String description, Secret apiToken) {

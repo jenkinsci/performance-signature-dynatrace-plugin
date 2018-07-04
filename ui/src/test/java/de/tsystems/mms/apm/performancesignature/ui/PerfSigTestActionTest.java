@@ -33,7 +33,7 @@ import static org.junit.Assert.assertNotNull;
 public class PerfSigTestActionTest {
     private final static String TEST_PROJECT_WITH_HISTORY = "projectAction";
     @Rule
-    public JenkinsRule j = new JenkinsRule();
+    public final JenkinsRule j = new JenkinsRule();
     @Rule
     public ExpectedException exception = ExpectedException.none();
 

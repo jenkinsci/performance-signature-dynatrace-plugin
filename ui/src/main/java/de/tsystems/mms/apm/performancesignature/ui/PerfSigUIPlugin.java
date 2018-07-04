@@ -55,7 +55,7 @@ public class PerfSigUIPlugin extends Plugin {
     @Initializer(after = JOB_LOADED)
     public static void init1() throws IOException, InterruptedException {
         // Check for old dashboard configurations
-        for (Job<?, ?> job : Jenkins.getActiveInstance().getAllItems(Job.class)) {
+        for (Job<?, ?> job : Jenkins.getInstance().getAllItems(Job.class)) {
             FilePath jobPath = new FilePath(job.getConfigFile().getFile()).getParent();
             if (jobPath == null) {
                 continue;

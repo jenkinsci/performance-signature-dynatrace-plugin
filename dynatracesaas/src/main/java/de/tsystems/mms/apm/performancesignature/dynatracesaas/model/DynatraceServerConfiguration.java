@@ -39,7 +39,7 @@ public class DynatraceServerConfiguration extends AbstractDescribableImpl<Dynatr
     private final String apiTokenId;
     private final boolean verifyCertificate;
     private final CustomProxy customProxy;
-    private String serverUrl;
+    private final String serverUrl;
 
     @DataBoundConstructor
     public DynatraceServerConfiguration(final String name, final String serverUrl, final String apiTokenId,
