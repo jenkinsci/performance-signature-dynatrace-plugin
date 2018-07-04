@@ -33,9 +33,9 @@ import java.io.IOException;
 
 public class SessionData extends BaseReference {
     @SerializedName("storedsessiontype")
-    private StoredsessiontypeEnum storedsessiontype;
+    private StoredSessiontypeEnum storedsessiontype;
     @SerializedName("sessiontype")
-    private SessiontypeEnum sessiontype;
+    private SessionTypeEnum sessiontype;
     @SerializedName("systemprofile")
     private String systemprofile;
 
@@ -45,7 +45,7 @@ public class SessionData extends BaseReference {
      * @return storedsessiontype
      **/
     @ApiModelProperty(value = "Stored session type")
-    public StoredsessiontypeEnum getStoredsessiontype() {
+    public StoredSessiontypeEnum getStoredsessiontype() {
         return storedsessiontype;
     }
 
@@ -55,7 +55,7 @@ public class SessionData extends BaseReference {
      * @return sessiontype
      **/
     @ApiModelProperty(value = "Session type")
-    public SessiontypeEnum getSessiontype() {
+    public SessionTypeEnum getSessiontype() {
         return sessiontype;
     }
 
@@ -83,8 +83,8 @@ public class SessionData extends BaseReference {
     /**
      * Stored session type
      */
-    @JsonAdapter(StoredsessiontypeEnum.Adapter.class)
-    public enum StoredsessiontypeEnum {
+    @JsonAdapter(StoredSessiontypeEnum.Adapter.class)
+    public enum StoredSessiontypeEnum {
         PUREPATH("purepath"),
 
         MEMDUMP_SIMPLE("memdump_simple"),
@@ -99,12 +99,12 @@ public class SessionData extends BaseReference {
 
         private final String value;
 
-        StoredsessiontypeEnum(String value) {
+        StoredSessiontypeEnum(String value) {
             this.value = value;
         }
 
-        public static StoredsessiontypeEnum fromValue(String text) {
-            for (StoredsessiontypeEnum b : StoredsessiontypeEnum.values()) {
+        public static StoredSessiontypeEnum fromValue(String text) {
+            for (StoredSessiontypeEnum b : StoredSessiontypeEnum.values()) {
                 if (String.valueOf(b.value).equals(text)) {
                     return b;
                 }
@@ -121,16 +121,16 @@ public class SessionData extends BaseReference {
             return String.valueOf(value);
         }
 
-        public static class Adapter extends TypeAdapter<StoredsessiontypeEnum> {
+        public static class Adapter extends TypeAdapter<StoredSessiontypeEnum> {
             @Override
-            public void write(final JsonWriter jsonWriter, final StoredsessiontypeEnum enumeration) throws IOException {
+            public void write(final JsonWriter jsonWriter, final StoredSessiontypeEnum enumeration) throws IOException {
                 jsonWriter.value(enumeration.getValue());
             }
 
             @Override
-            public StoredsessiontypeEnum read(final JsonReader jsonReader) throws IOException {
+            public StoredSessiontypeEnum read(final JsonReader jsonReader) throws IOException {
                 String value = jsonReader.nextString();
-                return StoredsessiontypeEnum.fromValue(String.valueOf(value));
+                return StoredSessiontypeEnum.fromValue(String.valueOf(value));
             }
         }
     }
@@ -138,8 +138,8 @@ public class SessionData extends BaseReference {
     /**
      * Session type
      */
-    @JsonAdapter(SessiontypeEnum.Adapter.class)
-    public enum SessiontypeEnum {
+    @JsonAdapter(SessionTypeEnum.Adapter.class)
+    public enum SessionTypeEnum {
         LIVE("live"),
 
         SERVER("server"),
@@ -150,12 +150,12 @@ public class SessionData extends BaseReference {
 
         private final String value;
 
-        SessiontypeEnum(String value) {
+        SessionTypeEnum(String value) {
             this.value = value;
         }
 
-        public static SessiontypeEnum fromValue(String text) {
-            for (SessiontypeEnum b : SessiontypeEnum.values()) {
+        public static SessionTypeEnum fromValue(String text) {
+            for (SessionTypeEnum b : SessionTypeEnum.values()) {
                 if (String.valueOf(b.value).equals(text)) {
                     return b;
                 }
@@ -172,16 +172,16 @@ public class SessionData extends BaseReference {
             return String.valueOf(value);
         }
 
-        public static class Adapter extends TypeAdapter<SessiontypeEnum> {
+        public static class Adapter extends TypeAdapter<SessionTypeEnum> {
             @Override
-            public void write(final JsonWriter jsonWriter, final SessiontypeEnum enumeration) throws IOException {
+            public void write(final JsonWriter jsonWriter, final SessionTypeEnum enumeration) throws IOException {
                 jsonWriter.value(enumeration.getValue());
             }
 
             @Override
-            public SessiontypeEnum read(final JsonReader jsonReader) throws IOException {
+            public SessionTypeEnum read(final JsonReader jsonReader) throws IOException {
                 String value = jsonReader.nextString();
-                return SessiontypeEnum.fromValue(String.valueOf(value));
+                return SessionTypeEnum.fromValue(String.valueOf(value));
             }
         }
     }

@@ -55,12 +55,13 @@ public final class PerfSigUtils {
                 listBoxModel.add(((Agent) item).getName());
             } else if (item instanceof DynatraceServerConfiguration) {
                 DynatraceServerConfiguration conf = (DynatraceServerConfiguration) item;
-                if (CollectionUtils.isNotEmpty(conf.getCredProfilePairs()))
+                if (CollectionUtils.isNotEmpty(conf.getCredProfilePairs())) {
                     for (CredProfilePair credProfilePair : conf.getCredProfilePairs()) {
                         String listItem = credProfilePair.getProfile() + " (" + credProfilePair.getCredentials().getUsername() + ") @ " +
                                 conf.getName();
                         listBoxModel.add(listItem);
                     }
+                }
             } else if (item instanceof BaseReference) {
                 listBoxModel.add(((BaseReference) item).getId());
             }

@@ -33,7 +33,7 @@ public class PerfSigEnvInvisAction extends InvisibleAction {
     private String sessionId;
     private Date timeframeStop;
 
-    PerfSigEnvInvisAction(final String sessionId, final Date timeframeStart, final String testCase, final String testRunId, final String sessionName) {
+    PerfSigEnvInvisAction(final String testCase, final String sessionId, final String sessionName, final Date timeframeStart, final String testRunId) {
         this.sessionId = sessionId;
         this.timeframeStart = timeframeStart == null ? null : (Date) timeframeStart.clone();
         this.testCase = testCase;

@@ -55,6 +55,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Logger;
 
 @ExportedBean
@@ -289,7 +290,7 @@ public class PerfSigBuildActionResultsDisplay implements ModelObject {
             DateAxis dateAxis = (DateAxis) xyPlot.getDomainAxis();
             dateAxis.setTickMarkPosition(DateTickMarkPosition.MIDDLE);
             dateAxis.setDateFormatOverride(new SimpleDateFormat("HH:mm:ss"));
-            xyitemrenderer.setSeriesPaint(0, Color.decode(color));
+            xyitemrenderer.setSeriesPaint(0, Color.decode(Optional.ofNullable(color).orElse("#FF0000")));
             xyitemrenderer.setSeriesStroke(0, new BasicStroke(2));
 
             chart.setBackgroundPaint(Color.white);

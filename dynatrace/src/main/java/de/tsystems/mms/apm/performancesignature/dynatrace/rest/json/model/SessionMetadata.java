@@ -31,8 +31,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import static de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model.SessionData.SessiontypeEnum;
-import static de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model.SessionData.StoredsessiontypeEnum;
+import static de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model.SessionData.SessionTypeEnum;
+import static de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model.SessionData.StoredSessiontypeEnum;
 
 /**
  * Comprehensive metadata of a session
@@ -41,9 +41,9 @@ import static de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model
 
 public class SessionMetadata extends BaseReference {
     @SerializedName("storedsessiontype")
-    private StoredsessiontypeEnum storedsessiontype;
+    private StoredSessiontypeEnum storedsessiontype;
     @SerializedName("sessiontype")
-    private SessiontypeEnum sessiontype;
+    private SessionTypeEnum sessiontype;
     @SerializedName("systemprofile")
     private String systemprofile;
     @SerializedName("name")
@@ -81,7 +81,7 @@ public class SessionMetadata extends BaseReference {
      * @return storedsessiontype
      **/
     @ApiModelProperty(value = "Stored session type")
-    public StoredsessiontypeEnum getStoredsessiontype() {
+    public StoredSessiontypeEnum getStoredsessiontype() {
         return storedsessiontype;
     }
 
@@ -91,7 +91,7 @@ public class SessionMetadata extends BaseReference {
      * @return sessiontype
      **/
     @ApiModelProperty(value = "Session type")
-    public SessiontypeEnum getSessiontype() {
+    public SessionTypeEnum getSessiontype() {
         return sessiontype;
     }
 

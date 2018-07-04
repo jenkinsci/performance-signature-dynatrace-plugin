@@ -104,7 +104,7 @@ public class PerfSigStartRecording extends Builder implements SimpleBuildStep {
             logger.log(Messages.PerfSigStartRecording_StartedTestRun(pair.getProfile(), testRunId, PerfSigEnvContributor.TESTRUN_ID_KEY));
         }
 
-        run.addAction(new PerfSigEnvInvisAction(sessionId, timeframeStart, extTestCase, testRunId, sessionName));
+        run.addAction(new PerfSigEnvInvisAction(extTestCase, sessionId, sessionName, timeframeStart, testRunId));
     }
 
     public String getTestCase() {
