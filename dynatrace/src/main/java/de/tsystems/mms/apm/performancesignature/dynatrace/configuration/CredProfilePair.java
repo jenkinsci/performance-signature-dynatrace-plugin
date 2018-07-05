@@ -22,7 +22,6 @@ import com.cloudbees.plugins.credentials.common.StandardListBoxModel;
 import com.cloudbees.plugins.credentials.common.StandardUsernameListBoxModel;
 import com.cloudbees.plugins.credentials.common.StandardUsernamePasswordCredentials;
 import com.cloudbees.plugins.credentials.common.UsernamePasswordCredentials;
-import com.cloudbees.plugins.credentials.domains.DomainRequirement;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.DTServerConnection;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.CommandExecutionException;
 import de.tsystems.mms.apm.performancesignature.dynatrace.util.PerfSigUtils;
@@ -85,7 +84,7 @@ public class CredProfilePair extends AbstractDescribableImpl<CredProfilePair> {
                             ACL.SYSTEM,
                             Jenkins.getInstance(),
                             StandardUsernamePasswordCredentials.class,
-                            Collections.<DomainRequirement>emptyList(),
+                            Collections.emptyList(),
                             CredentialsMatchers.always())
                     .includeCurrentValue(credentialsId);
         }
@@ -98,7 +97,7 @@ public class CredProfilePair extends AbstractDescribableImpl<CredProfilePair> {
             for (ListBoxModel.Option o : CredentialsProvider.listCredentials(StandardUsernamePasswordCredentials.class,
                     Jenkins.getInstance(),
                     ACL.SYSTEM,
-                    Collections.<DomainRequirement>emptyList(),
+                    Collections.emptyList(),
                     CredentialsMatchers.always())) {
                 if (StringUtils.equals(value, o.value)) {
                     return FormValidation.ok();
@@ -110,20 +109,14 @@ public class CredProfilePair extends AbstractDescribableImpl<CredProfilePair> {
         @Restricted(NoExternalUse.class)
         @Nonnull
         public ListBoxModel doFillProfileItems(@RelativePath("..") @QueryParameter final String serverUrl, @QueryParameter final String credentialsId,
-                                               @RelativePath("..") @QueryParameter final boolean verifyCertificate, @RelativePath("..") @QueryParameter final boolean proxy,
-                                               @RelativePath("..") @QueryParameter final String proxyServer, @RelativePath("..") @QueryParameter final int proxyPort,
-                                               @RelativePath("..") @QueryParameter final String proxyUser, @RelativePath("..") @QueryParameter final String proxyPassword) {
+                                               @RelativePath("..") @QueryParameter final boolean verifyCertificate, @RelativePath("..") @QueryParameter final boolean useProxy) {
 
             if (StringUtils.isBlank(serverUrl) || StringUtils.isBlank(credentialsId)) {
                 return new StandardListBoxModel().includeEmptyValue();
             }
-            CustomProxy customProxyServer = null;
-            if (proxy) {
-                customProxyServer = new CustomProxy(proxyServer, proxyPort, proxyUser, proxyPassword, StringUtils.isBlank(proxyServer));
-            }
             try {
                 CredProfilePair pair = new CredProfilePair("", credentialsId);
-                final DTServerConnection connection = new DTServerConnection(serverUrl, pair, verifyCertificate, 0, customProxyServer);
+                final DTServerConnection connection = new DTServerConnection(serverUrl, pair, verifyCertificate, 0, useProxy);
                 return PerfSigUtils.listToListBoxModel(connection.getSystemProfiles().getSystemprofiles());
             } catch (CommandExecutionException ex) {
                 return new StandardListBoxModel().includeEmptyValue();
@@ -143,16 +136,10 @@ public class CredProfilePair extends AbstractDescribableImpl<CredProfilePair> {
 
         @Restricted(NoExternalUse.class)
         public FormValidation doTestDynaTraceConnection(@QueryParameter final String serverUrl, @QueryParameter final String credentialsId,
-                                                        @QueryParameter final boolean verifyCertificate, @QueryParameter final boolean proxy,
-                                                        @QueryParameter final String proxyServer, @QueryParameter final int proxyPort,
-                                                        @QueryParameter final String proxyUser, @QueryParameter final String proxyPassword) {
+                                                        @QueryParameter final boolean verifyCertificate, @QueryParameter final boolean useProxy) {
 
-            CustomProxy customProxyServer = null;
-            if (proxy) {
-                customProxyServer = new CustomProxy(proxyServer, proxyPort, proxyUser, proxyPassword, StringUtils.isBlank(proxyServer));
-            }
             CredProfilePair pair = new CredProfilePair("", credentialsId);
-            final DTServerConnection connection = new DTServerConnection(serverUrl, pair, verifyCertificate, 0, customProxyServer);
+            final DTServerConnection connection = new DTServerConnection(serverUrl, pair, verifyCertificate, 0, useProxy);
 
             if (connection.validateConnection()) {
                 return FormValidation.ok(Messages.PerfSigRecorder_TestConnectionSuccessful());

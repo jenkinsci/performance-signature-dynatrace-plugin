@@ -17,7 +17,6 @@
 package de.tsystems.mms.apm.performancesignature.dynatrace.rest;
 
 import de.tsystems.mms.apm.performancesignature.dynatrace.configuration.CredProfilePair;
-import de.tsystems.mms.apm.performancesignature.dynatrace.configuration.CustomProxy;
 import de.tsystems.mms.apm.performancesignature.dynatrace.configuration.DynatraceServerConfiguration;
 import de.tsystems.mms.apm.performancesignature.dynatrace.configuration.DynatraceServerConfiguration.DescriptorImpl;
 import de.tsystems.mms.apm.performancesignature.dynatrace.model.*;
@@ -35,12 +34,10 @@ import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
 import hudson.FilePath;
 import hudson.ProxyConfiguration;
 import jenkins.model.Jenkins;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 
 import java.io.File;
 import java.net.Authenticator;
-import java.net.InetSocketAddress;
 import java.net.PasswordAuthentication;
 import java.net.Proxy;
 import java.util.ArrayList;
@@ -57,11 +54,12 @@ public class DTServerConnection {
     private DynatraceServerConfiguration configuration;
 
     public DTServerConnection(final DynatraceServerConfiguration config, final CredProfilePair pair) {
-        this(config.getServerUrl(), pair, config.isVerifyCertificate(), config.getReadTimeout(), config.getCustomProxy());
+        this(config.getServerUrl(), pair, config.isVerifyCertificate(), config.getReadTimeout(), config.isUseProxy());
         this.configuration = config;
     }
 
-    public DTServerConnection(final String serverUrl, final CredProfilePair pair, final boolean verifyCertificate, final int readTimeout, final CustomProxy customProxy) {
+    public DTServerConnection(final String serverUrl, final CredProfilePair pair, final boolean verifyCertificate,
+                              final int readTimeout, final boolean useProxy) {
         this.systemProfile = pair.getProfile();
         this.credProfilePair = pair;
 
@@ -74,32 +72,22 @@ public class DTServerConnection {
         apiClient.getHttpClient().setReadTimeout(readTimeout == 0 ? DescriptorImpl.defaultReadTimeout : readTimeout, TimeUnit.SECONDS);
 
         Proxy proxy = Proxy.NO_PROXY;
-        if (customProxy != null) {
-            Jenkins jenkins = Jenkins.getInstance();
-            ProxyConfiguration proxyConfiguration = jenkins.proxy;
-            if (customProxy.isUseJenkinsProxy() && proxyConfiguration != null) {
-                proxy = proxyConfiguration.createProxy(PerfSigUIUtils.getHostFromUrl(serverUrl));
-            } else {
-                proxy = createProxy(customProxy.getProxyServer(), customProxy.getProxyPort(), customProxy.getProxyUser(), customProxy.getProxyPassword());
+        ProxyConfiguration proxyConfig = Jenkins.getInstance().proxy;
+        if (proxyConfig != null && useProxy) {
+            proxy = proxyConfig.createProxy(PerfSigUIUtils.getHostFromUrl(serverUrl));
+            if (proxyConfig.getUserName() != null) {
+                // Add an authenticator which provides the credentials for proxy authentication
+                Authenticator.setDefault(new Authenticator() {
+                    @Override
+                    public PasswordAuthentication getPasswordAuthentication() {
+                        if (getRequestorType() != RequestorType.PROXY) return null;
+                        return new PasswordAuthentication(proxyConfig.getUserName(),
+                                proxyConfig.getPassword().toCharArray());
+                    }
+                });
             }
         }
         apiClient.getHttpClient().setProxy(proxy);
-    }
-
-    private Proxy createProxy(String host, int port, final String proxyUser, final String proxyPassword) {
-        Proxy proxy = Proxy.NO_PROXY;
-        if (StringUtils.isNotBlank(host) && port > 0) {
-            proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(host, port));
-            if (StringUtils.isNotBlank(proxyUser)) {
-                Authenticator authenticator = new Authenticator() {
-                    public PasswordAuthentication getPasswordAuthentication() {
-                        return new PasswordAuthentication(proxyUser, proxyPassword.toCharArray());
-                    }
-                };
-                Authenticator.setDefault(authenticator);
-            }
-        }
-        return proxy;
     }
 
     public DynatraceServerConfiguration getConfiguration() {

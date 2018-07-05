@@ -41,18 +41,23 @@ public final class DynatraceUtils {
     private DynatraceUtils() {
     }
 
-    public static ListBoxModel listToListBoxModel(final List<?> arrayList) {
+    public static ListBoxModel listToListBoxModel(final List<?> list) {
         final ListBoxModel listBoxModel = new ListBoxModel();
-        for (Object item : arrayList) {
-            if (item instanceof String)
-                listBoxModel.add((String) item);
-            else if (item instanceof DynatraceServerConfiguration) {
-                DynatraceServerConfiguration conf = (DynatraceServerConfiguration) item;
-                listBoxModel.add(conf.getName());
-            } else if (item instanceof Timeseries) {
-                Timeseries metric = (Timeseries) item;
-                listBoxModel.add(metric.getDetailedSource() + " - " + metric.getDisplayName(), metric.getTimeseriesId());
-            }
+        if (list == null || list.isEmpty()) return listBoxModel;
+
+        Class clazz = list.get(0).getClass();
+        if (clazz == String.class) {
+            list.stream()
+                    .map(String.class::cast)
+                    .forEach(listBoxModel::add);
+        } else if (clazz == DynatraceServerConfiguration.class) {
+            list.stream()
+                    .map(DynatraceServerConfiguration.class::cast)
+                    .forEach(conf -> listBoxModel.add(conf.getName()));
+        } else if (clazz == Timeseries.class) {
+            list.stream()
+                    .map(Timeseries.class::cast)
+                    .forEach(metric -> listBoxModel.add(metric.getDetailedSource() + " - " + metric.getDisplayName(), metric.getTimeseriesId()));
         }
         return listBoxModel;
     }

@@ -16,15 +16,10 @@
 
 package de.tsystems.mms.apm.performancesignature.dynatrace.model;
 
-import de.tsystems.mms.apm.performancesignature.ui.model.ClientLinkGenerator;
-import org.kohsuke.accmod.Restricted;
-import org.kohsuke.accmod.restrictions.NoExternalUse;
 import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
 
-import javax.annotation.Nonnull;
 import javax.xml.bind.annotation.*;
-import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,8 +35,6 @@ public class DashboardReport {
     @XmlElement(name = "incident")
     private final List<Alert> incidents;
     private boolean unitTest;
-    @Deprecated
-    private transient ClientLinkGenerator clientLink;
     private String clientUrl;
 
     public DashboardReport(final String testCaseName) {
@@ -127,16 +120,6 @@ public class DashboardReport {
 
     public void setClientUrl(String clientUrl) {
         this.clientUrl = clientUrl;
-    }
-
-    @SuppressWarnings("deprecation")
-    @Restricted(NoExternalUse.class)
-    @Nonnull
-    protected Object readResolve() throws MalformedURLException {
-        if (clientLink != null) {
-            clientUrl = clientLink.generateLink();
-        }
-        return this;
     }
 
     public Measure getMeasure(final String chartDashlet, final String measure) {

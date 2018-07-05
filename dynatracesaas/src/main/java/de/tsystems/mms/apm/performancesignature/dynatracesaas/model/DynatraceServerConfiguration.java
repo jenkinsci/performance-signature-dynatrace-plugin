@@ -38,19 +38,17 @@ public class DynatraceServerConfiguration extends AbstractDescribableImpl<Dynatr
     private final String name;
     private final String apiTokenId;
     private final boolean verifyCertificate;
-    private final CustomProxy customProxy;
+    private final boolean useProxy;
     private final String serverUrl;
 
     @DataBoundConstructor
     public DynatraceServerConfiguration(final String name, final String serverUrl, final String apiTokenId,
-                                        final boolean verifyCertificate, final boolean proxy, final int proxySource, final String proxyServer,
-                                        final int proxyPort, final String proxyUser, final String proxyPassword) {
+                                        final boolean verifyCertificate, final boolean useProxy) {
         this.name = name;
         this.serverUrl = serverUrl;
         this.apiTokenId = apiTokenId;
         this.verifyCertificate = verifyCertificate;
-
-        this.customProxy = proxy ? new CustomProxy(proxyServer, proxyPort, proxyUser, proxyPassword, proxySource) : null;
+        this.useProxy = useProxy;
     }
 
     public String getName() {
@@ -69,14 +67,15 @@ public class DynatraceServerConfiguration extends AbstractDescribableImpl<Dynatr
         return verifyCertificate;
     }
 
-    public CustomProxy getCustomProxy() {
-        return customProxy;
+    public boolean isUseProxy() {
+        return useProxy;
     }
 
     @Extension
     public static final class DescriptorImpl extends Descriptor<DynatraceServerConfiguration> {
         public static final String defaultServerUrl = "https://myjenkins.com/e/1234-5678-9012-3456";
         public static final boolean defaultVerifyCertificate = false;
+        public static final boolean defaultUseProxy = false;
 
         @Override
         public String getDisplayName() {
@@ -93,7 +92,6 @@ public class DynatraceServerConfiguration extends AbstractDescribableImpl<Dynatr
                                 Collections.emptyList(),
                                 CredentialsMatchers.always());
             }
-            //ToDo: fill me
             return new StandardListBoxModel();
         }
 
@@ -106,16 +104,9 @@ public class DynatraceServerConfiguration extends AbstractDescribableImpl<Dynatr
         }
 
         public FormValidation doTestServerConnection(@QueryParameter final String serverUrl, @QueryParameter final String apiTokenId,
-                                                     @QueryParameter boolean verifyCertificate,
-                                                     @QueryParameter final boolean proxy, @QueryParameter final String proxyServer,
-                                                     @QueryParameter final int proxyPort, @QueryParameter final String proxyUser,
-                                                     @QueryParameter final String proxyPassword) {
+                                                     @QueryParameter final boolean verifyCertificate, @QueryParameter final boolean useProxy) {
 
-            CustomProxy customProxyServer = null;
-            if (proxy) {
-                customProxyServer = new CustomProxy(proxyServer, proxyPort, proxyUser, proxyPassword, StringUtils.isBlank(proxyServer));
-            }
-            final DynatraceServerConnection connection = new DynatraceServerConnection(serverUrl, apiTokenId, verifyCertificate, customProxyServer);
+            final DynatraceServerConnection connection = new DynatraceServerConnection(serverUrl, apiTokenId, verifyCertificate, useProxy);
 
             if (connection.validateConnection()) {
                 return FormValidation.ok(Messages.CredJobPair_TestConnectionSuccessful());

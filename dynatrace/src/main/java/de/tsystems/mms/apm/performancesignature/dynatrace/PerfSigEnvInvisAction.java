@@ -17,15 +17,10 @@
 package de.tsystems.mms.apm.performancesignature.dynatrace;
 
 import hudson.model.InvisibleAction;
-import org.kohsuke.accmod.Restricted;
-import org.kohsuke.accmod.restrictions.NoExternalUse;
 
-import javax.annotation.Nonnull;
 import java.util.Date;
 
 public class PerfSigEnvInvisAction extends InvisibleAction {
-    @Deprecated
-    private transient String testRunID;
     private String testRunId;
     private final String testCase;
     private final Date timeframeStart;
@@ -75,15 +70,5 @@ public class PerfSigEnvInvisAction extends InvisibleAction {
 
     void setTimeframeStop(Date timeframeStop) {
         this.timeframeStop = timeframeStop;
-    }
-
-    @SuppressWarnings("deprecation")
-    @Restricted(NoExternalUse.class)
-    @Nonnull
-    protected Object readResolve() {
-        if (testRunID != null) {
-            testRunId = testRunID;
-        }
-        return this;
     }
 }

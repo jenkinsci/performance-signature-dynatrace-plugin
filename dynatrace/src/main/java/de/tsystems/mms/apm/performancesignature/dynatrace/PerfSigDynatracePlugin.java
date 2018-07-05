@@ -34,7 +34,6 @@ public class PerfSigDynatracePlugin extends Plugin {
         Items.XSTREAM2.addCompatibilityAlias("de.tsystems.mms.apm.performancesignature.model.GenericTestCase", GenericTestCase.class);
         Items.XSTREAM2.addCompatibilityAlias("de.tsystems.mms.apm.performancesignature.model.ConfigurationTestCase", ConfigurationTestCase.class);
         Items.XSTREAM2.addCompatibilityAlias("de.tsystems.mms.apm.performancesignature.model.CredProfilePair", CredProfilePair.class);
-        Items.XSTREAM2.addCompatibilityAlias("de.tsystems.mms.apm.performancesignature.model.CustomProxy", CustomProxy.class);
         Items.XSTREAM2.addCompatibilityAlias("de.tsystems.mms.apm.performancesignature.model.Dashboard", Dashboard.class);
         Items.XSTREAM2.addCompatibilityAlias("de.tsystems.mms.apm.performancesignature.model.DynatraceServerConfiguration", DynatraceServerConfiguration.class);
         Items.XSTREAM2.addCompatibilityAlias("de.tsystems.mms.apm.performancesignature.model.UnitTestCase", UnitTestCase.class);

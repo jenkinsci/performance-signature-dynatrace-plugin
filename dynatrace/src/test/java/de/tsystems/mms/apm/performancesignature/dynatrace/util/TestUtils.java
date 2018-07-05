@@ -45,12 +45,10 @@ public class TestUtils {
         List<DynatraceServerConfiguration> configurations = new ArrayList<>();
         configurations.add(new DynatraceServerConfiguration("PoC PerfSig",
                 "https://192.168.192.202:8021", credProfilePairs, false, DescriptorImpl.defaultDelay,
-                DescriptorImpl.defaultRetryCount, DescriptorImpl.defaultReadTimeout,
-                false, 0, null, 0, null, null));
+                DescriptorImpl.defaultRetryCount, DescriptorImpl.defaultReadTimeout, false));
         configurations.add(new DynatraceServerConfiguration("TestMigration",
                 "https://192.168.194.68:8021", credProfilePairs, false, DescriptorImpl.defaultDelay,
-                DescriptorImpl.defaultRetryCount, DescriptorImpl.defaultReadTimeout,
-                false, 0, null, 0, null, null));
+                DescriptorImpl.defaultRetryCount, DescriptorImpl.defaultReadTimeout, false));
         SystemCredentialsProvider.getInstance().getCredentials().add(new UsernamePasswordCredentialsImpl(CredentialsScope.GLOBAL,
                 "myCreds", null, "admin", "admin"));
         SystemCredentialsProvider.getInstance().save();

@@ -16,7 +16,6 @@
 
 package de.tsystems.mms.apm.performancesignature.dynatracesaas.rest;
 
-import de.tsystems.mms.apm.performancesignature.dynatracesaas.model.CustomProxy;
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.model.DynatraceServerConfiguration;
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.api.ServerManagementApi;
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.api.TimeSeriesApi;
@@ -26,11 +25,9 @@ import de.tsystems.mms.apm.performancesignature.dynatracesaas.util.DynatraceUtil
 import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
 import hudson.ProxyConfiguration;
 import jenkins.model.Jenkins;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 
 import java.net.Authenticator;
-import java.net.InetSocketAddress;
 import java.net.PasswordAuthentication;
 import java.net.Proxy;
 import java.util.Date;
@@ -42,7 +39,7 @@ public class DynatraceServerConnection {
     private final ApiClient apiClient;
 
     public DynatraceServerConnection(final String serverUrl, final String apiTokenId, final boolean verifyCertificate,
-                                     final CustomProxy customProxyServer) {
+                                     final boolean useProxy) {
         this.apiClient = new ApiClient();
         apiClient.setVerifyingSsl(verifyCertificate);
         apiClient.setBasePath(serverUrl);
@@ -51,37 +48,26 @@ public class DynatraceServerConnection {
         apiClient.setDebugging(true);
 
         Proxy proxy = Proxy.NO_PROXY;
-        if (customProxyServer != null) {
-            Jenkins jenkins = Jenkins.getInstance();
-            ProxyConfiguration proxyConfiguration = jenkins.proxy;
-            if (customProxyServer.isUseJenkinsProxy() && proxyConfiguration != null) {
-                proxy = proxyConfiguration.createProxy(PerfSigUIUtils.getHostFromUrl(serverUrl));
-            } else {
-                proxy = createProxy(customProxyServer.getProxyServer(), customProxyServer.getProxyPort(), customProxyServer.getProxyUser(),
-                        customProxyServer.getProxyPassword());
+        ProxyConfiguration proxyConfig = Jenkins.getInstance().proxy;
+        if (proxyConfig != null && useProxy) {
+            proxy = proxyConfig.createProxy(PerfSigUIUtils.getHostFromUrl(serverUrl));
+            if (proxyConfig.getUserName() != null) {
+                // Add an authenticator which provides the credentials for proxy authentication
+                Authenticator.setDefault(new Authenticator() {
+                    @Override
+                    public PasswordAuthentication getPasswordAuthentication() {
+                        if (getRequestorType() != RequestorType.PROXY) return null;
+                        return new PasswordAuthentication(proxyConfig.getUserName(),
+                                proxyConfig.getPassword().toCharArray());
+                    }
+                });
             }
         }
         apiClient.getHttpClient().setProxy(proxy);
     }
 
     public DynatraceServerConnection(final DynatraceServerConfiguration config) {
-        this(config.getServerUrl(), config.getApiTokenId(), config.isVerifyCertificate(), config.getCustomProxy());
-    }
-
-    private Proxy createProxy(String host, int port, final String proxyUser, final String proxyPassword) {
-        Proxy proxy = Proxy.NO_PROXY;
-        if (StringUtils.isNotBlank(host) && port > 0) {
-            proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(host, port));
-            if (StringUtils.isNotBlank(proxyUser)) {
-                Authenticator authenticator = new Authenticator() {
-                    public PasswordAuthentication getPasswordAuthentication() {
-                        return new PasswordAuthentication(proxyUser, proxyPassword.toCharArray());
-                    }
-                };
-                Authenticator.setDefault(authenticator);
-            }
-        }
-        return proxy;
+        this(config.getServerUrl(), config.getApiTokenId(), config.isVerifyCertificate(), config.isUseProxy());
     }
 
     public boolean validateConnection() {
