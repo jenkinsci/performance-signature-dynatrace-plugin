@@ -25,7 +25,7 @@
         </f:entry>
 
         <f:advanced>
-            <f:entry title="${%use Proxy" field="useProxy"
+            <f:entry title="${%use Proxy}" field="useProxy"
                      description="${%use proxy server configured in Jenkins}">
                 <f:checkbox default="${descriptor.defaultUseProxy}"/>
             </f:entry>
