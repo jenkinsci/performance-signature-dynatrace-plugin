@@ -62,7 +62,7 @@ public class DynatraceRecorder extends Recorder implements SimpleBuildStep {
     public void perform(@Nonnull final Run<?, ?> run, @Nonnull final FilePath workspace, @Nonnull final Launcher launcher, @Nonnull final TaskListener listener)
             throws IOException {
         PluginLogger logger = PerfSigUIUtils.createLogger(listener.getLogger());
-        DynatraceServerConnection serverConnection = DynatraceUtils.createJenkinsServerConnection(envId);
+        DynatraceServerConnection serverConnection = DynatraceUtils.createDynatraceServerConnection(envId);
         logger.log("getting metric data from Dynatrace Server");
         List<Result> results = new ArrayList<>();
 

@@ -80,7 +80,7 @@ public class DynatraceServerConnection {
         }
     }
 
-    private String getServerVersion() {
+    public String getServerVersion() {
         ServerManagementApi api = new ServerManagementApi(apiClient);
         try {
             return api.getVersion();

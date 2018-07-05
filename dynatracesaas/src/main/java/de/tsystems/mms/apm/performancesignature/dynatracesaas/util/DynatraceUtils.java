@@ -43,22 +43,17 @@ public final class DynatraceUtils {
 
     public static ListBoxModel listToListBoxModel(final List<?> list) {
         final ListBoxModel listBoxModel = new ListBoxModel();
-        if (list == null || list.isEmpty()) return listBoxModel;
 
-        Class clazz = list.get(0).getClass();
-        if (clazz == String.class) {
-            list.stream()
-                    .map(String.class::cast)
-                    .forEach(listBoxModel::add);
-        } else if (clazz == DynatraceServerConfiguration.class) {
-            list.stream()
-                    .map(DynatraceServerConfiguration.class::cast)
-                    .forEach(conf -> listBoxModel.add(conf.getName()));
-        } else if (clazz == Timeseries.class) {
-            list.stream()
-                    .map(Timeseries.class::cast)
-                    .forEach(metric -> listBoxModel.add(metric.getDetailedSource() + " - " + metric.getDisplayName(), metric.getTimeseriesId()));
-        }
+        list.forEach(item -> {
+            if (item instanceof String) {
+                listBoxModel.add((String) item);
+            } else if (item instanceof DynatraceServerConfiguration) {
+                listBoxModel.add(((DynatraceServerConfiguration) item).getName());
+            } else if (item instanceof Timeseries) {
+                Timeseries metric = (Timeseries) item;
+                listBoxModel.add(metric.getDetailedSource() + " - " + metric.getDisplayName(), metric.getTimeseriesId());
+            }
+        });
         return listBoxModel;
     }
 
@@ -90,7 +85,7 @@ public final class DynatraceUtils {
         return null;
     }
 
-    public static DynatraceServerConnection createJenkinsServerConnection(final String dynatraceServer) throws AbortException, RESTErrorException {
+    public static DynatraceServerConnection createDynatraceServerConnection(final String dynatraceServer) throws AbortException, RESTErrorException {
         DynatraceServerConfiguration serverConfiguration = DynatraceUtils.getServerConfiguration(dynatraceServer);
         if (serverConfiguration == null) {
             throw new AbortException(Messages.DynatraceRecorder_FailedToLookupServer());

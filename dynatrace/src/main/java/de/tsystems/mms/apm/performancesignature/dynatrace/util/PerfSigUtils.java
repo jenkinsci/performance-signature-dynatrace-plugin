@@ -22,7 +22,6 @@ import com.cloudbees.plugins.credentials.common.UsernamePasswordCredentials;
 import de.tsystems.mms.apm.performancesignature.dynatrace.PerfSigGlobalConfiguration;
 import de.tsystems.mms.apm.performancesignature.dynatrace.configuration.CredProfilePair;
 import de.tsystems.mms.apm.performancesignature.dynatrace.configuration.DynatraceServerConfiguration;
-import de.tsystems.mms.apm.performancesignature.dynatrace.model.BaseReference;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.DTServerConnection;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.ApiResponse;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.RESTErrorException;
@@ -44,9 +43,10 @@ public final class PerfSigUtils {
     private PerfSigUtils() {
     }
 
-    public static ListBoxModel listToListBoxModel(final List<?> arrayList) {
+    public static ListBoxModel listToListBoxModel(final List<?> list) {
         final ListBoxModel listBoxModel = new ListBoxModel();
-        for (Object item : arrayList) {
+
+        list.forEach(item -> {
             if (item instanceof String) {
                 listBoxModel.add((String) item);
             } else if (item instanceof Dashboard) {
@@ -62,10 +62,8 @@ public final class PerfSigUtils {
                         listBoxModel.add(listItem);
                     }
                 }
-            } else if (item instanceof BaseReference) {
-                listBoxModel.add(((BaseReference) item).getId());
             }
-        }
+        });
         return sortListBoxModel(listBoxModel);
     }
 
