@@ -134,7 +134,7 @@ public class PullPerfSigDataStepExecution extends SynchronousNonBlockingStepExec
         Gson gson = new Gson();
         List<String> obj = gson.fromJson(json, new TypeToken<List<String>>() {
         }.getType());
-        return obj != null ? obj : Collections.<String>emptyList();
+        return obj != null ? obj : Collections.emptyList();
     }
 
     private List<Artifact> getArtifactsList(final BuildContext context) throws IOException, InterruptedException {
@@ -144,7 +144,7 @@ public class PullPerfSigDataStepExecution extends SynchronousNonBlockingStepExec
         Gson gson = new Gson();
         BuildData artifacts = gson.fromJson(json, new TypeToken<BuildData>() {
         }.getType());
-        return artifacts != null ? artifacts.getArtifacts() : Collections.<Artifact>emptyList();
+        return artifacts != null ? artifacts.getArtifacts() : Collections.emptyList();
     }
 
     private boolean downloadArtifacts(final BuildContext context, final FilePath dir, final PluginLogger logger)

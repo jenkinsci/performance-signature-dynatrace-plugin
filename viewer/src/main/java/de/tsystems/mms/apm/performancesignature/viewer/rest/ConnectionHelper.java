@@ -5,6 +5,7 @@ import hudson.AbortException;
 import hudson.ProxyConfiguration;
 import jenkins.model.Jenkins;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.CharEncoding;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.jenkinsci.plugins.ParameterizedRemoteTrigger.*;
 import org.jenkinsci.plugins.ParameterizedRemoteTrigger.auth2.Auth2;
@@ -65,7 +66,7 @@ public class ConnectionHelper {
         }
         URL crumbProviderUrl;
         try {
-            String xpathValue = URLEncoder.encode("concat(//crumbRequestField,\":\",//crumb)", "UTF-8");
+            String xpathValue = URLEncoder.encode("concat(//crumbRequestField,\":\",//crumb)", CharEncoding.UTF_8);
             crumbProviderUrl = new URL(address.concat("/crumbIssuer/api/xml?xpath=").concat(xpathValue));
             HttpURLConnection connection = getAuthorizedConnection(context, crumbProviderUrl);
             int responseCode = connection.getResponseCode();

@@ -33,6 +33,7 @@ import hudson.security.ACL;
 import hudson.util.ListBoxModel;
 import jenkins.model.Jenkins;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.CharEncoding;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -171,8 +172,8 @@ public final class PerfSigUtils {
      */
     public static String unescapeString(String str) {
         try {
-            String decoded = URLDecoder.decode(str, "utf8");
-            return URLDecoder.decode(decoded, "utf8");
+            String decoded = URLDecoder.decode(str, CharEncoding.UTF_8);
+            return URLDecoder.decode(decoded, CharEncoding.UTF_8);
         } catch (UnsupportedEncodingException e) {
             return str;
         }
