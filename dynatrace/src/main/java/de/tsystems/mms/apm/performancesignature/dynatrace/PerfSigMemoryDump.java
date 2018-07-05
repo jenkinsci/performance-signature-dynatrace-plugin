@@ -220,10 +220,13 @@ public class PerfSigMemoryDump extends Builder implements SimpleBuildStep {
             return PerfSigUtils.fillHostItems(dynatraceProfile, agent);
         }
 
-        public boolean isApplicable(final Class<? extends AbstractProject> aClass) {
+        @Override
+        public boolean isApplicable(final Class<? extends AbstractProject> jobType) {
             return true;
         }
 
+        @Nonnull
+        @Override
         public String getDisplayName() {
             return Messages.PerfSigMemoryDump_DisplayName();
         }

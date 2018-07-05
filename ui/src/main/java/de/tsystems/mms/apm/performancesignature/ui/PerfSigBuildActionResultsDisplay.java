@@ -69,6 +69,7 @@ public class PerfSigBuildActionResultsDisplay implements ModelObject {
         this.currentDashboardReports = this.buildAction.getDashboardReports();
     }
 
+    @Override
     public String getDisplayName() {
         return Messages.PerfSigBuildActionResultsDisplay_DisplayName();
     }

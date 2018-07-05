@@ -97,7 +97,7 @@ public class PerfSigTestAction extends TestAction {
 
     @Override
     public String getDisplayName() {
-        return null;
+        return "";
     }
 
     @Override

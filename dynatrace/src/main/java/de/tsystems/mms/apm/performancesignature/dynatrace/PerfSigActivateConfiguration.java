@@ -114,10 +114,13 @@ public class PerfSigActivateConfiguration extends Builder implements SimpleBuild
             return new ListBoxModel();
         }
 
-        public boolean isApplicable(final Class<? extends AbstractProject> aClass) {
+        @Override
+        public boolean isApplicable(final Class<? extends AbstractProject> jobType) {
             return true;
         }
 
+        @Nonnull
+        @Override
         public String getDisplayName() {
             return Messages.PerfSigActivateConfiguration_DisplayName();
         }

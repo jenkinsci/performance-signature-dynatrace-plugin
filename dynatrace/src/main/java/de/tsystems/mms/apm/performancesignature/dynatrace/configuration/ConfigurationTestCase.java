@@ -19,7 +19,6 @@ package de.tsystems.mms.apm.performancesignature.dynatrace.configuration;
 import de.tsystems.mms.apm.performancesignature.ui.model.ClientLinkGenerator;
 import hudson.DescriptorExtensionList;
 import hudson.RelativePath;
-import hudson.model.AbstractProject;
 import hudson.model.Describable;
 import hudson.model.Descriptor;
 import hudson.util.ListBoxModel;
@@ -102,10 +101,6 @@ public abstract class ConfigurationTestCase implements Describable<Configuration
 
         public static DescriptorExtensionList<ConfigurationTestCase, Descriptor<ConfigurationTestCase>> all() {
             return Jenkins.getInstance().getDescriptorList(ConfigurationTestCase.class);
-        }
-
-        public boolean isApplicable(final Class<? extends AbstractProject<?, ?>> jobType) {
-            return true;
         }
 
         public ListBoxModel doFillNameItems() {

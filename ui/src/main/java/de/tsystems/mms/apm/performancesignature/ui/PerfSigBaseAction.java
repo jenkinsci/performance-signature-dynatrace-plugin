@@ -23,6 +23,7 @@ abstract class PerfSigBaseAction implements Action {
         return "performance-signature";
     }
 
+    @Override
     public String getDisplayName() {
         return Messages.PerfSigBaseAction_DisplayName();
     }

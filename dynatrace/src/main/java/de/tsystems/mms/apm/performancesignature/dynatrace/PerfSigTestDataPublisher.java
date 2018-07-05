@@ -83,6 +83,7 @@ public class PerfSigTestDataPublisher extends TestDataPublisher {
             return PerfSigUtils.listToListBoxModel(PerfSigUtils.getDTConfigurations());
         }
 
+        @Nonnull
         @Override
         public String getDisplayName() {
             return Messages.PerfSigTestDataPublisher_DisplayName();

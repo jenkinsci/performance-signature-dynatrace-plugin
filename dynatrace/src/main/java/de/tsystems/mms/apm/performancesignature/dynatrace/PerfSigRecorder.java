@@ -252,7 +252,7 @@ public class PerfSigRecorder extends Recorder implements SimpleBuildStep {
     }
 
     public List<ConfigurationTestCase> getConfigurationTestCases() {
-        return configurationTestCases == null ? Collections.<ConfigurationTestCase>emptyList() : configurationTestCases;
+        return configurationTestCases == null ? Collections.emptyList() : configurationTestCases;
     }
 
     public int getNonFunctionalFailure() {
@@ -293,10 +293,13 @@ public class PerfSigRecorder extends Recorder implements SimpleBuildStep {
             return PerfSigUtils.listToListBoxModel(PerfSigUtils.getDTConfigurations());
         }
 
-        public boolean isApplicable(final Class<? extends AbstractProject> aClass) {
+        @Override
+        public boolean isApplicable(final Class<? extends AbstractProject> jobType) {
             return true;
         }
 
+        @Nonnull
+        @Override
         public String getDisplayName() {
             return Messages.PerfSigRecorder_DisplayName();
         }

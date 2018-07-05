@@ -121,10 +121,13 @@ public class DynatraceRecorder extends Recorder implements SimpleBuildStep {
             return DynatraceUtils.listToListBoxModel(DynatraceUtils.getDynatraceConfigurations());
         }
 
-        public boolean isApplicable(final Class<? extends AbstractProject> aClass) {
+        @Override
+        public boolean isApplicable(final Class<? extends AbstractProject> jobType) {
             return true;
         }
 
+        @Nonnull
+        @Override
         public String getDisplayName() {
             return Messages.DynatraceRecorder_DisplayName();
         }

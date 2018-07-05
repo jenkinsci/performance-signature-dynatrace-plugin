@@ -29,6 +29,7 @@ import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
 import org.kohsuke.stapler.DataBoundConstructor;
 
+import javax.annotation.Nonnull;
 import java.util.Set;
 
 public class CreateDeploymentStep extends Step {
@@ -66,6 +67,7 @@ public class CreateDeploymentStep extends Step {
             return true;
         }
 
+        @Nonnull
         @Override
         public String getDisplayName() {
             return "create Dynatrace Deployment event";
