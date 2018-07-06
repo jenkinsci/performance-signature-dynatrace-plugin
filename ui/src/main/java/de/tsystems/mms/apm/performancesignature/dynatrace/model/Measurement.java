@@ -23,7 +23,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.util.Map;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement
@@ -32,9 +31,14 @@ public class Measurement extends MeasureBaseModel {
     @XmlAttribute
     private long timestamp;
 
-    public Measurement(Map.Entry<Long, Double> entry) {
-        this.timestamp = entry.getKey();
-        this.avg = entry.getValue();
+    public Measurement(final long timestamp, final Number avg, final Number min, final Number max, final Number sum,
+                       final Number count) {
+        this.timestamp = timestamp;
+        this.setAvg(avg.doubleValue());
+        this.setMin(min.doubleValue());
+        this.setMax(max.doubleValue());
+        this.setSum(sum.doubleValue());
+        this.setCount(count.longValue());
     }
 
     public Measurement() {

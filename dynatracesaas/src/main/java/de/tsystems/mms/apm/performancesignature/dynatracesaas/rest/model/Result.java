@@ -5,6 +5,8 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 
 import java.util.Map;
 
+import static de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.Timeseries.AggregationEnum;
+
 public class Result {
     @SerializedName("dataPoints")
     private Map<String, Map<Long, Double>> dataPoints;
@@ -17,7 +19,7 @@ public class Result {
     @SerializedName("resolutionInMillisUTC")
     private Long resolutionInMillisUTC;
     @SerializedName("aggregationType")
-    private Timeseries.AggregationEnum aggregationType;
+    private AggregationEnum aggregationType;
 
     public Map<String, Map<Long, Double>> getDataPoints() {
         return dataPoints;
@@ -39,7 +41,7 @@ public class Result {
         return resolutionInMillisUTC;
     }
 
-    public Timeseries.AggregationEnum getAggregationType() {
+    public AggregationEnum getAggregationType() {
         return aggregationType;
     }
 

@@ -137,7 +137,7 @@ public class Timeseries {
         MAX("MAX"),
         SUM("SUM"),
         AVG("AVG"),
-        MEDIAN("MEDIAN"),
+        //MEDIAN("MEDIAN"),
         COUNT("COUNT");
 
         private final String value;

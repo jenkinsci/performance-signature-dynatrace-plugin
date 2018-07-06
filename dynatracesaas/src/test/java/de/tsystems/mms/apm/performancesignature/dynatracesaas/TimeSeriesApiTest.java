@@ -56,7 +56,6 @@ public class TimeSeriesApiTest {
         List<Metric> metrics = new ArrayList<>();
         metrics.add(new Metric("com.dynatrace.builtin:host.cpu.user"));
 
-
         DynatraceRecorder recorder = new DynatraceRecorder(dynatraceConfigurations.get(0).name, metrics);
         project.getPublishersList().add(recorder);
         FreeStyleBuild build = j.assertBuildStatusSuccess(project.scheduleBuild2(0));

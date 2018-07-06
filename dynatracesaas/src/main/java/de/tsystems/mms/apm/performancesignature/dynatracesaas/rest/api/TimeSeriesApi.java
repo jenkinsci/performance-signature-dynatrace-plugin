@@ -28,6 +28,8 @@ import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.Timeser
 import java.lang.reflect.Type;
 import java.util.*;
 
+import static de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.Timeseries.AggregationEnum;
+
 public class TimeSeriesApi {
     private ApiClient apiClient;
 
@@ -43,7 +45,8 @@ public class TimeSeriesApi {
         this.apiClient = apiClient;
     }
 
-    public Call getTimeseriesCall(String timeseriesId, Long startTimestamp, Long endTimestamp, Timeseries.AggregationEnum aggregationType) throws ApiException {
+    public Call getTimeseriesCall(String timeseriesId, Long startTimestamp, Long endTimestamp,
+                                  AggregationEnum aggregationType, String queryMode) throws ApiException {
         // create path and map variables
         String localVarPath = ApiClient.API_SUFFIX + "/timeseries";
 
@@ -60,6 +63,9 @@ public class TimeSeriesApi {
         if (aggregationType != null) {
             localVarQueryParams.addAll(apiClient.parameterToPair("aggregationType", aggregationType));
         }
+        if (queryMode != null) {
+            localVarQueryParams.addAll(apiClient.parameterToPair("queryMode", queryMode));
+        }
 
         Map<String, String> localVarHeaderParams = new HashMap<>();
         localVarHeaderParams.put("Accept", "application/json");
@@ -67,13 +73,15 @@ public class TimeSeriesApi {
         return apiClient.buildCall(localVarPath, "GET", localVarQueryParams, null, localVarHeaderParams, null);
     }
 
-    public Result getTimeseriesData(String timeseriesId, Date startTimestamp, Date endTimestamp, Timeseries.AggregationEnum aggregationType) throws ApiException {
-        ApiResponse<Result.Container> resp = getTimeseriesDataWithHttpInfo(timeseriesId, startTimestamp, endTimestamp, aggregationType);
+    public Result getTimeseriesData(String timeseriesId, Date startTimestamp, Date endTimestamp,
+                                    AggregationEnum aggregationType, String queryMode) throws ApiException {
+        ApiResponse<Result.Container> resp = getTimeseriesDataWithHttpInfo(timeseriesId, startTimestamp, endTimestamp, aggregationType, queryMode);
         return resp.getData().result;
     }
 
-    public ApiResponse<Result.Container> getTimeseriesDataWithHttpInfo(String timeseriesId, Date startTimestamp, Date endTimestamp, Timeseries.AggregationEnum aggregationType) throws ApiException {
-        Call call = getTimeseriesCall(timeseriesId, startTimestamp.getTime(), endTimestamp.getTime(), aggregationType);
+    public ApiResponse<Result.Container> getTimeseriesDataWithHttpInfo(String timeseriesId, Date startTimestamp,
+                                                                       Date endTimestamp, AggregationEnum aggregationType, String queryMode) throws ApiException {
+        Call call = getTimeseriesCall(timeseriesId, startTimestamp.getTime(), endTimestamp.getTime(), aggregationType, queryMode);
         Type localVarReturnType = new TypeToken<Result.Container>() {
         }.getType();
         return apiClient.execute(call, localVarReturnType);
@@ -85,7 +93,7 @@ public class TimeSeriesApi {
     }
 
     public ApiResponse<List<Timeseries>> getTimeseriesWithHttpInfo() throws ApiException {
-        Call call = getTimeseriesCall(null, null, null, null);
+        Call call = getTimeseriesCall(null, null, null, null, null);
         Type localVarReturnType = new TypeToken<List<Timeseries>>() {
         }.getType();
         return apiClient.execute(call, localVarReturnType);

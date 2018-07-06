@@ -34,6 +34,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
 
+import static de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.Timeseries.AggregationEnum;
+
 public class DynatraceServerConnection {
     private static final Logger LOGGER = Logger.getLogger(DynatraceServerConnection.class.getName());
     private final ApiClient apiClient;
@@ -98,10 +100,21 @@ public class DynatraceServerConnection {
         }
     }
 
-    public Result getTimeseriesData(String timeseriesId, Date startTimestamp, Date endTimestamp, Timeseries.AggregationEnum aggregationType) {
+    public Result getTotalTimeseriesData(String timeseriesId, Date startTimestamp, Date endTimestamp,
+                                         AggregationEnum aggregationType) {
         TimeSeriesApi api = new TimeSeriesApi(apiClient);
         try {
-            return api.getTimeseriesData(timeseriesId, startTimestamp, endTimestamp, aggregationType);
+            return api.getTimeseriesData(timeseriesId, startTimestamp, endTimestamp, aggregationType, "total");
+        } catch (ApiException ex) {
+            throw new CommandExecutionException("error while querying timeseries data: " + ex.getResponseBody(), ex);
+        }
+    }
+
+    public Result getTimeseriesData(String timeseriesId, Date startTimestamp, Date endTimestamp,
+                                    AggregationEnum aggregationType) {
+        TimeSeriesApi api = new TimeSeriesApi(apiClient);
+        try {
+            return api.getTimeseriesData(timeseriesId, startTimestamp, endTimestamp, aggregationType, "series");
         } catch (ApiException ex) {
             throw new CommandExecutionException("error while querying timeseries data: " + ex.getResponseBody(), ex);
         }

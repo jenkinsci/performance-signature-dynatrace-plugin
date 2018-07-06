@@ -47,6 +47,9 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
+
+import static de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.Timeseries.AggregationEnum;
 
 public class DynatraceRecorder extends Recorder implements SimpleBuildStep {
     private final String envId;
@@ -64,35 +67,72 @@ public class DynatraceRecorder extends Recorder implements SimpleBuildStep {
         PluginLogger logger = PerfSigUIUtils.createLogger(listener.getLogger());
         DynatraceServerConnection serverConnection = DynatraceUtils.createDynatraceServerConnection(envId);
         logger.log("getting metric data from Dynatrace Server");
-        List<Result> results = new ArrayList<>();
 
         Date start = DateUtils.addHours(new Date(), -2);
         Date end = new Date();
 
-        results.add(serverConnection.getTimeseriesData("com.dynatrace.builtin:host.cpu.user", start, end, Timeseries.AggregationEnum.AVG));
-        for (Metric metric : metrics) {
-            serverConnection.getTimeseriesData(metric.getMetricId(), start, end, Timeseries.AggregationEnum.AVG);
-        }
+        Map<String, Timeseries> timeseries = serverConnection.getTimeseries()
+                .parallelStream().collect(Collectors.toMap(Timeseries::getTimeseriesId, item -> item));
+
         DashboardReport dashboardReport = new DashboardReport("loadtest");
-        for (Result result : results) {
+        for (Metric metric : metrics) {
+            Timeseries tm = timeseries.get(metric.getMetricId());
+            Map<AggregationEnum, Result> aggregations = tm.getAggregationTypes().stream()
+                    .collect(Collectors.toMap(aggregation -> aggregation,
+                            aggregation -> serverConnection.getTimeseriesData(metric.getMetricId(), start, end, aggregation),
+                            (a, b) -> b, LinkedHashMap::new));
+
+            Result baseResult = aggregations.get(AggregationEnum.AVG);
             ChartDashlet chartDashlet = new ChartDashlet();
-            chartDashlet.setName(result.getTimeseriesId());
-            for (Map.Entry<String, Map<Long, Double>> entity : result.getDataPoints().entrySet()) {
-                System.out.println(entity.getKey());
-                Measure measure = new Measure(entity.getKey());
-                for (Map.Entry<Long, Double> entry : entity.getValue().entrySet()) {
-                    System.out.println(entry);
-                    if (entry != null && entry.getValue() != null) {
-                        measure.getMeasurements().add(new Measurement(entry));
-                    }
-                }
+            chartDashlet.setName(tm.getDetailedSource() + " - " + tm.getDisplayName());
+
+            baseResult.getDataPoints().forEach((key, value) -> {
+                Measure measure = new Measure(baseResult.getEntities().get(key));
+                measure.setAggregation(baseResult.getAggregationType().getValue().toLowerCase());
+                measure.setUnit(baseResult.getUnit());
+
+                Map<AggregationEnum, Number> values = tm.getAggregationTypes().stream()
+                        .collect(Collectors.toMap(aggregation -> aggregation,
+                                aggregation -> serverConnection.getTotalTimeseriesData(metric.getMetricId(), start, end, aggregation)
+                                        .getDataPoints().get(key).entrySet().iterator().next().getValue(),
+                                (a, b) -> b, LinkedHashMap::new));
+
+                measure.setAvg(values.get(AggregationEnum.AVG) != null ? values.get(AggregationEnum.AVG).doubleValue() : 0);
+                measure.setMin(values.get(AggregationEnum.MIN) != null ? values.get(AggregationEnum.MIN).doubleValue() : 0);
+                measure.setMax(values.get(AggregationEnum.MAX) != null ? values.get(AggregationEnum.MAX).doubleValue() : 0);
+                measure.setSum(values.get(AggregationEnum.SUM) != null ? values.get(AggregationEnum.SUM).doubleValue() : 0);
+                measure.setCount(values.get(AggregationEnum.COUNT) != null ? values.get(AggregationEnum.COUNT).longValue() : 0);
+
+                value.entrySet().stream()
+                        .filter(entry -> entry != null && entry.getValue() != null)
+                        .forEach(entry -> {
+                            long timestamp = entry.getKey();
+                            Measurement m = new Measurement(timestamp,
+                                    entry.getKey(),
+                                    //getAggregationValue(baseResult, aggregations, AggregationEnum.AVG, key, timestamp),
+                                    getAggregationValue(baseResult, aggregations, AggregationEnum.MIN, key, timestamp),
+                                    getAggregationValue(baseResult, aggregations, AggregationEnum.MAX, key, timestamp),
+                                    getAggregationValue(baseResult, aggregations, AggregationEnum.SUM, key, timestamp),
+                                    getAggregationValue(baseResult, aggregations, AggregationEnum.COUNT, key, timestamp));
+
+                            measure.getMeasurements().add(m);
+                        });
                 chartDashlet.getMeasures().add(measure);
-            }
+            });
             dashboardReport.addChartDashlet(chartDashlet);
         }
-
         PerfSigBuildAction action = new PerfSigBuildAction(Collections.singletonList(dashboardReport));
         run.addAction(action);
+    }
+
+    private Number getAggregationValue(Result result, Map<AggregationEnum, Result> aggregations, AggregationEnum aggregation, String key, long timestamp) {
+        if (aggregations.get(aggregation) == null) return 0;
+        if (result.getUnit().equals("Byte (B)")) {
+            String tmp = DynatraceUtils.humanReadableByteCount(aggregations.get(aggregation).getDataPoints().get(key).get(timestamp), false);
+            return Double.valueOf(tmp.substring(0, tmp.length() - 3));
+        } else {
+            return aggregations.get(aggregation).getDataPoints().get(key).get(timestamp);
+        }
     }
 
     public BuildStepMonitor getRequiredMonitorService() {

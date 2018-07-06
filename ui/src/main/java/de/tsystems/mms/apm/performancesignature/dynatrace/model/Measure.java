@@ -120,6 +120,10 @@ public class Measure extends MeasureBaseModel {
         return aggregation;
     }
 
+    public void setAggregation(String aggregation) {
+        this.aggregation = aggregation;
+    }
+
     /**
      * Ruft den Wert der unit-Eigenschaft ab.
      *
@@ -129,6 +133,10 @@ public class Measure extends MeasureBaseModel {
     @Exported
     public String getUnit() {
         return unit;
+    }
+
+    public void setUnit(String unit) {
+        this.unit = unit;
     }
 
     public String getUnit(final String aggregation) {
