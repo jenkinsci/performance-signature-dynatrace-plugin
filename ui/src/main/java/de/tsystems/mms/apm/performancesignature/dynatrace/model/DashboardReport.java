@@ -123,7 +123,7 @@ public class DashboardReport {
     }
 
     public Measure getMeasure(final String chartDashlet, final String measure) {
-        for (ChartDashlet cd : this.chartDashlets) {
+        for (ChartDashlet cd : chartDashlets) {
             if (cd.getName().equalsIgnoreCase(chartDashlet) && cd.getMeasures() != null) {
                 for (Measure m : cd.getMeasures()) {
                     if (m.getName().equalsIgnoreCase(measure))

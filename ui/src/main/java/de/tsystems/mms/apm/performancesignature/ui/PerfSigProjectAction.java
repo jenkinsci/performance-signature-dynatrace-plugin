@@ -488,7 +488,7 @@ public class PerfSigProjectAction extends PerfSigBaseAction implements Prominent
                     final Measure m = dr.getMeasure(chartDashlet, measure);
                     if (m != null) {
                         unit = m.getUnit(aggregation);
-                        color = m.getColor();
+                        color = m.getColor() != null ? m.getColor() : color;
                     }
                     break;
                 }

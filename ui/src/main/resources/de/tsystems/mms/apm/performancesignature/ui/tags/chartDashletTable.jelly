@@ -59,5 +59,8 @@
                 </j:if>
             </tr>
         </j:forEach>
+        <j:if test="${it.measures == null}">
+            this chart dashlet does not contain any measures
+        </j:if>
     </table>
 </j:jelly>
