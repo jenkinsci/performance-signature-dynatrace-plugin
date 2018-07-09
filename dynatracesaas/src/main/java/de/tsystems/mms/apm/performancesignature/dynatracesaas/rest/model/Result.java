@@ -33,6 +33,10 @@ public class Result {
         return unit;
     }
 
+    public void setUnit(final String unit) {
+        this.unit = unit;
+    }
+
     public Map<String, String> getEntities() {
         return entities;
     }

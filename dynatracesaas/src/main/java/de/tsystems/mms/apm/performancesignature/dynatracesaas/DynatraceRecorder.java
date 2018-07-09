@@ -47,6 +47,7 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.Timeseries.AggregationEnum;
@@ -86,43 +87,62 @@ public class DynatraceRecorder extends Recorder implements SimpleBuildStep {
             ChartDashlet chartDashlet = new ChartDashlet();
             chartDashlet.setName(tm.getDetailedSource() + " - " + tm.getDisplayName());
 
-            baseResult.getDataPoints().forEach((key, value) -> {
-                Measure measure = new Measure(baseResult.getEntities().get(key));
-                measure.setAggregation(baseResult.getAggregationType().getValue().toLowerCase());
-                measure.setUnit(baseResult.getUnit());
+            if (baseResult != null) {
+                baseResult.getDataPoints().forEach((key, value) -> {
+                    Map<AggregationEnum, Number> values = tm.getAggregationTypes().stream()
+                            .collect(Collectors.toMap(Function.identity(),
+                                    aggregation -> serverConnection.getTotalTimeseriesData(metric.getMetricId(), start, end, aggregation)
+                                            .getDataPoints().get(key).entrySet().iterator().next().getValue(),
+                                    (a, b) -> b, LinkedHashMap::new));
 
-                Map<AggregationEnum, Number> values = tm.getAggregationTypes().stream()
-                        .collect(Collectors.toMap(aggregation -> aggregation,
-                                aggregation -> serverConnection.getTotalTimeseriesData(metric.getMetricId(), start, end, aggregation)
-                                        .getDataPoints().get(key).entrySet().iterator().next().getValue(),
-                                (a, b) -> b, LinkedHashMap::new));
+                    Measure measure = new Measure(baseResult.getEntities().get(key));
+                    measure.setAggregation(baseResult.getAggregationType().getValue().toLowerCase());
+                    measure.setUnit(caluclateUnit(baseResult, values));
 
-                measure.setAvg(values.get(AggregationEnum.AVG) != null ? values.get(AggregationEnum.AVG).doubleValue() : 0);
-                measure.setMin(values.get(AggregationEnum.MIN) != null ? values.get(AggregationEnum.MIN).doubleValue() : 0);
-                measure.setMax(values.get(AggregationEnum.MAX) != null ? values.get(AggregationEnum.MAX).doubleValue() : 0);
-                measure.setSum(values.get(AggregationEnum.SUM) != null ? values.get(AggregationEnum.SUM).doubleValue() : 0);
-                measure.setCount(values.get(AggregationEnum.COUNT) != null ? values.get(AggregationEnum.COUNT).longValue() : 0);
+                    measure.setAvg(getTotalValues(baseResult, values, AggregationEnum.AVG));
+                    measure.setMin(getTotalValues(baseResult, values, AggregationEnum.MIN));
+                    measure.setMax(getTotalValues(baseResult, values, AggregationEnum.MAX));
+                    measure.setSum(getTotalValues(baseResult, values, AggregationEnum.SUM));
+                    measure.setCount(getTotalValues(baseResult, values, AggregationEnum.COUNT));
 
-                value.entrySet().stream()
-                        .filter(entry -> entry != null && entry.getValue() != null)
-                        .forEach(entry -> {
-                            long timestamp = entry.getKey();
-                            Measurement m = new Measurement(timestamp,
-                                    entry.getKey(),
-                                    //getAggregationValue(baseResult, aggregations, AggregationEnum.AVG, key, timestamp),
-                                    getAggregationValue(baseResult, aggregations, AggregationEnum.MIN, key, timestamp),
-                                    getAggregationValue(baseResult, aggregations, AggregationEnum.MAX, key, timestamp),
-                                    getAggregationValue(baseResult, aggregations, AggregationEnum.SUM, key, timestamp),
-                                    getAggregationValue(baseResult, aggregations, AggregationEnum.COUNT, key, timestamp));
+                    value.entrySet().stream()
+                            .filter(entry -> entry != null && entry.getValue() != null)
+                            .forEach(entry -> {
+                                long timestamp = entry.getKey();
+                                Measurement m = new Measurement(timestamp,
+                                        getAggregationValue(baseResult, aggregations, AggregationEnum.AVG, key, timestamp),
+                                        getAggregationValue(baseResult, aggregations, AggregationEnum.MIN, key, timestamp),
+                                        getAggregationValue(baseResult, aggregations, AggregationEnum.MAX, key, timestamp),
+                                        getAggregationValue(baseResult, aggregations, AggregationEnum.SUM, key, timestamp),
+                                        getAggregationValue(baseResult, aggregations, AggregationEnum.COUNT, key, timestamp));
 
-                            measure.getMeasurements().add(m);
-                        });
-                chartDashlet.getMeasures().add(measure);
-            });
+                                measure.getMeasurements().add(m);
+                            });
+                    chartDashlet.getMeasures().add(measure);
+                });
+            }
             dashboardReport.addChartDashlet(chartDashlet);
         }
         PerfSigBuildAction action = new PerfSigBuildAction(Collections.singletonList(dashboardReport));
         run.addAction(action);
+    }
+
+    private String caluclateUnit(Result baseResult, Map<AggregationEnum, Number> values) {
+        if (baseResult.getUnit().equals("Byte (B)")) {
+            String tmp = DynatraceUtils.humanReadableByteCount(values.get(AggregationEnum.MAX).doubleValue(), false);
+            return tmp.substring(tmp.length() - 3, tmp.length());
+        }
+        return baseResult.getUnit();
+    }
+
+    private Number getTotalValues(Result baseResult, Map<AggregationEnum, Number> values, AggregationEnum aggregation) {
+        if (values.get(aggregation) == null) return 0;
+        if (baseResult.getUnit().equals("Byte (B)")) {
+            String tmp = DynatraceUtils.humanReadableByteCount(values.get(aggregation).doubleValue(), false);
+            return Double.valueOf(tmp.substring(0, tmp.length() - 3));
+        } else {
+            return values.get(aggregation).doubleValue();
+        }
     }
 
     private Number getAggregationValue(Result result, Map<AggregationEnum, Result> aggregations, AggregationEnum aggregation, String key, long timestamp) {

@@ -16,8 +16,8 @@
 
 package de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.auth;
 
-import com.squareup.okhttp.Credentials;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.Pair;
+import okhttp3.Credentials;
 
 import java.util.List;
 import java.util.Map;

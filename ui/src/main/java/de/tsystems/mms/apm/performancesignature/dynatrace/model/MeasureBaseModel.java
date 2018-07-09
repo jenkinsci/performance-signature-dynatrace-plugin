@@ -52,8 +52,8 @@ public abstract class MeasureBaseModel {
         return avg;
     }
 
-    public void setAvg(double avg) {
-        this.avg = avg;
+    public void setAvg(Number avg) {
+        this.avg = avg.doubleValue();
     }
 
     /**
@@ -64,8 +64,8 @@ public abstract class MeasureBaseModel {
         return min;
     }
 
-    public void setMin(double min) {
-        this.min = min;
+    public void setMin(Number min) {
+        this.min = min.doubleValue();
     }
 
     /**
@@ -76,8 +76,8 @@ public abstract class MeasureBaseModel {
         return max;
     }
 
-    public void setMax(double max) {
-        this.max = max;
+    public void setMax(Number max) {
+        this.max = max.doubleValue();
     }
 
     /**
@@ -88,8 +88,8 @@ public abstract class MeasureBaseModel {
         return sum;
     }
 
-    public void setSum(double sum) {
-        this.sum = sum;
+    public void setSum(Number sum) {
+        this.sum = sum.doubleValue();
     }
 
     /**
@@ -103,8 +103,8 @@ public abstract class MeasureBaseModel {
         return count;
     }
 
-    public void setCount(long count) {
-        this.count = count;
+    public void setCount(Number count) {
+        this.count = count.longValue();
     }
 
     /**
