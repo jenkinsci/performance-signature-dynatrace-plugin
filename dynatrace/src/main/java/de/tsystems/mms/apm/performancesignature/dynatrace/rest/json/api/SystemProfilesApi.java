@@ -17,7 +17,6 @@
 package de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.api;
 
 import com.google.gson.reflect.TypeToken;
-import com.squareup.okhttp.Call;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.ApiClient;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.ApiException;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.ApiResponse;
@@ -27,6 +26,7 @@ import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model.System
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model.SystemProfileConfigurations;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model.SystemProfiles;
 import de.tsystems.mms.apm.performancesignature.dynatrace.util.PerfSigUtils;
+import okhttp3.Call;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;

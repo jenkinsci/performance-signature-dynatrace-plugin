@@ -43,7 +43,6 @@ import java.net.Proxy;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 public class DTServerConnection {
@@ -69,7 +68,7 @@ public class DTServerConnection {
         apiClient.setUsername(pair.getCredentials().getUsername());
         apiClient.setPassword(pair.getCredentials().getPassword().getPlainText());
         //apiClient.setDebugging(true);
-        apiClient.getHttpClient().setReadTimeout(readTimeout == 0 ? DescriptorImpl.defaultReadTimeout : readTimeout, TimeUnit.SECONDS);
+        apiClient.setReadTimeout(readTimeout == 0 ? DescriptorImpl.defaultReadTimeout : readTimeout);
 
         Proxy proxy = Proxy.NO_PROXY;
         ProxyConfiguration proxyConfig = Jenkins.getInstance().proxy;
@@ -87,7 +86,7 @@ public class DTServerConnection {
                 });
             }
         }
-        apiClient.getHttpClient().setProxy(proxy);
+        apiClient.setProxy(proxy);
     }
 
     public DynatraceServerConfiguration getConfiguration() {

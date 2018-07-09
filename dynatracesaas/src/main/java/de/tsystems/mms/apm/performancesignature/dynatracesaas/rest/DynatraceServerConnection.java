@@ -65,7 +65,7 @@ public class DynatraceServerConnection {
                 });
             }
         }
-        apiClient.getHttpClient().setProxy(proxy);
+        apiClient.setProxy(proxy);
     }
 
     public DynatraceServerConnection(final DynatraceServerConfiguration config) {

@@ -17,7 +17,6 @@
 package de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.api;
 
 import com.google.gson.reflect.TypeToken;
-import com.squareup.okhttp.Call;
 import de.tsystems.mms.apm.performancesignature.dynatrace.model.DashboardReport;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.ApiClient;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.ApiException;
@@ -28,6 +27,7 @@ import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.model.AgentLi
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.model.DashboardList;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.model.Result;
 import de.tsystems.mms.apm.performancesignature.dynatrace.util.PerfSigUtils;
+import okhttp3.Call;
 
 import javax.annotation.Nonnull;
 import java.io.File;
@@ -103,7 +103,7 @@ public class CustomXMLApi {
     }
 
     public ApiResponse<AgentList> getAgentsWithHttpInfo() throws ApiException {
-        Call call = getXmlCall("/rest/management/agents", new ArrayList<Pair>());
+        Call call = getXmlCall("/rest/management/agents", new ArrayList<>());
         Type localVarReturnType = new TypeToken<AgentList>() {
         }.getType();
         return apiClient.execute(call, localVarReturnType);
@@ -116,7 +116,7 @@ public class CustomXMLApi {
         }
         String localVarPath = String.format("/rest/management/agents/%1$s/hotsensorplacement", PerfSigUtils.escapeString(String.valueOf(agentId)));
 
-        return getXmlCall(localVarPath, new ArrayList<Pair>());
+        return getXmlCall(localVarPath, new ArrayList<>());
     }
 
     public Result hotSensorPlacement(int agentId) throws ApiException {
@@ -217,7 +217,7 @@ public class CustomXMLApi {
         String localVarPath = String.format("/rest/management/profiles/%1$s/memorydumpcreated/%2$s",
                 PerfSigUtils.escapeString(profileName), PerfSigUtils.escapeString(memoryDumpName));
 
-        return getXmlCall(localVarPath, new ArrayList<Pair>());
+        return getXmlCall(localVarPath, new ArrayList<>());
     }
 
     public Result getMemoryDumpStatus(String profileName, String memoryDumpName) throws ApiException {
@@ -302,7 +302,7 @@ public class CustomXMLApi {
         String localVarPath = String.format("/rest/management/profiles/%1$s/threaddumpcreated/%2$s",
                 PerfSigUtils.escapeString(profileName), PerfSigUtils.escapeString(threadDumpName));
 
-        return getXmlCall(localVarPath, new ArrayList<Pair>());
+        return getXmlCall(localVarPath, new ArrayList<>());
     }
 
     public Result getThreadDumpStatus(String profileName, String threadDumpName) throws ApiException {

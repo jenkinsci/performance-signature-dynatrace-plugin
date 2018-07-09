@@ -17,11 +17,11 @@
 package de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.api;
 
 import com.google.gson.reflect.TypeToken;
-import com.squareup.okhttp.Call;
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.ApiClient;
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.ApiException;
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.ApiResponse;
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.Pair;
+import okhttp3.Call;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;

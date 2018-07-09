@@ -16,19 +16,18 @@
 
 package de.tsystems.mms.apm.performancesignature.dynatracesaas.rest;
 
-import com.squareup.okhttp.*;
-import com.squareup.okhttp.internal.http.HttpMethod;
-import com.squareup.okhttp.logging.HttpLoggingInterceptor;
-import com.squareup.okhttp.logging.HttpLoggingInterceptor.Level;
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.auth.ApiKeyAuth;
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.auth.Authentication;
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.util.DynatraceUtils;
+import okhttp3.*;
+import okhttp3.internal.http.HttpMethod;
+import okhttp3.logging.HttpLoggingInterceptor;
 import okio.BufferedSink;
 import okio.Okio;
 import org.apache.commons.lang.StringUtils;
 
-import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 import javax.xml.bind.JAXBContext;
@@ -38,9 +37,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.lang.reflect.Type;
+import java.net.Proxy;
 import java.net.URLConnection;
 import java.security.GeneralSecurityException;
-import java.security.SecureRandom;
+import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.text.DateFormat;
 import java.time.LocalDate;
@@ -48,9 +48,10 @@ import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.Map.Entry;
-import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static okhttp3.logging.HttpLoggingInterceptor.Level;
 
 public class ApiClient {
     public final static String API_SUFFIX = "/api/v1";
@@ -280,14 +281,16 @@ public class ApiClient {
      */
     public ApiClient setDebugging(boolean debugging) {
         if (debugging != this.debugging) {
+            OkHttpClient.Builder builder = httpClient.newBuilder();
             if (debugging) {
                 loggingInterceptor = new HttpLoggingInterceptor();
                 loggingInterceptor.setLevel(Level.BODY);
-                httpClient.interceptors().add(loggingInterceptor);
+                builder.addInterceptor(loggingInterceptor);
             } else {
-                httpClient.interceptors().remove(loggingInterceptor);
+                builder.interceptors().remove(loggingInterceptor);
                 loggingInterceptor = null;
             }
+            httpClient = builder.build();
         }
         this.debugging = debugging;
         return this;
@@ -322,19 +325,7 @@ public class ApiClient {
      * @return Timeout in milliseconds
      */
     public int getConnectTimeout() {
-        return httpClient.getConnectTimeout();
-    }
-
-    /**
-     * Sets the connect timeout (in milliseconds).
-     * A value of 0 means no timeout, otherwise values must be between 1 and
-     *
-     * @param connectionTimeout connection timeout in milliseconds
-     * @return Api client
-     */
-    public ApiClient setConnectTimeout(int connectionTimeout) {
-        httpClient.setConnectTimeout(connectionTimeout, TimeUnit.MILLISECONDS);
-        return this;
+        return httpClient.connectTimeoutMillis();
     }
 
     /**
@@ -634,11 +625,7 @@ public class ApiClient {
                 // returning null if the returnType is not defined,
                 // or the status code is 204 (No Content)
                 if (response.body() != null) {
-                    try {
-                        response.body().close();
-                    } catch (IOException e) {
-                        throw new ApiException(response.message(), e, response.code(), response.headers().toMultimap());
-                    }
+                    response.body().close();
                 }
                 return null;
             } else {
@@ -703,10 +690,6 @@ public class ApiClient {
         RequestBody reqBody;
         if (!HttpMethod.permitsRequestBody(method)) {
             reqBody = null;
-        } else if ("application/x-www-form-urlencoded".equals(contentType)) {
-            reqBody = buildRequestBodyFormEncoding(formParams);
-        } else if ("multipart/form-data".equals(contentType)) {
-            reqBody = buildRequestBodyMultipart(formParams);
         } else if (body == null) {
             if ("DELETE".equals(method)) {
                 // allow calling DELETE without sending a request body
@@ -786,43 +769,6 @@ public class ApiClient {
     }
 
     /**
-     * Build a form-encoding request body with the given form parameters.
-     *
-     * @param formParams Form parameters in the form of Map
-     * @return RequestBody
-     */
-    public RequestBody buildRequestBodyFormEncoding(Map<String, Object> formParams) {
-        FormEncodingBuilder formBuilder = new FormEncodingBuilder();
-        for (Entry<String, Object> param : formParams.entrySet()) {
-            formBuilder.add(param.getKey(), parameterToString(param.getValue()));
-        }
-        return formBuilder.build();
-    }
-
-    /**
-     * Build a multipart (file uploading) request body with the given form parameters,
-     * which could contain text fields and file fields.
-     *
-     * @param formParams Form parameters in the form of Map
-     * @return RequestBody
-     */
-    public RequestBody buildRequestBodyMultipart(Map<String, Object> formParams) {
-        MultipartBuilder mpBuilder = new MultipartBuilder().type(MultipartBuilder.FORM);
-        for (Entry<String, Object> param : formParams.entrySet()) {
-            if (param.getValue() instanceof File) {
-                File file = (File) param.getValue();
-                Headers partHeaders = Headers.of("Content-Disposition", "form-data; name=\"" + param.getKey() + "\"; filename=\"" + file.getName() + "\"");
-                MediaType mediaType = MediaType.parse(guessContentTypeFromFile(file));
-                mpBuilder.addPart(partHeaders, RequestBody.create(mediaType, file));
-            } else {
-                Headers partHeaders = Headers.of("Content-Disposition", "form-data; name=\"" + param.getKey() + "\"");
-                mpBuilder.addPart(partHeaders, RequestBody.create(null, parameterToString(param.getValue())));
-            }
-        }
-        return mpBuilder.build();
-    }
-
-    /**
      * Guess Content-Type header from the given file (defaults to "application/octet-stream").
      *
      * @param file The given file
@@ -843,37 +789,45 @@ public class ApiClient {
      */
     private void applySslSettings() {
         try {
-            TrustManager[] trustManagers = null;
-            HostnameVerifier hostnameVerifier = null;
             if (!verifyingSsl) {
-                TrustManager trustAll = new X509TrustManager() {
-                    @Override
-                    public void checkClientTrusted(X509Certificate[] chain, String authType) {
-                    }
+                // Create a trust manager that does not validate certificate chains
+                final TrustManager[] trustAllCerts = new TrustManager[]{
+                        new X509TrustManager() {
+                            @Override
+                            public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+                            }
 
-                    @Override
-                    public void checkServerTrusted(X509Certificate[] chain, String authType) {
-                    }
+                            @Override
+                            public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+                            }
 
-                    @Override
-                    public X509Certificate[] getAcceptedIssuers() {
-                        return null;
-                    }
+                            @Override
+                            public X509Certificate[] getAcceptedIssuers() {
+                                return new X509Certificate[]{};
+                            }
+                        }
                 };
-                trustManagers = new TrustManager[]{trustAll};
-                hostnameVerifier = (hostname, session) -> true;
-            }
 
-            if (trustManagers != null) {
-                SSLContext sslContext = SSLContext.getInstance("TLSv1.2");
-                sslContext.init(null, trustManagers, new SecureRandom());
-                httpClient.setSslSocketFactory(sslContext.getSocketFactory());
-            } else {
-                httpClient.setSslSocketFactory(null);
+                // Install the all-trusting trust manager
+                final SSLContext sslContext = SSLContext.getInstance("SSL");
+                sslContext.init(null, trustAllCerts, new java.security.SecureRandom());
+                // Create an ssl socket factory with our all-trusting manager
+                final SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
+
+                OkHttpClient.Builder builder = httpClient.newBuilder();
+                builder.sslSocketFactory(sslSocketFactory, (X509TrustManager) trustAllCerts[0]);
+                builder.hostnameVerifier((hostname, session) -> true);
+                httpClient = builder.build();
             }
-            httpClient.setHostnameVerifier(hostnameVerifier);
         } catch (GeneralSecurityException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public ApiClient setProxy(Proxy proxy) {
+        OkHttpClient.Builder builder = httpClient.newBuilder();
+        builder.proxy(proxy);
+        httpClient = builder.build();
+        return this;
     }
 }

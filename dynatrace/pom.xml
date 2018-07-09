@@ -15,17 +15,17 @@
     <name>Performance Signature: Dynatrace AppMon</name>
 
     <properties>
-        <okhttp-version>2.7.5</okhttp-version>
+        <okhttp-version>3.10.0</okhttp-version>
     </properties>
 
     <dependencies>
         <dependency>
-            <groupId>com.squareup.okhttp</groupId>
+            <groupId>com.squareup.okhttp3</groupId>
             <artifactId>okhttp</artifactId>
             <version>${okhttp-version}</version>
         </dependency>
         <dependency>
-            <groupId>com.squareup.okhttp</groupId>
+            <groupId>com.squareup.okhttp3</groupId>
             <artifactId>logging-interceptor</artifactId>
             <version>${okhttp-version}</version>
         </dependency>
