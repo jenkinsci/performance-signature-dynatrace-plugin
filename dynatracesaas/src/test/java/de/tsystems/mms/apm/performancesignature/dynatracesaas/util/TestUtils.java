@@ -29,7 +29,6 @@ public class TestUtils {
                 "myApiToken", null, Secret.fromString("1TVZ_pc4S_WeY3h5cUXzd")));
         SystemCredentialsProvider.getInstance().save();
 
-
         DynatraceGlobalConfiguration.get().setConfigurations(configurations);
         Jenkins.getInstance().save();
 
@@ -41,7 +40,7 @@ public class TestUtils {
         assertTrue(containsOption(dynatraceConfigurations, "PoC PerfSig"));
 
         for (ListBoxModel.Option configuration : dynatraceConfigurations) {
-            DynatraceServerConnection connection = DynatraceUtils.createDynatraceServerConnection(configuration.name);
+            DynatraceServerConnection connection = DynatraceUtils.createDynatraceServerConnection(configuration.name, false);
             assumeTrue("assume that the server is reachable", connection.validateConnection());
         }
 

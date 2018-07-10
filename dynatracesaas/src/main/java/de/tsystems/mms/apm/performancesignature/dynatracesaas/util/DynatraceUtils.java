@@ -85,14 +85,15 @@ public final class DynatraceUtils {
         return null;
     }
 
-    public static DynatraceServerConnection createDynatraceServerConnection(final String dynatraceServer) throws AbortException, RESTErrorException {
+    public static DynatraceServerConnection createDynatraceServerConnection(final String dynatraceServer, final boolean validateConnection)
+            throws AbortException, RESTErrorException {
         DynatraceServerConfiguration serverConfiguration = DynatraceUtils.getServerConfiguration(dynatraceServer);
         if (serverConfiguration == null) {
             throw new AbortException(Messages.DynatraceRecorder_FailedToLookupServer());
         }
 
         DynatraceServerConnection serverConnection = new DynatraceServerConnection(serverConfiguration);
-        if (!serverConnection.validateConnection()) {
+        if (validateConnection && !serverConnection.validateConnection()) {
             throw new RESTErrorException(Messages.DynatraceRecorder_ConnectionError());
         }
         return serverConnection;

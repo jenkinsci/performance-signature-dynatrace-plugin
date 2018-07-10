@@ -32,7 +32,7 @@ public class TimeSeriesApiTest {
     private DynatraceServerConnection connection;
 
     public TimeSeriesApiTest() throws AbortException, RESTErrorException {
-        connection = DynatraceUtils.createDynatraceServerConnection(dynatraceConfigurations.get(0).name);
+        connection = DynatraceUtils.createDynatraceServerConnection(dynatraceConfigurations.get(0).name, false);
     }
 
     @BeforeClass
@@ -94,7 +94,7 @@ public class TimeSeriesApiTest {
 
     @Test
     public void testServerVersionViaRest() throws Exception {
-        DynatraceServerConnection connection = DynatraceUtils.createDynatraceServerConnection(dynatraceConfigurations.get(0).name);
+        DynatraceServerConnection connection = DynatraceUtils.createDynatraceServerConnection(dynatraceConfigurations.get(0).name, false);
         assertNotNull(connection.getServerVersion());
     }
 }

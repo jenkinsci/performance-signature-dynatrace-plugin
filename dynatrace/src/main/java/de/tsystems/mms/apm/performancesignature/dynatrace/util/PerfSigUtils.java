@@ -128,7 +128,8 @@ public final class PerfSigUtils {
         return createDTServerConnection(dynatraceConfiguration, true);
     }
 
-    public static DTServerConnection createDTServerConnection(final String dynatraceConfiguration, final boolean validateConnection) throws AbortException, RESTErrorException {
+    public static DTServerConnection createDTServerConnection(final String dynatraceConfiguration, final boolean validateConnection)
+            throws AbortException, RESTErrorException {
         DynatraceServerConfiguration serverConfiguration = getServerConfiguration(dynatraceConfiguration);
         if (serverConfiguration == null) {
             throw new AbortException(de.tsystems.mms.apm.performancesignature.dynatrace.Messages.PerfSigRecorder_FailedToLookupServer());

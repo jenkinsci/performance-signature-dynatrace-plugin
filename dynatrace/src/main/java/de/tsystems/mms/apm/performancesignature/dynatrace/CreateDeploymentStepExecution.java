@@ -106,6 +106,5 @@ public class CreateDeploymentStepExecution extends StepExecution {
         protected void finished(StepContext context) throws Exception {
             updateEvent();
         }
-
     }
 }
