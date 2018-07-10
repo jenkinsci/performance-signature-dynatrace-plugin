@@ -502,12 +502,7 @@ public class ApiClient {
             // File body parameter support.
             return RequestBody.create(MediaType.parse(contentType), (File) obj);
         } else if (isJsonMime(contentType)) {
-            String content;
-            if (obj != null) {
-                content = json.serialize(obj);
-            } else {
-                content = null;
-            }
+            String content = json.serialize(obj);
             return RequestBody.create(MediaType.parse(contentType), content);
         } else {
             throw new ApiException("Content type \"" + contentType + "\" is not supported");
