@@ -16,6 +16,7 @@
 
 package de.tsystems.mms.apm.performancesignature.dynatrace;
 
+import com.cloudbees.plugins.credentials.common.StandardListBoxModel;
 import de.tsystems.mms.apm.performancesignature.dynatrace.model.PerfSigTestData;
 import de.tsystems.mms.apm.performancesignature.dynatrace.model.TestRun;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.DTServerConnection;
@@ -30,12 +31,17 @@ import hudson.model.Descriptor;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.plugins.analysis.util.PluginLogger;
+import hudson.security.Permission;
 import hudson.tasks.junit.TestDataPublisher;
 import hudson.tasks.junit.TestResult;
 import hudson.tasks.junit.TestResultAction;
 import hudson.util.ListBoxModel;
+import jenkins.model.Jenkins;
 import org.apache.commons.lang.StringUtils;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.QueryParameter;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -79,7 +85,12 @@ public class PerfSigTestDataPublisher extends TestDataPublisher {
     @Extension
     public static final class PerfSigTestDataPublisherDescriptor extends Descriptor<TestDataPublisher> {
 
-        public ListBoxModel doFillDynatraceProfileItems() {
+        @Nonnull
+        @Restricted(NoExternalUse.class)
+        public ListBoxModel doFillDynatraceProfileItems(@QueryParameter final String dynatraceProfile) {
+            if (!Jenkins.getInstance().hasPermission(Permission.CONFIGURE)) {
+                return new StandardListBoxModel().includeCurrentValue(dynatraceProfile);
+            }
             return PerfSigUtils.listToListBoxModel(PerfSigUtils.getDTConfigurations());
         }
 

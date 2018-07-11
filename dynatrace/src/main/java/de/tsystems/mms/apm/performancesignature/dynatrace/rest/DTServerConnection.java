@@ -65,8 +65,7 @@ public class DTServerConnection {
         this.apiClient = new ApiClient();
         apiClient.setVerifyingSsl(verifyCertificate);
         apiClient.setBasePath(serverUrl);
-        apiClient.setUsername(pair.getCredentials().getUsername());
-        apiClient.setPassword(pair.getCredentials().getPassword().getPlainText());
+        apiClient.setCredentials(pair.getCredentials());
         //apiClient.setDebugging(true);
         apiClient.setReadTimeout(readTimeout == 0 ? DescriptorImpl.defaultReadTimeout : readTimeout);
 

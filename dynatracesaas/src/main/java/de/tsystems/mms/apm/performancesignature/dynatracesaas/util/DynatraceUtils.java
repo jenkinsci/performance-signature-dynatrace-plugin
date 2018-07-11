@@ -27,12 +27,12 @@ import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.RESTErrorExce
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.Timeseries;
 import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
 import hudson.AbortException;
-import hudson.model.Item;
 import hudson.security.ACL;
 import hudson.util.ListBoxModel;
+import jenkins.model.Jenkins;
 import org.jenkinsci.plugins.plaincredentials.StringCredentials;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static com.cloudbees.plugins.credentials.CredentialsProvider.lookupCredentials;
@@ -59,13 +59,12 @@ public final class DynatraceUtils {
 
     public static String getApiToken(final String apiTokenId) {
         StandardCredentials credentials = CredentialsMatchers.firstOrNull(
-                lookupCredentials(StandardCredentials.class, (Item) null, ACL.SYSTEM, new ArrayList<>()),
+                lookupCredentials(StandardCredentials.class, Jenkins.getInstance(), ACL.SYSTEM, Collections.emptyList()),
                 CredentialsMatchers.withId(apiTokenId));
         if (credentials != null) {
             if (credentials instanceof DynatraceApiToken) {
                 return ((DynatraceApiToken) credentials).getApiToken().getPlainText();
-            }
-            if (credentials instanceof StringCredentials) {
+            } else if (credentials instanceof StringCredentials) {
                 return ((StringCredentials) credentials).getSecret().getPlainText();
             }
         }
@@ -77,12 +76,9 @@ public final class DynatraceUtils {
     }
 
     public static DynatraceServerConfiguration getServerConfiguration(final String dynatraceServer) {
-        for (DynatraceServerConfiguration serverConfiguration : getDynatraceConfigurations()) {
-            if (dynatraceServer.equals(serverConfiguration.getName())) {
-                return serverConfiguration;
-            }
-        }
-        return null;
+        return getDynatraceConfigurations().stream()
+                .filter(serverConfiguration -> dynatraceServer.equals(serverConfiguration.getName()))
+                .findFirst().orElse(null);
     }
 
     public static DynatraceServerConnection createDynatraceServerConnection(final String dynatraceServer, final boolean validateConnection)

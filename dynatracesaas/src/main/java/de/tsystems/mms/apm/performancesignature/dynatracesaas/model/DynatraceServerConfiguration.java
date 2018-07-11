@@ -29,9 +29,13 @@ import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
 import jenkins.model.Jenkins;
 import org.apache.commons.lang.StringUtils;
+import org.jenkinsci.plugins.plaincredentials.StringCredentials;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 
+import javax.annotation.Nonnull;
 import java.util.Collections;
 
 public class DynatraceServerConfiguration extends AbstractDescribableImpl<DynatraceServerConfiguration> {
@@ -82,19 +86,25 @@ public class DynatraceServerConfiguration extends AbstractDescribableImpl<Dynatr
             return "";
         }
 
+        @Nonnull
+        @Restricted(NoExternalUse.class)
         public ListBoxModel doFillApiTokenIdItems(@QueryParameter String name, @QueryParameter String url) {
             if (Jenkins.getInstance().hasPermission(Jenkins.ADMINISTER)) {
                 return new StandardListBoxModel()
                         .includeEmptyValue()
-                        .includeMatchingAs(ACL.SYSTEM,
+                        .includeMatchingAs(
+                                ACL.SYSTEM,
                                 Jenkins.getInstance(),
                                 StandardCredentials.class,
                                 Collections.emptyList(),
-                                CredentialsMatchers.always());
+                                CredentialsMatchers.anyOf(
+                                        CredentialsMatchers.instanceOf(DynatraceApiToken.class),
+                                        CredentialsMatchers.instanceOf(StringCredentials.class)));
             }
             return new StandardListBoxModel();
         }
 
+        @Restricted(NoExternalUse.class)
         public FormValidation doCheckApiTokenId(@QueryParameter String value) {
             if (StringUtils.isBlank(value)) {
                 return FormValidation.error("API Token for Dynatrace access required");
@@ -103,6 +113,16 @@ public class DynatraceServerConfiguration extends AbstractDescribableImpl<Dynatr
             }
         }
 
+        @Restricted(NoExternalUse.class)
+        public FormValidation doCheckServerUrl(@QueryParameter final String serverUrl) {
+            if (PerfSigUIUtils.checkNotNullOrEmpty(serverUrl)) {
+                return FormValidation.ok();
+            } else {
+                return FormValidation.error(Messages.DynatraceServerConfiguration_ServerNotValid());
+            }
+        }
+
+        @Restricted(NoExternalUse.class)
         public FormValidation doTestServerConnection(@QueryParameter final String serverUrl, @QueryParameter final String apiTokenId,
                                                      @QueryParameter final boolean verifyCertificate, @QueryParameter final boolean useProxy) {
 
@@ -112,14 +132,6 @@ public class DynatraceServerConfiguration extends AbstractDescribableImpl<Dynatr
                 return FormValidation.ok(Messages.CredJobPair_TestConnectionSuccessful());
             } else {
                 return FormValidation.error(Messages.CredJobPair_TestConnectionNotSuccessful());
-            }
-        }
-
-        public FormValidation doCheckServerUrl(@QueryParameter final String serverUrl) {
-            if (PerfSigUIUtils.checkNotNullOrEmpty(serverUrl)) {
-                return FormValidation.ok();
-            } else {
-                return FormValidation.error(Messages.DynatraceServerConfiguration_ServerNotValid());
             }
         }
     }

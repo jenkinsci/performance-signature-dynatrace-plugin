@@ -16,6 +16,7 @@
 
 package de.tsystems.mms.apm.performancesignature.dynatrace;
 
+import com.cloudbees.plugins.credentials.common.StandardListBoxModel;
 import de.tsystems.mms.apm.performancesignature.dynatrace.configuration.CredProfilePair;
 import de.tsystems.mms.apm.performancesignature.dynatrace.configuration.GenericTestCase;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.DTServerConnection;
@@ -30,6 +31,7 @@ import hudson.model.Failure;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.plugins.analysis.util.PluginLogger;
+import hudson.security.Permission;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
 import hudson.util.FormValidation;
@@ -156,9 +158,12 @@ public class PerfSigStartRecording extends Builder implements SimpleBuildStep {
             }
         }
 
-        @Restricted(NoExternalUse.class)
         @Nonnull
-        public ListBoxModel doFillDynatraceProfileItems() {
+        @Restricted(NoExternalUse.class)
+        public ListBoxModel doFillDynatraceProfileItems(@QueryParameter final String dynatraceProfile) {
+            if (!Jenkins.getInstance().hasPermission(Permission.CONFIGURE)) {
+                return new StandardListBoxModel().includeCurrentValue(dynatraceProfile);
+            }
             return PerfSigUtils.listToListBoxModel(PerfSigUtils.getDTConfigurations());
         }
 

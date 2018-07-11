@@ -16,15 +16,22 @@
 
 package de.tsystems.mms.apm.performancesignature.dynatrace.configuration;
 
+import com.cloudbees.plugins.credentials.common.StandardListBoxModel;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.DTServerConnection;
 import de.tsystems.mms.apm.performancesignature.dynatrace.util.PerfSigUtils;
 import hudson.Extension;
 import hudson.RelativePath;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
+import hudson.security.Permission;
 import hudson.util.ListBoxModel;
+import jenkins.model.Jenkins;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
+
+import javax.annotation.Nonnull;
 
 public class Dashboard extends AbstractDescribableImpl<Dashboard> {
     private final String name;
@@ -44,12 +51,20 @@ public class Dashboard extends AbstractDescribableImpl<Dashboard> {
 
     @Extension
     public static class DescriptorImpl extends Descriptor<Dashboard> {
+        @Nonnull
         @Override
         public String getDisplayName() {
             return "";
         }
 
-        public ListBoxModel doFillDashboardItems(@RelativePath("../..") @QueryParameter final String dynatraceProfile) {
+        @Nonnull
+        @Restricted(NoExternalUse.class)
+        public ListBoxModel doFillDashboardItems(@RelativePath("../..") @QueryParameter final String dynatraceProfile,
+                                                 @QueryParameter final String dashboard) {
+            if (!Jenkins.getInstance().hasPermission(Permission.CONFIGURE)) {
+                return new StandardListBoxModel().includeCurrentValue(dashboard);
+            }
+
             DynatraceServerConfiguration serverConfiguration = PerfSigUtils.getServerConfiguration(dynatraceProfile);
             if (serverConfiguration != null) {
                 CredProfilePair pair = serverConfiguration.getCredProfilePair(dynatraceProfile);
@@ -58,7 +73,7 @@ public class Dashboard extends AbstractDescribableImpl<Dashboard> {
                     return PerfSigUtils.listToListBoxModel(connection.getDashboards());
                 }
             }
-            return null;
+            return new ListBoxModel();
         }
     }
 }

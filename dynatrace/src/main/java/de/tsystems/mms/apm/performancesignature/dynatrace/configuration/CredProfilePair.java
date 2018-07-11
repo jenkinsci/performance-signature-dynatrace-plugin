@@ -17,7 +17,6 @@
 package de.tsystems.mms.apm.performancesignature.dynatrace.configuration;
 
 import com.cloudbees.plugins.credentials.CredentialsMatchers;
-import com.cloudbees.plugins.credentials.CredentialsProvider;
 import com.cloudbees.plugins.credentials.common.StandardListBoxModel;
 import com.cloudbees.plugins.credentials.common.StandardUsernameListBoxModel;
 import com.cloudbees.plugins.credentials.common.StandardUsernamePasswordCredentials;
@@ -67,13 +66,14 @@ public class CredProfilePair extends AbstractDescribableImpl<CredProfilePair> {
 
     @Extension
     public static class DescriptorImpl extends Descriptor<CredProfilePair> {
+        @Nonnull
         @Override
         public String getDisplayName() {
             return "";
         }
 
-        @Restricted(NoExternalUse.class)
         @Nonnull
+        @Restricted(NoExternalUse.class)
         public ListBoxModel doFillCredentialsIdItems(@QueryParameter String credentialsId) {
             if (!Jenkins.getInstance().hasPermission(Jenkins.ADMINISTER)) {
                 return new StandardListBoxModel().includeCurrentValue(credentialsId);
@@ -85,31 +85,17 @@ public class CredProfilePair extends AbstractDescribableImpl<CredProfilePair> {
                             Jenkins.getInstance(),
                             StandardUsernamePasswordCredentials.class,
                             Collections.emptyList(),
-                            CredentialsMatchers.always())
+                            CredentialsMatchers.instanceOf(StandardUsernamePasswordCredentials.class))
                     .includeCurrentValue(credentialsId);
         }
 
-        @Restricted(NoExternalUse.class)
-        public FormValidation doCheckCredentialsId(@QueryParameter String value) {
-            if (!Jenkins.getInstance().hasPermission(Jenkins.ADMINISTER)) {
-                return FormValidation.ok();
-            }
-            for (ListBoxModel.Option o : CredentialsProvider.listCredentials(StandardUsernamePasswordCredentials.class,
-                    Jenkins.getInstance(),
-                    ACL.SYSTEM,
-                    Collections.emptyList(),
-                    CredentialsMatchers.always())) {
-                if (StringUtils.equals(value, o.value)) {
-                    return FormValidation.ok();
-                }
-            }
-            return FormValidation.error("The selected credentials cannot be found");
-        }
-
-        @Restricted(NoExternalUse.class)
         @Nonnull
+        @Restricted(NoExternalUse.class)
         public ListBoxModel doFillProfileItems(@RelativePath("..") @QueryParameter final String serverUrl, @QueryParameter final String credentialsId,
                                                @RelativePath("..") @QueryParameter final boolean verifyCertificate, @RelativePath("..") @QueryParameter final boolean useProxy) {
+            if (!Jenkins.getInstance().hasPermission(Jenkins.ADMINISTER)) {
+                return new StandardListBoxModel().includeCurrentValue(credentialsId);
+            }
 
             if (StringUtils.isBlank(serverUrl) || StringUtils.isBlank(credentialsId)) {
                 return new StandardListBoxModel().includeEmptyValue();

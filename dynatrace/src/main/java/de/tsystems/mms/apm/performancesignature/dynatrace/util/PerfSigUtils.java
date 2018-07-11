@@ -22,6 +22,7 @@ import com.cloudbees.plugins.credentials.common.UsernamePasswordCredentials;
 import de.tsystems.mms.apm.performancesignature.dynatrace.PerfSigGlobalConfiguration;
 import de.tsystems.mms.apm.performancesignature.dynatrace.configuration.CredProfilePair;
 import de.tsystems.mms.apm.performancesignature.dynatrace.configuration.DynatraceServerConfiguration;
+import de.tsystems.mms.apm.performancesignature.dynatrace.model.BaseReference;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.DTServerConnection;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.ApiResponse;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.RESTErrorException;
@@ -35,6 +36,7 @@ import jenkins.model.Jenkins;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.CharEncoding;
 
+import javax.annotation.CheckForNull;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Collections;
@@ -52,6 +54,8 @@ public final class PerfSigUtils {
                 listBoxModel.add((String) item);
             } else if (item instanceof Dashboard) {
                 listBoxModel.add(((Dashboard) item).getId());
+            } else if (item instanceof BaseReference) {
+                listBoxModel.add(((BaseReference) item).getId());
             } else if (item instanceof Agent) {
                 listBoxModel.add(((Agent) item).getName());
             } else if (item instanceof DynatraceServerConfiguration) {
@@ -78,15 +82,12 @@ public final class PerfSigUtils {
     }
 
     public static DynatraceServerConfiguration getServerConfiguration(final String dynatraceServer) {
-        for (DynatraceServerConfiguration serverConfiguration : getDTConfigurations()) {
-            String strippedName = dynatraceServer.replaceAll(".*@", "").trim();
-            if (strippedName.equals(serverConfiguration.getName())) {
-                return serverConfiguration;
-            }
-        }
-        return null;
+        return getDTConfigurations().stream()
+                .filter(serverConfiguration -> dynatraceServer.replaceAll(".*@", "").trim().equals(serverConfiguration.getName()))
+                .findFirst().orElse(null);
     }
 
+    @CheckForNull
     public static UsernamePasswordCredentials getCredentials(final String credsId) {
         return (credsId == null) ? null : CredentialsMatchers.firstOrNull(
                 CredentialsProvider.lookupCredentials(UsernamePasswordCredentials.class, Jenkins.getInstance(), ACL.SYSTEM,
@@ -113,11 +114,9 @@ public final class PerfSigUtils {
                 DTServerConnection connection = new DTServerConnection(serverConfiguration, pair);
                 List<Agent> agents = connection.getAgents();
                 ListBoxModel hosts = new ListBoxModel();
-                for (Agent a : agents) {
-                    if (a.getName().equals(agent)) {
-                        hosts.add(a.getHost());
-                    }
-                }
+                agents.stream()
+                        .filter(a -> a.getName().equals(agent))
+                        .map(Agent::getHost).forEach(hosts::add);
                 return hosts;
             }
         }

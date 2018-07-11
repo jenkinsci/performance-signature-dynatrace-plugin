@@ -57,7 +57,7 @@ public class MemoryDumpTest {
     @Test
     public void testFillAgentItems() {
         PerfSigMemoryDump.DescriptorImpl descriptor = new PerfSigMemoryDump.DescriptorImpl();
-        ListBoxModel listBoxModel = descriptor.doFillAgentItems(dynatraceConfigurations.get(0).name);
+        ListBoxModel listBoxModel = descriptor.doFillAgentItems(dynatraceConfigurations.get(0).name, "agent");
 
         assertFalse(listBoxModel.isEmpty());
         assertTrue(TestUtils.containsOption(listBoxModel, "BusinessBackend_easyTravel"));
@@ -67,7 +67,7 @@ public class MemoryDumpTest {
     @Test
     public void testFillHostItems() {
         PerfSigMemoryDump.DescriptorImpl descriptor = new PerfSigMemoryDump.DescriptorImpl();
-        ListBoxModel listBoxModel = descriptor.doFillHostItems(dynatraceConfigurations.get(0).name, "CreditCardAuthorization_easyTravel");
+        ListBoxModel listBoxModel = descriptor.doFillHostItems(dynatraceConfigurations.get(0).name, "CreditCardAuthorization_easyTravel", "host");
 
         assertFalse(listBoxModel.isEmpty());
         assertTrue(TestUtils.containsOption(listBoxModel, "wum192202"));

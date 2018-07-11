@@ -53,7 +53,7 @@ public class ActivateConfigurationTest {
     @Test
     public void testFillConfigurationItems() {
         PerfSigActivateConfiguration.DescriptorImpl descriptor = new PerfSigActivateConfiguration.DescriptorImpl();
-        ListBoxModel listBoxModel = descriptor.doFillConfigurationItems(dynatraceConfigurations.get(0).name);
+        ListBoxModel listBoxModel = descriptor.doFillConfigurationItems(dynatraceConfigurations.get(0).name, "test");
 
         assertNotNull(listBoxModel);
         assertFalse(listBoxModel.isEmpty());

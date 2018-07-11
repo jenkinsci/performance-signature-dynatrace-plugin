@@ -20,6 +20,7 @@ import hudson.Extension;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 public class UnitTestCase extends ConfigurationTestCase {
@@ -37,6 +38,7 @@ public class UnitTestCase extends ConfigurationTestCase {
 
     @Extension
     public static final class DescriptorImpl extends ConfigurationTestCaseDescriptor {
+        @Nonnull
         @Override
         public String getDisplayName() {
             return Messages.UnitTestCase_DisplayName();

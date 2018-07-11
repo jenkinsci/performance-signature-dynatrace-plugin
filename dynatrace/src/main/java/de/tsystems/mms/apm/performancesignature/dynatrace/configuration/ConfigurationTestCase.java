@@ -24,6 +24,8 @@ import hudson.model.Descriptor;
 import hudson.util.ListBoxModel;
 import jenkins.model.Jenkins;
 import org.apache.commons.lang.StringUtils;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
 import org.kohsuke.stapler.QueryParameter;
 
 import javax.annotation.Nonnull;
@@ -103,14 +105,16 @@ public abstract class ConfigurationTestCase implements Describable<Configuration
             return Jenkins.getInstance().getDescriptorList(ConfigurationTestCase.class);
         }
 
+        @Nonnull
+        @Restricted(NoExternalUse.class)
         public ListBoxModel doFillNameItems() {
             final ListBoxModel out = new ListBoxModel();
-            for (String s : testCases) {
-                out.add(s);
-            }
+            testCases.forEach(out::add);
             return out;
         }
 
+        @Nonnull
+        @Restricted(NoExternalUse.class)
         public ListBoxModel doFillClientDashboardItems() {
             ListBoxModel out = new ListBoxModel();
             out.add(ClientLinkGenerator.LOADTEST_OVERVIEW)
@@ -119,8 +123,11 @@ public abstract class ConfigurationTestCase implements Describable<Configuration
             return out;
         }
 
-        public ListBoxModel doFillXmlDashboardItems(@RelativePath("..") @QueryParameter final String dynatraceProfile) {
-            return new Dashboard.DescriptorImpl().doFillDashboardItems(dynatraceProfile);
+        @Nonnull
+        @Restricted(NoExternalUse.class)
+        public ListBoxModel doFillXmlDashboardItems(@RelativePath("..") @QueryParameter final String dynatraceProfile,
+                                                    @QueryParameter final String xmlDashboard) {
+            return new Dashboard.DescriptorImpl().doFillDashboardItems(dynatraceProfile, xmlDashboard);
         }
     }
 }

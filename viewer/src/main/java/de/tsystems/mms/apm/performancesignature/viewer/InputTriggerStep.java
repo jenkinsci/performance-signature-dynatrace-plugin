@@ -35,6 +35,7 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
 
+import javax.annotation.Nonnull;
 import java.util.Set;
 
 public class InputTriggerStep extends Step {
@@ -75,6 +76,7 @@ public class InputTriggerStep extends Step {
             }
         }
 
+        @Nonnull
         @Override
         public String getDisplayName() {
             return Messages.InputTriggerStep_DisplayName();

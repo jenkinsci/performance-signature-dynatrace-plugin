@@ -40,7 +40,6 @@ import java.lang.reflect.Type;
 import java.net.Proxy;
 import java.net.URLConnection;
 import java.security.GeneralSecurityException;
-import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.text.DateFormat;
 import java.time.LocalDate;
@@ -54,7 +53,7 @@ import java.util.regex.Pattern;
 import static okhttp3.logging.HttpLoggingInterceptor.Level;
 
 public class ApiClient {
-    public final static String API_SUFFIX = "/api/v1";
+    public static final String API_SUFFIX = "/api/v1";
     private final Map<String, String> defaultHeaderMap = new HashMap<>();
     private String basePath = "https://localhost" + API_SUFFIX;
     private boolean debugging = false;
@@ -789,11 +788,11 @@ public class ApiClient {
                 final TrustManager[] trustAllCerts = new TrustManager[]{
                         new X509TrustManager() {
                             @Override
-                            public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+                            public void checkClientTrusted(X509Certificate[] chain, String authType) {
                             }
 
                             @Override
-                            public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+                            public void checkServerTrusted(X509Certificate[] chain, String authType) {
                             }
 
                             @Override
@@ -804,7 +803,7 @@ public class ApiClient {
                 };
 
                 // Install the all-trusting trust manager
-                final SSLContext sslContext = SSLContext.getInstance("SSL");
+                final SSLContext sslContext = SSLContext.getInstance("TLSv1.2");
                 sslContext.init(null, trustAllCerts, new java.security.SecureRandom());
                 // Create an ssl socket factory with our all-trusting manager
                 final SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();

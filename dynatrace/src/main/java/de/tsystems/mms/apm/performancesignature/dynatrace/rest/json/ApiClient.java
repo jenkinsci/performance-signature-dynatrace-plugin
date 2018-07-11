@@ -16,6 +16,7 @@
 
 package de.tsystems.mms.apm.performancesignature.dynatrace.rest.json;
 
+import com.cloudbees.plugins.credentials.common.UsernamePasswordCredentials;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.auth.Authentication;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.auth.HttpBasicAuth;
 import de.tsystems.mms.apm.performancesignature.dynatrace.util.PerfSigUtils;
@@ -40,7 +41,6 @@ import java.io.StringReader;
 import java.lang.reflect.Type;
 import java.net.Proxy;
 import java.security.GeneralSecurityException;
-import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.text.DateFormat;
 import java.time.LocalDate;
@@ -216,7 +216,7 @@ public class ApiClient {
      *
      * @param username Username
      */
-    public void setUsername(String username) {
+    public void setUsername(final String username) {
         for (Authentication auth : authentications.values()) {
             if (auth instanceof HttpBasicAuth) {
                 ((HttpBasicAuth) auth).setUsername(username);
@@ -231,7 +231,7 @@ public class ApiClient {
      *
      * @param password Password
      */
-    public void setPassword(String password) {
+    public void setPassword(final String password) {
         for (Authentication auth : authentications.values()) {
             if (auth instanceof HttpBasicAuth) {
                 ((HttpBasicAuth) auth).setPassword(password);
@@ -239,6 +239,11 @@ public class ApiClient {
             }
         }
         throw new RuntimeException("No HTTP basic authentication configured!");
+    }
+
+    public void setCredentials(final UsernamePasswordCredentials creds) {
+        setUsername(creds.getUsername());
+        setPassword(creds.getPassword().getPlainText());
     }
 
     /**
@@ -818,11 +823,11 @@ public class ApiClient {
                 final TrustManager[] trustAllCerts = new TrustManager[]{
                         new X509TrustManager() {
                             @Override
-                            public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+                            public void checkClientTrusted(X509Certificate[] chain, String authType) {
                             }
 
                             @Override
-                            public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+                            public void checkServerTrusted(X509Certificate[] chain, String authType) {
                             }
 
                             @Override
