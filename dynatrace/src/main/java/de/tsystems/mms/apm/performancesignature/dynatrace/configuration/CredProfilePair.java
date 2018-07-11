@@ -78,22 +78,15 @@ public class CredProfilePair extends AbstractDescribableImpl<CredProfilePair> {
         @Nonnull
         @Restricted(NoExternalUse.class)
         public ListBoxModel doFillCredentialsIdItems(@AncestorInPath Item item, @QueryParameter String credentialsId) {
-            StandardListBoxModel result = new StandardListBoxModel();
-            if (item == null) {
-                if (!Jenkins.getInstance().hasPermission(Jenkins.ADMINISTER)) {
-                    return result.includeCurrentValue(credentialsId);
-                }
-            } else {
-                if (!item.hasPermission(Item.EXTENDED_READ)
-                        && !item.hasPermission(CredentialsProvider.USE_ITEM)) {
-                    return result.includeCurrentValue(credentialsId);
-                }
+            if (checkMissingPermission(item)) {
+                return new StandardListBoxModel().includeCurrentValue(credentialsId);
             }
+
             return new StandardUsernameListBoxModel()
                     .includeEmptyValue()
                     .includeMatchingAs(
                             ACL.SYSTEM,
-                            (Item) (item != null ? item : Jenkins.getInstance()),
+                            item != null ? item : (Item) Jenkins.getInstance(),
                             StandardUsernamePasswordCredentials.class,
                             Collections.emptyList(),
                             CredentialsMatchers.instanceOf(StandardUsernamePasswordCredentials.class))
@@ -108,18 +101,11 @@ public class CredProfilePair extends AbstractDescribableImpl<CredProfilePair> {
                                                @RelativePath("..") @QueryParameter final boolean verifyCertificate,
                                                @RelativePath("..") @QueryParameter final boolean useProxy) {
             ListBoxModel result = new ListBoxModel();
-            if (item == null) {
-                if (!Jenkins.getInstance().hasPermission(Jenkins.ADMINISTER)) {
-                    return result;
-                }
-            } else {
-                if (!item.hasPermission(Item.EXTENDED_READ)
-                        && !item.hasPermission(CredentialsProvider.USE_ITEM)) {
-                    return result;
-                }
+            if (checkMissingPermission(item)) {
+                return result;
             }
             if (StringUtils.isBlank(serverUrl) || StringUtils.isBlank(credentialsId)) {
-                return new ListBoxModel();
+                return result;
             }
             try {
                 CredProfilePair pair = new CredProfilePair("", credentialsId);
@@ -131,19 +117,26 @@ public class CredProfilePair extends AbstractDescribableImpl<CredProfilePair> {
         }
 
         @Restricted(NoExternalUse.class)
-        public FormValidation doCheckProfile(@QueryParameter final String profile) {
-            FormValidation validationResult;
-            if (PerfSigUIUtils.checkNotNullOrEmpty(profile)) {
-                validationResult = FormValidation.ok();
-            } else {
-                validationResult = FormValidation.error(Messages.PerfSigRecorder_DTProfileNotValid());
+        public FormValidation doCheckProfile(@AncestorInPath Item item, @QueryParameter final String profile) {
+            FormValidation validationResult = FormValidation.ok();
+            if (checkMissingPermission(item)) {
+                return validationResult;
             }
-            return validationResult;
+
+            if (PerfSigUIUtils.checkNotNullOrEmpty(profile)) {
+                return validationResult;
+            } else {
+                return FormValidation.error(Messages.PerfSigRecorder_DTProfileNotValid());
+            }
         }
 
         @Restricted(NoExternalUse.class)
-        public FormValidation doTestDynaTraceConnection(@QueryParameter final String serverUrl, @QueryParameter final String credentialsId,
+        public FormValidation doTestDynaTraceConnection(@AncestorInPath Item item,
+                                                        @QueryParameter final String serverUrl, @QueryParameter final String credentialsId,
                                                         @QueryParameter final boolean verifyCertificate, @QueryParameter final boolean useProxy) {
+            if (checkMissingPermission(item)) {
+                return FormValidation.ok();
+            }
 
             CredProfilePair pair = new CredProfilePair("", credentialsId);
             final DTServerConnection connection = new DTServerConnection(serverUrl, pair, verifyCertificate, 0, useProxy);
@@ -153,6 +146,11 @@ public class CredProfilePair extends AbstractDescribableImpl<CredProfilePair> {
             } else {
                 return FormValidation.warning(Messages.PerfSigRecorder_TestConnectionNotSuccessful());
             }
+        }
+
+        private boolean checkMissingPermission(final Item item) {
+            return item == null ? !Jenkins.getInstance().hasPermission(Jenkins.ADMINISTER) :
+                    !item.hasPermission(Item.EXTENDED_READ) && !item.hasPermission(CredentialsProvider.USE_ITEM);
         }
     }
 }

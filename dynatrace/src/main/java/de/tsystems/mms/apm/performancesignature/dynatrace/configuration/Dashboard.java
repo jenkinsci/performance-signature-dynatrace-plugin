@@ -16,18 +16,17 @@
 
 package de.tsystems.mms.apm.performancesignature.dynatrace.configuration;
 
-import com.cloudbees.plugins.credentials.common.StandardListBoxModel;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.DTServerConnection;
 import de.tsystems.mms.apm.performancesignature.dynatrace.util.PerfSigUtils;
 import hudson.Extension;
 import hudson.RelativePath;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
-import hudson.security.Permission;
+import hudson.model.Item;
 import hudson.util.ListBoxModel;
-import jenkins.model.Jenkins;
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
+import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 
@@ -59,10 +58,10 @@ public class Dashboard extends AbstractDescribableImpl<Dashboard> {
 
         @Nonnull
         @Restricted(NoExternalUse.class)
-        public ListBoxModel doFillDashboardItems(@RelativePath("../..") @QueryParameter final String dynatraceProfile,
-                                                 @QueryParameter final String dashboard) {
-            if (!Jenkins.getInstance().hasPermission(Permission.CONFIGURE)) {
-                return new StandardListBoxModel().includeCurrentValue(dashboard);
+        public ListBoxModel doFillDashboardItems(@AncestorInPath Item item,
+                                                 @RelativePath("../..") @QueryParameter final String dynatraceProfile) {
+            if (!item.hasPermission(Item.CONFIGURE) && item.hasPermission(Item.EXTENDED_READ)) {
+                return new ListBoxModel();
             }
 
             DynatraceServerConfiguration serverConfiguration = PerfSigUtils.getServerConfiguration(dynatraceProfile);

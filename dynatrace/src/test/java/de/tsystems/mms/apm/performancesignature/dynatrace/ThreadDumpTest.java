@@ -19,8 +19,10 @@ package de.tsystems.mms.apm.performancesignature.dynatrace;
 import de.tsystems.mms.apm.performancesignature.dynatrace.util.TestUtils;
 import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
+import hudson.model.Item;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
+import jenkins.model.Jenkins;
 import org.apache.commons.io.FileUtils;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
@@ -53,7 +55,7 @@ public class ThreadDumpTest {
     @Test
     public void testFillAgentItems() {
         PerfSigThreadDump.DescriptorImpl descriptor = new PerfSigThreadDump.DescriptorImpl();
-        ListBoxModel listBoxModel = descriptor.doFillAgentItems(dynatraceConfigurations.get(0).name, "agent");
+        ListBoxModel listBoxModel = descriptor.doFillAgentItems((Item) Jenkins.getInstance(), dynatraceConfigurations.get(0).name);
 
         assertFalse(listBoxModel.isEmpty());
         assertTrue(TestUtils.containsOption(listBoxModel, "BusinessBackend_easyTravel"));
@@ -63,7 +65,7 @@ public class ThreadDumpTest {
     @Test
     public void testFillHostItems() {
         PerfSigThreadDump.DescriptorImpl descriptor = new PerfSigThreadDump.DescriptorImpl();
-        ListBoxModel listBoxModel = descriptor.doFillHostItems(dynatraceConfigurations.get(0).name, "CreditCardAuthorization_easyTravel", "host");
+        ListBoxModel listBoxModel = descriptor.doFillHostItems((Item) Jenkins.getInstance(), dynatraceConfigurations.get(0).name, "CreditCardAuthorization_easyTravel");
 
         assertFalse(listBoxModel.isEmpty());
         assertTrue(TestUtils.containsOption(listBoxModel, "wum192202"));
@@ -73,15 +75,15 @@ public class ThreadDumpTest {
     public void testCheckAgent() {
         PerfSigThreadDump.DescriptorImpl descriptor = new PerfSigThreadDump.DescriptorImpl();
 
-        assertEquals(descriptor.doCheckAgent("BusinessBackend_easyTravel"), (FormValidation.ok()));
-        assertNotEquals(descriptor.doCheckHost(""), FormValidation.ok());
+        assertEquals(descriptor.doCheckAgent((Item) Jenkins.getInstance(), "BusinessBackend_easyTravel"), FormValidation.ok());
+        assertNotEquals(descriptor.doCheckHost((Item) Jenkins.getInstance(), ""), FormValidation.ok());
     }
 
     @Test
     public void testCheckHost() {
         PerfSigThreadDump.DescriptorImpl descriptor = new PerfSigThreadDump.DescriptorImpl();
 
-        assertEquals(descriptor.doCheckHost("wum192202"), (FormValidation.ok()));
-        assertNotEquals(descriptor.doCheckHost(""), FormValidation.ok());
+        assertEquals(descriptor.doCheckHost((Item) Jenkins.getInstance(), "wum192202"), (FormValidation.ok()));
+        assertNotEquals(descriptor.doCheckHost((Item) Jenkins.getInstance(), ""), FormValidation.ok());
     }
 }

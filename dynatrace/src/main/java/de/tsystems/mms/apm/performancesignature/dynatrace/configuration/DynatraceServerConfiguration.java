@@ -20,9 +20,11 @@ import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
 import hudson.Extension;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
+import hudson.model.Item;
 import hudson.util.FormValidation;
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
+import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 
@@ -106,27 +108,42 @@ public class DynatraceServerConfiguration extends AbstractDescribableImpl<Dynatr
         }
 
         @Restricted(NoExternalUse.class)
-        public FormValidation doCheckServerUrl(@QueryParameter final String serverUrl) {
+        public FormValidation doCheckServerUrl(@AncestorInPath Item item, @QueryParameter final String serverUrl) {
+            FormValidation validationResult = FormValidation.ok();
+            if (!item.hasPermission(Item.CONFIGURE) && item.hasPermission(Item.EXTENDED_READ)) {
+                return validationResult;
+            }
+
             if (PerfSigUIUtils.checkNotNullOrEmpty(serverUrl) && (serverUrl.charAt(serverUrl.length() - 1) != '/')) {
-                return FormValidation.ok();
+                return validationResult;
             } else {
                 return FormValidation.error(Messages.PerfSigRecorder_DTServerUrlNotValid());
             }
         }
 
         @Restricted(NoExternalUse.class)
-        public FormValidation doCheckDelay(@QueryParameter final String delay) {
+        public FormValidation doCheckDelay(@AncestorInPath Item item, @QueryParameter final String delay) {
+            FormValidation validationResult = FormValidation.ok();
+            if (!item.hasPermission(Item.CONFIGURE) && item.hasPermission(Item.EXTENDED_READ)) {
+                return validationResult;
+            }
+
             if (PerfSigUIUtils.checkNotEmptyAndIsNumber(delay)) {
-                return FormValidation.ok();
+                return validationResult;
             } else {
                 return FormValidation.error(Messages.PerfSigRecorder_DelayNotValid());
             }
         }
 
         @Restricted(NoExternalUse.class)
-        public FormValidation doCheckRetryCount(@QueryParameter final String retryCount) {
+        public FormValidation doCheckRetryCount(@AncestorInPath Item item, @QueryParameter final String retryCount) {
+            FormValidation validationResult = FormValidation.ok();
+            if (!item.hasPermission(Item.CONFIGURE) && item.hasPermission(Item.EXTENDED_READ)) {
+                return validationResult;
+            }
+
             if (PerfSigUIUtils.checkNotEmptyAndIsNumber(retryCount)) {
-                return FormValidation.ok();
+                return validationResult;
             } else {
                 return FormValidation.error(Messages.PerfSigRecorder_RetryCountNotValid());
             }

@@ -43,7 +43,6 @@ public class Metric extends AbstractDescribableImpl<Metric> {
             if (!item.hasPermission(Item.CONFIGURE) && item.hasPermission(Item.EXTENDED_READ)) {
                 return new ListBoxModel();
             }
-            item.checkPermission(Item.CONFIGURE);
 
             DynatraceServerConfiguration serverConfiguration = DynatraceUtils.getServerConfiguration(envId);
             if (serverConfiguration != null) {

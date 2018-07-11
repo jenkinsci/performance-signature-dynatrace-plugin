@@ -6,6 +6,8 @@ import hudson.Extension;
 import hudson.util.Secret;
 import org.kohsuke.stapler.DataBoundConstructor;
 
+import javax.annotation.Nonnull;
+
 public final class DynatraceApiTokenImpl extends BaseStandardCredentials implements DynatraceApiToken {
 
     private final Secret apiToken;
@@ -23,6 +25,7 @@ public final class DynatraceApiTokenImpl extends BaseStandardCredentials impleme
 
     @Extension
     public static class DescriptorImpl extends BaseStandardCredentialsDescriptor {
+        @Nonnull
         @Override
         public String getDisplayName() {
             return Messages.DynatraceApiToken_name();

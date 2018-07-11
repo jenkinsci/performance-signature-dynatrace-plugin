@@ -16,7 +16,6 @@
 
 package de.tsystems.mms.apm.performancesignature.dynatrace;
 
-import com.cloudbees.plugins.credentials.common.StandardListBoxModel;
 import de.tsystems.mms.apm.performancesignature.dynatrace.configuration.CredProfilePair;
 import de.tsystems.mms.apm.performancesignature.dynatrace.configuration.DynatraceServerConfiguration;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.DTServerConnection;
@@ -26,20 +25,20 @@ import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
 import hudson.model.AbstractProject;
+import hudson.model.Item;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.plugins.analysis.util.PluginLogger;
-import hudson.security.Permission;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
-import jenkins.model.Jenkins;
 import jenkins.tasks.SimpleBuildStep;
 import org.apache.commons.lang.StringUtils;
 import org.jenkinsci.Symbol;
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
+import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 
@@ -88,32 +87,36 @@ public class PerfSigActivateConfiguration extends Builder implements SimpleBuild
     @Extension
     public static final class DescriptorImpl extends BuildStepDescriptor<Builder> {
         @Restricted(NoExternalUse.class)
-        public FormValidation doCheckConfiguration(@QueryParameter final String configuration) {
-            FormValidation validationResult;
-            if (StringUtils.isNotBlank(configuration)) {
-                validationResult = FormValidation.ok();
-            } else {
-                validationResult = FormValidation.error(Messages.PerfSigActivateConfiguration_ConfigurationNotValid());
+        public FormValidation doCheckConfiguration(@AncestorInPath Item item, @QueryParameter final String configuration) {
+            FormValidation validationResult = FormValidation.ok();
+            if (!item.hasPermission(Item.CONFIGURE) && item.hasPermission(Item.EXTENDED_READ)) {
+                return validationResult;
             }
-            return validationResult;
+
+            if (StringUtils.isNotBlank(configuration)) {
+                return validationResult;
+            } else {
+                return FormValidation.error(Messages.PerfSigActivateConfiguration_ConfigurationNotValid());
+            }
         }
 
         @Nonnull
         @Restricted(NoExternalUse.class)
-        public ListBoxModel doFillDynatraceProfileItems(@QueryParameter final String dynatraceProfile) {
-            if (!Jenkins.getInstance().hasPermission(Permission.CONFIGURE)) {
-                return new StandardListBoxModel().includeCurrentValue(dynatraceProfile);
+        public ListBoxModel doFillDynatraceProfileItems(@AncestorInPath Item item) {
+            if (!item.hasPermission(Item.CONFIGURE) && item.hasPermission(Item.EXTENDED_READ)) {
+                return new ListBoxModel();
             }
             return PerfSigUtils.listToListBoxModel(PerfSigUtils.getDTConfigurations());
         }
 
         @Nonnull
         @Restricted(NoExternalUse.class)
-        public ListBoxModel doFillConfigurationItems(@QueryParameter final String dynatraceProfile,
-                                                     @QueryParameter final String configuration) {
-            if (!Jenkins.getInstance().hasPermission(Permission.CONFIGURE)) {
-                return new StandardListBoxModel().includeCurrentValue(configuration);
+        public ListBoxModel doFillConfigurationItems(@AncestorInPath Item item,
+                                                     @QueryParameter final String dynatraceProfile) {
+            if (!item.hasPermission(Item.CONFIGURE) && item.hasPermission(Item.EXTENDED_READ)) {
+                return new ListBoxModel();
             }
+
             DynatraceServerConfiguration serverConfiguration = PerfSigUtils.getServerConfiguration(dynatraceProfile);
             if (serverConfiguration != null) {
                 CredProfilePair pair = serverConfiguration.getCredProfilePair(dynatraceProfile);

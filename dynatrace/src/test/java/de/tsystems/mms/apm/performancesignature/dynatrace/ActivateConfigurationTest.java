@@ -19,8 +19,10 @@ package de.tsystems.mms.apm.performancesignature.dynatrace;
 import de.tsystems.mms.apm.performancesignature.dynatrace.util.TestUtils;
 import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
+import hudson.model.Item;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
+import jenkins.model.Jenkins;
 import org.apache.commons.io.FileUtils;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
@@ -53,7 +55,7 @@ public class ActivateConfigurationTest {
     @Test
     public void testFillConfigurationItems() {
         PerfSigActivateConfiguration.DescriptorImpl descriptor = new PerfSigActivateConfiguration.DescriptorImpl();
-        ListBoxModel listBoxModel = descriptor.doFillConfigurationItems(dynatraceConfigurations.get(0).name, "test");
+        ListBoxModel listBoxModel = descriptor.doFillConfigurationItems((Item) Jenkins.getInstance(), dynatraceConfigurations.get(0).name);
 
         assertNotNull(listBoxModel);
         assertFalse(listBoxModel.isEmpty());
@@ -65,7 +67,7 @@ public class ActivateConfigurationTest {
     public void testCheckConfiguration() {
         PerfSigActivateConfiguration.DescriptorImpl descriptor = new PerfSigActivateConfiguration.DescriptorImpl();
 
-        assertEquals(descriptor.doCheckConfiguration("Default"), (FormValidation.ok()));
-        assertEquals(descriptor.doCheckConfiguration("ActivateConfigurationTest"), (FormValidation.ok()));
+        assertEquals(descriptor.doCheckConfiguration((Item) Jenkins.getInstance(), "Default"), FormValidation.ok());
+        assertEquals(descriptor.doCheckConfiguration((Item) Jenkins.getInstance(), "ActivateConfigurationTest"), FormValidation.ok());
     }
 }

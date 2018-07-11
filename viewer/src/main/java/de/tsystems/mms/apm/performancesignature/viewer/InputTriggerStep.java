@@ -21,6 +21,7 @@ import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
+import hudson.model.Item;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.util.FormValidation;
@@ -31,6 +32,7 @@ import org.jenkinsci.plugins.workflow.steps.StepDescriptor;
 import org.jenkinsci.plugins.workflow.steps.StepExecution;
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
+import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
@@ -68,9 +70,14 @@ public class InputTriggerStep extends Step {
     @Extension
     public static final class DescriptorImpl extends StepDescriptor {
         @Restricted(NoExternalUse.class)
-        public FormValidation doCheckTriggerId(@QueryParameter("triggerId") final String value) {
+        public FormValidation doCheckTriggerId(@AncestorInPath Item item,
+                                               @QueryParameter("triggerId") final String value) {
+            FormValidation validationResult = FormValidation.ok();
+            if (!item.hasPermission(Item.CONFIGURE) && item.hasPermission(Item.EXTENDED_READ)) {
+                return validationResult;
+            }
             if (PerfSigUIUtils.checkNotNullOrEmpty(value)) {
-                return FormValidation.ok();
+                return validationResult;
             } else {
                 return FormValidation.error("empty triggerId");
             }

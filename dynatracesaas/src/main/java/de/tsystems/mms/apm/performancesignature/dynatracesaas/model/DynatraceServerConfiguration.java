@@ -17,6 +17,7 @@
 package de.tsystems.mms.apm.performancesignature.dynatracesaas.model;
 
 import com.cloudbees.plugins.credentials.CredentialsMatchers;
+import com.cloudbees.plugins.credentials.CredentialsProvider;
 import com.cloudbees.plugins.credentials.common.StandardCredentials;
 import com.cloudbees.plugins.credentials.common.StandardListBoxModel;
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.DynatraceServerConnection;
@@ -24,14 +25,15 @@ import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
 import hudson.Extension;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
+import hudson.model.Item;
 import hudson.security.ACL;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
 import jenkins.model.Jenkins;
-import org.apache.commons.lang.StringUtils;
 import org.jenkinsci.plugins.plaincredentials.StringCredentials;
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
+import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 
@@ -88,43 +90,44 @@ public class DynatraceServerConfiguration extends AbstractDescribableImpl<Dynatr
 
         @Nonnull
         @Restricted(NoExternalUse.class)
-        public ListBoxModel doFillApiTokenIdItems(@QueryParameter String name, @QueryParameter String url) {
-            if (Jenkins.getInstance().hasPermission(Jenkins.ADMINISTER)) {
-                return new StandardListBoxModel()
-                        .includeEmptyValue()
-                        .includeMatchingAs(
-                                ACL.SYSTEM,
-                                Jenkins.getInstance(),
-                                StandardCredentials.class,
-                                Collections.emptyList(),
-                                CredentialsMatchers.anyOf(
-                                        CredentialsMatchers.instanceOf(DynatraceApiToken.class),
-                                        CredentialsMatchers.instanceOf(StringCredentials.class)));
+        public ListBoxModel doFillApiTokenIdItems(@AncestorInPath Item item, @QueryParameter String credentialsId) {
+            if (checkMissingPermission(item)) {
+                return new StandardListBoxModel().includeCurrentValue(credentialsId);
             }
-            return new StandardListBoxModel();
+
+            return new StandardListBoxModel()
+                    .includeEmptyValue()
+                    .includeMatchingAs(
+                            ACL.SYSTEM,
+                            item != null ? item : (Item) Jenkins.getInstance(),
+                            StandardCredentials.class,
+                            Collections.emptyList(),
+                            CredentialsMatchers.anyOf(
+                                    CredentialsMatchers.instanceOf(DynatraceApiToken.class),
+                                    CredentialsMatchers.instanceOf(StringCredentials.class)))
+                    .includeCurrentValue(credentialsId);
         }
 
         @Restricted(NoExternalUse.class)
-        public FormValidation doCheckApiTokenId(@QueryParameter String value) {
-            if (StringUtils.isBlank(value)) {
-                return FormValidation.error("API Token for Dynatrace access required");
-            } else {
-                return FormValidation.ok();
+        public FormValidation doCheckServerUrl(@AncestorInPath Item item, @QueryParameter final String serverUrl) {
+            FormValidation validationResult = FormValidation.ok();
+            if (checkMissingPermission(item)) {
+                return validationResult;
             }
-        }
-
-        @Restricted(NoExternalUse.class)
-        public FormValidation doCheckServerUrl(@QueryParameter final String serverUrl) {
             if (PerfSigUIUtils.checkNotNullOrEmpty(serverUrl)) {
-                return FormValidation.ok();
+                return validationResult;
             } else {
                 return FormValidation.error(Messages.DynatraceServerConfiguration_ServerNotValid());
             }
         }
 
         @Restricted(NoExternalUse.class)
-        public FormValidation doTestServerConnection(@QueryParameter final String serverUrl, @QueryParameter final String apiTokenId,
+        public FormValidation doTestServerConnection(@AncestorInPath Item item,
+                                                     @QueryParameter final String serverUrl, @QueryParameter final String apiTokenId,
                                                      @QueryParameter final boolean verifyCertificate, @QueryParameter final boolean useProxy) {
+            if (checkMissingPermission(item)) {
+                return FormValidation.ok();
+            }
 
             final DynatraceServerConnection connection = new DynatraceServerConnection(serverUrl, apiTokenId, verifyCertificate, useProxy);
 
@@ -133,6 +136,11 @@ public class DynatraceServerConfiguration extends AbstractDescribableImpl<Dynatr
             } else {
                 return FormValidation.error(Messages.CredJobPair_TestConnectionNotSuccessful());
             }
+        }
+
+        private boolean checkMissingPermission(final Item item) {
+            return item == null ? !Jenkins.getInstance().hasPermission(Jenkins.ADMINISTER) :
+                    !item.hasPermission(Item.EXTENDED_READ) && !item.hasPermission(CredentialsProvider.USE_ITEM);
         }
     }
 }

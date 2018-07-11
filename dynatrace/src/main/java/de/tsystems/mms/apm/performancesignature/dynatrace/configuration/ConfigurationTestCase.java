@@ -21,11 +21,13 @@ import hudson.DescriptorExtensionList;
 import hudson.RelativePath;
 import hudson.model.Describable;
 import hudson.model.Descriptor;
+import hudson.model.Item;
 import hudson.util.ListBoxModel;
 import jenkins.model.Jenkins;
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
+import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.QueryParameter;
 
 import javax.annotation.Nonnull;
@@ -107,7 +109,11 @@ public abstract class ConfigurationTestCase implements Describable<Configuration
 
         @Nonnull
         @Restricted(NoExternalUse.class)
-        public ListBoxModel doFillNameItems() {
+        public ListBoxModel doFillNameItems(@AncestorInPath Item item) {
+            if (!item.hasPermission(Item.CONFIGURE) && item.hasPermission(Item.EXTENDED_READ)) {
+                return new ListBoxModel();
+            }
+
             final ListBoxModel out = new ListBoxModel();
             testCases.forEach(out::add);
             return out;
@@ -115,7 +121,11 @@ public abstract class ConfigurationTestCase implements Describable<Configuration
 
         @Nonnull
         @Restricted(NoExternalUse.class)
-        public ListBoxModel doFillClientDashboardItems() {
+        public ListBoxModel doFillClientDashboardItems(@AncestorInPath Item item) {
+            if (!item.hasPermission(Item.CONFIGURE) && item.hasPermission(Item.EXTENDED_READ)) {
+                return new ListBoxModel();
+            }
+
             ListBoxModel out = new ListBoxModel();
             out.add(ClientLinkGenerator.LOADTEST_OVERVIEW)
                     .add(ClientLinkGenerator.PUREPATH_OVERVIEW)
@@ -125,9 +135,12 @@ public abstract class ConfigurationTestCase implements Describable<Configuration
 
         @Nonnull
         @Restricted(NoExternalUse.class)
-        public ListBoxModel doFillXmlDashboardItems(@RelativePath("..") @QueryParameter final String dynatraceProfile,
-                                                    @QueryParameter final String xmlDashboard) {
-            return new Dashboard.DescriptorImpl().doFillDashboardItems(dynatraceProfile, xmlDashboard);
+        public ListBoxModel doFillXmlDashboardItems(@AncestorInPath Item item,
+                                                    @RelativePath("..") @QueryParameter final String dynatraceProfile) {
+            if (!item.hasPermission(Item.CONFIGURE) && item.hasPermission(Item.EXTENDED_READ)) {
+                return new ListBoxModel();
+            }
+            return new Dashboard.DescriptorImpl().doFillDashboardItems(item, dynatraceProfile);
         }
     }
 }
