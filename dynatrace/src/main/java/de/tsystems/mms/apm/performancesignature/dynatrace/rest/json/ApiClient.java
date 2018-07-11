@@ -47,7 +47,6 @@ import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -773,14 +772,12 @@ public class ApiClient {
      * @param reqBuilder   Reqeust.Builder
      */
     public void processHeaderParams(Map<String, String> headerParams, Request.Builder reqBuilder) {
-        for (Entry<String, String> param : headerParams.entrySet()) {
-            reqBuilder.header(param.getKey(), parameterToString(param.getValue()));
-        }
-        for (Entry<String, String> header : defaultHeaderMap.entrySet()) {
-            if (!headerParams.containsKey(header.getKey())) {
-                reqBuilder.header(header.getKey(), parameterToString(header.getValue()));
+        headerParams.forEach((key, value) -> reqBuilder.header(key, parameterToString(value)));
+        defaultHeaderMap.forEach((key, value) -> {
+            if (!headerParams.containsKey(key)) {
+                reqBuilder.header(key, parameterToString(value));
             }
-        }
+        });
     }
 
     /**
@@ -791,11 +788,11 @@ public class ApiClient {
      * @param headerParams Map of header parameters
      */
     public void updateParamsForAuth(String[] authNames, List<Pair> queryParams, Map<String, String> headerParams) {
-        for (String authName : authNames) {
+        Arrays.stream(authNames).forEach(authName -> {
             Authentication auth = authentications.get(authName);
             if (auth == null) throw new RuntimeException("Authentication undefined: " + authName);
             auth.applyToParams(queryParams, headerParams);
-        }
+        });
     }
 
     /**
@@ -806,9 +803,7 @@ public class ApiClient {
      */
     public RequestBody buildRequestBodyFormEncoding(Map<String, Object> formParams) {
         FormBody.Builder formBuilder = new FormBody.Builder();
-        for (Entry<String, Object> param : formParams.entrySet()) {
-            formBuilder.add(param.getKey(), parameterToString(param.getValue()));
-        }
+        formParams.forEach((key, value) -> formBuilder.add(key, parameterToString(value)));
         return formBuilder.build();
     }
 

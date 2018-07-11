@@ -158,11 +158,6 @@ public class PerfSigProjectActionTest {
     }
 
     private boolean containsDashlet(List<JSONDashlet> list, String search) {
-        for (JSONDashlet jsonDashlet : list) {
-            if (jsonDashlet.generateDashletName().equals(search)) {
-                return true;
-            }
-        }
-        return false;
+        return list.stream().anyMatch(jsonDashlet -> jsonDashlet.generateDashletName().equals(search));
     }
 }

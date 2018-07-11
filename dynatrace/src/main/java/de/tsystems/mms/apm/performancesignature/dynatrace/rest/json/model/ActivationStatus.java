@@ -26,6 +26,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 /**
  * Activation state of a resource
@@ -73,12 +74,7 @@ public class ActivationStatus {
         }
 
         public static StatusEnum fromValue(String text) {
-            for (StatusEnum b : StatusEnum.values()) {
-                if (String.valueOf(b.value).equals(text)) {
-                    return b;
-                }
-            }
-            return null;
+            return Arrays.stream(StatusEnum.values()).filter(b -> String.valueOf(b.value).equals(text)).findFirst().orElse(null);
         }
 
         public String getValue() {

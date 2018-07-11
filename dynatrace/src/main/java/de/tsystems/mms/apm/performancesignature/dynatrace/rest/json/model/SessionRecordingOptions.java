@@ -25,6 +25,7 @@ import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 /**
  * SessionRecordingOptions
@@ -129,12 +130,7 @@ public class SessionRecordingOptions {
         }
 
         public static RecordingoptionEnum fromValue(String text) {
-            for (RecordingoptionEnum b : RecordingoptionEnum.values()) {
-                if (String.valueOf(b.value).equals(text)) {
-                    return b;
-                }
-            }
-            return null;
+            return Arrays.stream(RecordingoptionEnum.values()).filter(b -> String.valueOf(b.value).equals(text)).findFirst().orElse(null);
         }
 
         public String getValue() {

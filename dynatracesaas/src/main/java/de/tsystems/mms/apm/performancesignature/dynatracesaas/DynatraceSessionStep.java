@@ -14,12 +14,30 @@ import org.jenkinsci.plugins.workflow.steps.StepDescriptor;
 import org.jenkinsci.plugins.workflow.steps.StepExecution;
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
+import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 
 import javax.annotation.Nonnull;
 import java.util.Set;
 
 public class DynatraceSessionStep extends Step {
+    private final String envId;
+    private final String testCase;
+
+    @DataBoundConstructor
+    public DynatraceSessionStep(final String envId, final String testCase) {
+        this.envId = envId;
+        this.testCase = testCase;
+    }
+
+    public String getEnvId() {
+        return envId;
+    }
+
+    public String getTestCase() {
+        return testCase;
+    }
+
     @Override
     public StepExecution start(StepContext stepContext) throws Exception {
         return new DynatraceSessionStepExecution(this, stepContext);
@@ -29,7 +47,6 @@ public class DynatraceSessionStep extends Step {
     public DescriptorImpl getDescriptor() {
         return (DescriptorImpl) super.getDescriptor();
     }
-
 
     @Extension
     public static class DescriptorImpl extends StepDescriptor {
@@ -56,7 +73,16 @@ public class DynatraceSessionStep extends Step {
         }
 
         @Nonnull
-        @Restricted(NoExternalUse.class) // Only for UI calls
+        @Restricted(NoExternalUse.class)
+        public ListBoxModel doFillEnvIdItems(@QueryParameter final String envId) {
+            if (!Jenkins.getInstance().hasPermission(Permission.CONFIGURE)) {
+                return new StandardListBoxModel().includeCurrentValue(envId);
+            }
+            return DynatraceUtils.listToListBoxModel(DynatraceUtils.getDynatraceConfigurations());
+        }
+
+        @Nonnull
+        @Restricted(NoExternalUse.class)
         public ListBoxModel doFillDynatraceProfileItems(@QueryParameter final String dynatraceProfile) {
             if (!Jenkins.getInstance().hasPermission(Permission.CONFIGURE)) {
                 return new StandardListBoxModel().includeCurrentValue(dynatraceProfile);

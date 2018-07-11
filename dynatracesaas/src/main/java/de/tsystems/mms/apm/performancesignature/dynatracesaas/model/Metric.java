@@ -1,17 +1,16 @@
 package de.tsystems.mms.apm.performancesignature.dynatracesaas.model;
 
-import com.cloudbees.plugins.credentials.common.StandardListBoxModel;
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.DynatraceServerConnection;
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.util.DynatraceUtils;
 import hudson.Extension;
 import hudson.RelativePath;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
-import hudson.security.Permission;
+import hudson.model.Item;
 import hudson.util.ListBoxModel;
-import jenkins.model.Jenkins;
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
+import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 
@@ -39,11 +38,12 @@ public class Metric extends AbstractDescribableImpl<Metric> {
 
         @Nonnull
         @Restricted(NoExternalUse.class)
-        public ListBoxModel doFillMetricIdItems(@RelativePath("..") @QueryParameter final String envId,
-                                                @QueryParameter final String metricId) {
-            if (!Jenkins.getInstance().hasPermission(Permission.CONFIGURE)) {
-                return new StandardListBoxModel().includeCurrentValue(metricId);
+        public ListBoxModel doFillMetricIdItems(@AncestorInPath Item item,
+                                                @RelativePath("..") @QueryParameter final String envId) {
+            if (!item.hasPermission(Item.CONFIGURE) && item.hasPermission(Item.EXTENDED_READ)) {
+                return new ListBoxModel();
             }
+            item.checkPermission(Item.CONFIGURE);
 
             DynatraceServerConfiguration serverConfiguration = DynatraceUtils.getServerConfiguration(envId);
             if (serverConfiguration != null) {

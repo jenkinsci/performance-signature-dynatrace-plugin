@@ -47,7 +47,7 @@ public class DynatraceServerConnection {
         apiClient.setBasePath(serverUrl);
         apiClient.setApiKeyPrefix("Api-Token");
         apiClient.setApiKey(DynatraceUtils.getApiToken(apiTokenId));
-        apiClient.setDebugging(true);
+        //apiClient.setDebugging(true);
 
         Proxy proxy = Proxy.NO_PROXY;
         ProxyConfiguration proxyConfig = Jenkins.getInstance().proxy;

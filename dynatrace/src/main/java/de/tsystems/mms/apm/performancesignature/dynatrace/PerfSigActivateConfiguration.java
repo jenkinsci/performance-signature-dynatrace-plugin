@@ -20,7 +20,6 @@ import com.cloudbees.plugins.credentials.common.StandardListBoxModel;
 import de.tsystems.mms.apm.performancesignature.dynatrace.configuration.CredProfilePair;
 import de.tsystems.mms.apm.performancesignature.dynatrace.configuration.DynatraceServerConfiguration;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.DTServerConnection;
-import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.model.Agent;
 import de.tsystems.mms.apm.performancesignature.dynatrace.util.PerfSigUtils;
 import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
 import hudson.Extension;
@@ -67,14 +66,14 @@ public class PerfSigActivateConfiguration extends Builder implements SimpleBuild
         connection.activateConfiguration(configuration);
         logger.log(Messages.PerfSigActivateConfiguration_SuccessfullyActivated(dynatraceProfile));
 
-        for (Agent agent : connection.getAgents()) {
+        connection.getAgents().forEach(agent -> {
             boolean hotSensorPlacement = connection.hotSensorPlacement(agent.getAgentId());
             if (hotSensorPlacement) {
                 logger.log(Messages.PerfSigActivateConfiguration_HotSensorPlacementDone(agent.getName()));
             } else {
                 logger.log(Messages.PerfSigActivateConfiguration_FailureActivation(agent.getName()));
             }
-        }
+        });
     }
 
     public String getDynatraceProfile() {

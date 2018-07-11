@@ -30,11 +30,12 @@ public class DynatraceSessionStepExecution extends StepExecution {
 
         logger.log("getting build details ...");
 
-        body = context.newBodyInvoker()
-                .withCallback(new Callback())
-                .start();
-
-        return false;
+        if (context.hasBody()) {
+            body = context.newBodyInvoker()
+                    .withCallback(new Callback())
+                    .start();
+        }
+        return true;
     }
 
     @Override

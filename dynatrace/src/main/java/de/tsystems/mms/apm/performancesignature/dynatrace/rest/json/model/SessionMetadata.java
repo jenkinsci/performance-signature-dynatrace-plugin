@@ -28,6 +28,7 @@ import io.swagger.annotations.ApiModelProperty;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -307,12 +308,7 @@ public class SessionMetadata extends BaseReference {
         }
 
         public static StateEnum fromValue(String text) {
-            for (StateEnum b : StateEnum.values()) {
-                if (String.valueOf(b.value).equals(text)) {
-                    return b;
-                }
-            }
-            return null;
+            return Arrays.stream(StateEnum.values()).filter(b -> String.valueOf(b.value).equals(text)).findFirst().orElse(null);
         }
 
         public String getValue() {

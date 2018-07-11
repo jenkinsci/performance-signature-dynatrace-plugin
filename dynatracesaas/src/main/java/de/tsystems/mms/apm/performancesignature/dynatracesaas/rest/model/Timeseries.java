@@ -8,6 +8,7 @@ import com.google.gson.stream.JsonWriter;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 public class Timeseries {
@@ -97,12 +98,7 @@ public class Timeseries {
         }
 
         public static FilterEnum fromValue(String text) {
-            for (FilterEnum b : FilterEnum.values()) {
-                if (String.valueOf(b.value).equals(text)) {
-                    return b;
-                }
-            }
-            return null;
+            return Arrays.stream(FilterEnum.values()).filter(b -> String.valueOf(b.value).equals(text)).findFirst().orElse(null);
         }
 
         public String getValue() {
@@ -147,12 +143,7 @@ public class Timeseries {
         }
 
         public static AggregationEnum fromValue(String text) {
-            for (AggregationEnum b : AggregationEnum.values()) {
-                if (String.valueOf(b.value).equals(text)) {
-                    return b;
-                }
-            }
-            return null;
+            return Arrays.stream(AggregationEnum.values()).filter(b -> String.valueOf(b.value).equals(text)).findFirst().orElse(null);
         }
 
         public String getValue() {

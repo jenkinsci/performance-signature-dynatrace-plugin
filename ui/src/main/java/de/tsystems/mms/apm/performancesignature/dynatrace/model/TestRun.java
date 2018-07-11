@@ -27,6 +27,7 @@ import org.kohsuke.stapler.export.Exported;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -189,7 +190,7 @@ public class TestRun extends BaseReference {
     public static TestRun mergeTestRuns(final List<TestRun> testRuns) {
         TestRun newTestRun = new TestRun();
         if (testRuns != null && !testRuns.isEmpty()) {
-            for (TestRun otherTestRun : testRuns) {
+            testRuns.forEach(otherTestRun -> {
                 newTestRun.numDegraded += otherTestRun.numDegraded;
                 newTestRun.numFailed += otherTestRun.numFailed;
                 newTestRun.numImproved += otherTestRun.numImproved;
@@ -197,7 +198,7 @@ public class TestRun extends BaseReference {
                 newTestRun.numPassed += otherTestRun.numPassed;
                 newTestRun.numVolatile += otherTestRun.numVolatile;
                 newTestRun.getTestResults().addAll(otherTestRun.getTestResults());
-            }
+            });
         }
         return newTestRun;
     }
@@ -334,12 +335,7 @@ public class TestRun extends BaseReference {
         }
 
         public static CategoryEnum fromValue(String text) {
-            for (CategoryEnum b : CategoryEnum.values()) {
-                if (String.valueOf(b.value).equals(text)) {
-                    return b;
-                }
-            }
-            return null;
+            return Arrays.stream(CategoryEnum.values()).filter(b -> String.valueOf(b.value).equals(text)).findFirst().orElse(null);
         }
 
         public String getValue() {

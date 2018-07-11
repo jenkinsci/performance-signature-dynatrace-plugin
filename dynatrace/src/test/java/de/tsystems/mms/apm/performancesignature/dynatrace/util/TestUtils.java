@@ -56,9 +56,7 @@ public class TestUtils {
         PerfSigGlobalConfiguration.get().setConfigurations(configurations);
         Jenkins.getInstance().save();
 
-        for (ListBoxModel.Option option : PerfSigUtils.listToListBoxModel(PerfSigUtils.getDTConfigurations())) {
-            System.out.println(option.name);
-        }
+        PerfSigUtils.listToListBoxModel(PerfSigUtils.getDTConfigurations()).stream().map(option -> option.name).forEach(System.out::println);
 
         ListBoxModel dynatraceConfigurations = PerfSigUtils.listToListBoxModel(PerfSigUtils.getDTConfigurations());
         assertTrue(containsOption(dynatraceConfigurations, "easy Travel (admin) @ PoC PerfSig"));
@@ -74,12 +72,7 @@ public class TestUtils {
     }
 
     public static boolean containsOption(ListBoxModel listBoxModel, String search) {
-        for (ListBoxModel.Option option : listBoxModel) {
-            if (option.name.equalsIgnoreCase(search)) {
-                return true;
-            }
-        }
-        return false;
+        return listBoxModel.stream().anyMatch(option -> option.name.equalsIgnoreCase(search));
     }
 
     public static boolean isWindows() {

@@ -18,7 +18,6 @@ package de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml;
 
 import de.tsystems.mms.apm.performancesignature.dynatrace.model.ChartDashlet;
 import de.tsystems.mms.apm.performancesignature.dynatrace.model.DashboardReport;
-import de.tsystems.mms.apm.performancesignature.dynatrace.model.Measure;
 import org.junit.Test;
 
 import javax.xml.bind.JAXBContext;
@@ -33,14 +32,7 @@ import static org.junit.Assert.assertTrue;
 public class DashboardXMLHandlerTest {
 
     private static boolean containsMeasure(List<ChartDashlet> chartDashlets, String searchString) {
-        for (ChartDashlet cd : chartDashlets) {
-            for (Measure m : cd.getMeasures()) {
-                if (m.getName().equalsIgnoreCase(searchString)) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return chartDashlets.stream().flatMap(cd -> cd.getMeasures().stream()).anyMatch(m -> m.getName().equalsIgnoreCase(searchString));
     }
 
     @Test

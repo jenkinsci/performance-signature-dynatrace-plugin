@@ -26,6 +26,7 @@ import org.kohsuke.accmod.restrictions.NoExternalUse;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 
+import javax.annotation.CheckForNull;
 import java.util.List;
 
 public class DynatraceServerConfiguration extends AbstractDescribableImpl<DynatraceServerConfiguration> {
@@ -60,13 +61,10 @@ public class DynatraceServerConfiguration extends AbstractDescribableImpl<Dynatr
         return serverUrl;
     }
 
+    @CheckForNull
     public CredProfilePair getCredProfilePair(final String profile) {
         String systemProfile = profile.replaceAll("\\(.*", "").trim();
-        for (CredProfilePair pair : credProfilePairs) {
-            if (pair.getProfile().equals(systemProfile))
-                return pair;
-        }
-        return null;
+        return credProfilePairs.stream().filter(pair -> pair.getProfile().equals(systemProfile)).findFirst().orElse(null);
     }
 
     public List<CredProfilePair> getCredProfilePairs() {

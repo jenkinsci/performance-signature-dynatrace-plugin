@@ -28,6 +28,7 @@ import org.kohsuke.stapler.export.ExportedBean;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -120,11 +121,9 @@ public class TestResult {
     }
 
     public TestMeasure getMeasure(final String metricGroup, final String metric) {
-        for (TestMeasure measure : measures) {
-            if (measure.getMetricGroup().equals(metricGroup) && measure.getName().equals(metric))
-                return measure;
-        }
-        return null;
+        return measures.stream()
+                .filter(measure -> measure.getMetricGroup().equals(metricGroup) && measure.getName().equals(metric))
+                .findFirst().orElse(null);
     }
 
     /**
@@ -205,12 +204,7 @@ public class TestResult {
         }
 
         public static TestResult.StatusEnum fromValue(String text) {
-            for (TestResult.StatusEnum b : TestResult.StatusEnum.values()) {
-                if (String.valueOf(b.value).equalsIgnoreCase(text)) {
-                    return b;
-                }
-            }
-            return null;
+            return Arrays.stream(StatusEnum.values()).filter(b -> String.valueOf(b.value).equalsIgnoreCase(text)).findFirst().orElse(null);
         }
 
         public String getValue() {

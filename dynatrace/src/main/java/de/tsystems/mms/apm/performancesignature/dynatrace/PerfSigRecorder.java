@@ -50,6 +50,7 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
 
+import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -216,23 +217,15 @@ public class PerfSigRecorder extends Recorder implements SimpleBuildStep {
         run.addAction(action);
     }
 
+    @CheckForNull
     private PerfSigEnvInvisAction getBuildEnvVars(final Run<?, ?> build, final String testCase) {
         final List<PerfSigEnvInvisAction> envVars = build.getActions(PerfSigEnvInvisAction.class);
-        for (PerfSigEnvInvisAction vars : envVars) {
-            if (vars.getTestCase().equals(testCase))
-                return vars;
-        }
-        return null;
+        return envVars.stream().filter(vars -> vars.getTestCase().equals(testCase)).findFirst().orElse(null);
     }
 
     private boolean validateSessionId(final String id) {
         if (StringUtils.isBlank(id)) return false;
-        for (SessionData session : availableSessions) {
-            if (session.getId().equalsIgnoreCase(id)) {
-                return true;
-            }
-        }
-        return false;
+        return availableSessions.stream().anyMatch(session -> session.getId().equalsIgnoreCase(id));
     }
 
     public BuildStepMonitor getRequiredMonitorService() {

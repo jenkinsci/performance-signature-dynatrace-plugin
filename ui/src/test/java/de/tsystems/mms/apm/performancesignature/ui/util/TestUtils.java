@@ -26,11 +26,6 @@ public class TestUtils {
     }
 
     public static boolean containsMeasure(List<?> list, String search) {
-        for (Object text : list) {
-            if (((DomText) text).getWholeText().trim().equals(search)) {
-                return true;
-            }
-        }
-        return false;
+        return list.stream().anyMatch(text -> ((DomText) text).getWholeText().trim().equals(search));
     }
 }

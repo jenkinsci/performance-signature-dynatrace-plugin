@@ -65,9 +65,11 @@ public class CreateDeploymentStepExecution extends StepExecution {
         }
         logger.log("successfully created deployment event " + eventId);
 
-        body = context.newBodyInvoker()
-                .withCallback(new Callback())
-                .start();
+        if (context.hasBody()) {
+            body = context.newBodyInvoker()
+                    .withCallback(new Callback())
+                    .start();
+        }
         return false;
     }
 

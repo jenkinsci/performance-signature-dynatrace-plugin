@@ -19,7 +19,10 @@ package de.tsystems.mms.apm.performancesignature.dynatrace.rest;
 import de.tsystems.mms.apm.performancesignature.dynatrace.configuration.CredProfilePair;
 import de.tsystems.mms.apm.performancesignature.dynatrace.configuration.DynatraceServerConfiguration;
 import de.tsystems.mms.apm.performancesignature.dynatrace.configuration.DynatraceServerConfiguration.DescriptorImpl;
-import de.tsystems.mms.apm.performancesignature.dynatrace.model.*;
+import de.tsystems.mms.apm.performancesignature.dynatrace.model.Alert;
+import de.tsystems.mms.apm.performancesignature.dynatrace.model.DashboardReport;
+import de.tsystems.mms.apm.performancesignature.dynatrace.model.Measure;
+import de.tsystems.mms.apm.performancesignature.dynatrace.model.TestRun;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.ApiClient;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.ApiException;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.api.*;
@@ -44,6 +47,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public class DTServerConnection {
     private static final Logger LOGGER = Logger.getLogger(DTServerConnection.class.getName());
@@ -107,22 +111,20 @@ public class DTServerConnection {
             dashboardReport.setName(testCaseName);
 
             //handle dynamic measures in the dashboard xml probably
-            for (ChartDashlet chartDashlet : dashboardReport.getChartDashlets()) {
+            dashboardReport.getChartDashlets().forEach(chartDashlet -> {
                 List<Measure> dynamicMeasures = new ArrayList<>();
                 List<Measure> oldMeasures = new ArrayList<>();
-                for (Measure measure : chartDashlet.getMeasures()) {
-                    if (!measure.getMeasures().isEmpty()) {
-                        oldMeasures.add(measure);
-                        List<Measure> copy = new ArrayList<>(measure.getMeasures());
-                        measure.getMeasures().clear();
-                        dynamicMeasures.addAll(copy);
-                    }
-                }
+                chartDashlet.getMeasures().stream().filter(measure -> !measure.getMeasures().isEmpty()).forEach(measure -> {
+                    oldMeasures.add(measure);
+                    List<Measure> copy = new ArrayList<>(measure.getMeasures());
+                    measure.getMeasures().clear();
+                    dynamicMeasures.addAll(copy);
+                });
                 if (!dynamicMeasures.isEmpty()) {
                     chartDashlet.getMeasures().removeAll(oldMeasures);
                     chartDashlet.getMeasures().addAll(dynamicMeasures);
                 }
-            }
+            });
 
             return dashboardReport;
         } catch (Exception ex) {
@@ -247,13 +249,9 @@ public class DTServerConnection {
     }
 
     public List<Agent> getAgents() {
-        List<Agent> agents = getAllAgents();
-        List<Agent> filteredAgents = new ArrayList<>();
-        for (Agent agent : agents) {
-            if (systemProfile.equals(agent.getSystemProfile()))
-                filteredAgents.add(agent);
-        }
-        return filteredAgents;
+        return getAllAgents().stream()
+                .filter(agent -> systemProfile.equals(agent.getSystemProfile()))
+                .collect(Collectors.toList());
     }
 
     public boolean hotSensorPlacement(final int agentId) {

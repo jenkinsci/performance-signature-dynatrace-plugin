@@ -26,6 +26,7 @@ import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 /**
  * SessionData
@@ -104,12 +105,7 @@ public class SessionData extends BaseReference {
         }
 
         public static StoredSessiontypeEnum fromValue(String text) {
-            for (StoredSessiontypeEnum b : StoredSessiontypeEnum.values()) {
-                if (String.valueOf(b.value).equals(text)) {
-                    return b;
-                }
-            }
-            return null;
+            return Arrays.stream(StoredSessiontypeEnum.values()).filter(b -> String.valueOf(b.value).equals(text)).findFirst().orElse(null);
         }
 
         public String getValue() {
@@ -155,12 +151,7 @@ public class SessionData extends BaseReference {
         }
 
         public static SessionTypeEnum fromValue(String text) {
-            for (SessionTypeEnum b : SessionTypeEnum.values()) {
-                if (String.valueOf(b.value).equals(text)) {
-                    return b;
-                }
-            }
-            return null;
+            return Arrays.stream(SessionTypeEnum.values()).filter(b -> String.valueOf(b.value).equals(text)).findFirst().orElse(null);
         }
 
         public String getValue() {

@@ -82,17 +82,15 @@ public class DynatraceRecorder extends Recorder implements SimpleBuildStep {
                 .parallelStream().collect(Collectors.toMap(Timeseries::getTimeseriesId, item -> item));
 
         DashboardReport dashboardReport = new DashboardReport("loadtest");
-        for (Metric metric : metrics) {
+        metrics.forEach(metric -> {
             Timeseries tm = timeseries.get(metric.getMetricId());
             Map<AggregationEnum, Result> aggregations = tm.getAggregationTypes().stream()
                     .collect(Collectors.toMap(aggregation -> aggregation,
                             aggregation -> serverConnection.getTimeseriesData(metric.getMetricId(), start, end, aggregation),
                             (a, b) -> b, LinkedHashMap::new));
-
             Result baseResult = aggregations.get(AggregationEnum.AVG);
             ChartDashlet chartDashlet = new ChartDashlet();
             chartDashlet.setName(tm.getDetailedSource() + " - " + tm.getDisplayName());
-
             if (baseResult != null) {
                 baseResult.getDataPoints().forEach((key, value) -> {
                     Map<AggregationEnum, Number> values = tm.getAggregationTypes().stream()
@@ -128,7 +126,7 @@ public class DynatraceRecorder extends Recorder implements SimpleBuildStep {
                 });
             }
             dashboardReport.addChartDashlet(chartDashlet);
-        }
+        });
         PerfSigBuildAction action = new PerfSigBuildAction(Collections.singletonList(dashboardReport));
         run.addAction(action);
     }
@@ -136,7 +134,7 @@ public class DynatraceRecorder extends Recorder implements SimpleBuildStep {
     private String caluclateUnit(Result baseResult, Map<AggregationEnum, Number> values) {
         if (baseResult.getUnit().equals("Byte (B)")) {
             String tmp = DynatraceUtils.humanReadableByteCount(values.get(AggregationEnum.MAX).doubleValue(), false);
-            return tmp.substring(tmp.length() - 3, tmp.length());
+            return tmp.replaceAll("[^a-zA-Z]", "");
         }
         return baseResult.getUnit();
     }
@@ -145,7 +143,7 @@ public class DynatraceRecorder extends Recorder implements SimpleBuildStep {
         if (values.get(aggregation) == null) return 0;
         if (baseResult.getUnit().equals("Byte (B)")) {
             String tmp = DynatraceUtils.humanReadableByteCount(values.get(aggregation).doubleValue(), false);
-            return Double.valueOf(tmp.substring(0, tmp.length() - 3));
+            return Double.valueOf(tmp.replaceAll("[^0-9.]", ""));
         } else {
             return values.get(aggregation).doubleValue();
         }

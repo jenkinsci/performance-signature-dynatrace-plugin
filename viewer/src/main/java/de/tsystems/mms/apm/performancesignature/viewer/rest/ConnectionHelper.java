@@ -18,6 +18,7 @@ import javax.annotation.Nullable;
 import java.io.*;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -241,12 +242,8 @@ public class ConnectionHelper {
         if (isBlank(serverHost)) return null;
         RemoteBuildConfiguration.DescriptorImpl descriptor = (RemoteBuildConfiguration.DescriptorImpl)
                 Jenkins.getInstance().getDescriptorOrDie(RemoteBuildConfiguration.class);
-        for (RemoteJenkinsServer host : descriptor.getRemoteSites()) {
-            String hostname = PerfSigUIUtils.getHostFromUrl(host.getAddress());
-            if (serverHost.equals(hostname)) {
-                return host;
-            }
-        }
-        return null;
+        return Arrays.stream(descriptor.getRemoteSites())
+                .filter(host -> serverHost.equals(PerfSigUIUtils.getHostFromUrl(host.getAddress())))
+                .findFirst().orElse(null);
     }
 }

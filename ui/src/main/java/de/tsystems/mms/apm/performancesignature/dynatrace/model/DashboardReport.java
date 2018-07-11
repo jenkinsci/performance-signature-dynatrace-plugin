@@ -123,14 +123,9 @@ public class DashboardReport {
     }
 
     public Measure getMeasure(final String chartDashlet, final String measure) {
-        for (ChartDashlet cd : chartDashlets) {
-            if (cd.getName().equalsIgnoreCase(chartDashlet) && cd.getMeasures() != null) {
-                for (Measure m : cd.getMeasures()) {
-                    if (m.getName().equalsIgnoreCase(measure))
-                        return m;
-                }
-            }
-        }
-        return null;
+        return chartDashlets.stream()
+                .filter(cd -> cd.getName().equalsIgnoreCase(chartDashlet) && cd.getMeasures() != null)
+                .flatMap(cd -> cd.getMeasures().stream()).filter(m -> m.getName().equalsIgnoreCase(measure))
+                .findFirst().orElse(null);
     }
 }

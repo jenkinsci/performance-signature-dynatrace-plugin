@@ -18,14 +18,31 @@ package de.tsystems.mms.apm.performancesignature.dynatracesaas;
 
 import hudson.model.InvisibleAction;
 
-class DynatraceEnvInvisAction extends InvisibleAction {
-    private final int currentBuild;
+import java.time.LocalDateTime;
 
-    DynatraceEnvInvisAction(final int currentBuild) {
-        this.currentBuild = currentBuild;
+class DynatraceEnvInvisAction extends InvisibleAction {
+    private final String testCase;
+    private final LocalDateTime timeframeStart;
+    private LocalDateTime timeframeStop;
+
+    DynatraceEnvInvisAction(final String testCase, final LocalDateTime timeframeStart) {
+        this.timeframeStart = timeframeStart;
+        this.testCase = testCase;
     }
 
-    public int getCurrentBuild() {
-        return currentBuild;
+    public String getTestCase() {
+        return testCase;
+    }
+
+    public LocalDateTime getTimeframeStart() {
+        return timeframeStart;
+    }
+
+    public LocalDateTime getTimeframeStop() {
+        return timeframeStop;
+    }
+
+    void setTimeframeStop(LocalDateTime timeframeStop) {
+        this.timeframeStop = timeframeStop;
     }
 }

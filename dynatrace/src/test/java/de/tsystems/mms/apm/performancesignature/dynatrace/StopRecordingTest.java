@@ -125,12 +125,7 @@ public class StopRecordingTest {
     }
 
     private boolean containsSession(List<SessionData> sessions, String sessionId) {
-        for (SessionData sessionData : sessions) {
-            if (sessionData.getId().equalsIgnoreCase(sessionId)) {
-                return true;
-            }
-        }
-        return false;
+        return sessions.stream().anyMatch(sessionData -> sessionData.getId().equalsIgnoreCase(sessionId));
     }
 
 }

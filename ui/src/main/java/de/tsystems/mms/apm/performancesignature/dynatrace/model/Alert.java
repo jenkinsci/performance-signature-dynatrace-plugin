@@ -28,6 +28,7 @@ import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Date;
 
 /**
@@ -169,12 +170,7 @@ public class Alert {
         }
 
         public static SeverityEnum fromValue(String text) {
-            for (SeverityEnum b : SeverityEnum.values()) {
-                if (String.valueOf(b.value).equals(text)) {
-                    return b;
-                }
-            }
-            return null;
+            return Arrays.stream(SeverityEnum.values()).filter(b -> String.valueOf(b.value).equals(text)).findFirst().orElse(null);
         }
 
         public String getValue() {
@@ -218,12 +214,7 @@ public class Alert {
         }
 
         public static StateEnum fromValue(String text) {
-            for (StateEnum b : StateEnum.values()) {
-                if (String.valueOf(b.value).equals(text)) {
-                    return b;
-                }
-            }
-            return null;
+            return Arrays.stream(StateEnum.values()).filter(b -> String.valueOf(b.value).equals(text)).findFirst().orElse(null);
         }
 
         public String getValue() {

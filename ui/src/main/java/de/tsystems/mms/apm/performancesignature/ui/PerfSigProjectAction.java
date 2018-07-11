@@ -57,6 +57,7 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public class PerfSigProjectAction extends PerfSigBaseAction implements ProminentProjectAction {
     static final String UNITTEST_DASHLETNAME = "unittest_overview";
@@ -264,13 +265,9 @@ public class PerfSigProjectAction extends PerfSigBaseAction implements Prominent
 
     @JavaScriptMethod
     public String getDashboardConfiguration(final String dashboard) {
-        List<JSONDashlet> jsonDashletList = new ArrayList<>();
-        for (JSONDashlet jsonDashlet : getJsonDashletMap().values()) {
-            if (jsonDashlet.getDashboard().equals(dashboard)) {
-                jsonDashletList.add(jsonDashlet);
-            }
-        }
-        jsonDashletList.sort(new JSONDashletComparator());
+        List<JSONDashlet> jsonDashletList = getJsonDashletMap().values().stream()
+                .filter(jsonDashlet -> jsonDashlet.getDashboard().equals(dashboard))
+                .sorted(new JSONDashletComparator()).collect(Collectors.toList());
         return GSON.toJson(jsonDashletList);
     }
 
@@ -319,7 +316,7 @@ public class PerfSigProjectAction extends PerfSigBaseAction implements Prominent
     @JavaScriptMethod
     public void setDashboardConfiguration(final String dashboard, final String data) {
         Map<String, JSONDashlet> defaultConfiguration = createJSONConfiguration(false);
-        HashSet<String> idsFromJson = new HashSet<>();
+        HashSet<String> idsFromJson;
 
         String json = StringEscapeUtils.unescapeJava(data);
         if (!json.startsWith("[")) {
@@ -328,18 +325,15 @@ public class PerfSigProjectAction extends PerfSigBaseAction implements Prominent
 
         List<JSONDashlet> jsonDashletList = GSON.fromJson(json, new TypeToken<List<JSONDashlet>>() {
         }.getType());
-        for (JSONDashlet jsonDashlet : jsonDashletList) {
-            idsFromJson.add(jsonDashlet.getId());
-        }
+        idsFromJson = jsonDashletList.stream().map(JSONDashlet::getId).collect(Collectors.toCollection(HashSet::new));
 
-        for (JSONDashlet jsonDashlet : getJsonDashletMap().values()) {
-            //filter out dashlets from other dashboards
-            if (jsonDashlet.getDashboard().equals(dashboard) && !idsFromJson.contains(jsonDashlet.getId())) {
-                getJsonDashletMap().remove(jsonDashlet.getId()); //remove dashlet, if it's not present in gridConfiguration
-            }
-        }
+        //filter out dashlets from other dashboards
+        //remove dashlet, if it's not present in gridConfiguration
+        getJsonDashletMap().values().stream()
+                .filter(jsonDashlet -> jsonDashlet.getDashboard().equals(dashboard) && !idsFromJson.contains(jsonDashlet.getId()))
+                .forEach(jsonDashlet -> getJsonDashletMap().remove(jsonDashlet.getId()));
 
-        for (JSONDashlet modifiedDashlet : jsonDashletList) {
+        jsonDashletList.forEach(modifiedDashlet -> {
             JSONDashlet unmodifiedDashlet = defaultConfiguration.get(modifiedDashlet.getId());
             JSONDashlet originalDashlet = getJsonDashletMap().get(modifiedDashlet.getId());
             if (modifiedDashlet.getId().equals(UNITTEST_DASHLETNAME)) {
@@ -369,36 +363,28 @@ public class PerfSigProjectAction extends PerfSigBaseAction implements Prominent
                 getJsonDashletMap().remove(originalDashlet.getId());
                 getJsonDashletMap().put(modifiedDashlet.getId(), modifiedDashlet);
             }
-        }
+        });
         writeConfiguration(getJsonDashletMap());
     }
 
     @SuppressWarnings("WeakerAccess")
     @JavaScriptMethod
     public Map<String, String> getAvailableMeasures(final String dashboard, final String dashlet) {
-        Map<String, String> availableMeasures = new LinkedHashMap<>();
-        List<JSONDashlet> jsonDashlets = new ArrayList<>(createJSONConfiguration(false).values());
-        Collections.sort(jsonDashlets);
-        for (JSONDashlet jsonDashlet : jsonDashlets) {
-            if (jsonDashlet.getDashboard().equals(dashboard) && jsonDashlet.getChartDashlet().equals(dashlet)) {
-                availableMeasures.put(jsonDashlet.getId(), jsonDashlet.getMeasure());
-            }
-        }
-        return availableMeasures;
+        Collection<JSONDashlet> jsonDashlets = createJSONConfiguration(false).values();
+        return jsonDashlets.stream()
+                .filter(jsonDashlet -> jsonDashlet.getDashboard().equals(dashboard) && jsonDashlet.getChartDashlet().equals(dashlet))
+                .sorted()
+                .collect(Collectors.toMap(JSONDashlet::getId, JSONDashlet::getMeasure, (a, b) -> b, LinkedHashMap::new));
     }
 
     @SuppressWarnings("WeakerAccess")
     @JavaScriptMethod
     public String getAggregationFromMeasure(final String dashboard, final String dashlet, final String measure) {
-        for (DashboardReport dashboardReport : getLastDashboardReports()) {
-            if (dashboardReport.getName().equals(dashboard)) {
-                Measure m = dashboardReport.getMeasure(dashlet, measure);
-                if (m != null) {
-                    return m.getAggregation();
-                }
-            }
-        }
-        return "";
+        return getLastDashboardReports().stream()
+                .filter(dashboardReport -> dashboardReport.getName().equals(dashboard))
+                .map(dashboardReport -> dashboardReport.getMeasure(dashlet, measure))
+                .filter(Objects::nonNull).findFirst()
+                .map(Measure::getAggregation).orElse("");
     }
 
     @SuppressWarnings("unused")

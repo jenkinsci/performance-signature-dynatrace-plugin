@@ -17,6 +17,7 @@
 package de.tsystems.mms.apm.performancesignature.dynatrace.configuration;
 
 import com.cloudbees.plugins.credentials.CredentialsMatchers;
+import com.cloudbees.plugins.credentials.CredentialsProvider;
 import com.cloudbees.plugins.credentials.common.StandardListBoxModel;
 import com.cloudbees.plugins.credentials.common.StandardUsernameListBoxModel;
 import com.cloudbees.plugins.credentials.common.StandardUsernamePasswordCredentials;
@@ -29,6 +30,7 @@ import hudson.Extension;
 import hudson.RelativePath;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
+import hudson.model.Item;
 import hudson.security.ACL;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
@@ -36,6 +38,7 @@ import jenkins.model.Jenkins;
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
+import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 
@@ -74,15 +77,23 @@ public class CredProfilePair extends AbstractDescribableImpl<CredProfilePair> {
 
         @Nonnull
         @Restricted(NoExternalUse.class)
-        public ListBoxModel doFillCredentialsIdItems(@QueryParameter String credentialsId) {
-            if (!Jenkins.getInstance().hasPermission(Jenkins.ADMINISTER)) {
-                return new StandardListBoxModel().includeCurrentValue(credentialsId);
+        public ListBoxModel doFillCredentialsIdItems(@AncestorInPath Item item, @QueryParameter String credentialsId) {
+            StandardListBoxModel result = new StandardListBoxModel();
+            if (item == null) {
+                if (!Jenkins.getInstance().hasPermission(Jenkins.ADMINISTER)) {
+                    return result.includeCurrentValue(credentialsId);
+                }
+            } else {
+                if (!item.hasPermission(Item.EXTENDED_READ)
+                        && !item.hasPermission(CredentialsProvider.USE_ITEM)) {
+                    return result.includeCurrentValue(credentialsId);
+                }
             }
             return new StandardUsernameListBoxModel()
                     .includeEmptyValue()
                     .includeMatchingAs(
                             ACL.SYSTEM,
-                            Jenkins.getInstance(),
+                            (Item) (item != null ? item : Jenkins.getInstance()),
                             StandardUsernamePasswordCredentials.class,
                             Collections.emptyList(),
                             CredentialsMatchers.instanceOf(StandardUsernamePasswordCredentials.class))
@@ -91,21 +102,31 @@ public class CredProfilePair extends AbstractDescribableImpl<CredProfilePair> {
 
         @Nonnull
         @Restricted(NoExternalUse.class)
-        public ListBoxModel doFillProfileItems(@RelativePath("..") @QueryParameter final String serverUrl, @QueryParameter final String credentialsId,
-                                               @RelativePath("..") @QueryParameter final boolean verifyCertificate, @RelativePath("..") @QueryParameter final boolean useProxy) {
-            if (!Jenkins.getInstance().hasPermission(Jenkins.ADMINISTER)) {
-                return new StandardListBoxModel().includeCurrentValue(credentialsId);
+        public ListBoxModel doFillProfileItems(@AncestorInPath Item item,
+                                               @RelativePath("..") @QueryParameter final String serverUrl,
+                                               @QueryParameter final String credentialsId,
+                                               @RelativePath("..") @QueryParameter final boolean verifyCertificate,
+                                               @RelativePath("..") @QueryParameter final boolean useProxy) {
+            ListBoxModel result = new ListBoxModel();
+            if (item == null) {
+                if (!Jenkins.getInstance().hasPermission(Jenkins.ADMINISTER)) {
+                    return result;
+                }
+            } else {
+                if (!item.hasPermission(Item.EXTENDED_READ)
+                        && !item.hasPermission(CredentialsProvider.USE_ITEM)) {
+                    return result;
+                }
             }
-
             if (StringUtils.isBlank(serverUrl) || StringUtils.isBlank(credentialsId)) {
-                return new StandardListBoxModel().includeEmptyValue();
+                return new ListBoxModel();
             }
             try {
                 CredProfilePair pair = new CredProfilePair("", credentialsId);
                 final DTServerConnection connection = new DTServerConnection(serverUrl, pair, verifyCertificate, 0, useProxy);
                 return PerfSigUtils.listToListBoxModel(connection.getSystemProfiles().getSystemprofiles());
             } catch (CommandExecutionException ex) {
-                return new StandardListBoxModel().includeEmptyValue();
+                return result;
             }
         }
 

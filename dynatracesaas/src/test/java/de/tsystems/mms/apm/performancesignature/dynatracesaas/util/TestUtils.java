@@ -32,9 +32,7 @@ public class TestUtils {
         DynatraceGlobalConfiguration.get().setConfigurations(configurations);
         Jenkins.getInstance().save();
 
-        for (ListBoxModel.Option option : DynatraceUtils.listToListBoxModel(DynatraceUtils.getDynatraceConfigurations())) {
-            System.out.println(option.name);
-        }
+        DynatraceUtils.listToListBoxModel(DynatraceUtils.getDynatraceConfigurations()).stream().map(option -> option.name).forEach(System.out::println);
 
         ListBoxModel dynatraceConfigurations = DynatraceUtils.listToListBoxModel(DynatraceUtils.getDynatraceConfigurations());
         assertTrue(containsOption(dynatraceConfigurations, "PoC PerfSig"));
@@ -48,11 +46,6 @@ public class TestUtils {
     }
 
     public static boolean containsOption(ListBoxModel listBoxModel, String search) {
-        for (ListBoxModel.Option option : listBoxModel) {
-            if (option.name.equalsIgnoreCase(search)) {
-                return true;
-            }
-        }
-        return false;
+        return listBoxModel.stream().anyMatch(option -> option.name.equalsIgnoreCase(search));
     }
 }
