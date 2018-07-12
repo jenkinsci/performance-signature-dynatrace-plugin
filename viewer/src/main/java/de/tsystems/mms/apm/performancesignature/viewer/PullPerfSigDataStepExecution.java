@@ -17,6 +17,8 @@
 package de.tsystems.mms.apm.performancesignature.viewer;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 import de.tsystems.mms.apm.performancesignature.dynatrace.model.DashboardReport;
@@ -46,11 +48,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 public class PullPerfSigDataStepExecution extends SynchronousNonBlockingStepExecution<Void> {
     private static final long serialVersionUID = 1L;
     private transient final PullPerfSigDataStep step;
+    private final transient Gson gson;
 
     PullPerfSigDataStepExecution(final PullPerfSigDataStep step, final StepContext context) throws AbortException {
         super(context);
@@ -58,6 +62,11 @@ public class PullPerfSigDataStepExecution extends SynchronousNonBlockingStepExec
             throw new AbortException("'handle' has not been defined for this 'pullPerfSigReports' step");
         }
         this.step = step;
+        this.gson = new GsonBuilder()
+                .registerTypeAdapter(Date.class,
+                        (JsonDeserializer<Date>) (jsonElement, type, context1) ->
+                                new Date(jsonElement.getAsJsonPrimitive().getAsLong()))
+                .create();
     }
 
     @Override
@@ -119,7 +128,7 @@ public class PullPerfSigDataStepExecution extends SynchronousNonBlockingStepExec
             ConnectionHelper connectionHelper = new ConnectionHelper(handle);
             String json = connectionHelper.getStringFromUrl(url, context);
 
-            RootElement rootElement = new Gson().fromJson(json, RootElement.class);
+            RootElement rootElement = gson.fromJson(json, RootElement.class);
             return rootElement.getDashboardReports();
         } catch (IOException | JsonSyntaxException e) {
             throw new ContentRetrievalException(ExceptionUtils.getStackTrace(e) + "could not retrieve records from remote Jenkins: ", e);
@@ -131,7 +140,7 @@ public class PullPerfSigDataStepExecution extends SynchronousNonBlockingStepExec
         URL url = new URL(step.getHandle().getBuildUrl() + "performance-signature/get" + type + "ReportList");
         ConnectionHelper connectionHelper = new ConnectionHelper(step.getHandle());
         String json = connectionHelper.getStringFromUrl(url, context);
-        Gson gson = new Gson();
+
         List<String> obj = gson.fromJson(json, new TypeToken<List<String>>() {
         }.getType());
         return obj != null ? obj : Collections.emptyList();
@@ -141,7 +150,7 @@ public class PullPerfSigDataStepExecution extends SynchronousNonBlockingStepExec
         URL url = new URL(step.getHandle().getBuildUrl() + "api/json");
         ConnectionHelper connectionHelper = new ConnectionHelper(step.getHandle());
         String json = connectionHelper.getStringFromUrl(url, context);
-        Gson gson = new Gson();
+
         BuildData artifacts = gson.fromJson(json, new TypeToken<BuildData>() {
         }.getType());
         return artifacts != null ? artifacts.getArtifacts() : Collections.emptyList();
