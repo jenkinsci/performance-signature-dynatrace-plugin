@@ -115,7 +115,9 @@ public class PerfSigBuildActionResultsDisplay implements ModelObject {
         if (currentDashboardReports == null) {
             return null;
         }
-        return currentDashboardReports.stream().filter(dashboardReport -> dashboardReport.getName().equals(reportName)).findFirst().orElse(null);
+        return currentDashboardReports.stream()
+                .filter(dashboardReport -> dashboardReport.getName().equals(reportName))
+                .findFirst().orElse(null);
     }
 
     public void doSummarizerGraph(final StaplerRequest request, final StaplerResponse response) throws IOException {
@@ -133,9 +135,9 @@ public class PerfSigBuildActionResultsDisplay implements ModelObject {
                     return null;
                 }
 
-                m.getMeasurements()
-                        .forEach(measurement -> timeSeries.add(new Second(
-                                new Date(measurement.getTimestamp())), measurement.getMetricValue(m.getAggregation())));
+                m.getMeasurements().forEach(measurement -> timeSeries.add(
+                        new Second(new Date(measurement.getTimestamp())),
+                        measurement.getMetricValue(m.getAggregation())));
                 return new TimeSeriesCollection(timeSeries);
             }
         };
