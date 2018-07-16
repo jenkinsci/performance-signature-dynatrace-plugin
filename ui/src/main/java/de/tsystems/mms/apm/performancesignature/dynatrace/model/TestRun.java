@@ -319,13 +319,9 @@ public class TestRun extends BaseReference {
     @JsonAdapter(CategoryEnum.Adapter.class)
     public enum CategoryEnum {
         UNIT("unit"),
-
         UIDRIVEN("uidriven"),
-
         PERFORMANCE("performance"),
-
         WEBAPI("webapi"),
-
         EXTERNAL("external");
 
         private final String value;
@@ -335,7 +331,7 @@ public class TestRun extends BaseReference {
         }
 
         public static CategoryEnum fromValue(String text) {
-            return Arrays.stream(CategoryEnum.values()).filter(b -> String.valueOf(b.value).equals(text)).findFirst().orElse(null);
+            return Arrays.stream(CategoryEnum.values()).filter(b -> b.value.equals(text)).findFirst().orElse(null);
         }
 
         public String getValue() {

@@ -204,7 +204,7 @@ public class TestResult {
         }
 
         public static TestResult.StatusEnum fromValue(String text) {
-            return Arrays.stream(StatusEnum.values()).filter(b -> String.valueOf(b.value).equalsIgnoreCase(text)).findFirst().orElse(null);
+            return Arrays.stream(StatusEnum.values()).filter(b -> b.value.equalsIgnoreCase(text)).findFirst().orElse(null);
         }
 
         public String getValue() {
@@ -213,7 +213,7 @@ public class TestResult {
 
         @Override
         public String toString() {
-            return String.valueOf(value);
+            return value;
         }
 
         public static class Adapter extends TypeAdapter<TestResult.StatusEnum> {

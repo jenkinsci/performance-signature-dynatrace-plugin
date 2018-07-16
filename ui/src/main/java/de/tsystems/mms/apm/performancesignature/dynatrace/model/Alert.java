@@ -129,18 +129,6 @@ public class Alert {
         return rule;
     }
 
-    public String getPanelColor() {
-        switch (severity) {
-            case INFORMATIONAL:
-                return "";
-            case WARNING:
-                return "panel-warning";
-            case SEVERE:
-                return "panel-danger";
-        }
-        return null;
-    }
-
     @Override
     public String toString() {
         return "class Alert {\n" +
@@ -170,7 +158,7 @@ public class Alert {
         }
 
         public static SeverityEnum fromValue(String text) {
-            return Arrays.stream(SeverityEnum.values()).filter(b -> String.valueOf(b.value).equals(text)).findFirst().orElse(null);
+            return Arrays.stream(SeverityEnum.values()).filter(b -> b.value.equals(text)).findFirst().orElse(null);
         }
 
         public String getValue() {
@@ -179,7 +167,18 @@ public class Alert {
 
         @Override
         public String toString() {
-            return String.valueOf(value);
+            return value;
+        }
+
+        public String getPanelColor() {
+            switch (fromValue(value)) {
+                case WARNING:
+                    return "panel-warning";
+                case SEVERE:
+                    return "panel-danger";
+                default:
+                    return "";
+            }
         }
 
         public static class Adapter extends TypeAdapter<SeverityEnum> {
@@ -202,9 +201,7 @@ public class Alert {
     @JsonAdapter(StateEnum.Adapter.class)
     public enum StateEnum {
         CREATED("Created"),
-
         INPROGRESS("InProgress"),
-
         CONFIRMED("Confirmed");
 
         private final String value;
@@ -214,7 +211,7 @@ public class Alert {
         }
 
         public static StateEnum fromValue(String text) {
-            return Arrays.stream(StateEnum.values()).filter(b -> String.valueOf(b.value).equals(text)).findFirst().orElse(null);
+            return Arrays.stream(StateEnum.values()).filter(b -> b.value.equals(text)).findFirst().orElse(null);
         }
 
         public String getValue() {
@@ -223,7 +220,7 @@ public class Alert {
 
         @Override
         public String toString() {
-            return String.valueOf(value);
+            return value;
         }
 
         public static class Adapter extends TypeAdapter<StateEnum> {

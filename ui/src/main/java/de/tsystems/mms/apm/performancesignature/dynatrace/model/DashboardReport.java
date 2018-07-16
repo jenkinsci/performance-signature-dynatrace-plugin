@@ -16,12 +16,18 @@
 
 package de.tsystems.mms.apm.performancesignature.dynatrace.model;
 
+import de.tsystems.mms.apm.performancesignature.dynatrace.model.Alert.SeverityEnum;
 import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
 
 import javax.xml.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.groupingBy;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "dashboardreport")
@@ -50,6 +56,12 @@ public class DashboardReport {
     @Exported
     public List<Alert> getIncidents() {
         return incidents;
+    }
+
+    public Map<SeverityEnum, Map<String, List<Alert>>> getIncidentMap() {
+        return incidents.stream()
+                .collect(groupingBy(Alert::getSeverity,
+                        groupingBy(alert -> String.format("%s Incident: %s", alert.getSeverity(), alert.getMessage()), TreeMap::new, Collectors.toList())));
     }
 
     public void addIncident(final Alert incident) {

@@ -118,9 +118,7 @@ public class SessionRecordingOptions {
     @JsonAdapter(RecordingoptionEnum.Adapter.class)
     public enum RecordingoptionEnum {
         ALL("all"),
-
         VIOLATIONS("violations"),
-
         TIMESERIES("timeseries");
 
         private final String value;
@@ -130,7 +128,7 @@ public class SessionRecordingOptions {
         }
 
         public static RecordingoptionEnum fromValue(String text) {
-            return Arrays.stream(RecordingoptionEnum.values()).filter(b -> String.valueOf(b.value).equals(text)).findFirst().orElse(null);
+            return Arrays.stream(RecordingoptionEnum.values()).filter(b -> b.value.equals(text)).findFirst().orElse(null);
         }
 
         public String getValue() {
@@ -139,7 +137,7 @@ public class SessionRecordingOptions {
 
         @Override
         public String toString() {
-            return String.valueOf(value);
+            return value;
         }
 
         public static class Adapter extends TypeAdapter<RecordingoptionEnum> {

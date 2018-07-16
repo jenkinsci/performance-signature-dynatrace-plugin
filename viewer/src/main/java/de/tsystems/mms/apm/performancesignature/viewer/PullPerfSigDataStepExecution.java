@@ -47,6 +47,7 @@ import org.jenkinsci.plugins.workflow.steps.SynchronousNonBlockingStepExecution;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -135,7 +136,7 @@ public class PullPerfSigDataStepExecution extends SynchronousNonBlockingStepExec
         }
     }
 
-    private List<String> getReportList(final BuildContext context, final ReportType type)
+    private List<String> getReportList(final BuildContext context, final String type)
             throws IOException, InterruptedException {
         URL url = new URL(step.getHandle().getBuildUrl() + "performance-signature/get" + type + "ReportList");
         ConnectionHelper connectionHelper = new ConnectionHelper(step.getHandle());
@@ -175,7 +176,7 @@ public class PullPerfSigDataStepExecution extends SynchronousNonBlockingStepExec
             throws InterruptedException {
         boolean result = true;
         try {
-            for (ReportType reportType : ReportType.values()) {
+            for (String reportType : Arrays.asList("Single", "Comparison")) {
                 List reportlist = getReportList(context, reportType);
                 for (Object report : reportlist) {
                     URL url = new URL(step.getHandle().getBuildUrl() + "performance-signature/get" + reportType + "Report?number="
@@ -210,9 +211,5 @@ public class PullPerfSigDataStepExecution extends SynchronousNonBlockingStepExec
             logger.log("Could not download artifact: " + FilenameUtils.getBaseName(url.toString()));
             return false;
         }
-    }
-
-    private enum ReportType {
-        Single, Comparison
     }
 }

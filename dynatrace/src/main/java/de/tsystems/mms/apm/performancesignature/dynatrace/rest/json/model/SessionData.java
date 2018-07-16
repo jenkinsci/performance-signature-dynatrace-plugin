@@ -87,15 +87,10 @@ public class SessionData extends BaseReference {
     @JsonAdapter(StoredSessiontypeEnum.Adapter.class)
     public enum StoredSessiontypeEnum {
         PUREPATH("purepath"),
-
         MEMDUMP_SIMPLE("memdump_simple"),
-
         MEMDUMP_EXTENDED("memdump_extended"),
-
         MEMDUMP_SELECTIVE("memdump_selective"),
-
         THREADDUMP("threaddump"),
-
         SAMPLING("sampling");
 
         private final String value;
@@ -105,7 +100,7 @@ public class SessionData extends BaseReference {
         }
 
         public static StoredSessiontypeEnum fromValue(String text) {
-            return Arrays.stream(StoredSessiontypeEnum.values()).filter(b -> String.valueOf(b.value).equals(text)).findFirst().orElse(null);
+            return Arrays.stream(StoredSessiontypeEnum.values()).filter(b -> b.value.equals(text)).findFirst().orElse(null);
         }
 
         public String getValue() {
@@ -114,7 +109,7 @@ public class SessionData extends BaseReference {
 
         @Override
         public String toString() {
-            return String.valueOf(value);
+            return value;
         }
 
         public static class Adapter extends TypeAdapter<StoredSessiontypeEnum> {
@@ -137,11 +132,8 @@ public class SessionData extends BaseReference {
     @JsonAdapter(SessionTypeEnum.Adapter.class)
     public enum SessionTypeEnum {
         LIVE("live"),
-
         SERVER("server"),
-
         STORED("stored"),
-
         UNTYPED("untyped");
 
         private final String value;
@@ -151,7 +143,7 @@ public class SessionData extends BaseReference {
         }
 
         public static SessionTypeEnum fromValue(String text) {
-            return Arrays.stream(SessionTypeEnum.values()).filter(b -> String.valueOf(b.value).equals(text)).findFirst().orElse(null);
+            return Arrays.stream(SessionTypeEnum.values()).filter(b -> b.value.equals(text)).findFirst().orElse(null);
         }
 
         public String getValue() {
@@ -160,7 +152,7 @@ public class SessionData extends BaseReference {
 
         @Override
         public String toString() {
-            return String.valueOf(value);
+            return value;
         }
 
         public static class Adapter extends TypeAdapter<SessionTypeEnum> {

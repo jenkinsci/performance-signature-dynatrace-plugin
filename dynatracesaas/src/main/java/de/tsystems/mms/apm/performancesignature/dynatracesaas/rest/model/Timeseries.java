@@ -98,7 +98,7 @@ public class Timeseries {
         }
 
         public static FilterEnum fromValue(String text) {
-            return Arrays.stream(FilterEnum.values()).filter(b -> String.valueOf(b.value).equals(text)).findFirst().orElse(null);
+            return Arrays.stream(FilterEnum.values()).filter(b -> b.value.equals(text)).findFirst().orElse(null);
         }
 
         public String getValue() {
@@ -107,7 +107,7 @@ public class Timeseries {
 
         @Override
         public String toString() {
-            return String.valueOf(value);
+            return value;
         }
 
         public static class Adapter extends TypeAdapter<FilterEnum> {
@@ -143,7 +143,7 @@ public class Timeseries {
         }
 
         public static AggregationEnum fromValue(String text) {
-            return Arrays.stream(AggregationEnum.values()).filter(b -> String.valueOf(b.value).equals(text)).findFirst().orElse(null);
+            return Arrays.stream(AggregationEnum.values()).filter(b -> b.value.equals(text)).findFirst().orElse(null);
         }
 
         public String getValue() {
@@ -152,7 +152,7 @@ public class Timeseries {
 
         @Override
         public String toString() {
-            return String.valueOf(value);
+            return value;
         }
 
         public static class Adapter extends TypeAdapter<AggregationEnum> {

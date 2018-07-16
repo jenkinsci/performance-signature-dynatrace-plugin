@@ -294,11 +294,8 @@ public class SessionMetadata extends BaseReference {
     @JsonAdapter(StateEnum.Adapter.class)
     public enum StateEnum {
         INPROGRESS("inprogress"),
-
         FINISHED("finished"),
-
         CORRUPT("corrupt"),
-
         INCOMPLETE("incomplete");
 
         private final String value;
@@ -308,7 +305,7 @@ public class SessionMetadata extends BaseReference {
         }
 
         public static StateEnum fromValue(String text) {
-            return Arrays.stream(StateEnum.values()).filter(b -> String.valueOf(b.value).equals(text)).findFirst().orElse(null);
+            return Arrays.stream(StateEnum.values()).filter(b -> b.value.equals(text)).findFirst().orElse(null);
         }
 
         public String getValue() {
@@ -317,7 +314,7 @@ public class SessionMetadata extends BaseReference {
 
         @Override
         public String toString() {
-            return String.valueOf(value);
+            return value;
         }
 
         public static class Adapter extends TypeAdapter<StateEnum> {

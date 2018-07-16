@@ -64,7 +64,6 @@ public class ActivationStatus {
     @JsonAdapter(StatusEnum.Adapter.class)
     public enum StatusEnum {
         ENABLED("ENABLED"),
-
         DISABLED("DISABLED");
 
         private final String value;
@@ -74,7 +73,7 @@ public class ActivationStatus {
         }
 
         public static StatusEnum fromValue(String text) {
-            return Arrays.stream(StatusEnum.values()).filter(b -> String.valueOf(b.value).equals(text)).findFirst().orElse(null);
+            return Arrays.stream(StatusEnum.values()).filter(b -> b.value.equals(text)).findFirst().orElse(null);
         }
 
         public String getValue() {
@@ -83,7 +82,7 @@ public class ActivationStatus {
 
         @Override
         public String toString() {
-            return String.valueOf(value);
+            return value;
         }
 
         public static class Adapter extends TypeAdapter<StatusEnum> {

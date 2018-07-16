@@ -36,6 +36,7 @@ import org.xml.sax.SAXException;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.List;
 
 import static de.tsystems.mms.apm.performancesignature.ui.util.TestUtils.containsMeasure;
@@ -185,16 +186,12 @@ public class PerfSigBuildActionResultsDisplayTest {
         HtmlPage buildPage = wc.getPage(build);
         Gson gson = new Gson();
 
-        for (ReportType type : ReportType.values()) {
+        for (String type : Arrays.asList("Single", "Comparison")) {
             URL url = new URL(buildPage.getUrl() + "performance-signature/get" + type + "ReportList");
             List<String> obj = gson.fromJson(org.apache.commons.io.IOUtils.toString(url), new TypeToken<List<String>>() {
             }.getType());
             assertTrue(!obj.isEmpty());
             assertEquals(2, obj.size());
         }
-    }
-
-    private enum ReportType {
-        Single, Comparison
     }
 }
