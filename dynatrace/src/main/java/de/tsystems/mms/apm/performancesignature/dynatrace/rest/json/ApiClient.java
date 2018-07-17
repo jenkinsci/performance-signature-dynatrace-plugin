@@ -355,7 +355,7 @@ public class ApiClient {
      */
     public ApiClient setReadTimeout(int readTimeout) {
         OkHttpClient.Builder builder = httpClient.newBuilder();
-        builder.readTimeout(readTimeout, TimeUnit.MILLISECONDS);
+        builder.readTimeout(readTimeout, TimeUnit.SECONDS);
         httpClient = builder.build();
         return this;
     }

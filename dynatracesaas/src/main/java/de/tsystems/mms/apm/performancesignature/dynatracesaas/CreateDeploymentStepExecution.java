@@ -25,13 +25,13 @@ import hudson.plugins.analysis.util.PluginLogger;
 import org.jenkinsci.plugins.workflow.steps.BodyExecution;
 import org.jenkinsci.plugins.workflow.steps.BodyExecutionCallback;
 import org.jenkinsci.plugins.workflow.steps.StepContext;
-import org.jenkinsci.plugins.workflow.steps.StepExecution;
+import org.jenkinsci.plugins.workflow.steps.SynchronousStepExecution;
 
 import javax.annotation.Nonnull;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class CreateDeploymentStepExecution extends StepExecution {
+public class CreateDeploymentStepExecution extends SynchronousStepExecution<Void> {
     private static final long serialVersionUID = 1L;
     private static final Logger LOGGER = Logger.getLogger(CreateDeploymentStepExecution.class.getName());
     private final transient CreateDeploymentStep step;
@@ -44,7 +44,7 @@ public class CreateDeploymentStepExecution extends StepExecution {
     }
 
     @Override
-    public boolean start() throws Exception {
+    protected Void run() throws Exception {
         StepContext context = getContext();
         PluginLogger logger = PerfSigUIUtils.createLogger(listener().getLogger());
 
@@ -64,7 +64,7 @@ public class CreateDeploymentStepExecution extends StepExecution {
                     .withCallback(new Callback())
                     .start();
         }
-        return false;
+        return null;
     }
 
     @Override

@@ -1,11 +1,18 @@
 {
-  "name": "perfsig-jenkins",
+  "name": "perfsig-ui",
+  "description": "Performance Signature UI",
   "version": "1.0.0",
+  "author": "Raphael Pionke <raphael.pionke@t-systems.com> (https://github.com/rpionke)",
   "license": "Apache-2.0",
   "scripts": {
     "mvnbuild": "gulp bundle",
     "mvntest": "gulp test lint"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jenkinsci/performance-signature-dynatrace-plugin.git"
+  },
+  "readme": "../README.md",
   "devDependencies": {
     "@jenkins-cd/js-builder": "0.0.63",
     "gulp": "^3.9.1",

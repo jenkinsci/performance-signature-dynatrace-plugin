@@ -36,6 +36,9 @@ import hudson.tasks.BatchFile;
 import hudson.tasks.Shell;
 import hudson.util.ListBoxModel;
 import org.apache.commons.io.FileUtils;
+import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
+import org.jenkinsci.plugins.workflow.job.WorkflowJob;
+import org.jenkinsci.plugins.workflow.job.WorkflowRun;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -95,6 +98,36 @@ public class RecorderTest {
         assertTrue(s.contains("session successfully downloaded"));
 
         PerfSigBuildAction buildAction = build.getAction(PerfSigBuildAction.class);
+        assertNotNull(buildAction);
+        assertNotNull(buildAction.getDashboardReports());
+        DashboardReport dashboardReport = buildAction.getDashboardReports().get(0);
+        assertNotNull(dashboardReport);
+        assertNotNull(dashboardReport.getChartDashlets());
+        assertEquals(7, dashboardReport.getChartDashlets().size());
+    }
+
+    @Test
+    public void testPipelineConfiguration() throws Exception {
+        String testCase = "RecorderTest";
+
+        WorkflowJob p = j.createProject(WorkflowJob.class);
+        p.setDefinition(new CpsFlowDefinition("node('master') {" +
+                "startSession dynatraceProfile: 'easy Travel (admin) @ PoC PerfSig', testCase: 'RecorderTest'\n" +
+                "sleep 30\n" +
+                "stopSession 'easy Travel (admin) @ PoC PerfSig'\n" +
+                "perfSigReports configurationTestCases: [[$class: 'GenericTestCase', clientDashboard: 'PurePath Overview'," +
+                "comparisonDashboards: [[dashboard: 'PerformanceSignature_comparisonreport']], name: 'RecorderTest'," +
+                "singleDashboards: [[dashboard: 'PerformanceSignature_singlereport']], xmlDashboard: 'PerformanceSignature_xml']]," +
+                "dynatraceProfile: 'easy Travel (fn_perfsig) @ PoC PerfSig', deleteSessions: true, exportSessions: true, removeConfidentialStrings: true\n" +
+                "}", true));
+        WorkflowRun b = j.assertBuildStatusSuccess(p.scheduleBuild2(0));
+
+        j.assertLogContains("connection successful, getting reports for this build and testcase " + testCase, b);
+        j.assertLogContains("getting PDF report: Singlereport", b); //no Comparisonreport available
+        j.assertLogContains("parsing XML report", b);
+        j.assertLogContains("session successfully downloaded", b);
+
+        PerfSigBuildAction buildAction = b.getAction(PerfSigBuildAction.class);
         assertNotNull(buildAction);
         assertNotNull(buildAction.getDashboardReports());
         DashboardReport dashboardReport = buildAction.getDashboardReports().get(0);

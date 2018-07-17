@@ -57,11 +57,8 @@ public class PullPerfSigDataStepExecution extends SynchronousNonBlockingStepExec
     private transient final PullPerfSigDataStep step;
     private final transient Gson gson;
 
-    PullPerfSigDataStepExecution(final PullPerfSigDataStep step, final StepContext context) throws AbortException {
+    PullPerfSigDataStepExecution(final PullPerfSigDataStep step, final StepContext context) {
         super(context);
-        if (step.getHandle() == null) {
-            throw new AbortException("'handle' has not been defined for this 'pullPerfSigReports' step");
-        }
         this.step = step;
         this.gson = new GsonBuilder()
                 .registerTypeAdapter(Date.class,
@@ -80,6 +77,10 @@ public class PullPerfSigDataStepExecution extends SynchronousNonBlockingStepExec
         if (run == null || listener == null) {
             throw new AbortException("run or listener are not available");
         }
+        if (step.getHandle() == null) {
+            throw new AbortException("'handle' has not been defined for this 'pullPerfSigReports' step");
+        }
+
         PluginLogger logger = PerfSigUIUtils.createLogger(listener.getLogger());
         BuildContext context = new BuildContext(run, workspace, listener, listener.getLogger(), new RemoteJenkinsServer());
 
