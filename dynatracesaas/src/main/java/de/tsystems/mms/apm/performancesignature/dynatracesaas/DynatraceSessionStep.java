@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableSet;
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.util.DynatraceUtils;
 import hudson.Extension;
 import hudson.model.Item;
+import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.util.ListBoxModel;
 import org.jenkinsci.plugins.workflow.steps.Step;
@@ -67,7 +68,7 @@ public class DynatraceSessionStep extends Step {
 
         @Override
         public Set<? extends Class<?>> getRequiredContext() {
-            return ImmutableSet.of(TaskListener.class);
+            return ImmutableSet.of(Run.class, TaskListener.class);
         }
 
         @Nonnull

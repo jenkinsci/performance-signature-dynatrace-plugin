@@ -13,13 +13,12 @@ import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.plugins.analysis.util.PluginLogger;
-import org.apache.commons.lang.time.DateUtils;
 import org.jenkinsci.plugins.workflow.steps.StepContext;
 import org.jenkinsci.plugins.workflow.steps.SynchronousNonBlockingStepExecution;
 
-import java.util.Collections;
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -49,59 +48,64 @@ public class DynatraceReportStepExecution extends SynchronousNonBlockingStepExec
         DynatraceServerConnection serverConnection = DynatraceUtils.createDynatraceServerConnection(step.getEnvId(), true);
         logger.log("getting metric data from Dynatrace Server");
 
-        Date start = DateUtils.addHours(new Date(), -2);
-        Date end = new Date();
-
         Map<String, Timeseries> timeseries = serverConnection.getTimeseries()
                 .parallelStream().collect(Collectors.toMap(Timeseries::getTimeseriesId, item -> item));
 
-        DashboardReport dashboardReport = new DashboardReport("loadtest");
-        step.getMetrics().forEach(metric -> {
-            Timeseries tm = timeseries.get(metric.getMetricId());
-            Map<Timeseries.AggregationEnum, Result> aggregations = tm.getAggregationTypes().stream()
-                    .collect(Collectors.toMap(aggregation -> aggregation,
-                            aggregation -> serverConnection.getTimeseriesData(metric.getMetricId(), start, end, aggregation),
-                            (a, b) -> b, LinkedHashMap::new));
-            Result baseResult = aggregations.get(Timeseries.AggregationEnum.AVG);
-            ChartDashlet chartDashlet = new ChartDashlet();
-            chartDashlet.setName(tm.getDetailedSource() + " - " + tm.getDisplayName());
-            if (baseResult != null) {
-                baseResult.getDataPoints().forEach((key, value) -> {
-                    Map<Timeseries.AggregationEnum, Number> values = tm.getAggregationTypes().stream()
-                            .collect(Collectors.toMap(Function.identity(),
-                                    aggregation -> serverConnection.getTotalTimeseriesData(metric.getMetricId(), start, end, aggregation)
-                                            .getDataPoints().get(key).entrySet().iterator().next().getValue(),
-                                    (a, b) -> b, LinkedHashMap::new));
+        final List<DynatraceEnvInvisAction> envVars = run.getActions(DynatraceEnvInvisAction.class);
+        final List<DashboardReport> dashboardReports = new ArrayList<>();
+        envVars.forEach(dynatraceAction -> {
+            Long start = dynatraceAction.getTimeframeStart();
+            Long end = dynatraceAction.getTimeframeStop();
 
-                    Measure measure = new Measure(baseResult.getEntities().get(key));
-                    measure.setAggregation(baseResult.getAggregationType().getValue().toLowerCase());
-                    measure.setUnit(caluclateUnit(baseResult, values));
+            DashboardReport dashboardReport = new DashboardReport(dynatraceAction.getTestCase());
+            step.getMetrics().forEach(metric -> {
+                Timeseries tm = timeseries.get(metric.getMetricId());
+                Map<Timeseries.AggregationEnum, Result> aggregations = tm.getAggregationTypes().stream()
+                        .collect(Collectors.toMap(aggregation -> aggregation,
+                                aggregation -> serverConnection.getTimeseriesData(metric.getMetricId(), start, end, aggregation),
+                                (a, b) -> b, LinkedHashMap::new));
+                Result baseResult = aggregations.get(Timeseries.AggregationEnum.AVG);
+                ChartDashlet chartDashlet = new ChartDashlet();
+                chartDashlet.setName(tm.getDetailedSource() + " - " + tm.getDisplayName());
+                if (baseResult != null) {
+                    baseResult.getDataPoints().forEach((key, value) -> {
+                        Map<Timeseries.AggregationEnum, Number> values = tm.getAggregationTypes().stream()
+                                .collect(Collectors.toMap(Function.identity(),
+                                        aggregation -> serverConnection.getTotalTimeseriesData(metric.getMetricId(), start, end, aggregation)
+                                                .getDataPoints().get(key).entrySet().iterator().next().getValue(),
+                                        (a, b) -> b, LinkedHashMap::new));
 
-                    measure.setAvg(getTotalValues(baseResult, values, Timeseries.AggregationEnum.AVG));
-                    measure.setMin(getTotalValues(baseResult, values, Timeseries.AggregationEnum.MIN));
-                    measure.setMax(getTotalValues(baseResult, values, Timeseries.AggregationEnum.MAX));
-                    measure.setSum(getTotalValues(baseResult, values, Timeseries.AggregationEnum.SUM));
-                    measure.setCount(getTotalValues(baseResult, values, Timeseries.AggregationEnum.COUNT));
+                        Measure measure = new Measure(baseResult.getEntities().get(key));
+                        measure.setAggregation(baseResult.getAggregationType().getValue().toLowerCase());
+                        measure.setUnit(caluclateUnit(baseResult, values));
 
-                    value.entrySet().stream()
-                            .filter(entry -> entry != null && entry.getValue() != null)
-                            .forEach(entry -> {
-                                long timestamp = entry.getKey();
-                                Measurement m = new Measurement(timestamp,
-                                        getAggregationValue(baseResult, aggregations, Timeseries.AggregationEnum.AVG, key, timestamp),
-                                        getAggregationValue(baseResult, aggregations, Timeseries.AggregationEnum.MIN, key, timestamp),
-                                        getAggregationValue(baseResult, aggregations, Timeseries.AggregationEnum.MAX, key, timestamp),
-                                        getAggregationValue(baseResult, aggregations, Timeseries.AggregationEnum.SUM, key, timestamp),
-                                        getAggregationValue(baseResult, aggregations, Timeseries.AggregationEnum.COUNT, key, timestamp));
+                        measure.setAvg(getTotalValues(baseResult, values, Timeseries.AggregationEnum.AVG));
+                        measure.setMin(getTotalValues(baseResult, values, Timeseries.AggregationEnum.MIN));
+                        measure.setMax(getTotalValues(baseResult, values, Timeseries.AggregationEnum.MAX));
+                        measure.setSum(getTotalValues(baseResult, values, Timeseries.AggregationEnum.SUM));
+                        measure.setCount(getTotalValues(baseResult, values, Timeseries.AggregationEnum.COUNT));
 
-                                measure.getMeasurements().add(m);
-                            });
-                    chartDashlet.getMeasures().add(measure);
-                });
-            }
-            dashboardReport.addChartDashlet(chartDashlet);
+                        value.entrySet().stream()
+                                .filter(entry -> entry != null && entry.getValue() != null)
+                                .forEach(entry -> {
+                                    long timestamp = entry.getKey();
+                                    Measurement m = new Measurement(timestamp,
+                                            getAggregationValue(baseResult, aggregations, Timeseries.AggregationEnum.AVG, key, timestamp),
+                                            getAggregationValue(baseResult, aggregations, Timeseries.AggregationEnum.MIN, key, timestamp),
+                                            getAggregationValue(baseResult, aggregations, Timeseries.AggregationEnum.MAX, key, timestamp),
+                                            getAggregationValue(baseResult, aggregations, Timeseries.AggregationEnum.SUM, key, timestamp),
+                                            getAggregationValue(baseResult, aggregations, Timeseries.AggregationEnum.COUNT, key, timestamp));
+
+                                    measure.getMeasurements().add(m);
+                                });
+                        chartDashlet.getMeasures().add(measure);
+                    });
+                }
+                dashboardReport.addChartDashlet(chartDashlet);
+            });
+            dashboardReports.add(dashboardReport);
         });
-        PerfSigBuildAction action = new PerfSigBuildAction(Collections.singletonList(dashboardReport));
+        PerfSigBuildAction action = new PerfSigBuildAction(dashboardReports);
         run.addAction(action);
         return null;
     }

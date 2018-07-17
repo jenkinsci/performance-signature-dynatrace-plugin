@@ -26,7 +26,10 @@ import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.Timeser
 import okhttp3.Call;
 
 import java.lang.reflect.Type;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.Timeseries.AggregationEnum;
 
@@ -73,15 +76,15 @@ public class TimeSeriesApi {
         return apiClient.buildCall(localVarPath, "GET", localVarQueryParams, null, localVarHeaderParams, null);
     }
 
-    public Result getTimeseriesData(String timeseriesId, Date startTimestamp, Date endTimestamp,
+    public Result getTimeseriesData(String timeseriesId, Long startTimestamp, Long endTimestamp,
                                     AggregationEnum aggregationType, String queryMode) throws ApiException {
         ApiResponse<Result.Container> resp = getTimeseriesDataWithHttpInfo(timeseriesId, startTimestamp, endTimestamp, aggregationType, queryMode);
         return resp.getData().result;
     }
 
-    public ApiResponse<Result.Container> getTimeseriesDataWithHttpInfo(String timeseriesId, Date startTimestamp,
-                                                                       Date endTimestamp, AggregationEnum aggregationType, String queryMode) throws ApiException {
-        Call call = getTimeseriesCall(timeseriesId, startTimestamp.getTime(), endTimestamp.getTime(), aggregationType, queryMode);
+    public ApiResponse<Result.Container> getTimeseriesDataWithHttpInfo(String timeseriesId, Long startTimestamp,
+                                                                       Long endTimestamp, AggregationEnum aggregationType, String queryMode) throws ApiException {
+        Call call = getTimeseriesCall(timeseriesId, startTimestamp, endTimestamp, aggregationType, queryMode);
         Type localVarReturnType = new TypeToken<Result.Container>() {
         }.getType();
         return apiClient.execute(call, localVarReturnType);

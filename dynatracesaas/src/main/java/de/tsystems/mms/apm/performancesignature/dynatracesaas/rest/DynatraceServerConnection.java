@@ -30,7 +30,6 @@ import org.apache.commons.lang.exception.ExceptionUtils;
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
 import java.net.Proxy;
-import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -100,7 +99,7 @@ public class DynatraceServerConnection {
         }
     }
 
-    public Result getTotalTimeseriesData(String timeseriesId, Date startTimestamp, Date endTimestamp,
+    public Result getTotalTimeseriesData(String timeseriesId, Long startTimestamp, Long endTimestamp,
                                          AggregationEnum aggregationType) {
         TimeSeriesApi api = new TimeSeriesApi(apiClient);
         try {
@@ -110,7 +109,7 @@ public class DynatraceServerConnection {
         }
     }
 
-    public Result getTimeseriesData(String timeseriesId, Date startTimestamp, Date endTimestamp,
+    public Result getTimeseriesData(String timeseriesId, Long startTimestamp, Long endTimestamp,
                                     AggregationEnum aggregationType) {
         TimeSeriesApi api = new TimeSeriesApi(apiClient);
         try {
