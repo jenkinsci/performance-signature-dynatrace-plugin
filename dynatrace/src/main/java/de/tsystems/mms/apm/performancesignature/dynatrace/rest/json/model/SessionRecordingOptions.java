@@ -149,7 +149,7 @@ public class SessionRecordingOptions {
             @Override
             public RecordingoptionEnum read(final JsonReader jsonReader) throws IOException {
                 String value = jsonReader.nextString();
-                return RecordingoptionEnum.fromValue(String.valueOf(value));
+                return RecordingoptionEnum.fromValue(value);
             }
         }
     }

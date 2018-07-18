@@ -17,23 +17,23 @@
 package de.tsystems.mms.apm.performancesignature.dynatracesaas.rest;
 
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.model.DynatraceServerConfiguration;
-import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.api.ServerManagementApi;
-import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.api.TimeSeriesApi;
-import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.Result;
-import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.Timeseries;
+import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.api.ClusterVersionApi;
+import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.api.TimeseriesApi;
+import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.*;
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.util.DynatraceUtils;
 import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
 import hudson.ProxyConfiguration;
 import jenkins.model.Jenkins;
 import org.apache.commons.lang.exception.ExceptionUtils;
+import retrofit2.Call;
+import retrofit2.Response;
 
+import java.io.IOException;
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
 import java.net.Proxy;
 import java.util.List;
 import java.util.logging.Logger;
-
-import static de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.Timeseries.AggregationEnum;
 
 public class DynatraceServerConnection {
     private static final Logger LOGGER = Logger.getLogger(DynatraceServerConnection.class.getName());
@@ -44,9 +44,8 @@ public class DynatraceServerConnection {
         this.apiClient = new ApiClient();
         apiClient.setVerifyingSsl(verifyCertificate);
         apiClient.setBasePath(serverUrl);
-        apiClient.setApiKeyPrefix("Api-Token");
         apiClient.setApiKey(DynatraceUtils.getApiToken(apiTokenId));
-        //apiClient.setDebugging(true);
+        apiClient.setDebugging(true);
 
         Proxy proxy = Proxy.NO_PROXY;
         ProxyConfiguration proxyConfig = Jenkins.getInstance().proxy;
@@ -82,40 +81,108 @@ public class DynatraceServerConnection {
     }
 
     public String getServerVersion() {
-        ServerManagementApi api = new ServerManagementApi(apiClient);
+        ClusterVersionApi api = apiClient.createService(ClusterVersionApi.class);
+        Call<ClusterVersion> call = api.getVersion();
         try {
-            return api.getVersion();
+            ApiResponse<ClusterVersion> version = execute(call);
+            return version.getData().getVersion();
         } catch (ApiException ex) {
             throw new CommandExecutionException("error getting version of server: " + ex.getResponseBody(), ex);
         }
     }
 
-    public List<Timeseries> getTimeseries() {
-        TimeSeriesApi api = new TimeSeriesApi(apiClient);
+    public List<TimeseriesDefinition> getTimeseries() {
+        TimeseriesApi api = apiClient.createService(TimeseriesApi.class);
+        Call<List<TimeseriesDefinition>> call = api.getAllTimeseriesDefinitions(null, null);
         try {
-            return api.getTimeseries();
+            ApiResponse<List<TimeseriesDefinition>> reponse = execute(call);
+            return reponse.getData();
         } catch (ApiException ex) {
             throw new CommandExecutionException("error while querying timeseries: " + ex.getResponseBody(), ex);
         }
     }
 
-    public Result getTotalTimeseriesData(String timeseriesId, Long startTimestamp, Long endTimestamp,
-                                         AggregationEnum aggregationType) {
-        TimeSeriesApi api = new TimeSeriesApi(apiClient);
+    public TimeseriesDataPointQueryResult getTotalTimeseriesData(String timeseriesId, Long startTimestamp, Long endTimestamp,
+                                                                 AggregationTypeEnum aggregationType) {
+        TimeseriesApi api = apiClient.createService(TimeseriesApi.class);
+        TimeseriesQueryMessage body = new TimeseriesQueryMessage()
+                .timeseriesId(timeseriesId)
+                .startTimestamp(startTimestamp)
+                .endTimestamp(endTimestamp)
+                .aggregationType(aggregationType)
+                .queryMode(QueryModeEnum.TOTAL);
+
+        Call<TimeseriesDataPointQueryResult.Container> call = api.readTimeseriesComplex(timeseriesId, body);
         try {
-            return api.getTimeseriesData(timeseriesId, startTimestamp, endTimestamp, aggregationType, "total");
+            ApiResponse<TimeseriesDataPointQueryResult.Container> response = execute(call);
+            return response.getData().result;
         } catch (ApiException ex) {
             throw new CommandExecutionException("error while querying timeseries data: " + ex.getResponseBody(), ex);
         }
     }
 
-    public Result getTimeseriesData(String timeseriesId, Long startTimestamp, Long endTimestamp,
-                                    AggregationEnum aggregationType) {
-        TimeSeriesApi api = new TimeSeriesApi(apiClient);
+    public TimeseriesDataPointQueryResult getTimeseriesData(String timeseriesId, Long startTimestamp, Long endTimestamp,
+                                                            AggregationTypeEnum aggregationType) {
+        TimeseriesApi api = apiClient.createService(TimeseriesApi.class);
+        TimeseriesQueryMessage body = new TimeseriesQueryMessage()
+                .timeseriesId(timeseriesId)
+                .startTimestamp(startTimestamp)
+                .endTimestamp(endTimestamp)
+                .aggregationType(aggregationType)
+                .queryMode(QueryModeEnum.SERIES);
+
+        Call<TimeseriesDataPointQueryResult.Container> call = api.readTimeseriesComplex(timeseriesId, body);
         try {
-            return api.getTimeseriesData(timeseriesId, startTimestamp, endTimestamp, aggregationType, "series");
+            ApiResponse<TimeseriesDataPointQueryResult.Container> response = execute(call);
+            return response.getData().result;
         } catch (ApiException ex) {
             throw new CommandExecutionException("error while querying timeseries data: " + ex.getResponseBody(), ex);
+        }
+    }
+
+    /**
+     * Execute HTTP call and deserialize the HTTP response body into the given return type.
+     *
+     * @param <T>  The return type corresponding to (same with) returnType
+     * @param call Call
+     * @return ApiResponse object containing response status, headers and
+     * data, which is a Java object deserialized from response body and would be null
+     * when returnType is null.
+     * @throws ApiException If fail to execute the call
+     */
+
+    private <T> ApiResponse<T> execute(final Call<T> call) throws ApiException {
+        try {
+            Response<T> response = call.execute();
+            T data = handleResponse(response);
+            return new ApiResponse<>(response.code(), response.headers().toMultimap(), data);
+        } catch (IOException e) {
+            throw new ApiException(e);
+        }
+    }
+
+    /**
+     * Handle the given response, return the deserialized object when the response is successful.
+     *
+     * @param <T>      Type
+     * @param response Response
+     * @return Type
+     * @throws ApiException If the response has a unsuccessful status code or
+     *                      fail to deserialize the response body
+     */
+    private <T> T handleResponse(final Response<T> response) throws ApiException {
+        if (response.isSuccessful()) {
+            return response.body();
+        } else {
+            String respBody = null;
+            if (response.body() != null) {
+                try {
+                    respBody = response.errorBody() != null ? response.errorBody().string() : "empty response body";
+                } catch (IOException e) {
+                    throw new ApiException(response.message(), e, response.code(), response.headers().toMultimap());
+                }
+            }
+            throw new ApiException(response.message(), response.code(), response.headers().toMultimap(), respBody);
         }
     }
 }

@@ -326,7 +326,7 @@ public class SessionMetadata extends BaseReference {
             @Override
             public StateEnum read(final JsonReader jsonReader) throws IOException {
                 String value = jsonReader.nextString();
-                return StateEnum.fromValue(String.valueOf(value));
+                return StateEnum.fromValue(value);
             }
         }
     }

@@ -1,16 +1,19 @@
 package de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.auth;
 
-import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.Pair;
+import okhttp3.Interceptor;
+import okhttp3.Request;
+import okhttp3.Response;
 
-import java.util.List;
-import java.util.Map;
+import javax.annotation.Nonnull;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 
-public class ApiKeyAuth implements Authentication {
+public class ApiKeyAuth implements Interceptor {
     private final String location;
     private final String paramName;
 
     private String apiKey;
-    private String apiKeyPrefix;
 
     public ApiKeyAuth(String location, String paramName) {
         this.location = location;
@@ -33,29 +36,34 @@ public class ApiKeyAuth implements Authentication {
         this.apiKey = apiKey;
     }
 
-    public String getApiKeyPrefix() {
-        return apiKeyPrefix;
-    }
-
-    public void setApiKeyPrefix(String apiKeyPrefix) {
-        this.apiKeyPrefix = apiKeyPrefix;
-    }
-
     @Override
-    public void applyToParams(List<Pair> queryParams, Map<String, String> headerParams) {
-        if (apiKey == null) {
-            return;
-        }
-        String value;
-        if (apiKeyPrefix != null) {
-            value = apiKeyPrefix + " " + apiKey;
-        } else {
-            value = apiKey;
-        }
+    public Response intercept(@Nonnull Chain chain) throws IOException {
+        String paramValue;
+        Request request = chain.request();
+
         if ("query".equals(location)) {
-            queryParams.add(new Pair(paramName, value));
+            String newQuery = request.url().uri().getQuery();
+            paramValue = paramName + "=" + apiKey;
+            if (newQuery == null) {
+                newQuery = paramValue;
+            } else {
+                newQuery += "&" + paramValue;
+            }
+
+            URI newUri;
+            try {
+                newUri = new URI(request.url().uri().getScheme(), request.url().uri().getAuthority(),
+                        request.url().uri().getPath(), newQuery, request.url().uri().getFragment());
+            } catch (URISyntaxException e) {
+                throw new IOException(e);
+            }
+
+            request = request.newBuilder().url(newUri.toURL()).build();
         } else if ("header".equals(location)) {
-            headerParams.put(paramName, value);
+            request = request.newBuilder()
+                    .addHeader(paramName, "Api-Token " + apiKey)
+                    .build();
         }
+        return chain.proceed(request);
     }
 }

@@ -3,7 +3,9 @@ package de.tsystems.mms.apm.performancesignature.dynatracesaas;
 import de.tsystems.mms.apm.performancesignature.dynatrace.model.DashboardReport;
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.DynatraceServerConnection;
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.RESTErrorException;
-import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.Timeseries;
+import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.AggregationTypeEnum;
+import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.TimeseriesDataPointQueryResult;
+import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.TimeseriesDefinition;
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.util.DynatraceUtils;
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.util.TestUtils;
 import de.tsystems.mms.apm.performancesignature.ui.PerfSigBuildAction;
@@ -18,8 +20,10 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
 
+import java.time.Instant;
 import java.util.List;
 
+import static java.time.temporal.ChronoUnit.HOURS;
 import static org.junit.Assert.*;
 
 public class TimeSeriesApiTest {
@@ -37,6 +41,13 @@ public class TimeSeriesApiTest {
     @BeforeClass
     public static void setUp() throws Exception {
         dynatraceConfigurations = TestUtils.prepareDTConfigurations();
+    }
+
+    @Test
+    public void testTimeseriesApi() throws Exception {
+        TimeseriesDataPointQueryResult response = connection.getTimeseriesData("com.dynatrace.builtin:host.cpu.user",
+                Instant.now().minus(2, HOURS).toEpochMilli(), Instant.now().toEpochMilli(), AggregationTypeEnum.AVG);
+        assertNotNull(response);
     }
 
     @Test
@@ -69,7 +80,7 @@ public class TimeSeriesApiTest {
 
     @Test
     public void testGetDashboardViaRest() {
-        List<Timeseries> dashboardList = connection.getTimeseries();
+        List<TimeseriesDefinition> dashboardList = connection.getTimeseries();
         assertTrue(!dashboardList.isEmpty());
     }
 

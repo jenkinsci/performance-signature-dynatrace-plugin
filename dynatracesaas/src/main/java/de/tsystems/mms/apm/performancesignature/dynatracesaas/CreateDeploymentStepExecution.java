@@ -18,10 +18,10 @@ package de.tsystems.mms.apm.performancesignature.dynatracesaas;
 
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.ApiException;
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.RESTErrorException;
+import de.tsystems.mms.apm.performancesignature.dynatracesaas.util.DynatraceUtils;
 import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
 import hudson.AbortException;
 import hudson.model.TaskListener;
-import hudson.plugins.analysis.util.PluginLogger;
 import org.jenkinsci.plugins.workflow.steps.AbstractStepExecutionImpl;
 import org.jenkinsci.plugins.workflow.steps.BodyExecution;
 import org.jenkinsci.plugins.workflow.steps.BodyExecutionCallback;
@@ -46,7 +46,6 @@ public class CreateDeploymentStepExecution extends AbstractStepExecutionImpl {
     @Override
     public boolean start() throws Exception {
         StepContext context = getContext();
-        PluginLogger logger = PerfSigUIUtils.createLogger(listener().getLogger());
 
         /*DTServerConnection connection = PerfSigUtils.createDTServerConnection(step.getDynatraceProfile());
         AlertsIncidentsAndEventsApi api = new AlertsIncidentsAndEventsApi(connection.getApiClient());
@@ -57,7 +56,7 @@ public class CreateDeploymentStepExecution extends AbstractStepExecutionImpl {
         if (eventId == null) {
             throw new AbortException("could not create deployment event");
         }*/
-        logger.log("successfully created deployment event " + eventId);
+        println("successfully created deployment event " + eventId);
 
         if (context.hasBody()) {
             body = context.newBodyInvoker()
@@ -69,10 +68,10 @@ public class CreateDeploymentStepExecution extends AbstractStepExecutionImpl {
 
     @Override
     public void stop(@Nonnull Throwable cause) throws Exception {
+        updateEvent();
         if (body != null) {
             body.cancel(cause);
         }
-        updateEvent();
     }
 
     private void updateEvent() throws ApiException, AbortException, RESTErrorException {
@@ -81,17 +80,7 @@ public class CreateDeploymentStepExecution extends AbstractStepExecutionImpl {
             AlertsIncidentsAndEventsApi api = new AlertsIncidentsAndEventsApi(connection.getApiClient());
             EventUpdate event = new EventUpdate(new Date());
             api.updateDeploymentEvent(eventId, event);*/
-            PluginLogger logger = PerfSigUIUtils.createLogger(listener().getLogger());
-            logger.log("successfully updated deployment event " + eventId);
-        }
-    }
-
-    private TaskListener listener() {
-        try {
-            return getContext().get(TaskListener.class);
-        } catch (Exception x) {
-            LOGGER.log(Level.WARNING, null, x);
-            return TaskListener.NULL;
+            println("successfully updated deployment event " + eventId);
         }
     }
 
@@ -101,6 +90,15 @@ public class CreateDeploymentStepExecution extends AbstractStepExecutionImpl {
         @Override
         protected void finished(StepContext context) throws Exception {
             updateEvent();
+        }
+    }
+
+    private void println(String message) {
+        TaskListener listener = DynatraceUtils.getTaskListener(getContext());
+        if (listener == null) {
+            LOGGER.log(Level.FINE, "failed to print message {0} due to null TaskListener", message);
+        } else {
+            PerfSigUIUtils.createLogger(listener.getLogger()).log(message);
         }
     }
 }

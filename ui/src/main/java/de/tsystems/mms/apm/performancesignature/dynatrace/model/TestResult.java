@@ -225,7 +225,7 @@ public class TestResult {
             @Override
             public TestResult.StatusEnum read(final JsonReader jsonReader) throws IOException {
                 String value = jsonReader.nextString();
-                return TestResult.StatusEnum.fromValue(String.valueOf(value));
+                return TestResult.StatusEnum.fromValue(value);
             }
         }
     }

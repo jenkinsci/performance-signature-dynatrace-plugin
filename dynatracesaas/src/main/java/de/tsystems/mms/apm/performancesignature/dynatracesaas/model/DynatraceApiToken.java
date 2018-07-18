@@ -15,6 +15,7 @@ public interface DynatraceApiToken extends StandardCredentials {
     Secret getApiToken();
 
     class NameProvider extends CredentialsNameProvider<DynatraceApiToken> {
+        @Nonnull
         @Override
         public String getName(@Nonnull DynatraceApiToken c) {
             String description = Util.fixEmptyAndTrim(c.getDescription());

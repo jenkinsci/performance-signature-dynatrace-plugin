@@ -340,7 +340,7 @@ public class TestRun extends BaseReference {
 
         @Override
         public String toString() {
-            return String.valueOf(value);
+            return value;
         }
 
         public static class Adapter extends TypeAdapter<CategoryEnum> {
@@ -352,7 +352,7 @@ public class TestRun extends BaseReference {
             @Override
             public CategoryEnum read(final JsonReader jsonReader) throws IOException {
                 String value = jsonReader.nextString();
-                return CategoryEnum.fromValue(String.valueOf(value));
+                return CategoryEnum.fromValue(value);
             }
         }
     }

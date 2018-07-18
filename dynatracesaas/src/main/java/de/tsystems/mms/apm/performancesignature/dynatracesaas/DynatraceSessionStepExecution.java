@@ -1,5 +1,6 @@
 package de.tsystems.mms.apm.performancesignature.dynatracesaas;
 
+import de.tsystems.mms.apm.performancesignature.dynatracesaas.util.DynatraceUtils;
 import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
 import hudson.model.Run;
 import hudson.model.TaskListener;
@@ -54,32 +55,11 @@ public class DynatraceSessionStepExecution extends AbstractStepExecutionImpl {
     }
 
     private void println(String message) {
-        TaskListener listener = getTaskListener();
+        TaskListener listener = DynatraceUtils.getTaskListener(getContext());
         if (listener == null) {
             LOGGER.log(Level.FINE, "failed to print message {0} due to null TaskListener", message);
         } else {
             PerfSigUIUtils.createLogger(listener.getLogger()).log(message);
-        }
-    }
-
-    private void println(Throwable throwable) {
-        TaskListener listener = getTaskListener();
-        if (listener == null) {
-            LOGGER.log(Level.FINE, "failed to print message {0} due to null TaskListener", throwable);
-        } else {
-            PerfSigUIUtils.createLogger(listener.getLogger()).log(throwable);
-        }
-    }
-
-    private TaskListener getTaskListener() {
-        StepContext context = getContext();
-        if (!context.isReady()) {
-            return null;
-        }
-        try {
-            return context.get(TaskListener.class);
-        } catch (Exception x) {
-            return null;
         }
     }
 

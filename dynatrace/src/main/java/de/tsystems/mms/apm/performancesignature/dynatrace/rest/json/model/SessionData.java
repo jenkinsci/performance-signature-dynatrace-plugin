@@ -121,7 +121,7 @@ public class SessionData extends BaseReference {
             @Override
             public StoredSessiontypeEnum read(final JsonReader jsonReader) throws IOException {
                 String value = jsonReader.nextString();
-                return StoredSessiontypeEnum.fromValue(String.valueOf(value));
+                return StoredSessiontypeEnum.fromValue(value);
             }
         }
     }
@@ -164,7 +164,7 @@ public class SessionData extends BaseReference {
             @Override
             public SessionTypeEnum read(final JsonReader jsonReader) throws IOException {
                 String value = jsonReader.nextString();
-                return SessionTypeEnum.fromValue(String.valueOf(value));
+                return SessionTypeEnum.fromValue(value);
             }
         }
     }

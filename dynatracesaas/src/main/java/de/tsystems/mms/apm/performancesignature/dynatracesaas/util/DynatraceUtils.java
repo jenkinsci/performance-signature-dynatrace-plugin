@@ -24,13 +24,15 @@ import de.tsystems.mms.apm.performancesignature.dynatracesaas.model.DynatraceApi
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.model.DynatraceServerConfiguration;
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.DynatraceServerConnection;
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.RESTErrorException;
-import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.Timeseries;
+import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.TimeseriesDefinition;
 import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
 import hudson.AbortException;
+import hudson.model.TaskListener;
 import hudson.security.ACL;
 import hudson.util.ListBoxModel;
 import jenkins.model.Jenkins;
 import org.jenkinsci.plugins.plaincredentials.StringCredentials;
+import org.jenkinsci.plugins.workflow.steps.StepContext;
 
 import java.util.Collections;
 import java.util.List;
@@ -49,8 +51,8 @@ public final class DynatraceUtils {
                 listBoxModel.add((String) item);
             } else if (item instanceof DynatraceServerConfiguration) {
                 listBoxModel.add(((DynatraceServerConfiguration) item).getName());
-            } else if (item instanceof Timeseries) {
-                Timeseries metric = (Timeseries) item;
+            } else if (item instanceof TimeseriesDefinition) {
+                TimeseriesDefinition metric = (TimeseriesDefinition) item;
                 listBoxModel.add(metric.getDetailedSource() + " - " + metric.getDisplayName(), metric.getTimeseriesId());
             }
         });
@@ -112,5 +114,17 @@ public final class DynatraceUtils {
      */
     public static String escapeString(String str) {
         return PerfSigUIUtils.encodeString(str);
+    }
+
+
+    public static TaskListener getTaskListener(final StepContext context) {
+        if (!context.isReady()) {
+            return null;
+        }
+        try {
+            return context.get(TaskListener.class);
+        } catch (Exception x) {
+            return null;
+        }
     }
 }

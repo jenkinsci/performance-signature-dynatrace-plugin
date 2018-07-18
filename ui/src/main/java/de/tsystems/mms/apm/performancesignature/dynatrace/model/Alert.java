@@ -190,7 +190,7 @@ public class Alert {
             @Override
             public SeverityEnum read(final JsonReader jsonReader) throws IOException {
                 String value = jsonReader.nextString();
-                return SeverityEnum.fromValue(String.valueOf(value));
+                return SeverityEnum.fromValue(value);
             }
         }
     }
@@ -232,7 +232,7 @@ public class Alert {
             @Override
             public StateEnum read(final JsonReader jsonReader) throws IOException {
                 String value = jsonReader.nextString();
-                return StateEnum.fromValue(String.valueOf(value));
+                return StateEnum.fromValue(value);
             }
         }
     }
