@@ -19,7 +19,10 @@
     <f:entry title="${%Environment}" field="envId" description="${%description(rootURL)}">
         <f:select/>
     </f:entry>
-    <f:entry title="${%Metrics}" field="metrics" description="select metrics">
+    <f:entry title="${%relative Path to spec file}" field="specFile" description="${%File and Metrics are mutually exclusive}">
+        <f:textbox/>
+    </f:entry>
+    <f:entry title="${%Metrics}" field="metrics" description="${%File and Metrics are mutually exclusive}">
         <f:repeatable field="metrics" add="${%Add metric}" header="${%Metric}" minimum="1">
             <table width="100%">
                 <f:entry field="metricId">

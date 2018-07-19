@@ -28,7 +28,7 @@ public enum AggregationTypeEnum {
     }
 
     public static AggregationTypeEnum fromValue(String text) {
-        return Arrays.stream(AggregationTypeEnum.values()).filter(b -> b.value.equals(text)).findFirst().orElse(null);
+        return Arrays.stream(AggregationTypeEnum.values()).filter(b -> b.value.equalsIgnoreCase(text)).findFirst().orElse(null);
     }
 
     public String getValue() {

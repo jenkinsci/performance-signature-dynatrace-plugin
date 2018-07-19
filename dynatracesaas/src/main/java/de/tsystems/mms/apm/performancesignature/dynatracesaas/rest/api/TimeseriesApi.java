@@ -30,16 +30,15 @@ public interface TimeseriesApi {
      * Lists all available metric data points, matching specified parameters.
      * Provides advanced filtering possibilities, comparing to the &#x60;GET /timeseries/{metricIdentifier}&#x60; request.
      *
-     * @param timeseriesIdentifier Case-sensitive identifier of the timeseries, where you want to read parameters and data points.\&quot; (required)
-     * @param body                 JSON body of the request, containing parameters to identify the required data points. (optional)
+     * @param body JSON body of the request, containing parameters to identify the required data points.
      * @return Call&lt;TimeseriesQueryResultWrapper.Container&gt;
      */
     @Headers({
             "Content-Type:application/json; charset=utf-8"
     })
-    @POST("timeseries/{timeseriesIdentifier}")
+    @POST("timeseries")
     Call<TimeseriesDataPointQueryResult.Container> readTimeseriesComplex(
-            @Path("timeseriesIdentifier") String timeseriesIdentifier, @Body TimeseriesQueryMessage body
+            @Body TimeseriesQueryMessage body
     );
 
     /**

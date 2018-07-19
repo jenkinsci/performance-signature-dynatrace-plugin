@@ -24,6 +24,8 @@ import hudson.model.Item;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.util.ListBoxModel;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.jenkinsci.plugins.workflow.steps.Step;
 import org.jenkinsci.plugins.workflow.steps.StepContext;
 import org.jenkinsci.plugins.workflow.steps.StepDescriptor;
@@ -32,20 +34,22 @@ import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.DataBoundSetter;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class DynatraceReportStep extends Step {
     private final String envId;
     private List<Metric> metrics;
+    private String specFile;
 
     @DataBoundConstructor
-    public DynatraceReportStep(final String envId, final List<Metric> metrics) {
+    public DynatraceReportStep(final String envId) {
         this.envId = envId;
-        this.metrics = metrics;
     }
 
     @Override
@@ -62,6 +66,20 @@ public class DynatraceReportStep extends Step {
             metrics = new ArrayList<>();
         }
         return metrics;
+    }
+
+    @DataBoundSetter
+    public void setMetrics(List<Metric> metrics) {
+        this.metrics = metrics;
+    }
+
+    public String getSpecFile() {
+        return specFile;
+    }
+
+    @DataBoundSetter
+    public void setSpecFile(String specFile) {
+        this.specFile = specFile;
     }
 
     @Extension
@@ -89,6 +107,15 @@ public class DynatraceReportStep extends Step {
         @Override
         public String getDisplayName() {
             return Messages.DynatraceRecorder_DisplayName();
+        }
+
+        @Override
+        public DynatraceReportStep newInstance(Map<String, Object> arguments) throws Exception {
+            DynatraceReportStep step = (DynatraceReportStep) super.newInstance(arguments);
+            if (StringUtils.isBlank(step.getSpecFile()) && CollectionUtils.isEmpty(step.getMetrics())) {
+                throw new IllegalArgumentException("At least one of file or metrics needs to be provided to " + getFunctionName());
+            }
+            return step;
         }
     }
 }

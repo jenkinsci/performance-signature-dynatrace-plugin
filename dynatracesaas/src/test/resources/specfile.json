@@ -1,0 +1,22 @@
+[
+  {
+    "timeseriesId": "com.dynatrace.builtin:servicemethod.responsetime",
+    "aggregation": "avg",
+    "threshold": 10
+  },
+  {
+    "timeseriesId": "com.dynatrace.builtin:host.cpu.user",
+    "aggregation": "avg",
+    "threshold": 25
+  },
+  {
+    "timeseriesId": "com.dynatrace.builtin:service.failurerate",
+    "aggregation": "max",
+    "threshold": 3
+  },
+  {
+    "timeseriesId": "com.dynatrace.builtin:service.requestspermin",
+    "aggregation": "min",
+    "threshold": 5
+  }
+]

@@ -53,6 +53,7 @@ import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -135,9 +136,10 @@ public class PerfSigBuildActionResultsDisplay implements ModelObject {
                     return null;
                 }
 
-                m.getMeasurements().forEach(measurement -> timeSeries.add(
-                        new Second(new Date(measurement.getTimestamp())),
-                        measurement.getMetricValue(m.getAggregation())));
+                m.getMeasurements().stream().filter(Objects::nonNull).forEach(measurement ->
+                        timeSeries.add(
+                                new Second(new Date(measurement.getTimestamp())),
+                                measurement.getMetricValue(m.getAggregation())));
                 return new TimeSeriesCollection(timeSeries);
             }
         };

@@ -93,10 +93,10 @@ public class DynatraceServerConnection {
 
     public List<TimeseriesDefinition> getTimeseries() {
         TimeseriesApi api = apiClient.createService(TimeseriesApi.class);
-        Call<List<TimeseriesDefinition>> call = api.getAllTimeseriesDefinitions(null, null);
+        Call<List<TimeseriesDefinition>> call = api.getAllTimeseriesDefinitions(FilterEnum.ALL.getValue(), null);
         try {
-            ApiResponse<List<TimeseriesDefinition>> reponse = execute(call);
-            return reponse.getData();
+            ApiResponse<List<TimeseriesDefinition>> response = execute(call);
+            return response.getData();
         } catch (ApiException ex) {
             throw new CommandExecutionException("error while querying timeseries: " + ex.getResponseBody(), ex);
         }
@@ -111,8 +111,9 @@ public class DynatraceServerConnection {
                 .endTimestamp(endTimestamp)
                 .aggregationType(aggregationType)
                 .queryMode(QueryModeEnum.TOTAL);
+        if (aggregationType == AggregationTypeEnum.PERCENTILE) body.percentile(98);
 
-        Call<TimeseriesDataPointQueryResult.Container> call = api.readTimeseriesComplex(timeseriesId, body);
+        Call<TimeseriesDataPointQueryResult.Container> call = api.readTimeseriesComplex(body);
         try {
             ApiResponse<TimeseriesDataPointQueryResult.Container> response = execute(call);
             return response.getData().result;
@@ -130,8 +131,9 @@ public class DynatraceServerConnection {
                 .endTimestamp(endTimestamp)
                 .aggregationType(aggregationType)
                 .queryMode(QueryModeEnum.SERIES);
+        if (aggregationType == AggregationTypeEnum.PERCENTILE) body.percentile(98);
 
-        Call<TimeseriesDataPointQueryResult.Container> call = api.readTimeseriesComplex(timeseriesId, body);
+        Call<TimeseriesDataPointQueryResult.Container> call = api.readTimeseriesComplex(body);
         try {
             ApiResponse<TimeseriesDataPointQueryResult.Container> response = execute(call);
             return response.getData().result;

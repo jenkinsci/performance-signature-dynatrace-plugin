@@ -1,9 +1,9 @@
 package de.tsystems.mms.apm.performancesignature.dynatracesaas;
 
-import de.tsystems.mms.apm.performancesignature.dynatrace.model.ChartDashlet;
-import de.tsystems.mms.apm.performancesignature.dynatrace.model.DashboardReport;
-import de.tsystems.mms.apm.performancesignature.dynatrace.model.Measure;
-import de.tsystems.mms.apm.performancesignature.dynatrace.model.Measurement;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import de.tsystems.mms.apm.performancesignature.dynatrace.model.*;
+import de.tsystems.mms.apm.performancesignature.dynatracesaas.model.Specification;
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.DynatraceServerConnection;
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.AggregationTypeEnum;
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.TimeseriesDataPointQueryResult;
@@ -12,11 +12,20 @@ import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.UnitEnu
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.util.DynatraceUtils;
 import de.tsystems.mms.apm.performancesignature.ui.PerfSigBuildAction;
 import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
+import hudson.FilePath;
 import hudson.model.Run;
 import hudson.model.TaskListener;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
+import org.jenkinsci.plugins.workflow.steps.MissingContextVariableException;
 import org.jenkinsci.plugins.workflow.steps.StepContext;
 import org.jenkinsci.plugins.workflow.steps.SynchronousNonBlockingStepExecution;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -30,6 +39,7 @@ public class DynatraceReportStepExecution extends SynchronousNonBlockingStepExec
     private static final long serialVersionUID = 1L;
     private static final Logger LOGGER = Logger.getLogger(DynatraceReportStepExecution.class.getName());
     private final transient DynatraceReportStep step;
+    private FilePath ws;
 
     public DynatraceReportStepExecution(DynatraceReportStep dynatraceReportStep, StepContext context) {
         super(context);
@@ -44,8 +54,16 @@ public class DynatraceReportStepExecution extends SynchronousNonBlockingStepExec
     protected Void run() throws Exception {
         Run<?, ?> run = getContext().get(Run.class);
         TaskListener listener = getContext().get(TaskListener.class);
+        ws = getContext().get(FilePath.class);
+
         if (run == null || listener == null) {
             throw new IllegalStateException("pipeline step was called without run or task listener in context");
+        }
+        if (StringUtils.isNotBlank(step.getSpecFile()) && CollectionUtils.isNotEmpty(step.getMetrics())) {
+            throw new IllegalArgumentException("At most one of file or text must be provided to " + step.getDescriptor().getFunctionName());
+        }
+        if (ws == null && StringUtils.isNotBlank(step.getSpecFile())) {
+            throw new MissingContextVariableException(FilePath.class);
         }
 
         DynatraceServerConnection serverConnection = DynatraceUtils.createDynatraceServerConnection(step.getEnvId(), true);
@@ -56,49 +74,55 @@ public class DynatraceReportStepExecution extends SynchronousNonBlockingStepExec
 
         final List<DynatraceEnvInvisAction> envVars = run.getActions(DynatraceEnvInvisAction.class);
         final List<DashboardReport> dashboardReports = new ArrayList<>();
+        List<Specification> specifications = getSpecifications();
         envVars.forEach(dynatraceAction -> {
-            //ToDo: remove this magic number before release
-            Long start = dynatraceAction.getTimeframeStart() - 7200000;
+            Long start = dynatraceAction.getTimeframeStart() - 7200000; //ToDo: remove this magic number before release
             Long end = dynatraceAction.getTimeframeStop();
-
             DashboardReport dashboardReport = new DashboardReport(dynatraceAction.getTestCase());
-            step.getMetrics().forEach(metric -> {
-                TimeseriesDefinition tm = timeseries.get(metric.getMetricId());
+
+            specifications.forEach(spec -> {
+                TimeseriesDefinition tm = timeseries.get(spec.getTimeseriesId());
                 Map<AggregationTypeEnum, TimeseriesDataPointQueryResult> aggregations = tm.getAggregationTypes().parallelStream()
-                        .collect(Collectors.toMap(aggregation -> aggregation,
-                                aggregation -> serverConnection.getTimeseriesData(metric.getMetricId(), start, end, aggregation),
+                        .collect(Collectors.toMap(Function.identity(),
+                                aggregation -> serverConnection.getTimeseriesData(spec.getTimeseriesId(), start, end, aggregation),
                                 (a, b) -> b, LinkedHashMap::new));
+
                 TimeseriesDataPointQueryResult baseResult = aggregations.get(AggregationTypeEnum.AVG);
+                Map<AggregationTypeEnum, TimeseriesDataPointQueryResult> totalValues = tm.getAggregationTypes().parallelStream()
+                        .collect(Collectors.toMap(Function.identity(),
+                                aggregation -> serverConnection.getTotalTimeseriesData(spec.getTimeseriesId(), start, end, aggregation),
+                                (a, b) -> b, LinkedHashMap::new));
+
+                dashboardReport.getIncidents().addAll(evaluateSpecification(spec, totalValues, timeseries, dynatraceAction));
                 ChartDashlet chartDashlet = new ChartDashlet();
                 chartDashlet.setName(tm.getDetailedSource() + " - " + tm.getDisplayName());
+
                 if (baseResult != null) {
                     baseResult.getDataPoints().forEach((key, value) -> {
-                        Map<AggregationTypeEnum, Number> values = tm.getAggregationTypes().parallelStream()
+                        Map<AggregationTypeEnum, Double> totalValuesPerDataPoint = tm.getAggregationTypes().stream()
                                 .collect(Collectors.toMap(Function.identity(),
-                                        aggregation -> serverConnection.getTotalTimeseriesData(metric.getMetricId(), start, end, aggregation)
-                                                .getDataPoints().get(key).entrySet().iterator().next().getValue(),
+                                        aggregation -> totalValues.get(aggregation).getDataPoints().get(key).entrySet().iterator().next().getValue(),
                                         (a, b) -> b, LinkedHashMap::new));
 
                         Measure measure = new Measure(baseResult.getEntities().get(key));
                         measure.setAggregation(baseResult.getAggregationType().getValue().toLowerCase());
-                        measure.setUnit(caluclateUnit(baseResult, values));
+                        measure.setUnit(caluclateUnit(baseResult, totalValuesPerDataPoint.get(AggregationTypeEnum.MAX)));
 
-                        measure.setAvg(getTotalValues(baseResult, values, AggregationTypeEnum.AVG));
-                        measure.setMin(getTotalValues(baseResult, values, AggregationTypeEnum.MIN));
-                        measure.setMax(getTotalValues(baseResult, values, AggregationTypeEnum.MAX));
-                        measure.setSum(getTotalValues(baseResult, values, AggregationTypeEnum.SUM));
-                        measure.setCount(getTotalValues(baseResult, values, AggregationTypeEnum.COUNT));
+                        measure.setAvg(getTotalValues(baseResult, totalValuesPerDataPoint.get(AggregationTypeEnum.AVG)));
+                        measure.setMin(getTotalValues(baseResult, totalValuesPerDataPoint.get(AggregationTypeEnum.MIN)));
+                        measure.setMax(getTotalValues(baseResult, totalValuesPerDataPoint.get(AggregationTypeEnum.MAX)));
+                        measure.setSum(getTotalValues(baseResult, totalValuesPerDataPoint.get(AggregationTypeEnum.SUM)));
+                        measure.setCount(getTotalValues(baseResult, totalValuesPerDataPoint.get(AggregationTypeEnum.COUNT)));
 
-                        value.entrySet().stream()
+                        value.entrySet().parallelStream()
                                 .filter(entry -> entry != null && entry.getValue() != null)
                                 .forEach(entry -> {
-                                    long timestamp = entry.getKey();
-                                    Measurement m = new Measurement(timestamp,
-                                            getAggregationValue(baseResult, aggregations, AggregationTypeEnum.AVG, key, timestamp),
-                                            getAggregationValue(baseResult, aggregations, AggregationTypeEnum.MIN, key, timestamp),
-                                            getAggregationValue(baseResult, aggregations, AggregationTypeEnum.MAX, key, timestamp),
-                                            getAggregationValue(baseResult, aggregations, AggregationTypeEnum.SUM, key, timestamp),
-                                            getAggregationValue(baseResult, aggregations, AggregationTypeEnum.COUNT, key, timestamp));
+                                    Measurement m = new Measurement(entry.getKey(),
+                                            getAggregationValue(baseResult, aggregations.get(AggregationTypeEnum.AVG), key, entry.getKey()),
+                                            getAggregationValue(baseResult, aggregations.get(AggregationTypeEnum.MIN), key, entry.getKey()),
+                                            getAggregationValue(baseResult, aggregations.get(AggregationTypeEnum.MAX), key, entry.getKey()),
+                                            getAggregationValue(baseResult, aggregations.get(AggregationTypeEnum.SUM), key, entry.getKey()),
+                                            getAggregationValue(baseResult, aggregations.get(AggregationTypeEnum.COUNT), key, entry.getKey()));
 
                                     measure.getMeasurements().add(m);
                                 });
@@ -108,6 +132,9 @@ public class DynatraceReportStepExecution extends SynchronousNonBlockingStepExec
                 dashboardReport.addChartDashlet(chartDashlet);
             });
             dashboardReports.add(dashboardReport);
+
+            PerfSigUIUtils.handleIncidents(run, dashboardReport.getIncidents(),
+                    PerfSigUIUtils.createLogger(DynatraceUtils.getTaskListener(getContext()).getLogger()), 0);
         });
         println("created " + dashboardReports.size() + " DashboardReports");
 
@@ -116,32 +143,68 @@ public class DynatraceReportStepExecution extends SynchronousNonBlockingStepExec
         return null;
     }
 
-    private String caluclateUnit(TimeseriesDataPointQueryResult baseResult, Map<AggregationTypeEnum, Number> values) {
+    private List<Alert> evaluateSpecification(Specification spec, Map<AggregationTypeEnum, TimeseriesDataPointQueryResult> totalValues, Map<String,
+            TimeseriesDefinition> timeseries, DynatraceEnvInvisAction dynatraceAction) {
+        List<Alert> alerts = new ArrayList<>();
+        TimeseriesDataPointQueryResult result = totalValues.get(spec.getAggregation());
+        if (spec.getAggregation() == null || spec.getThreshold() == null || result == null) return alerts;
+
+        result.getDataPoints().forEach((entity, value) -> {
+            Double actualValue = value.entrySet().iterator().next().getValue();
+            if (spec.getAggregation() != AggregationTypeEnum.MIN && actualValue > spec.getThreshold()) {
+                String rule = timeseries.get(result.getTimeseriesId()).getDetailedSource() + " - " + timeseries.get(result.getTimeseriesId()).getDisplayName();
+                alerts.add(new Alert(Alert.SeverityEnum.WARNING,
+                        "SpecFile threshold violation: " + rule + " upper bound exceeded",
+                        String.format("%s: Measured peak value: %.2f %s, Upper Bound: %.2f", rule, actualValue, result.getUnit(), spec.getThreshold()),
+                        dynatraceAction.getTimeframeStart(), dynatraceAction.getTimeframeStop(), rule));
+            }
+        });
+        return alerts;
+    }
+
+    private List<Specification> getSpecifications() throws IOException, InterruptedException {
+        List<Specification> specs = new ArrayList<>();
+        if (ws != null && StringUtils.isNotBlank(step.getSpecFile())) {
+            FilePath f = ws.child(step.getSpecFile());
+            if (f.exists() && !f.isDirectory()) {
+                try (InputStream is = f.read()) {
+                    Type type = new TypeToken<List<Specification>>() {
+                    }.getType();
+                    specs = new Gson().fromJson(IOUtils.toString(is, "UTF-8"), type);
+                }
+            } else if (f.isDirectory()) {
+                throw new IllegalArgumentException(f.getRemote() + "  is a directory ...");
+            } else if (!f.exists()) {
+                throw new FileNotFoundException(f.getRemote() + " does not exist ...");
+            }
+        } else {
+            specs = step.getMetrics().stream().map(metric -> new Specification(metric.getMetricId())).collect(Collectors.toList());
+        }
+        return specs;
+    }
+
+    private String caluclateUnit(TimeseriesDataPointQueryResult baseResult, Double maxValue) {
         if (baseResult.getUnit() == UnitEnum.BYTEPERMINUTE) {
-            String tmp = DynatraceUtils.humanReadableByteCount(values.get(AggregationTypeEnum.MAX).doubleValue(), false);
+            String tmp = DynatraceUtils.humanReadableByteCount(maxValue, false);
             return tmp.replaceAll("[^a-zA-Z]", "");
         }
         return baseResult.getUnit().getValue();
     }
 
-    private Number getTotalValues(TimeseriesDataPointQueryResult baseResult, Map<AggregationTypeEnum, Number> values, AggregationTypeEnum aggregation) {
-        if (values.get(aggregation) == null) return 0;
+    private Number getTotalValues(TimeseriesDataPointQueryResult baseResult, Double value) {
+        if (value == null) return 0;
         if (baseResult.getUnit() == UnitEnum.BYTEPERMINUTE) {
-            String tmp = DynatraceUtils.humanReadableByteCount(values.get(aggregation).doubleValue(), false);
+            String tmp = DynatraceUtils.humanReadableByteCount(value, false);
             return Double.valueOf(tmp.replaceAll("[^0-9.]", ""));
         } else {
-            return values.get(aggregation).doubleValue();
+            return value;
         }
     }
 
-    private Number getAggregationValue(TimeseriesDataPointQueryResult result, Map<AggregationTypeEnum, TimeseriesDataPointQueryResult> aggregations, AggregationTypeEnum aggregation, String key, long timestamp) {
-        if (aggregations.get(aggregation) == null) return 0;
-        if (result.getUnit() == UnitEnum.BYTEPERMINUTE) {
-            String tmp = DynatraceUtils.humanReadableByteCount(aggregations.get(aggregation).getDataPoints().get(key).get(timestamp), false);
-            return Double.valueOf(tmp.substring(0, tmp.length() - 3));
-        } else {
-            return aggregations.get(aggregation).getDataPoints().get(key).get(timestamp);
-        }
+    private Number getAggregationValue(TimeseriesDataPointQueryResult result, TimeseriesDataPointQueryResult value,
+                                       String key, Long timestamp) {
+        if (value == null) return 0;
+        return getTotalValues(result, value.getDataPoints().get(key).get(timestamp));
     }
 
     private void println(String message) {

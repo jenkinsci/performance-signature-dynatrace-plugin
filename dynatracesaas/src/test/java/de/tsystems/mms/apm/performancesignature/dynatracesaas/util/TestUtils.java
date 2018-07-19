@@ -10,6 +10,7 @@ import hudson.util.ListBoxModel;
 import hudson.util.Secret;
 import jenkins.model.Jenkins;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
@@ -47,5 +48,19 @@ public class TestUtils {
 
     public static boolean containsOption(ListBoxModel listBoxModel, String search) {
         return listBoxModel.stream().anyMatch(option -> option.name.equalsIgnoreCase(search));
+    }
+
+    /**
+     * Convert a file to a platform agnostic representation.
+     *
+     * @param file
+     * @return a file path operative system aware
+     */
+    public static String toPath(File file) {
+        if (file == null) {
+            return null;
+        }
+
+        return file.getAbsolutePath().replace("\\", "/");
     }
 }
