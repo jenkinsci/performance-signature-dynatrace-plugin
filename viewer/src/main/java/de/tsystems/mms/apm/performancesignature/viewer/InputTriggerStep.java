@@ -73,7 +73,7 @@ public class InputTriggerStep extends Step {
         public FormValidation doCheckTriggerId(@AncestorInPath Item item,
                                                @QueryParameter("triggerId") final String value) {
             FormValidation validationResult = FormValidation.ok();
-            if (!item.hasPermission(Item.CONFIGURE) && item.hasPermission(Item.EXTENDED_READ)) {
+            if (PerfSigUIUtils.checkForMissingPermission(item)) {
                 return validationResult;
             }
             if (PerfSigUIUtils.checkNotNullOrEmpty(value)) {

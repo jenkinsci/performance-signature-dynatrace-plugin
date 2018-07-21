@@ -89,7 +89,7 @@ public class PerfSigActivateConfiguration extends Builder implements SimpleBuild
         @Restricted(NoExternalUse.class)
         public FormValidation doCheckConfiguration(@AncestorInPath Item item, @QueryParameter final String configuration) {
             FormValidation validationResult = FormValidation.ok();
-            if (!item.hasPermission(Item.CONFIGURE) && item.hasPermission(Item.EXTENDED_READ)) {
+            if (PerfSigUIUtils.checkForMissingPermission(item)) {
                 return validationResult;
             }
 
@@ -103,7 +103,7 @@ public class PerfSigActivateConfiguration extends Builder implements SimpleBuild
         @Nonnull
         @Restricted(NoExternalUse.class)
         public ListBoxModel doFillDynatraceProfileItems(@AncestorInPath Item item) {
-            if (!item.hasPermission(Item.CONFIGURE) && item.hasPermission(Item.EXTENDED_READ)) {
+            if (PerfSigUIUtils.checkForMissingPermission(item)) {
                 return new ListBoxModel();
             }
             return PerfSigUtils.listToListBoxModel(PerfSigUtils.getDTConfigurations());
@@ -113,7 +113,7 @@ public class PerfSigActivateConfiguration extends Builder implements SimpleBuild
         @Restricted(NoExternalUse.class)
         public ListBoxModel doFillConfigurationItems(@AncestorInPath Item item,
                                                      @QueryParameter final String dynatraceProfile) {
-            if (!item.hasPermission(Item.CONFIGURE) && item.hasPermission(Item.EXTENDED_READ)) {
+            if (PerfSigUIUtils.checkForMissingPermission(item)) {
                 return new ListBoxModel();
             }
 

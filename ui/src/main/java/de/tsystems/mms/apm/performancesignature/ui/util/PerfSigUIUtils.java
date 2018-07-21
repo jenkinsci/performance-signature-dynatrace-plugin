@@ -19,15 +19,18 @@ package de.tsystems.mms.apm.performancesignature.ui.util;
 import de.tsystems.mms.apm.performancesignature.dynatrace.model.Alert;
 import de.tsystems.mms.apm.performancesignature.dynatrace.model.ChartDashlet;
 import hudson.FilePath;
+import hudson.model.Item;
 import hudson.model.Result;
 import hudson.model.Run;
 import hudson.plugins.analysis.util.PluginLogger;
+import jenkins.model.Jenkins;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.filefilter.RegexFileFilter;
 import org.apache.commons.lang.CharEncoding;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 
+import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -199,5 +202,11 @@ public final class PerfSigUIUtils {
         } catch (MalformedURLException e) {
             return null;
         }
+    }
+
+    public static boolean checkForMissingPermission(@Nullable final Item item) {
+        return item == null ?
+                !Jenkins.getInstance().hasPermission(Item.CONFIGURE) && !Jenkins.getInstance().hasPermission(Item.EXTENDED_READ) :
+                !item.hasPermission(Item.CONFIGURE) && !item.hasPermission(Item.EXTENDED_READ);
     }
 }

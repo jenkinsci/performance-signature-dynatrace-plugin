@@ -19,10 +19,8 @@ package de.tsystems.mms.apm.performancesignature.dynatrace;
 import de.tsystems.mms.apm.performancesignature.dynatrace.util.TestUtils;
 import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
-import hudson.model.Item;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
-import jenkins.model.Jenkins;
 import org.apache.commons.io.FileUtils;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
@@ -36,6 +34,7 @@ public class MemoryDumpTest {
     @ClassRule
     public static final JenkinsRule j = new JenkinsRule();
     private static ListBoxModel dynatraceConfigurations;
+    private FreeStyleProject project;
 
     @BeforeClass
     public static void setUp() throws Exception {
@@ -44,7 +43,7 @@ public class MemoryDumpTest {
 
     @Test
     public void testJenkinsConfiguration() throws Exception {
-        FreeStyleProject project = j.createFreeStyleProject();
+        project = j.createFreeStyleProject();
         PerfSigMemoryDump memoryDump = new PerfSigMemoryDump(dynatraceConfigurations.get(0).name, "CustomerFrontend_easyTravel_8080", "wum192202");
         memoryDump.setType("extended");
         memoryDump.setAutoPostProcess(true);
@@ -59,7 +58,7 @@ public class MemoryDumpTest {
     @Test
     public void testFillAgentItems() {
         PerfSigMemoryDump.DescriptorImpl descriptor = new PerfSigMemoryDump.DescriptorImpl();
-        ListBoxModel listBoxModel = descriptor.doFillAgentItems((Item) Jenkins.getInstance(), dynatraceConfigurations.get(0).name);
+        ListBoxModel listBoxModel = descriptor.doFillAgentItems(project, dynatraceConfigurations.get(0).name);
 
         assertFalse(listBoxModel.isEmpty());
         assertTrue(TestUtils.containsOption(listBoxModel, "BusinessBackend_easyTravel"));
@@ -69,7 +68,7 @@ public class MemoryDumpTest {
     @Test
     public void testFillHostItems() {
         PerfSigMemoryDump.DescriptorImpl descriptor = new PerfSigMemoryDump.DescriptorImpl();
-        ListBoxModel listBoxModel = descriptor.doFillHostItems((Item) Jenkins.getInstance(), dynatraceConfigurations.get(0).name, "CreditCardAuthorization_easyTravel");
+        ListBoxModel listBoxModel = descriptor.doFillHostItems(null, dynatraceConfigurations.get(0).name, "CreditCardAuthorization_easyTravel");
 
         assertFalse(listBoxModel.isEmpty());
         assertTrue(TestUtils.containsOption(listBoxModel, "wum192202"));
@@ -79,15 +78,15 @@ public class MemoryDumpTest {
     public void testCheckAgent() {
         PerfSigMemoryDump.DescriptorImpl descriptor = new PerfSigMemoryDump.DescriptorImpl();
 
-        assertEquals(descriptor.doCheckAgent((Item) Jenkins.getInstance(), "BusinessBackend_easyTravel"), FormValidation.ok());
-        assertNotEquals(descriptor.doCheckHost((Item) Jenkins.getInstance(), ""), FormValidation.ok());
+        assertEquals(descriptor.doCheckAgent(project, "BusinessBackend_easyTravel"), FormValidation.ok());
+        assertNotEquals(descriptor.doCheckHost(null, ""), FormValidation.ok());
     }
 
     @Test
     public void testCheckHost() {
         PerfSigMemoryDump.DescriptorImpl descriptor = new PerfSigMemoryDump.DescriptorImpl();
 
-        assertEquals(descriptor.doCheckHost((Item) Jenkins.getInstance(), "wum192202"), FormValidation.ok());
-        assertNotEquals(descriptor.doCheckHost((Item) Jenkins.getInstance(), ""), FormValidation.ok());
+        assertEquals(descriptor.doCheckHost(project, "wum192202"), FormValidation.ok());
+        assertNotEquals(descriptor.doCheckHost(null, ""), FormValidation.ok());
     }
 }

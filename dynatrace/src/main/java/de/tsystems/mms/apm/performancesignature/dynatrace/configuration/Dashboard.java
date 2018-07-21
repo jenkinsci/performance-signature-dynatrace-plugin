@@ -18,6 +18,7 @@ package de.tsystems.mms.apm.performancesignature.dynatrace.configuration;
 
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.DTServerConnection;
 import de.tsystems.mms.apm.performancesignature.dynatrace.util.PerfSigUtils;
+import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
 import hudson.Extension;
 import hudson.RelativePath;
 import hudson.model.AbstractDescribableImpl;
@@ -60,7 +61,7 @@ public class Dashboard extends AbstractDescribableImpl<Dashboard> {
         @Restricted(NoExternalUse.class)
         public ListBoxModel doFillDashboardItems(@AncestorInPath Item item,
                                                  @RelativePath("../..") @QueryParameter final String dynatraceProfile) {
-            if (!item.hasPermission(Item.CONFIGURE) && item.hasPermission(Item.EXTENDED_READ)) {
+            if (PerfSigUIUtils.checkForMissingPermission(item)) {
                 return new ListBoxModel();
             }
 

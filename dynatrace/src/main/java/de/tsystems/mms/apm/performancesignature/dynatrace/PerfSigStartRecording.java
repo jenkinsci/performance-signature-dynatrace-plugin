@@ -140,7 +140,7 @@ public class PerfSigStartRecording extends Builder implements SimpleBuildStep {
         @Restricted(NoExternalUse.class)
         @Nonnull
         public ListBoxModel doFillRecordingOptionItems(@AncestorInPath Item item) {
-            if (!item.hasPermission(Item.CONFIGURE) && item.hasPermission(Item.EXTENDED_READ)) {
+            if (PerfSigUIUtils.checkForMissingPermission(item)) {
                 return new ListBoxModel();
             }
             return new ListBoxModel(new ListBoxModel.Option("all"), new ListBoxModel.Option("violations"), new ListBoxModel.Option("timeseries"));
@@ -149,7 +149,7 @@ public class PerfSigStartRecording extends Builder implements SimpleBuildStep {
         @Restricted(NoExternalUse.class)
         public FormValidation doCheckTestCase(@AncestorInPath Item item, @QueryParameter final String testCase) {
             FormValidation validationResult = FormValidation.ok();
-            if (!item.hasPermission(Item.CONFIGURE) && item.hasPermission(Item.EXTENDED_READ)) {
+            if (PerfSigUIUtils.checkForMissingPermission(item)) {
                 return validationResult;
             }
 
@@ -165,7 +165,7 @@ public class PerfSigStartRecording extends Builder implements SimpleBuildStep {
         @Nonnull
         @Restricted(NoExternalUse.class)
         public ListBoxModel doFillDynatraceProfileItems(@AncestorInPath Item item) {
-            if (!item.hasPermission(Item.CONFIGURE) && item.hasPermission(Item.EXTENDED_READ)) {
+            if (PerfSigUIUtils.checkForMissingPermission(item)) {
                 return new ListBoxModel();
             }
             return PerfSigUtils.listToListBoxModel(PerfSigUtils.getDTConfigurations());

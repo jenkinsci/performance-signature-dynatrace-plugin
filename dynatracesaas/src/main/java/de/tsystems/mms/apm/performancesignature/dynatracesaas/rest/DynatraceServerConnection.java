@@ -177,9 +177,9 @@ public class DynatraceServerConnection {
             return response.body();
         } else {
             String respBody = null;
-            if (response.body() != null) {
+            if (response.errorBody() != null) {
                 try {
-                    respBody = response.errorBody() != null ? response.errorBody().string() : "empty response body";
+                    respBody = response.errorBody().string();
                 } catch (IOException e) {
                     throw new ApiException(response.message(), e, response.code(), response.headers().toMultimap());
                 }

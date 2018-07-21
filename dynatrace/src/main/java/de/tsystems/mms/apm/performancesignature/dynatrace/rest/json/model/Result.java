@@ -31,18 +31,18 @@ public class Result {
     private String result;
 
     /**
-     * Result value
+     * XmlResult value
      *
      * @return result
      **/
-    @ApiModelProperty(required = true, value = "Result value")
+    @ApiModelProperty(required = true, value = "XmlResult value")
     public String getResult() {
         return result;
     }
 
     @Override
     public String toString() {
-        return "class Result {\n" +
+        return "class XmlResult {\n" +
                 "    result: " + PerfSigUIUtils.toIndentedString(result) + "\n" +
                 "}";
     }

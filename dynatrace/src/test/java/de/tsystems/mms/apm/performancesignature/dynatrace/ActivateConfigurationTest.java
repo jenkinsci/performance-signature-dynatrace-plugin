@@ -19,10 +19,8 @@ package de.tsystems.mms.apm.performancesignature.dynatrace;
 import de.tsystems.mms.apm.performancesignature.dynatrace.util.TestUtils;
 import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
-import hudson.model.Item;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
-import jenkins.model.Jenkins;
 import org.apache.commons.io.FileUtils;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
@@ -36,6 +34,7 @@ public class ActivateConfigurationTest {
     @ClassRule
     public static final JenkinsRule j = new JenkinsRule();
     private static ListBoxModel dynatraceConfigurations;
+    private FreeStyleProject project;
 
     @BeforeClass
     public static void setUp() throws Exception {
@@ -44,7 +43,7 @@ public class ActivateConfigurationTest {
 
     @Test
     public void testJenkinsConfiguration() throws Exception {
-        FreeStyleProject project = j.createFreeStyleProject();
+        project = j.createFreeStyleProject();
         project.getBuildersList().add(new PerfSigActivateConfiguration(dynatraceConfigurations.get(0).name, "ActivateConfigurationTest"));
         FreeStyleBuild build = j.assertBuildStatusSuccess(project.scheduleBuild2(0));
 
@@ -55,7 +54,7 @@ public class ActivateConfigurationTest {
     @Test
     public void testFillConfigurationItems() {
         PerfSigActivateConfiguration.DescriptorImpl descriptor = new PerfSigActivateConfiguration.DescriptorImpl();
-        ListBoxModel listBoxModel = descriptor.doFillConfigurationItems((Item) Jenkins.getInstance(), dynatraceConfigurations.get(0).name);
+        ListBoxModel listBoxModel = descriptor.doFillConfigurationItems(project, dynatraceConfigurations.get(0).name);
 
         assertNotNull(listBoxModel);
         assertFalse(listBoxModel.isEmpty());
@@ -67,7 +66,7 @@ public class ActivateConfigurationTest {
     public void testCheckConfiguration() {
         PerfSigActivateConfiguration.DescriptorImpl descriptor = new PerfSigActivateConfiguration.DescriptorImpl();
 
-        assertEquals(descriptor.doCheckConfiguration((Item) Jenkins.getInstance(), "Default"), FormValidation.ok());
-        assertEquals(descriptor.doCheckConfiguration((Item) Jenkins.getInstance(), "ActivateConfigurationTest"), FormValidation.ok());
+        assertEquals(descriptor.doCheckConfiguration(project, "Default"), FormValidation.ok());
+        assertEquals(descriptor.doCheckConfiguration(null, "ActivateConfigurationTest"), FormValidation.ok());
     }
 }

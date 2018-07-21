@@ -17,6 +17,7 @@
 package de.tsystems.mms.apm.performancesignature.dynatrace.configuration;
 
 import de.tsystems.mms.apm.performancesignature.ui.model.ClientLinkGenerator;
+import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
 import hudson.DescriptorExtensionList;
 import hudson.RelativePath;
 import hudson.model.Describable;
@@ -110,7 +111,7 @@ public abstract class ConfigurationTestCase implements Describable<Configuration
         @Nonnull
         @Restricted(NoExternalUse.class)
         public ListBoxModel doFillNameItems(@AncestorInPath Item item) {
-            if (!item.hasPermission(Item.CONFIGURE) && item.hasPermission(Item.EXTENDED_READ)) {
+            if (PerfSigUIUtils.checkForMissingPermission(item)) {
                 return new ListBoxModel();
             }
 
@@ -122,7 +123,7 @@ public abstract class ConfigurationTestCase implements Describable<Configuration
         @Nonnull
         @Restricted(NoExternalUse.class)
         public ListBoxModel doFillClientDashboardItems(@AncestorInPath Item item) {
-            if (!item.hasPermission(Item.CONFIGURE) && item.hasPermission(Item.EXTENDED_READ)) {
+            if (PerfSigUIUtils.checkForMissingPermission(item)) {
                 return new ListBoxModel();
             }
 
@@ -137,7 +138,7 @@ public abstract class ConfigurationTestCase implements Describable<Configuration
         @Restricted(NoExternalUse.class)
         public ListBoxModel doFillXmlDashboardItems(@AncestorInPath Item item,
                                                     @RelativePath("..") @QueryParameter final String dynatraceProfile) {
-            if (!item.hasPermission(Item.CONFIGURE) && item.hasPermission(Item.EXTENDED_READ)) {
+            if (PerfSigUIUtils.checkForMissingPermission(item)) {
                 return new ListBoxModel();
             }
             return new Dashboard.DescriptorImpl().doFillDashboardItems(item, dynatraceProfile);

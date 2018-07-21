@@ -105,7 +105,7 @@ public class PerfSigStopRecording extends Builder implements SimpleBuildStep {
         @Nonnull
         @Restricted(NoExternalUse.class)
         public ListBoxModel doFillDynatraceProfileItems(@AncestorInPath Item item) {
-            if (!item.hasPermission(Item.CONFIGURE) && item.hasPermission(Item.EXTENDED_READ)) {
+            if (PerfSigUIUtils.checkForMissingPermission(item)) {
                 return new ListBoxModel();
             }
             return PerfSigUtils.listToListBoxModel(PerfSigUtils.getDTConfigurations());

@@ -2,6 +2,7 @@ package de.tsystems.mms.apm.performancesignature.dynatracesaas.model;
 
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.DynatraceServerConnection;
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.util.DynatraceUtils;
+import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
 import hudson.Extension;
 import hudson.RelativePath;
 import hudson.model.AbstractDescribableImpl;
@@ -40,7 +41,7 @@ public class Metric extends AbstractDescribableImpl<Metric> {
         @Restricted(NoExternalUse.class)
         public ListBoxModel doFillMetricIdItems(@AncestorInPath Item item,
                                                 @RelativePath("..") @QueryParameter final String envId) {
-            if (!item.hasPermission(Item.CONFIGURE) && item.hasPermission(Item.EXTENDED_READ)) {
+            if (PerfSigUIUtils.checkForMissingPermission(item)) {
                 return new ListBoxModel();
             }
 

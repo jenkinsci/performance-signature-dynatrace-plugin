@@ -110,7 +110,7 @@ public class DynatraceServerConfiguration extends AbstractDescribableImpl<Dynatr
         @Restricted(NoExternalUse.class)
         public FormValidation doCheckServerUrl(@AncestorInPath Item item, @QueryParameter final String serverUrl) {
             FormValidation validationResult = FormValidation.ok();
-            if (!item.hasPermission(Item.CONFIGURE) && item.hasPermission(Item.EXTENDED_READ)) {
+            if (PerfSigUIUtils.checkForMissingPermission(item)) {
                 return validationResult;
             }
 
@@ -124,7 +124,7 @@ public class DynatraceServerConfiguration extends AbstractDescribableImpl<Dynatr
         @Restricted(NoExternalUse.class)
         public FormValidation doCheckDelay(@AncestorInPath Item item, @QueryParameter final String delay) {
             FormValidation validationResult = FormValidation.ok();
-            if (!item.hasPermission(Item.CONFIGURE) && item.hasPermission(Item.EXTENDED_READ)) {
+            if (PerfSigUIUtils.checkForMissingPermission(item)) {
                 return validationResult;
             }
 
@@ -138,7 +138,7 @@ public class DynatraceServerConfiguration extends AbstractDescribableImpl<Dynatr
         @Restricted(NoExternalUse.class)
         public FormValidation doCheckRetryCount(@AncestorInPath Item item, @QueryParameter final String retryCount) {
             FormValidation validationResult = FormValidation.ok();
-            if (!item.hasPermission(Item.CONFIGURE) && item.hasPermission(Item.EXTENDED_READ)) {
+            if (PerfSigUIUtils.checkForMissingPermission(item)) {
                 return validationResult;
             }
 

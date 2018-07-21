@@ -181,7 +181,7 @@ public class PerfSigMemoryDump extends Builder implements SimpleBuildStep {
         @Nonnull
         @Restricted(NoExternalUse.class)
         public ListBoxModel doFillTypeItems(@AncestorInPath Item item) {
-            if (!item.hasPermission(Item.CONFIGURE) && item.hasPermission(Item.EXTENDED_READ)) {
+            if (PerfSigUIUtils.checkForMissingPermission(item)) {
                 return new ListBoxModel();
             }
 
@@ -194,7 +194,7 @@ public class PerfSigMemoryDump extends Builder implements SimpleBuildStep {
         @Restricted(NoExternalUse.class)
         public FormValidation doCheckAgent(@AncestorInPath Item item, @QueryParameter final String agent) {
             FormValidation validationResult = FormValidation.ok();
-            if (!item.hasPermission(Item.CONFIGURE) && item.hasPermission(Item.EXTENDED_READ)) {
+            if (PerfSigUIUtils.checkForMissingPermission(item)) {
                 return validationResult;
             }
 
@@ -208,7 +208,7 @@ public class PerfSigMemoryDump extends Builder implements SimpleBuildStep {
         @Restricted(NoExternalUse.class)
         public FormValidation doCheckHost(@AncestorInPath Item item, @QueryParameter final String host) {
             FormValidation validationResult = FormValidation.ok();
-            if (!item.hasPermission(Item.CONFIGURE) && item.hasPermission(Item.EXTENDED_READ)) {
+            if (PerfSigUIUtils.checkForMissingPermission(item)) {
                 return validationResult;
             }
 
@@ -222,7 +222,7 @@ public class PerfSigMemoryDump extends Builder implements SimpleBuildStep {
         @Nonnull
         @Restricted(NoExternalUse.class)
         public ListBoxModel doFillDynatraceProfileItems(@AncestorInPath Item item) {
-            if (!item.hasPermission(Item.CONFIGURE) && item.hasPermission(Item.EXTENDED_READ)) {
+            if (PerfSigUIUtils.checkForMissingPermission(item)) {
                 return new ListBoxModel();
             }
             return PerfSigUtils.listToListBoxModel(PerfSigUtils.getDTConfigurations());
@@ -231,7 +231,7 @@ public class PerfSigMemoryDump extends Builder implements SimpleBuildStep {
         @Nonnull
         @Restricted(NoExternalUse.class)
         public ListBoxModel doFillAgentItems(@AncestorInPath Item item, @QueryParameter final String dynatraceProfile) {
-            if (!item.hasPermission(Item.CONFIGURE) && item.hasPermission(Item.EXTENDED_READ)) {
+            if (PerfSigUIUtils.checkForMissingPermission(item)) {
                 return new ListBoxModel();
             }
             return PerfSigUtils.fillAgentItems(dynatraceProfile);
@@ -241,7 +241,7 @@ public class PerfSigMemoryDump extends Builder implements SimpleBuildStep {
         @Restricted(NoExternalUse.class)
         public ListBoxModel doFillHostItems(@AncestorInPath Item item,
                                             @QueryParameter final String dynatraceProfile, @QueryParameter final String agent) {
-            if (!item.hasPermission(Item.CONFIGURE) && item.hasPermission(Item.EXTENDED_READ)) {
+            if (PerfSigUIUtils.checkForMissingPermission(item)) {
                 return new ListBoxModel();
             }
             return PerfSigUtils.fillHostItems(dynatraceProfile, agent);

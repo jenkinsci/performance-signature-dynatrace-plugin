@@ -32,7 +32,7 @@ public class TestDataPublisherTest {
     public void testXMLParser() throws IOException, InterruptedException {
         FilePath file = new FilePath(new File("src/test/resources/sampleTestRun.json"));
         JSON json = new JSON();
-        TestRun testRun = json.deserialize(file.readToString(), TestRun.class);
+        TestRun testRun = json.getGson().fromJson(file.readToString(), TestRun.class);
 
         assertEquals(305, testRun.getTestResults().size());
     }

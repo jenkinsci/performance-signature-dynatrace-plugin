@@ -20,7 +20,7 @@ import javax.xml.bind.annotation.*;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement
-public class Result {
+public class XmlResult {
     @XmlAttribute
     private String value;
     @XmlElement

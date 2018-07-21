@@ -16,17 +16,13 @@
 
 package de.tsystems.mms.apm.performancesignature.dynatrace.rest.json;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonParseException;
-import com.google.gson.TypeAdapter;
+import com.google.gson.*;
 import com.google.gson.internal.bind.util.ISO8601Utils;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
+import io.gsonfire.GsonFireBuilder;
 
 import java.io.IOException;
-import java.io.StringReader;
-import java.lang.reflect.Type;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.ParsePosition;
@@ -34,23 +30,45 @@ import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.Map;
 import java.util.TimeZone;
 
 public class JSON {
     private Gson gson;
-    private boolean isLenientOnJson = false;
     private final DateTypeAdapter dateTypeAdapter = new DateTypeAdapter();
     private final SqlDateTypeAdapter sqlDateTypeAdapter = new SqlDateTypeAdapter();
     private final OffsetDateTimeTypeAdapter offsetDateTimeTypeAdapter = new OffsetDateTimeTypeAdapter();
     private final LocalDateTypeAdapter localDateTypeAdapter = new LocalDateTypeAdapter();
 
     public JSON() {
-        gson = new GsonBuilder()
+        gson = createGson()
+                .setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
                 .registerTypeAdapter(Date.class, dateTypeAdapter)
                 .registerTypeAdapter(java.sql.Date.class, sqlDateTypeAdapter)
                 .registerTypeAdapter(OffsetDateTime.class, offsetDateTimeTypeAdapter)
                 .registerTypeAdapter(LocalDate.class, localDateTypeAdapter)
                 .create();
+    }
+
+    public static GsonBuilder createGson() {
+        GsonFireBuilder fireBuilder = new GsonFireBuilder();
+        return fireBuilder.createGsonBuilder();
+    }
+
+    private static String getDiscriminatorValue(JsonElement readElement, String discriminatorField) {
+        JsonElement element = readElement.getAsJsonObject().get(discriminatorField);
+        if (null == element) {
+            throw new IllegalArgumentException("missing discriminator field: <" + discriminatorField + ">");
+        }
+        return element.getAsString();
+    }
+
+    private static Class getClassByDiscriminator(Map classByDiscriminatorValue, String discriminatorValue) {
+        Class clazz = (Class) classByDiscriminatorValue.get(discriminatorValue.toUpperCase());
+        if (null == clazz) {
+            throw new IllegalArgumentException("cannot determine model class of name: <" + discriminatorValue + ">");
+        }
+        return clazz;
     }
 
     /**
@@ -71,49 +89,6 @@ public class JSON {
     public JSON setGson(Gson gson) {
         this.gson = gson;
         return this;
-    }
-
-    public JSON setLenientOnJson(boolean lenientOnJson) {
-        isLenientOnJson = lenientOnJson;
-        return this;
-    }
-
-    /**
-     * Serialize the given Java object into JSON string.
-     *
-     * @param obj Object
-     * @return String representation of the JSON
-     */
-    public String serialize(Object obj) {
-        return gson.toJson(obj);
-    }
-
-    /**
-     * Deserialize the given JSON string to Java object.
-     *
-     * @param <T>        Type
-     * @param body       The JSON string
-     * @param returnType The type to deserialize into
-     * @return The deserialized Java object
-     */
-    @SuppressWarnings("unchecked")
-    public <T> T deserialize(String body, Type returnType) {
-        try {
-            if (isLenientOnJson) {
-                JsonReader jsonReader = new JsonReader(new StringReader(body));
-                // see https://google-gson.googlecode.com/svn/trunk/gson/docs/javadocs/com/google/gson/stream/JsonReader.html#setLenient(boolean)
-                jsonReader.setLenient(true);
-                return gson.fromJson(jsonReader, returnType);
-            } else {
-                return gson.fromJson(body, returnType);
-            }
-        } catch (JsonParseException e) {
-            // Fallback processing when failed to parse JSON form response body:
-            // return the response body string directly for the String return type;
-            if (returnType.equals(String.class))
-                return (T) body;
-            else throw (e);
-        }
     }
 
     public JSON setOffsetDateTimeFormat(DateTimeFormatter dateFormat) {
@@ -237,7 +212,7 @@ public class JSON {
 
     /**
      * Gson TypeAdapter for java.util.Date type
-     * If the dateFormat is null, ISO8601Utils will be used.
+     * If the dateFormat is null, ISO8601Utils will1 be used.
      */
     public static class DateTypeAdapter extends TypeAdapter<Date> {
 

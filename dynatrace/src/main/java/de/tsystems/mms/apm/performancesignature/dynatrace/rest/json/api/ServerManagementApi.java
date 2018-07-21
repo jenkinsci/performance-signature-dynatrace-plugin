@@ -16,76 +16,20 @@
 
 package de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.api;
 
-import com.google.gson.reflect.TypeToken;
-import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.ApiClient;
-import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.ApiException;
-import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.ApiResponse;
-import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.Pair;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model.Result;
-import okhttp3.Call;
+import retrofit2.Call;
+import retrofit2.http.GET;
 
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import static de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.ApiClient.API_SUFFIX;
 
-public class ServerManagementApi {
-    private ApiClient apiClient;
-
-    public ServerManagementApi(ApiClient apiClient) {
-        this.apiClient = apiClient;
-    }
-
-    public ApiClient getApiClient() {
-        return apiClient;
-    }
-
-    public void setApiClient(ApiClient apiClient) {
-        this.apiClient = apiClient;
-    }
-
-    /**
-     * Build call for getVersion
-     *
-     * @return Call to execute
-     * @throws ApiException If fail to serialize the request body object
-     */
-    public Call getVersionCall() throws ApiException {
-        // create path and map variables
-        String localVarPath = ApiClient.API_SUFFIX + "/server/version";
-
-        List<Pair> localVarQueryParams = new ArrayList<>();
-
-        Map<String, String> localVarHeaderParams = new HashMap<>();
-        localVarHeaderParams.put("Accept", "application/json");
-
-        return apiClient.buildCall(localVarPath, "GET", localVarQueryParams, null, localVarHeaderParams, null);
-    }
+public interface ServerManagementApi {
 
     /**
      * Request the version of the AppMon Server
      * Get the version of the running server.
      *
-     * @return Result
-     * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
+     * @return Call&lt;XmlResult&gt;
      */
-    public Result getVersion() throws ApiException {
-        ApiResponse<Result> resp = getVersionWithHttpInfo();
-        return resp.getData();
-    }
-
-    /**
-     * Request the version of the AppMon Server
-     * Get the version of the running server.
-     *
-     * @return ApiResponse&lt;Result&gt;
-     * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-     */
-    public ApiResponse<Result> getVersionWithHttpInfo() throws ApiException {
-        Call call = getVersionCall();
-        Type localVarReturnType = new TypeToken<Result>() {
-        }.getType();
-        return apiClient.execute(call, localVarReturnType);
-    }
+    @GET(API_SUFFIX + "server/version")
+    Call<Result> getVersion();
 }

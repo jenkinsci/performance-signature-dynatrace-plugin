@@ -86,7 +86,7 @@ public class CredProfilePair extends AbstractDescribableImpl<CredProfilePair> {
                     .includeEmptyValue()
                     .includeMatchingAs(
                             ACL.SYSTEM,
-                            item != null ? item : (Item) Jenkins.getInstance(),
+                            Jenkins.getInstance(),
                             StandardUsernamePasswordCredentials.class,
                             Collections.emptyList(),
                             CredentialsMatchers.instanceOf(StandardUsernamePasswordCredentials.class))

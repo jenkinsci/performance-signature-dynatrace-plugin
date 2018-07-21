@@ -18,6 +18,7 @@ package de.tsystems.mms.apm.performancesignature.dynatracesaas;
 
 import com.google.common.collect.ImmutableSet;
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.util.DynatraceUtils;
+import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
 import hudson.Extension;
 import hudson.model.Item;
 import hudson.model.TaskListener;
@@ -83,7 +84,7 @@ public class CreateDeploymentStep extends Step {
         @Nonnull
         @Restricted(NoExternalUse.class)
         public ListBoxModel doFillEnvIdItems(@AncestorInPath Item item) {
-            if (!item.hasPermission(Item.CONFIGURE) && item.hasPermission(Item.EXTENDED_READ)) {
+            if (PerfSigUIUtils.checkForMissingPermission(item)) {
                 return new ListBoxModel();
             }
             return DynatraceUtils.listToListBoxModel(DynatraceUtils.getDynatraceConfigurations());
