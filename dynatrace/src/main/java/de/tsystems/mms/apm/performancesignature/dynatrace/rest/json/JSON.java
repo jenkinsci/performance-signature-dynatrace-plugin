@@ -24,7 +24,6 @@ import com.google.gson.internal.bind.util.ISO8601Utils;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
-import io.gsonfire.GsonFireBuilder;
 
 import java.io.IOException;
 import java.text.DateFormat;
@@ -41,16 +40,11 @@ public class JSON {
     private final LocalDateTypeAdapter localDateTypeAdapter = new LocalDateTypeAdapter();
 
     public JSON() {
-        gson = createGson()
+        gson = new GsonBuilder()
                 .setDateFormat(ApiClient.REST_DF)
                 .registerTypeAdapter(Date.class, dateTypeAdapter)
                 .registerTypeAdapter(LocalDate.class, localDateTypeAdapter)
                 .create();
-    }
-
-    private static GsonBuilder createGson() {
-        GsonFireBuilder fireBuilder = new GsonFireBuilder();
-        return fireBuilder.createGsonBuilder();
     }
 
     /**

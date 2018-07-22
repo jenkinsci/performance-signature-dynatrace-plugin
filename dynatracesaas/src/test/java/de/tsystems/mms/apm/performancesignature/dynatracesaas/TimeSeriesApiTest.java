@@ -107,10 +107,4 @@ public class TimeSeriesApiTest {
         List<TimeseriesDefinition> dashboardList = connection.getTimeseries();
         assertTrue(!dashboardList.isEmpty());
     }
-
-    @Test
-    public void testServerVersionViaRest() throws Exception {
-        DynatraceServerConnection connection = DynatraceUtils.createDynatraceServerConnection(dynatraceConfigurations.get(0).name, false);
-        assertNotNull(connection.getServerVersion());
-    }
 }
