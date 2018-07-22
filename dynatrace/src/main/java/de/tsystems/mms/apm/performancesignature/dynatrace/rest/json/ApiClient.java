@@ -53,7 +53,7 @@ import java.util.concurrent.TimeUnit;
 
 public class ApiClient {
     public final static String API_SUFFIX = "api/v2/";
-    public final static DateFormat REST_DF = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
+    public final static String REST_DF = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX";
     private boolean debugging = false;
     private boolean verifyingSsl;
 
@@ -70,7 +70,7 @@ public class ApiClient {
         apiAuthorizations = new LinkedHashMap<>();
         verifyingSsl = true;
         json = new JSON();
-        json.setDateFormat(REST_DF);
+        json.setDateFormat(new SimpleDateFormat(REST_DF));
         okBuilder = new OkHttpClient.Builder();
 
         String baseUrl = "https://localhost" + API_SUFFIX;

@@ -1,12 +1,3 @@
-package de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.api;
-
-import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model.RecordingStatus;
-import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model.SessionRecordingOptions;
-import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model.SessionStoringOptions;
-import retrofit2.Call;
-import retrofit2.http.*;
-
-import static de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.ApiClient.API_SUFFIX;
 /*
  * Copyright (c) 2014 T-Systems Multimedia Solutions GmbH
  *
@@ -22,6 +13,16 @@ import static de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.ApiCl
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+package de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.api;
+
+import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model.RecordingStatus;
+import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model.SessionRecordingOptions;
+import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model.SessionStoringOptions;
+import retrofit2.Call;
+import retrofit2.http.*;
+
+import static de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.ApiClient.API_SUFFIX;
 
 public interface LiveSessionsApi {
     /**

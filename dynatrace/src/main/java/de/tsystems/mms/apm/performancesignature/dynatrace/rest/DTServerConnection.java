@@ -43,13 +43,12 @@ import retrofit2.Response;
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
 import java.net.Proxy;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-
-import static de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.ApiClient.REST_DF;
 
 public class DTServerConnection {
     private static final Logger LOGGER = Logger.getLogger(DTServerConnection.class.getName());
@@ -391,10 +390,11 @@ public class DTServerConnection {
     }
 
     public List<Alert> getIncidents(Date from, Date to) {
+        SimpleDateFormat df = new SimpleDateFormat(ApiClient.REST_DF);
         AlertsIncidentsAndEventsApi api = apiClient.createService(AlertsIncidentsAndEventsApi.class);
         try {
             ApiResponse<Alerts> response = apiClient.execute(api.getIncidents(systemProfile, null, Alert.StateEnum.CREATED.getValue(),
-                    REST_DF.format(from), REST_DF.format(to)));
+                    df.format(from), df.format(to)));
             return response.getData().getAlerts().parallelStream().map(alertReference -> getIncident(alertReference.getId(), api)).collect(Collectors.toList());
         } catch (ApiException ex) {
             throw new CommandExecutionException("error while getting incident details: " + ex.getResponseBody(), ex);

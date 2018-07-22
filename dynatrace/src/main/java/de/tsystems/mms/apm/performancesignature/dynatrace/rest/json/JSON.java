@@ -42,7 +42,7 @@ public class JSON {
 
     public JSON() {
         gson = createGson()
-                .setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
+                .setDateFormat(ApiClient.REST_DF)
                 .registerTypeAdapter(Date.class, dateTypeAdapter)
                 .registerTypeAdapter(java.sql.Date.class, sqlDateTypeAdapter)
                 .registerTypeAdapter(OffsetDateTime.class, offsetDateTimeTypeAdapter)
