@@ -57,7 +57,7 @@ public enum UnitEnum {
 
     public static UnitEnum fromValue(String text) {
         if (text != null && text.contains("(")) {
-            text = text.substring(0, text.indexOf("(") - 1);
+            text = text.substring(0, text.indexOf('(') - 1);
         }
         String finalText = text;
         return Arrays.stream(UnitEnum.values()).filter(b -> b.value.equals(finalText)).findFirst().orElse(null);

@@ -74,9 +74,9 @@ public class RecorderTest {
         project.getBuildersList().add(new PerfSigStartRecording(dynatraceConfigurations.get(0).name, testCase));
         //wait some time to get some data into the session
         if (TestUtils.isWindows()) {
-            project.getBuildersList().add(new BatchFile("ping -n 30 127.0.0.1 > NUL"));
+            project.getBuildersList().add(new BatchFile("ping -n 10 127.0.0.1 > NUL"));
         } else {
-            project.getBuildersList().add(new Shell("sleep 30"));
+            project.getBuildersList().add(new Shell("sleep 10"));
         }
         project.getBuildersList().add(new PerfSigStopRecording(dynatraceConfigurations.get(0).name));
         ConfigurationTestCase configurationTestCase = new GenericTestCase(testCase,
@@ -113,19 +113,16 @@ public class RecorderTest {
         WorkflowJob p = j.createProject(WorkflowJob.class);
         p.setDefinition(new CpsFlowDefinition("node('master') {" +
                 "startSession dynatraceProfile: 'easy Travel (admin) @ PoC PerfSig', testCase: 'RecorderTest'\n" +
-                "sleep 30\n" +
+                "sleep 10\n" +
                 "stopSession 'easy Travel (admin) @ PoC PerfSig'\n" +
                 "perfSigReports configurationTestCases: [[$class: 'GenericTestCase', clientDashboard: 'PurePath Overview'," +
-                "comparisonDashboards: [[dashboard: 'PerformanceSignature_comparisonreport']], name: 'RecorderTest'," +
-                "singleDashboards: [[dashboard: 'PerformanceSignature_singlereport']], xmlDashboard: 'PerformanceSignature_xml']]," +
-                "dynatraceProfile: 'easy Travel (fn_perfsig) @ PoC PerfSig', deleteSessions: true, exportSessions: true, removeConfidentialStrings: true\n" +
+                "name: 'RecorderTest', xmlDashboard: 'PerformanceSignature_xml']]," +
+                "dynatraceProfile: 'easy Travel (fn_perfsig) @ PoC PerfSig', deleteSessions: true, exportSessions: false, removeConfidentialStrings: true\n" +
                 "}", true));
         WorkflowRun b = j.assertBuildStatusSuccess(p.scheduleBuild2(0));
 
         j.assertLogContains("connection successful, getting reports for this build and testcase " + testCase, b);
-        j.assertLogContains("getting PDF report: Singlereport", b); //no Comparisonreport available
         j.assertLogContains("parsing XML report", b);
-        j.assertLogContains("session successfully downloaded", b);
 
         PerfSigBuildAction buildAction = b.getAction(PerfSigBuildAction.class);
         assertNotNull(buildAction);
@@ -191,12 +188,6 @@ public class RecorderTest {
                 assertTrue(connection.hotSensorPlacement(agent.getAgentId()));
             }
         }
-    }
-
-    @Test
-    public void testServerVersionViaRest() throws Exception {
-        DTServerConnection connection = PerfSigUtils.createDTServerConnection(dynatraceConfigurations.get(0).name);
-        assertNotNull(connection.getServerVersion());
     }
 
     @Test

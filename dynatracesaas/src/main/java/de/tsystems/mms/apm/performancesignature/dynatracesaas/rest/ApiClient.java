@@ -3,7 +3,6 @@ package de.tsystems.mms.apm.performancesignature.dynatracesaas.rest;
 import com.google.gson.Gson;
 import com.google.gson.JsonParseException;
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.auth.ApiKeyAuth;
-import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
@@ -24,26 +23,19 @@ import java.lang.reflect.Type;
 import java.net.Proxy;
 import java.security.GeneralSecurityException;
 import java.security.cert.X509Certificate;
-import java.text.DateFormat;
-import java.time.format.DateTimeFormatter;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 public class ApiClient {
 
     private static final String API_SUFFIX = "api/v1/";
     private boolean debugging = false;
     private boolean verifyingSsl;
-    private Map<String, Interceptor> apiAuthorizations;
     private OkHttpClient.Builder okBuilder;
     private Retrofit.Builder adapterBuilder;
     private HttpLoggingInterceptor loggingInterceptor;
-    private JSON json;
 
     public ApiClient() {
-        apiAuthorizations = new LinkedHashMap<>();
         verifyingSsl = true;
-        json = new JSON();
+        JSON json = new JSON();
         okBuilder = new OkHttpClient.Builder();
 
         String baseUrl = "https://localhost/" + API_SUFFIX;
@@ -53,7 +45,6 @@ public class ApiClient {
                 .baseUrl(baseUrl)
                 .addConverterFactory(ScalarsConverterFactory.create())
                 .addConverterFactory(GsonCustomConverterFactory.create(json.getGson()));
-        addAuthorization("apiKeyAuth", new ApiKeyAuth("header", "Authorization"));
     }
 
     /**
@@ -166,26 +157,6 @@ public class ApiClient {
                 .create(serviceClass);
     }
 
-    public ApiClient setDateFormat(DateFormat dateFormat) {
-        this.json.setDateFormat(dateFormat);
-        return this;
-    }
-
-    public ApiClient setSqlDateFormat(DateFormat dateFormat) {
-        this.json.setSqlDateFormat(dateFormat);
-        return this;
-    }
-
-    public ApiClient setOffsetDateTimeFormat(DateTimeFormatter dateFormat) {
-        this.json.setOffsetDateTimeFormat(dateFormat);
-        return this;
-    }
-
-    public ApiClient setLocalDateFormat(DateTimeFormatter dateFormat) {
-        this.json.setLocalDateFormat(dateFormat);
-        return this;
-    }
-
     /**
      * Helper method to configure the first api key found
      *
@@ -193,38 +164,9 @@ public class ApiClient {
      * @return ApiClient
      */
     public ApiClient setApiKey(String apiKey) {
-        for (Interceptor apiAuthorization : apiAuthorizations.values()) {
-            if (apiAuthorization instanceof ApiKeyAuth) {
-                ApiKeyAuth keyAuth = (ApiKeyAuth) apiAuthorization;
-                keyAuth.setApiKey(apiKey);
-                return this;
-            }
-        }
-        return this;
-    }
-
-    /**
-     * Adds an authorization to be used by the client
-     *
-     * @param authName      Authentication name
-     * @param authorization Authorization interceptor
-     * @return ApiClient
-     */
-    public ApiClient addAuthorization(String authName, Interceptor authorization) {
-        if (apiAuthorizations.containsKey(authName)) {
-            throw new RuntimeException("auth name \"" + authName + "\" already in api authorizations");
-        }
-        apiAuthorizations.put(authName, authorization);
-        okBuilder.addInterceptor(authorization);
-        return this;
-    }
-
-    public Map<String, Interceptor> getApiAuthorizations() {
-        return apiAuthorizations;
-    }
-
-    public ApiClient setApiAuthorizations(Map<String, Interceptor> apiAuthorizations) {
-        this.apiAuthorizations = apiAuthorizations;
+        ApiKeyAuth keyAuth = new ApiKeyAuth("header", "Authorization");
+        keyAuth.setApiKey(apiKey);
+        okBuilder.addInterceptor(keyAuth);
         return this;
     }
 
@@ -239,22 +181,6 @@ public class ApiClient {
 
     public OkHttpClient.Builder getOkBuilder() {
         return okBuilder;
-    }
-
-    public void addAuthsToOkBuilder(OkHttpClient.Builder okBuilder) {
-        for (Interceptor apiAuthorization : apiAuthorizations.values()) {
-            okBuilder.addInterceptor(apiAuthorization);
-        }
-    }
-
-    /**
-     * Clones the okBuilder given in parameter, adds the auth interceptors and uses it to configure the Retrofit
-     *
-     * @param okClient An instance of OK HTTP client
-     */
-    public void configureFromOkclient(OkHttpClient okClient) {
-        this.okBuilder = okClient.newBuilder();
-        addAuthsToOkBuilder(this.okBuilder);
     }
 }
 
@@ -288,8 +214,9 @@ class GsonCustomConverterFactory extends Converter.Factory {
     private final GsonConverterFactory gsonConverterFactory;
 
     private GsonCustomConverterFactory(Gson gson) {
-        if (gson == null)
+        if (gson == null) {
             throw new NullPointerException("gson == null");
+        }
         this.gson = gson;
         this.gsonConverterFactory = GsonConverterFactory.create(gson);
     }
@@ -300,10 +227,10 @@ class GsonCustomConverterFactory extends Converter.Factory {
 
     @Override
     public Converter<ResponseBody, ?> responseBodyConverter(Type type, Annotation[] annotations, Retrofit retrofit) {
-        if (type.equals(String.class))
+        if (type.equals(String.class)) {
             return new GsonResponseBodyConverterToString<>(gson, type);
-        else
-            return gsonConverterFactory.responseBodyConverter(type, annotations, retrofit);
+        }
+        return gsonConverterFactory.responseBodyConverter(type, annotations, retrofit);
     }
 
     @Override

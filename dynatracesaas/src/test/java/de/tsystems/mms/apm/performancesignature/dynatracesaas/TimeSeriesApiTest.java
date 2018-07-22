@@ -45,7 +45,7 @@ public class TimeSeriesApiTest {
     }
 
     @Test
-    public void testTimeseriesApi() throws Exception {
+    public void testTimeseriesApi() {
         TimeseriesDataPointQueryResult response = connection.getTimeseriesData("com.dynatrace.builtin:host.cpu.user",
                 Instant.now().minus(2, HOURS).toEpochMilli(), Instant.now().toEpochMilli(), AggregationTypeEnum.AVG);
         assertNotNull(response);
@@ -99,7 +99,7 @@ public class TimeSeriesApiTest {
         p.setDefinition(new CpsFlowDefinition("node('master'){" +
                 "createPerfSigDynatraceReports envId: '', metrics: null}", true));
         WorkflowRun b = j.assertBuildStatus(Result.FAILURE, p.scheduleBuild2(0));
-        j.assertLogContains("failed to lookup Dynatrace server configuration", b);
+        j.assertLogContains("At least one of file or metrics needs to be provided", b);
     }
 
     @Test

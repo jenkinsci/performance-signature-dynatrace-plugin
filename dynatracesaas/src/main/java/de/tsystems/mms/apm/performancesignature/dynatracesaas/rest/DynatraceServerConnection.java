@@ -41,11 +41,11 @@ public class DynatraceServerConnection {
 
     public DynatraceServerConnection(final String serverUrl, final String apiTokenId, final boolean verifyCertificate,
                                      final boolean useProxy) {
-        this.apiClient = new ApiClient();
-        apiClient.setVerifyingSsl(verifyCertificate);
-        apiClient.setBasePath(serverUrl);
-        apiClient.setApiKey(DynatraceUtils.getApiToken(apiTokenId));
-        apiClient.setDebugging(true);
+        this.apiClient = new ApiClient()
+                .setVerifyingSsl(verifyCertificate)
+                .setBasePath(serverUrl)
+                .setApiKey(DynatraceUtils.getApiToken(apiTokenId))
+                .setDebugging(true);
 
         Proxy proxy = Proxy.NO_PROXY;
         ProxyConfiguration proxyConfig = Jenkins.getInstance().proxy;

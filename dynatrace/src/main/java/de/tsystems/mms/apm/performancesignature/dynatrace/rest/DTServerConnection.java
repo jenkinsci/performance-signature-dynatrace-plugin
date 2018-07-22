@@ -397,7 +397,7 @@ public class DTServerConnection {
                     df.format(from), df.format(to)));
             return response.getData().getAlerts().parallelStream().map(alertReference -> getIncident(alertReference.getId(), api)).collect(Collectors.toList());
         } catch (ApiException ex) {
-            throw new CommandExecutionException("error while getting incident details: " + ex.getResponseBody(), ex);
+            throw new CommandExecutionException("error while getting incidents: " + ex.getResponseBody(), ex);
         }
     }
 
@@ -416,7 +416,7 @@ public class DTServerConnection {
             apiClient.execute(api.updateDeploymentEvent(eventId, body));
             return true;
         } catch (ApiException ex) {
-            throw new CommandExecutionException("error while getting incident details: " + ex.getResponseBody(), ex);
+            throw new CommandExecutionException("error while updating deployment event: " + ex.getResponseBody(), ex);
         }
     }
 
@@ -426,7 +426,7 @@ public class DTServerConnection {
             ApiResponse<Void> response = apiClient.execute(api.createDeploymentEvent(event));
             return PerfSigUtils.getIdFromLocationHeader(response);
         } catch (ApiException ex) {
-            throw new CommandExecutionException("error while getting incident details: " + ex.getResponseBody(), ex);
+            throw new CommandExecutionException("error while creating deployment event: " + ex.getResponseBody(), ex);
         }
     }
 }
