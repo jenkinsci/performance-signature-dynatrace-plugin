@@ -25,17 +25,17 @@ import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
 import hudson.AbortException;
 import hudson.model.TaskListener;
 import hudson.plugins.analysis.util.PluginLogger;
-import org.jenkinsci.plugins.workflow.steps.AbstractStepExecutionImpl;
 import org.jenkinsci.plugins.workflow.steps.BodyExecution;
 import org.jenkinsci.plugins.workflow.steps.BodyExecutionCallback;
 import org.jenkinsci.plugins.workflow.steps.StepContext;
+import org.jenkinsci.plugins.workflow.steps.StepExecution;
 
 import javax.annotation.Nonnull;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class CreateDeploymentStepExecution extends AbstractStepExecutionImpl {
+public class CreateDeploymentStepExecution extends StepExecution {
     private static final long serialVersionUID = 1L;
     private static final Logger LOGGER = Logger.getLogger(CreateDeploymentStepExecution.class.getName());
     private final transient CreateDeploymentStep step;

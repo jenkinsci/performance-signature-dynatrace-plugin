@@ -4,17 +4,17 @@ import de.tsystems.mms.apm.performancesignature.dynatracesaas.util.DynatraceUtil
 import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
 import hudson.model.Run;
 import hudson.model.TaskListener;
-import org.jenkinsci.plugins.workflow.steps.AbstractStepExecutionImpl;
 import org.jenkinsci.plugins.workflow.steps.BodyExecution;
 import org.jenkinsci.plugins.workflow.steps.BodyExecutionCallback;
 import org.jenkinsci.plugins.workflow.steps.StepContext;
+import org.jenkinsci.plugins.workflow.steps.StepExecution;
 
 import javax.annotation.Nonnull;
 import java.time.Instant;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class DynatraceSessionStepExecution extends AbstractStepExecutionImpl {
+public class DynatraceSessionStepExecution extends StepExecution {
     private static final long serialVersionUID = 1L;
     private static final Logger LOGGER = Logger.getLogger(DynatraceSessionStep.class.getName());
     private final transient DynatraceSessionStep step;
