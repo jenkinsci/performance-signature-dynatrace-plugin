@@ -61,8 +61,11 @@ public class CreateDeploymentStepExecution extends StepExecution {
         DTServerConnection connection = PerfSigUtils.createDTServerConnection(step.getDynatraceProfile());
 
         String buildUrl = envVars != null ? envVars.get(BUILD_URL_ENV_PROPERTY) : "";
-        DeploymentEvent event = new DeploymentEvent(SeverityEnum.WARNING, StateEnum.CREATED, "ongoing Deployment",
-                "deployment event created by Jenkins: " + buildUrl, new Date(), null, connection.getCredProfilePair().getProfile(), null);
+        DeploymentEvent event = new DeploymentEvent(connection.getCredProfilePair().getProfile(), "ongoing Deployment")
+                .setSeverity(SeverityEnum.WARNING)
+                .setState(StateEnum.CREATED)
+                .setDescription("deployment event created by Jenkins: " + buildUrl)
+                .setStart(new Date());
         eventId = connection.createDeploymentEvent(event);
         if (eventId == null) {
             throw new AbortException("could not create deployment event");

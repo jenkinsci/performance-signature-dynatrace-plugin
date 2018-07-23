@@ -18,6 +18,7 @@ package de.tsystems.mms.apm.performancesignature.dynatrace;
 
 import de.tsystems.mms.apm.performancesignature.dynatrace.configuration.CredProfilePair;
 import de.tsystems.mms.apm.performancesignature.dynatrace.configuration.GenericTestCase;
+import de.tsystems.mms.apm.performancesignature.dynatrace.model.TestRun.CategoryEnum;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.DTServerConnection;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model.TestRunDefinition;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.CommandExecutionException;
@@ -104,7 +105,7 @@ public class PerfSigStartRecording extends Builder implements SimpleBuildStep {
                     .setVersionMinor(variables.get(BUILD_VAR_KEY_VERSION_MINOR))
                     .setVersionRevision(variables.get(BUILD_VAR_KEY_VERSION_REVISION))
                     .setVersionMilestone(variables.get(BUILD_VAR_KEY_VERSION_MILESTONE))
-                    .setCategory(variables.get(BUILD_VAR_KEY_CATEGORY) != null ? variables.get(BUILD_VAR_KEY_CATEGORY) : "performance")
+                    .setCategory(variables.get(BUILD_VAR_KEY_CATEGORY) != null ? CategoryEnum.fromValue(variables.get(BUILD_VAR_KEY_CATEGORY)) : CategoryEnum.PERFORMANCE)
                     .setPlatform(variables.get(BUILD_VAR_KEY_PLATFORM))
                     .setMarker(variables.get(BUILD_VAR_KEY_MARKER))
                     .addAdditionalMetaData("JENKINS_JOB", variables.get(BUILD_URL_ENV_PROPERTY));

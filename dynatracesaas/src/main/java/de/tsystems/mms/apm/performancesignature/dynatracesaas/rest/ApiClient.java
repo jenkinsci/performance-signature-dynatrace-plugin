@@ -7,7 +7,9 @@ import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import okhttp3.logging.HttpLoggingInterceptor;
+import retrofit2.Call;
 import retrofit2.Converter;
+import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
@@ -50,7 +52,7 @@ public class ApiClient {
     /**
      * Helper constructor for single api key
      *
-     * @param apiKey   API key
+     * @param apiKey API key
      */
     public ApiClient(String apiKey) {
         this();
@@ -181,6 +183,51 @@ public class ApiClient {
 
     public OkHttpClient.Builder getOkBuilder() {
         return okBuilder;
+    }
+
+    /**
+     * Execute HTTP call and deserialize the HTTP response body into the given return type.
+     *
+     * @param call Call
+     * @return ApiResponse object containing response status, headers and
+     * data, which is a Java object deserialized from response body and would be null
+     * when returnType is null.
+     * @throws ApiException If fail to execute the call
+     */
+
+    public <T> ApiResponse<T> execute(final Call<T> call) throws ApiException {
+        try {
+            Response<T> response = call.execute();
+            T data = handleResponse(response);
+            return new ApiResponse<>(response.code(), response.headers().toMultimap(), data);
+        } catch (IOException e) {
+            throw new ApiException(e);
+        }
+    }
+
+    /**
+     * Handle the given response, return the deserialized object when the response is successful.
+     *
+     * @param <T>      Type
+     * @param response Response
+     * @return Type
+     * @throws ApiException If the response has a unsuccessful status code or
+     *                      fail to deserialize the response body
+     */
+    private <T> T handleResponse(final Response<T> response) throws ApiException {
+        if (response.isSuccessful()) {
+            return response.body();
+        } else {
+            String respBody = null;
+            if (response.errorBody() != null) {
+                try {
+                    respBody = response.errorBody().string();
+                } catch (IOException e) {
+                    throw new ApiException(response.message(), e, response.code(), response.headers().toMultimap());
+                }
+            }
+            throw new ApiException(response.message(), response.code(), response.headers().toMultimap(), respBody);
+        }
     }
 }
 

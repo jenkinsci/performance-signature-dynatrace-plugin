@@ -16,27 +16,30 @@
 
 package de.tsystems.mms.apm.performancesignature.dynatracesaas;
 
-import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.ApiException;
-import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.RESTErrorException;
+import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.DynatraceServerConnection;
+import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.EventPushMessage;
+import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.EventStoreResult;
+import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.EventTypeEnum;
+import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.PushEventAttachRules;
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.util.DynatraceUtils;
 import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
 import hudson.AbortException;
+import hudson.EnvVars;
 import hudson.model.TaskListener;
-import org.jenkinsci.plugins.workflow.steps.BodyExecution;
-import org.jenkinsci.plugins.workflow.steps.BodyExecutionCallback;
 import org.jenkinsci.plugins.workflow.steps.StepContext;
 import org.jenkinsci.plugins.workflow.steps.StepExecution;
 
-import javax.annotation.Nonnull;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import static de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.DynatraceServerConnection.BUILD_URL_ENV_PROPERTY;
 
 public class CreateDeploymentStepExecution extends StepExecution {
     private static final long serialVersionUID = 1L;
     private static final Logger LOGGER = Logger.getLogger(CreateDeploymentStepExecution.class.getName());
+    private static final String BUILD_VAR_KEY_DEPLOYMENT_VERSION = "dtDeploymentVersion";
+    private static final String BUILD_VAR_KEY_DEPLOYMENT_PROJECT = "dtDeploymentProject";
     private final transient CreateDeploymentStep step;
-    private BodyExecution body;
-    private String eventId;
 
     CreateDeploymentStepExecution(CreateDeploymentStep createDeploymentStep, StepContext context) {
         super(context);
@@ -46,51 +49,31 @@ public class CreateDeploymentStepExecution extends StepExecution {
     @Override
     public boolean start() throws Exception {
         StepContext context = getContext();
+        EnvVars envVars = getContext().get(EnvVars.class);
 
-        /*DTServerConnection connection = PerfSigUtils.createDTServerConnection(step.getDynatraceProfile());
-        AlertsIncidentsAndEventsApi api = new AlertsIncidentsAndEventsApi(connection.getApiClient());
+        DynatraceServerConnection connection = DynatraceUtils.createDynatraceServerConnection(step.getEnvId(), true);
 
-        DeploymentEvent event = new DeploymentEvent(null, null, "ongoing Deployment",
-                "deployment event created by Jenkins", new Date(), null, connection.getCredProfilePair().getProfile(), null);
-        eventId = api.createDeploymentEvent(event);
+        EventPushMessage event = new EventPushMessage(EventTypeEnum.CUSTOM_DEPLOYMENT, new PushEventAttachRules())
+                .setSource("Jenkins");
+        if (envVars != null) {
+            event.setDeploymentName(envVars.get("JOB_NAME"))
+                    .setDeploymentVersion(envVars.get(BUILD_VAR_KEY_DEPLOYMENT_VERSION))
+                    .setDeploymentProject(envVars.get(BUILD_VAR_KEY_DEPLOYMENT_PROJECT))
+                    .setCiBackLink(envVars.get(BUILD_URL_ENV_PROPERTY))
+                    .addCustomProperties("Jenkins Build Number", envVars.get("BUILD_ID"))
+                    .addCustomProperties("Git Commit", envVars.get("GIT_COMMIT"));
+        }
+
+        EventStoreResult eventId = connection.createDeploymentEvent(event);
         if (eventId == null) {
             throw new AbortException("could not create deployment event");
-        }*/
+        }
         println("successfully created deployment event " + eventId);
 
         if (context.hasBody()) {
-            body = context.newBodyInvoker()
-                    .withCallback(new Callback())
-                    .start();
+            context.newBodyInvoker().start();
         }
         return false;
-    }
-
-    @Override
-    public void stop(@Nonnull Throwable cause) throws Exception {
-        updateEvent();
-        if (body != null) {
-            body.cancel(cause);
-        }
-    }
-
-    private void updateEvent() throws ApiException, AbortException, RESTErrorException {
-        if (eventId != null) {
-            /*DTServerConnection connection = PerfSigUtils.createDTServerConnection(step.getDynatraceProfile());
-            AlertsIncidentsAndEventsApi api = new AlertsIncidentsAndEventsApi(connection.getApiClient());
-            EventUpdate event = new EventUpdate(new Date());
-            api.updateDeploymentEvent(eventId, event);*/
-            println("successfully updated deployment event " + eventId);
-        }
-    }
-
-    private class Callback extends BodyExecutionCallback.TailCall {
-        private static final long serialVersionUID = 1L;
-
-        @Override
-        protected void finished(StepContext context) throws Exception {
-            updateEvent();
-        }
     }
 
     private void println(String message) {

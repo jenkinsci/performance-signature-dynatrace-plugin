@@ -10,7 +10,6 @@
  * Do not edit the class manually.
  */
 
-
 package de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model;
 
 import com.google.gson.annotations.SerializedName;
@@ -26,128 +25,218 @@ import static de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils.to
  */
 
 public class EventPushMessage {
+    @SerializedName("start")
+    private Long startTime;
+    @SerializedName("end")
+    private Long endTime;
+
     @SerializedName("eventType")
     private EventTypeEnum eventType;
-    @SerializedName("start")
-    private Long start;
-    @SerializedName("end")
-    private Long end;
+    @SerializedName("deploymentProject")
+    private String deploymentProject;
+    @SerializedName("source")
+    private String source;
+    @SerializedName("annotationDescription")
+    private String annotationDescription;
+    @SerializedName("deploymentName")
+    private String deploymentName;
+    @SerializedName("deploymentVersion")
+    private String deploymentVersion;
+    @SerializedName("annotationType")
+    private String annotationType;
+    @SerializedName("customProperties")
+    private Map<String, String> customProperties;
+    @SerializedName("remediationAction")
+    private String remediationAction;
+    @SerializedName("ciBackLink")
+    private String ciBackLink;
     @SerializedName("attachRules")
     private PushEventAttachRules attachRules;
-    @SerializedName("customProperties")
-    private Map<String, Object> customProperties;
 
-    public EventPushMessage eventType(EventTypeEnum eventType) {
+    public EventPushMessage(EventTypeEnum eventType, PushEventAttachRules attachRules) {
         this.eventType = eventType;
-        return this;
-    }
-
-    /**
-     * The predefined event type
-     *
-     * @return eventType
-     **/
-    @ApiModelProperty(value = "The predefined event type")
-    public EventTypeEnum getEventType() {
-        return eventType;
-    }
-
-    public void setEventType(EventTypeEnum eventType) {
-        this.eventType = eventType;
-    }
-
-    public EventPushMessage start(Long start) {
-        this.start = start;
-        return this;
-    }
-
-    /**
-     * Optional start timestamp of the event in UTC milliseconds (for example 1495200637630). The actual time is used for the event if no start timestamp is provided.
-     *
-     * @return start
-     **/
-    @ApiModelProperty(value = "Optional start timestamp of the event in UTC milliseconds (for example 1495200637630). The actual time is used for the event if no start timestamp is provided.")
-    public Long getStart() {
-        return start;
-    }
-
-    public void setStart(Long start) {
-        this.start = start;
-    }
-
-    public EventPushMessage end(Long end) {
-        this.end = end;
-        return this;
-    }
-
-    /**
-     * Optional end timestamp of the event in UTC milliseconds. The actual time is used if no end timestamp is provided.
-     *
-     * @return end
-     **/
-    @ApiModelProperty(value = "Optional end timestamp of the event in UTC milliseconds. The actual time is used if no end timestamp is provided.")
-    public Long getEnd() {
-        return end;
-    }
-
-    public void setEnd(Long end) {
-        this.end = end;
-    }
-
-    public EventPushMessage attachRules(PushEventAttachRules attachRules) {
         this.attachRules = attachRules;
-        return this;
     }
 
-    /**
-     * contains attachment rules
-     *
-     * @return attachRules
-     **/
-    @ApiModelProperty(value = "contains attachment rules")
     public PushEventAttachRules getAttachRules() {
         return attachRules;
     }
 
-    public void setAttachRules(PushEventAttachRules attachRules) {
-        this.attachRules = attachRules;
+    /**
+     * Timestamp of the event detection, in UTC milliseconds.
+     *
+     * @return startTime
+     **/
+    @ApiModelProperty(value = "Timestamp of the event detection, in UTC milliseconds.")
+    public Long getStartTime() {
+        return startTime;
     }
 
-    public EventPushMessage customProperties(Map<String, Object> customProperties) {
-        this.customProperties = customProperties;
-        return this;
-    }
-
-    public EventPushMessage putCustomPropertiesItem(String key, Object customPropertiesItem) {
-        if (this.customProperties == null) {
-            this.customProperties = new HashMap<>();
-        }
-        this.customProperties.put(key, customPropertiesItem);
+    public EventPushMessage setStartTime(final Long startTime) {
+        this.startTime = startTime;
         return this;
     }
 
     /**
-     * Dictionary of custom key value pairs that can be used to send additional information along with the event
+     * Timestamp of the event closure, in UTC milliseconds.  &#x60;-1&#x60; if the event is still open.
      *
+     * @return endTime
+     **/
+    @ApiModelProperty(value = "Timestamp of the event closure, in UTC milliseconds.  `-1` if the event is still open.")
+    public Long getEndTime() {
+        return endTime;
+    }
+
+    public EventPushMessage setEndTime(final Long endTime) {
+        this.endTime = endTime;
+        return this;
+    }
+
+    /**
+     * The type of the event.
+     *
+     * @return eventType
+     **/
+    @ApiModelProperty(value = "The type of the event.")
+    public EventTypeEnum getEventType() {
+        return eventType;
+    }
+
+    /**
+     * @return deploymentProject
+     **/
+    @ApiModelProperty()
+    public String getDeploymentProject() {
+        return deploymentProject;
+    }
+
+    public EventPushMessage setDeploymentProject(final String deploymentProject) {
+        this.deploymentProject = deploymentProject;
+        return this;
+    }
+
+    /**
+     * @return source
+     **/
+    @ApiModelProperty()
+    public String getSource() {
+        return source;
+    }
+
+    public EventPushMessage setSource(final String source) {
+        this.source = source;
+        return this;
+    }
+
+    /**
+     * @return annotationDescription
+     **/
+    @ApiModelProperty()
+    public String getAnnotationDescription() {
+        return annotationDescription;
+    }
+
+    public EventPushMessage setAnnotationDescription(final String annotationDescription) {
+        this.annotationDescription = annotationDescription;
+        return this;
+    }
+
+    /**
+     * @return deploymentName
+     **/
+    @ApiModelProperty()
+    public String getDeploymentName() {
+        return deploymentName;
+    }
+
+    public EventPushMessage setDeploymentName(final String deploymentName) {
+        this.deploymentName = deploymentName;
+        return this;
+    }
+
+    /**
+     * @return deploymentVersion
+     **/
+    @ApiModelProperty()
+    public String getDeploymentVersion() {
+        return deploymentVersion;
+    }
+
+    public EventPushMessage setDeploymentVersion(final String deploymentVersion) {
+        this.deploymentVersion = deploymentVersion;
+        return this;
+    }
+
+    /**
+     * @return annotationType
+     **/
+    @ApiModelProperty()
+    public String getAnnotationType() {
+        return annotationType;
+    }
+
+    public EventPushMessage setAnnotationType(final String annotationType) {
+        this.annotationType = annotationType;
+        return this;
+    }
+
+    /**
      * @return customProperties
      **/
-    @ApiModelProperty(value = "Dictionary of custom key value pairs that can be used to send additional information along with the event")
-    public Map<String, Object> getCustomProperties() {
+    @ApiModelProperty()
+    public Map<String, String> getCustomProperties() {
         return customProperties;
     }
 
-    public void setCustomProperties(Map<String, Object> customProperties) {
-        this.customProperties = customProperties;
+    public EventPushMessage addCustomProperties(final String key, final String value) {
+        if (this.customProperties == null) {
+            this.customProperties = new HashMap<>();
+        }
+        this.customProperties.put(key, value);
+        return this;
+    }
+
+    /**
+     * @return remediationAction
+     **/
+    @ApiModelProperty()
+    public String getRemediationAction() {
+        return remediationAction;
+    }
+
+    public EventPushMessage setRemediationAction(final String remediationAction) {
+        this.remediationAction = remediationAction;
+        return this;
+    }
+
+    /**
+     * @return ciBackLink
+     **/
+    @ApiModelProperty()
+    public String getCiBackLink() {
+        return ciBackLink;
+    }
+
+    public EventPushMessage setCiBackLink(final String ciBackLink) {
+        this.ciBackLink = ciBackLink;
+        return this;
     }
 
     @Override
     public String toString() {
-        return "class EventPushMessage {\n" +
+        return "class Event {\n" +
+                "    startTime: " + toIndentedString(startTime) + "\n" +
+                "    endTime: " + toIndentedString(endTime) + "\n" +
                 "    eventType: " + toIndentedString(eventType) + "\n" +
-                "    start: " + toIndentedString(start) + "\n" +
-                "    end: " + toIndentedString(end) + "\n" +
-                "    attachRules: " + toIndentedString(attachRules) + "\n" +
+                "    deploymentProject: " + toIndentedString(deploymentProject) + "\n" +
+                "    source: " + toIndentedString(source) + "\n" +
+                "    annotationDescription: " + toIndentedString(annotationDescription) + "\n" +
+                "    deploymentName: " + toIndentedString(deploymentName) + "\n" +
+                "    deploymentVersion: " + toIndentedString(deploymentVersion) + "\n" +
+                "    annotationType: " + toIndentedString(annotationType) + "\n" +
                 "    customProperties: " + toIndentedString(customProperties) + "\n" +
+                "    remediationAction: " + toIndentedString(remediationAction) + "\n" +
+                "    ciBackLink: " + toIndentedString(ciBackLink) + "\n" +
                 "}";
     }
 }

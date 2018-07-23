@@ -331,7 +331,7 @@ public class TestRun extends BaseReference {
         }
 
         public static CategoryEnum fromValue(String text) {
-            return Arrays.stream(CategoryEnum.values()).filter(b -> b.value.equals(text)).findFirst().orElse(null);
+            return Arrays.stream(CategoryEnum.values()).filter(b -> b.value.equalsIgnoreCase(text)).findFirst().orElse(null);
         }
 
         public String getValue() {

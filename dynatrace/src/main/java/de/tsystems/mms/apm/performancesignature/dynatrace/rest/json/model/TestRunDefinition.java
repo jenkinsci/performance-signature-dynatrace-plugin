@@ -170,8 +170,8 @@ public class TestRunDefinition {
         return category;
     }
 
-    public TestRunDefinition setCategory(String category) {
-        this.category = CategoryEnum.fromValue(category);
+    public TestRunDefinition setCategory(final CategoryEnum category) {
+        this.category = category;
         return this;
     }
 
