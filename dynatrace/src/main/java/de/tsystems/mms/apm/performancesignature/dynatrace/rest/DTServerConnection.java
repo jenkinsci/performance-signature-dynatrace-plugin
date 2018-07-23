@@ -51,7 +51,17 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 public class DTServerConnection {
+    public static final String BUILD_URL_ENV_PROPERTY = "BUILD_URL";
+    public static final String BUILD_VAR_KEY_VERSION_MAJOR = "dtVersionMajor";
+    public static final String BUILD_VAR_KEY_VERSION_MINOR = "dtVersionMinor";
+    public static final String BUILD_VAR_KEY_VERSION_REVISION = "dtVersionRevision";
+    public static final String BUILD_VAR_KEY_VERSION_MILESTONE = "dtVersionMilestone";
+    public static final String BUILD_VAR_KEY_CATEGORY = "dtCategory";
+    public static final String BUILD_VAR_KEY_MARKER = "dtMarker";
+    public static final String BUILD_VAR_KEY_PLATFORM = "dtPlatform";
     private static final Logger LOGGER = Logger.getLogger(DTServerConnection.class.getName());
+    private static final String SESSION_PREFIX = "stored: ";
+
     private final String systemProfile;
     private final ApiClient apiClient;
     private final CredProfilePair credProfilePair;
@@ -108,7 +118,7 @@ public class DTServerConnection {
     public DashboardReport getDashboardReportFromXML(final String dashBoardName, final String sessionId, final String testCaseName) {
         CustomXMLApi api = apiClient.createService(CustomXMLApi.class);
         try {
-            ApiResponse<DashboardReport> response = apiClient.execute(api.getXMLDashboard(dashBoardName, "stored:" + sessionId));
+            ApiResponse<DashboardReport> response = apiClient.execute(api.getXMLDashboard(dashBoardName, SESSION_PREFIX + sessionId));
             DashboardReport dashboardReport = response.getData();
             dashboardReport.setName(testCaseName);
 
@@ -278,7 +288,8 @@ public class DTServerConnection {
     public boolean getPDFReport(final String sessionName, final String comparedSessionName, final String dashboard, final FilePath outputFile) {
         CustomXMLApi api = apiClient.createService(CustomXMLApi.class);
         try {
-            Response<ResponseBody> response = api.getPDFReport(dashboard, sessionName, comparedSessionName, "PDF").execute();
+            Response<ResponseBody> response = api.getPDFReport(dashboard, SESSION_PREFIX + sessionName,
+                    SESSION_PREFIX + comparedSessionName, "PDF").execute();
             if (response.body() != null) {
                 outputFile.copyFrom(response.body().byteStream());
                 return true;
@@ -357,10 +368,8 @@ public class DTServerConnection {
         }
     }
 
-    public String registerTestRun(final int versionBuild) {
+    public String registerTestRun(final TestRunDefinition body) {
         TestAutomationApi api = apiClient.createService(TestAutomationApi.class);
-        //ToDo: add more parameter here
-        TestRunDefinition body = new TestRunDefinition(versionBuild, "performance");
         try {
             ApiResponse<TestRun> response = apiClient.execute(api.postTestRun(systemProfile, body));
             return response.getData().getId();

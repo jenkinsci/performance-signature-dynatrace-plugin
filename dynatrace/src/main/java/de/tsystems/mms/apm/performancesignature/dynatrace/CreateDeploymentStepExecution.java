@@ -16,6 +16,8 @@
 
 package de.tsystems.mms.apm.performancesignature.dynatrace;
 
+import de.tsystems.mms.apm.performancesignature.dynatrace.model.Alert.SeverityEnum;
+import de.tsystems.mms.apm.performancesignature.dynatrace.model.Alert.StateEnum;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.DTServerConnection;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model.DeploymentEvent;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model.EventUpdate;
@@ -23,6 +25,7 @@ import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.RESTErrorExce
 import de.tsystems.mms.apm.performancesignature.dynatrace.util.PerfSigUtils;
 import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
 import hudson.AbortException;
+import hudson.EnvVars;
 import hudson.model.TaskListener;
 import hudson.plugins.analysis.util.PluginLogger;
 import org.jenkinsci.plugins.workflow.steps.BodyExecution;
@@ -34,6 +37,8 @@ import javax.annotation.Nonnull;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import static de.tsystems.mms.apm.performancesignature.dynatrace.rest.DTServerConnection.BUILD_URL_ENV_PROPERTY;
 
 public class CreateDeploymentStepExecution extends StepExecution {
     private static final long serialVersionUID = 1L;
@@ -50,12 +55,14 @@ public class CreateDeploymentStepExecution extends StepExecution {
     @Override
     public boolean start() throws Exception {
         StepContext context = getContext();
+        EnvVars envVars = getContext().get(EnvVars.class);
         PluginLogger logger = PerfSigUIUtils.createLogger(listener().getLogger());
 
         DTServerConnection connection = PerfSigUtils.createDTServerConnection(step.getDynatraceProfile());
 
-        DeploymentEvent event = new DeploymentEvent(null, null, "ongoing Deployment",
-                "deployment event created by Jenkins", new Date(), null, connection.getCredProfilePair().getProfile(), null);
+        String buildUrl = envVars != null ? envVars.get(BUILD_URL_ENV_PROPERTY) : "";
+        DeploymentEvent event = new DeploymentEvent(SeverityEnum.WARNING, StateEnum.CREATED, "ongoing Deployment",
+                "deployment event created by Jenkins: " + buildUrl, new Date(), null, connection.getCredProfilePair().getProfile(), null);
         eventId = connection.createDeploymentEvent(event);
         if (eventId == null) {
             throw new AbortException("could not create deployment event");

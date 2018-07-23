@@ -19,6 +19,7 @@ package de.tsystems.mms.apm.performancesignature.dynatrace;
 import de.tsystems.mms.apm.performancesignature.dynatrace.configuration.CredProfilePair;
 import de.tsystems.mms.apm.performancesignature.dynatrace.configuration.GenericTestCase;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.DTServerConnection;
+import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model.TestRunDefinition;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.CommandExecutionException;
 import de.tsystems.mms.apm.performancesignature.dynatrace.util.PerfSigUtils;
 import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
@@ -45,6 +46,9 @@ import org.kohsuke.stapler.QueryParameter;
 import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.util.Date;
+import java.util.Map;
+
+import static de.tsystems.mms.apm.performancesignature.dynatrace.rest.DTServerConnection.*;
 
 public class PerfSigStartRecording extends Builder implements SimpleBuildStep {
     private final String dynatraceProfile;
@@ -94,7 +98,18 @@ public class PerfSigStartRecording extends Builder implements SimpleBuildStep {
         logger.log(Messages.PerfSigStartRecording_RegisteringTestRun());
         String testRunId = null;
         try {
-            testRunId = connection.registerTestRun(run.getNumber());
+            Map<String, String> variables = run.getEnvironment(listener);
+            TestRunDefinition body = new TestRunDefinition(run.getNumber())
+                    .setVersionMajor(variables.get(BUILD_VAR_KEY_VERSION_MAJOR))
+                    .setVersionMinor(variables.get(BUILD_VAR_KEY_VERSION_MINOR))
+                    .setVersionRevision(variables.get(BUILD_VAR_KEY_VERSION_REVISION))
+                    .setVersionMilestone(variables.get(BUILD_VAR_KEY_VERSION_MILESTONE))
+                    .setCategory(variables.get(BUILD_VAR_KEY_CATEGORY) != null ? variables.get(BUILD_VAR_KEY_CATEGORY) : "performance")
+                    .setPlatform(variables.get(BUILD_VAR_KEY_PLATFORM))
+                    .setMarker(variables.get(BUILD_VAR_KEY_MARKER))
+                    .addAdditionalMetaData("JENKINS_JOB", variables.get(BUILD_URL_ENV_PROPERTY));
+
+            testRunId = connection.registerTestRun(body);
         } catch (CommandExecutionException e) {
             logger.log(Messages.PerfSigStartRecording_CouldNotRegisterTestRun() + e.getMessage());
         }
