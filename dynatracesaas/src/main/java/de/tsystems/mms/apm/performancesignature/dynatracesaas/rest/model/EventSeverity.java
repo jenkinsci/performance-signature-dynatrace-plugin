@@ -26,11 +26,11 @@ import static de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils.to
 
 public class EventSeverity {
     @SerializedName("context")
-    private ContextEnum context = null;
+    private ContextEnum context;
     @SerializedName("value")
-    private Double value = null;
+    private Double value;
     @SerializedName("unit")
-    private UnitEnum unit = null;
+    private UnitEnum unit;
 
     public EventSeverity context(ContextEnum context) {
         this.context = context;

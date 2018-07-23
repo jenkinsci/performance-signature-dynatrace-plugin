@@ -27,25 +27,25 @@ import static de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils.to
 
 public class ExternalSyntheticTests {
     @SerializedName("syntheticEngineName")
-    private String syntheticEngineName = null;
+    private String syntheticEngineName;
 
     @SerializedName("syntheticEngineIconUrl")
-    private String syntheticEngineIconUrl = null;
+    private String syntheticEngineIconUrl;
 
     @SerializedName("messageTimestamp")
-    private Long messageTimestamp = null;
+    private Long messageTimestamp;
 
     @SerializedName("locations")
-    private List<SyntheticLocation> locations = null;
+    private List<SyntheticLocation> locations;
 
     @SerializedName("tests")
-    private List<ExternalSyntheticTest> tests = null;
+    private List<ExternalSyntheticTest> tests;
 
     @SerializedName("testResults")
-    private List<ExternalSyntheticTestResult> testResults = null;
+    private List<ExternalSyntheticTestResult> testResults;
 
     @SerializedName("syntheticEngine")
-    private Integer syntheticEngine = null;
+    private Integer syntheticEngine;
 
     public ExternalSyntheticTests syntheticEngineName(String syntheticEngineName) {
         this.syntheticEngineName = syntheticEngineName;

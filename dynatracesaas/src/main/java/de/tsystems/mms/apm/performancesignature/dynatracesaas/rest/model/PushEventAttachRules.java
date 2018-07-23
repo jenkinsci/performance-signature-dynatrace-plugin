@@ -29,10 +29,10 @@ import static de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils.to
 
 public class PushEventAttachRules {
     @SerializedName("entityIds")
-    private List<String> entityIds = null;
+    private List<String> entityIds;
 
     @SerializedName("tagRule")
-    private List<TagMatchRule> tagRule = null;
+    private List<TagMatchRule> tagRule;
 
     public PushEventAttachRules entityIds(List<String> entityIds) {
         this.entityIds = entityIds;

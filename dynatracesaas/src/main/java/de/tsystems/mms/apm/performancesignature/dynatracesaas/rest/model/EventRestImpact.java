@@ -26,16 +26,16 @@ import static de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils.to
 
 public class EventRestImpact {
     @SerializedName("entityId")
-    private String entityId = null;
+    private String entityId;
 
     @SerializedName("entityName")
-    private String entityName = null;
+    private String entityName;
     @SerializedName("severityLevel")
-    private SeverityLevelEnum severityLevel = null;
+    private SeverityLevelEnum severityLevel;
     @SerializedName("impactLevel")
-    private ImpactLevelEnum impactLevel = null;
+    private ImpactLevelEnum impactLevel;
     @SerializedName("eventType")
-    private EventTypeEnum eventType = null;
+    private EventTypeEnum eventType;
 
     public EventRestImpact entityId(String entityId) {
         this.entityId = entityId;

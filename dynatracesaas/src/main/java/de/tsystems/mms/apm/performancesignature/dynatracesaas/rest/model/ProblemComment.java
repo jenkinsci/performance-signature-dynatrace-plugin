@@ -26,13 +26,13 @@ import static de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils.to
 
 public class ProblemComment {
     @SerializedName("comment")
-    private String comment = null;
+    private String comment;
 
     @SerializedName("user")
-    private String user = null;
+    private String user;
 
     @SerializedName("context")
-    private String context = null;
+    private String context;
 
     public ProblemComment comment(String comment) {
         this.comment = comment;

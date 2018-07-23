@@ -26,10 +26,10 @@ import static de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils.to
 
 public class GlobalProblemStatus {
     @SerializedName("totalOpenProblemsCount")
-    private Integer totalOpenProblemsCount = null;
+    private Integer totalOpenProblemsCount;
 
     @SerializedName("openProblemCounts")
-    private GlobalProblemStatusOpenProblemCounts openProblemCounts = null;
+    private GlobalProblemStatusOpenProblemCounts openProblemCounts;
 
     public GlobalProblemStatus totalOpenProblemsCount(Integer totalOpenProblemsCount) {
         this.totalOpenProblemsCount = totalOpenProblemsCount;

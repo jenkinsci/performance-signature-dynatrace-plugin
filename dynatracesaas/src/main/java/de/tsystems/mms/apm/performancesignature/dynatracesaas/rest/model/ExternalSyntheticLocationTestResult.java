@@ -27,22 +27,22 @@ import static de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils.to
 
 public class ExternalSyntheticLocationTestResult {
     @SerializedName("id")
-    private String id = null;
+    private String id;
 
     @SerializedName("startTimestamp")
-    private Long startTimestamp = null;
+    private Long startTimestamp;
 
     @SerializedName("success")
-    private Boolean success = null;
+    private Boolean success;
 
     @SerializedName("responseTimeMillis")
-    private Long responseTimeMillis = null;
+    private Long responseTimeMillis;
 
     @SerializedName("stepResults")
     private List<SyntheticTestStepResult> stepResults = new ArrayList<>();
 
     @SerializedName("successRate")
-    private Double successRate = null;
+    private Double successRate;
 
     public ExternalSyntheticLocationTestResult id(String id) {
         this.id = id;

@@ -27,15 +27,15 @@ import static de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils.to
 
 public class EventPushMessage {
     @SerializedName("eventType")
-    private EventTypeEnum eventType = null;
+    private EventTypeEnum eventType;
     @SerializedName("start")
-    private Long start = null;
+    private Long start;
     @SerializedName("end")
-    private Long end = null;
+    private Long end;
     @SerializedName("attachRules")
-    private PushEventAttachRules attachRules = null;
+    private PushEventAttachRules attachRules;
     @SerializedName("customProperties")
-    private Map<String, Object> customProperties = null;
+    private Map<String, Object> customProperties;
 
     public EventPushMessage eventType(EventTypeEnum eventType) {
         this.eventType = eventType;

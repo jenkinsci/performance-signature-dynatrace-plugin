@@ -33,11 +33,11 @@ import static de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils.to
 
 public class TagInfo {
     @SerializedName("context")
-    private ContextEnum context = null;
+    private ContextEnum context;
     @SerializedName("key")
-    private String key = null;
+    private String key;
     @SerializedName("value")
-    private String value = null;
+    private String value;
 
     public TagInfo context(ContextEnum context) {
         this.context = context;

@@ -29,43 +29,43 @@ import static de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils.to
 
 public class ExternalSyntheticTest {
     @SerializedName("id")
-    private String id = null;
+    private String id;
 
     @SerializedName("title")
-    private String title = null;
+    private String title;
 
     @SerializedName("description")
-    private String description = null;
+    private String description;
 
     @SerializedName("testSetup")
-    private String testSetup = null;
+    private String testSetup;
 
     @SerializedName("expirationTimestamp")
-    private Long expirationTimestamp = null;
+    private Long expirationTimestamp;
 
     @SerializedName("drilldownLink")
-    private String drilldownLink = null;
+    private String drilldownLink;
 
     @SerializedName("editLink")
-    private String editLink = null;
+    private String editLink;
 
     @SerializedName("enabled")
-    private Boolean enabled = null;
+    private Boolean enabled;
 
     @SerializedName("deleted")
-    private Boolean deleted = null;
+    private Boolean deleted;
 
     @SerializedName("locations")
-    private List<SyntheticTestLocation> locations = null;
+    private List<SyntheticTestLocation> locations;
 
     @SerializedName("steps")
-    private List<SyntheticTestStep> steps = null;
+    private List<SyntheticTestStep> steps;
 
     @SerializedName("noDataTimeout")
-    private Integer noDataTimeout = null;
+    private Integer noDataTimeout;
 
     @SerializedName("scheduleIntervalInSeconds")
-    private Integer scheduleIntervalInSeconds = null;
+    private Integer scheduleIntervalInSeconds;
 
     public ExternalSyntheticTest id(String id) {
         this.id = id;

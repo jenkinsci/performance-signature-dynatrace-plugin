@@ -24,7 +24,7 @@ import static de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils.to
 
 public class ProblemFeedResultWrapper {
     @SerializedName("result")
-    private ProblemFeedQueryResult result = null;
+    private ProblemFeedQueryResult result;
 
     public ProblemFeedResultWrapper result(ProblemFeedQueryResult result) {
         this.result = result;

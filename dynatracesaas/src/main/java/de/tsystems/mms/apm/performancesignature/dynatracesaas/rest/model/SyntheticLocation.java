@@ -26,16 +26,16 @@ import static de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils.to
 
 public class SyntheticLocation {
     @SerializedName("id")
-    private String id = null;
+    private String id;
 
     @SerializedName("name")
-    private String name = null;
+    private String name;
 
     @SerializedName("ip")
-    private String ip = null;
+    private String ip;
 
     @SerializedName("iconUrl")
-    private String iconUrl = null;
+    private String iconUrl;
 
     public SyntheticLocation id(String id) {
         this.id = id;

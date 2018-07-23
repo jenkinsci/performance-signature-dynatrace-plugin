@@ -24,10 +24,10 @@ import static de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils.to
 
 public class SyntheticTestLocation {
     @SerializedName("id")
-    private String id = null;
+    private String id;
 
     @SerializedName("enabled")
-    private Boolean enabled = null;
+    private Boolean enabled;
 
     public SyntheticTestLocation id(String id) {
         this.id = id;

@@ -29,23 +29,23 @@ import static de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils.to
 
 public class TimeseriesDefinition {
     @SerializedName("displayName")
-    private String displayName = null;
+    private String displayName;
     @SerializedName("dimensions")
-    private List<String> dimensions = null;
+    private List<String> dimensions;
     @SerializedName("unit")
-    private UnitEnum unit = null;
+    private UnitEnum unit;
     @SerializedName("detailedSource")
-    private String detailedSource = null;
+    private String detailedSource;
     @SerializedName("pluginId")
-    private String pluginId = null;
+    private String pluginId;
     @SerializedName("types")
-    private List<String> types = null;
+    private List<String> types;
     @SerializedName("aggregationTypes")
-    private List<AggregationTypeEnum> aggregationTypes = null;
+    private List<AggregationTypeEnum> aggregationTypes;
     @SerializedName("filter")
-    private FilterEnum filter = null;
+    private FilterEnum filter;
     @SerializedName("timeseriesId")
-    private String timeseriesId = null;
+    private String timeseriesId;
 
     public TimeseriesDefinition displayName(String displayName) {
         this.displayName = displayName;

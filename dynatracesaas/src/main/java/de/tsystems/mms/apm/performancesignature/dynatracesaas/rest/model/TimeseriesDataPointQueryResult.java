@@ -29,17 +29,17 @@ import static de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils.to
 
 public class TimeseriesDataPointQueryResult {
     @SerializedName("dataPoints")
-    private Map<String, Map<Long, Double>> dataPoints = null;
+    private Map<String, Map<Long, Double>> dataPoints;
     @SerializedName("unit")
-    private UnitEnum unit = null;
+    private UnitEnum unit;
     @SerializedName("aggregationType")
-    private AggregationTypeEnum aggregationType = null;
+    private AggregationTypeEnum aggregationType;
     @SerializedName("resolutionInMillisUTC")
-    private Long resolutionInMillisUTC = null;
+    private Long resolutionInMillisUTC;
     @SerializedName("entities")
-    private Map<String, String> entities = null;
+    private Map<String, String> entities;
     @SerializedName("timeseriesId")
-    private String timeseriesId = null;
+    private String timeseriesId;
 
     /**
      * Metric data points   A JSON object that maps the ID of the entity that delivered the data points and an array, which consists of arrays of the data point float values.  May contain more that one entity ID per record (for example, a host and its network interface). In such cases, entity IDs are separated by commas. A datapoint contains a value and a timestamp, at which the value was recorded. There are three versions of data points: Numeric datapoint: contains a numeric value Enum datapoint: contains an enum value (currently only for availability timeseries) Prediction datapoint: Similar to the numeric datapoint, but it contains a confidence interval, within which the future values are expected to be

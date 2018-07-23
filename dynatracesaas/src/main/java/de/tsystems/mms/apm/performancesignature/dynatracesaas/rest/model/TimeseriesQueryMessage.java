@@ -31,25 +31,25 @@ import static de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils.to
 
 public class TimeseriesQueryMessage {
     @SerializedName("timeseriesId")
-    private String timeseriesId = null;
+    private String timeseriesId;
     @SerializedName("aggregationType")
-    private AggregationTypeEnum aggregationType = null;
+    private AggregationTypeEnum aggregationType;
     @SerializedName("startTimestamp")
-    private Long startTimestamp = null;
+    private Long startTimestamp;
     @SerializedName("endTimestamp")
-    private Long endTimestamp = null;
+    private Long endTimestamp;
     @SerializedName("predict")
-    private Boolean predict = null;
+    private Boolean predict;
     @SerializedName("queryMode")
-    private QueryModeEnum queryMode = null;
+    private QueryModeEnum queryMode;
     @SerializedName("entities")
-    private List<String> entities = null;
+    private List<String> entities;
     @SerializedName("tags")
-    private List<String> tags = null;
+    private List<String> tags;
     @SerializedName("filters")
-    private Map<String, String> filters = null;
+    private Map<String, String> filters;
     @SerializedName("percentile")
-    private Integer percentile = null;
+    private Integer percentile;
 
     public TimeseriesQueryMessage timeseriesId(String timeseriesId) {
         this.timeseriesId = timeseriesId;

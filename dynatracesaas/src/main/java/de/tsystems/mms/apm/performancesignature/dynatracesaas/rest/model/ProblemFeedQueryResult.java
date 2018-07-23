@@ -29,10 +29,10 @@ import static de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils.to
 
 public class ProblemFeedQueryResult {
     @SerializedName("problems")
-    private List<Problem> problems = null;
+    private List<Problem> problems;
 
     @SerializedName("monitored")
-    private ProblemFeedQueryResultMonitored monitored = null;
+    private ProblemFeedQueryResultMonitored monitored;
 
     public ProblemFeedQueryResult problems(List<Problem> problems) {
         this.problems = problems;

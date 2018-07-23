@@ -24,7 +24,7 @@ import static de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils.to
 
 public class ProblemDetailsResultWrapper {
     @SerializedName("result")
-    private Problem result = null;
+    private Problem result;
 
     public ProblemDetailsResultWrapper result(Problem result) {
         this.result = result;

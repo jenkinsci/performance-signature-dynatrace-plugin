@@ -29,36 +29,36 @@ import static de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils.to
 
 public class Problem {
     @SerializedName("id")
-    private String id = null;
+    private String id;
 
     @SerializedName("startTime")
-    private Long startTime = null;
+    private Long startTime;
 
     @SerializedName("endTime")
-    private Long endTime = null;
+    private Long endTime;
 
     @SerializedName("displayName")
-    private String displayName = null;
+    private String displayName;
     @SerializedName("impactLevel")
-    private ImpactLevelEnum impactLevel = null;
+    private ImpactLevelEnum impactLevel;
     @SerializedName("status")
-    private StatusEnum status = null;
+    private StatusEnum status;
     @SerializedName("severityLevel")
-    private SeverityLevelEnum severityLevel = null;
+    private SeverityLevelEnum severityLevel;
     @SerializedName("commentCount")
-    private Integer commentCount = null;
+    private Integer commentCount;
     @SerializedName("tagsOfAffectedEntities")
-    private List<TagInfo> tagsOfAffectedEntities = null;
+    private List<TagInfo> tagsOfAffectedEntities;
     @SerializedName("rankedEvents")
-    private List<Event> rankedEvents = null;
+    private List<Event> rankedEvents;
     @SerializedName("rankedImpacts")
-    private List<EventRestImpact> rankedImpacts = null;
+    private List<EventRestImpact> rankedImpacts;
     @SerializedName("affectedCounts")
-    private ProblemAffectedCounts affectedCounts = null;
+    private ProblemAffectedCounts affectedCounts;
     @SerializedName("recoveredCounts")
-    private ProblemRecoveredCounts recoveredCounts = null;
+    private ProblemRecoveredCounts recoveredCounts;
     @SerializedName("hasRootCause")
-    private Boolean hasRootCause = null;
+    private Boolean hasRootCause;
 
     public Problem id(String id) {
         this.id = id;

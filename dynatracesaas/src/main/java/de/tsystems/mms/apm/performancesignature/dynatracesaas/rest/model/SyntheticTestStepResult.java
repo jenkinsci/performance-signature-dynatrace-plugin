@@ -24,16 +24,16 @@ import static de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils.to
 
 public class SyntheticTestStepResult {
     @SerializedName("id")
-    private Long id = null;
+    private Long id;
 
     @SerializedName("startTimestamp")
-    private Long startTimestamp = null;
+    private Long startTimestamp;
 
     @SerializedName("responseTimeMillis")
-    private Long responseTimeMillis = null;
+    private Long responseTimeMillis;
 
     @SerializedName("error")
-    private SyntheticStepError error = null;
+    private SyntheticStepError error;
 
     public SyntheticTestStepResult id(Long id) {
         this.id = id;

@@ -33,7 +33,7 @@ import static de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils.to
 
 public class StateModification {
     @SerializedName("state")
-    private StateEnum state = null;
+    private StateEnum state;
 
     public StateModification state(StateEnum state) {
         this.state = state;

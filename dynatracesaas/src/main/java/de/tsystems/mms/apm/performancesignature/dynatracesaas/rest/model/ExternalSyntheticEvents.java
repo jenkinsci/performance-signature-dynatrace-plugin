@@ -29,13 +29,13 @@ import static de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils.to
 
 public class ExternalSyntheticEvents {
     @SerializedName("syntheticEngineName")
-    private String syntheticEngineName = null;
+    private String syntheticEngineName;
 
     @SerializedName("open")
-    private List<ExternalEventOpenNotification> open = null;
+    private List<ExternalEventOpenNotification> open;
 
     @SerializedName("resolved")
-    private List<ExternalEventResolvedNotification> resolved = null;
+    private List<ExternalEventResolvedNotification> resolved;
 
     public ExternalSyntheticEvents syntheticEngineName(String syntheticEngineName) {
         this.syntheticEngineName = syntheticEngineName;

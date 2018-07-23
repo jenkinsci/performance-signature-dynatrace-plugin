@@ -32,17 +32,17 @@ import static de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils.to
 
 public class ExternalEventOpenNotification {
     @SerializedName("testId")
-    private String testId = null;
+    private String testId;
 
     @SerializedName("eventId")
-    private String eventId = null;
+    private String eventId;
 
     @SerializedName("name")
-    private String name = null;
+    private String name;
     @SerializedName("eventType")
-    private EventTypeEnum eventType = null;
+    private EventTypeEnum eventType;
     @SerializedName("Location ids where the event happens.")
-    private List<String> locationIdsWhereTheEventHappens_ = null;
+    private List<String> locationIdsWhereTheEventHappens_;
 
     public ExternalEventOpenNotification testId(String testId) {
         this.testId = testId;

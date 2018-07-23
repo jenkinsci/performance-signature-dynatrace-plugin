@@ -26,16 +26,16 @@ import static de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils.to
 
 public class ProblemFeedQueryResultMonitored {
     @SerializedName("APPLICATION")
-    private Integer APPLICATION = null;
+    private Integer APPLICATION;
 
     @SerializedName("ENVIRONMENT")
-    private Integer ENVIRONMENT = null;
+    private Integer ENVIRONMENT;
 
     @SerializedName("INFRASTRUCTURE")
-    private Integer INFRASTRUCTURE = null;
+    private Integer INFRASTRUCTURE;
 
     @SerializedName("SERVICE")
-    private Integer SERVICE = null;
+    private Integer SERVICE;
 
     public ProblemFeedQueryResultMonitored APPLICATION(Integer APPLICATION) {
         this.APPLICATION = APPLICATION;

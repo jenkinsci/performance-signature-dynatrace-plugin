@@ -24,7 +24,7 @@ import static de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils.to
 
 public class ClusterVersion {
     @SerializedName("version")
-    private String version = null;
+    private String version;
 
     /**
      * The cluster version

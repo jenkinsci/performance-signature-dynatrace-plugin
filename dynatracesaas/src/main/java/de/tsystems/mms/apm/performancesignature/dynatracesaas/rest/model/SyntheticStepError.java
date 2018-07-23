@@ -24,10 +24,10 @@ import static de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils.to
 
 public class SyntheticStepError {
     @SerializedName("message")
-    private String message = null;
+    private String message;
 
     @SerializedName("code")
-    private Integer code = null;
+    private Integer code;
 
     public SyntheticStepError message(String message) {
         this.message = message;

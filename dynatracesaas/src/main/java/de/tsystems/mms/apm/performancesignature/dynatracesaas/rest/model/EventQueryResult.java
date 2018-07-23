@@ -29,25 +29,25 @@ import static de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils.to
 
 public class EventQueryResult {
     @SerializedName("nextEventStartTms")
-    private Long nextEventStartTms = null;
+    private Long nextEventStartTms;
 
     @SerializedName("nextEventId")
-    private Long nextEventId = null;
+    private Long nextEventId;
 
     @SerializedName("nextCursor")
-    private String nextCursor = null;
+    private String nextCursor;
 
     @SerializedName("from")
-    private Long from = null;
+    private Long from;
 
     @SerializedName("to")
-    private Long to = null;
+    private Long to;
 
     @SerializedName("totalEventCount")
-    private Long totalEventCount = null;
+    private Long totalEventCount;
 
     @SerializedName("events")
-    private List<EventRestEntry> events = null;
+    private List<EventRestEntry> events;
 
     public EventQueryResult nextEventStartTms(Long nextEventStartTms) {
         this.nextEventStartTms = nextEventStartTms;

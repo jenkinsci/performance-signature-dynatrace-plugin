@@ -29,16 +29,16 @@ import static de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils.to
 
 public class ExternalSyntheticTestResult {
     @SerializedName("id")
-    private String id = null;
+    private String id;
 
     @SerializedName("totalStepCount")
-    private Integer totalStepCount = null;
+    private Integer totalStepCount;
 
     @SerializedName("locationResults")
     private List<ExternalSyntheticLocationTestResult> locationResults = new ArrayList<>();
 
     @SerializedName("scheduleIntervalInSeconds")
-    private Integer scheduleIntervalInSeconds = null;
+    private Integer scheduleIntervalInSeconds;
 
     public ExternalSyntheticTestResult id(String id) {
         this.id = id;

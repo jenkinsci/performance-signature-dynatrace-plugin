@@ -35,100 +35,100 @@ import static de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils.to
 
 public class Event {
     @SerializedName("startTime")
-    private Long startTime = null;
+    private Long startTime;
 
     @SerializedName("endTime")
-    private Long endTime = null;
+    private Long endTime;
 
     @SerializedName("entityId")
-    private String entityId = null;
+    private String entityId;
 
     @SerializedName("entityName")
-    private String entityName = null;
+    private String entityName;
     @SerializedName("severityLevel")
-    private SeverityLevelEnum severityLevel = null;
+    private SeverityLevelEnum severityLevel;
     @SerializedName("impactLevel")
-    private ImpactLevelEnum impactLevel = null;
+    private ImpactLevelEnum impactLevel;
     @SerializedName("eventType")
-    private EventTypeEnum eventType = null;
+    private EventTypeEnum eventType;
     @SerializedName("status")
-    private StatusEnum status = null;
+    private StatusEnum status;
     @SerializedName("severities")
-    private List<EventSeverity> severities = null;
+    private List<EventSeverity> severities;
     @SerializedName("isRootCause")
-    private Boolean isRootCause = null;
+    private Boolean isRootCause;
     @SerializedName("deploymentProject")
-    private String deploymentProject = null;
+    private String deploymentProject;
     @SerializedName("cpuLimitInMHz")
-    private Integer cpuLimitInMHz = null;
+    private Integer cpuLimitInMHz;
     @SerializedName("deploymentParamAdded")
-    private String deploymentParamAdded = null;
+    private String deploymentParamAdded;
     @SerializedName("isClusterWide")
-    private Boolean isClusterWide = null;
+    private Boolean isClusterWide;
     @SerializedName("source")
-    private String source = null;
+    private String source;
     @SerializedName("effectiveEntity")
-    private String effectiveEntity = null;
+    private String effectiveEntity;
     @SerializedName("operatingSystem")
-    private String operatingSystem = null;
+    private String operatingSystem;
     @SerializedName("artifact")
-    private String artifact = null;
+    private String artifact;
     @SerializedName("cpuLoad")
-    private Float cpuLoad = null;
+    private Float cpuLoad;
     @SerializedName("affectedRequestsPerMinute")
-    private Float affectedRequestsPerMinute = null;
+    private Float affectedRequestsPerMinute;
     @SerializedName("annotationDescription")
-    private String annotationDescription = null;
+    private String annotationDescription;
     @SerializedName("browser")
-    private BrowserEnum browser = null;
+    private BrowserEnum browser;
     @SerializedName("affectedSyntheticLocations")
-    private List<String> affectedSyntheticLocations = null;
+    private List<String> affectedSyntheticLocations;
     @SerializedName("deploymentName")
-    private String deploymentName = null;
+    private String deploymentName;
     @SerializedName("deploymentParamRemoved")
-    private String deploymentParamRemoved = null;
+    private String deploymentParamRemoved;
     @SerializedName("userDefined50thPercentileThreshold")
-    private Float userDefined50thPercentileThreshold = null;
+    private Float userDefined50thPercentileThreshold;
     @SerializedName("serviceMethodGroup")
-    private String serviceMethodGroup = null;
+    private String serviceMethodGroup;
     @SerializedName("referenceResponseTime90thPercentile")
-    private Float referenceResponseTime90thPercentile = null;
+    private Float referenceResponseTime90thPercentile;
     @SerializedName("userAction")
-    private String userAction = null;
+    private String userAction;
     @SerializedName("minimumProcessGroupInstanceCountThreshold")
-    private Integer minimumProcessGroupInstanceCountThreshold = null;
+    private Integer minimumProcessGroupInstanceCountThreshold;
     @SerializedName("referenceResponseTime50thPercentile")
-    private Float referenceResponseTime50thPercentile = null;
+    private Float referenceResponseTime50thPercentile;
     @SerializedName("userDefined90thPercentileThreshold")
-    private Float userDefined90thPercentileThreshold = null;
+    private Float userDefined90thPercentileThreshold;
     @SerializedName("deploymentVersion")
-    private String deploymentVersion = null;
+    private String deploymentVersion;
     @SerializedName("annotationType")
-    private String annotationType = null;
+    private String annotationType;
     @SerializedName("affectedSyntheticActions")
-    private List<String> affectedSyntheticActions = null;
+    private List<String> affectedSyntheticActions;
     @SerializedName("affectedUserActionsPerMinute")
-    private Float affectedUserActionsPerMinute = null;
+    private Float affectedUserActionsPerMinute;
     @SerializedName("activeMaintenanceWindows")
-    private List<String> activeMaintenanceWindows = null;
+    private List<String> activeMaintenanceWindows;
     @SerializedName("mobileAppVersion")
-    private String mobileAppVersion = null;
+    private String mobileAppVersion;
     @SerializedName("userDefinedFailureRateThreshold")
-    private Float userDefinedFailureRateThreshold = null;
+    private Float userDefinedFailureRateThreshold;
     @SerializedName("percentile")
-    private PercentileEnum percentile = null;
+    private PercentileEnum percentile;
     @SerializedName("customProperties")
-    private Map<String, String> customProperties = null;
+    private Map<String, String> customProperties;
     @SerializedName("remediationAction")
-    private String remediationAction = null;
+    private String remediationAction;
     @SerializedName("service")
-    private String service = null;
+    private String service;
     @SerializedName("ciBackLink")
-    private String ciBackLink = null;
+    private String ciBackLink;
     @SerializedName("geolocation")
-    private String geolocation = null;
+    private String geolocation;
     @SerializedName("serviceMethod")
-    private String serviceMethod = null;
+    private String serviceMethod;
 
     /**
      * Timestamp of the event detection, in UTC milliseconds.

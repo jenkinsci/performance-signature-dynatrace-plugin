@@ -29,7 +29,7 @@ import static de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils.to
 
 public class ProblemCommentList {
     @SerializedName("comments")
-    private List<ProblemComment> comments = null;
+    private List<ProblemComment> comments;
 
     public ProblemCommentList comments(List<ProblemComment> comments) {
         this.comments = comments;

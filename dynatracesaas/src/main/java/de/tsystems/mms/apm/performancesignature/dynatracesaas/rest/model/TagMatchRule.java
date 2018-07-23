@@ -35,9 +35,9 @@ import static de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils.to
 
 public class TagMatchRule {
     @SerializedName("meTypes")
-    private List<MeTypesEnum> meTypes = null;
+    private List<MeTypesEnum> meTypes;
     @SerializedName("tags")
-    private List<TagInfo> tags = null;
+    private List<TagInfo> tags;
 
     public TagMatchRule meTypes(List<MeTypesEnum> meTypes) {
         this.meTypes = meTypes;

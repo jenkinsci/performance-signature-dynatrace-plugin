@@ -24,10 +24,10 @@ import static de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils.to
 
 public class SyntheticTestStep {
     @SerializedName("id")
-    private Long id = null;
+    private Long id;
 
     @SerializedName("title")
-    private String title = null;
+    private String title;
 
     public SyntheticTestStep id(Long id) {
         this.id = id;

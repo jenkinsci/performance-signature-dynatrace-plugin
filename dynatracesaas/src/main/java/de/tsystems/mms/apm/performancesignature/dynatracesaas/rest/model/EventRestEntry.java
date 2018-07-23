@@ -29,28 +29,28 @@ import static de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils.to
 
 public class EventRestEntry {
     @SerializedName("startTime")
-    private Long startTime = null;
+    private Long startTime;
 
     @SerializedName("endTime")
-    private Long endTime = null;
+    private Long endTime;
 
     @SerializedName("entityId")
-    private String entityId = null;
+    private String entityId;
 
     @SerializedName("entityName")
-    private String entityName = null;
+    private String entityName;
     @SerializedName("severityLevel")
-    private SeverityLevelEnum severityLevel = null;
+    private SeverityLevelEnum severityLevel;
     @SerializedName("impactLevel")
-    private ImpactLevelEnum impactLevel = null;
+    private ImpactLevelEnum impactLevel;
     @SerializedName("eventType")
-    private EventTypeEnum eventType = null;
+    private EventTypeEnum eventType;
     @SerializedName("eventStatus")
-    private StatusEnum eventStatus = null;
+    private StatusEnum eventStatus;
     @SerializedName("tags")
-    private List<TagInfo> tags = null;
+    private List<TagInfo> tags;
     @SerializedName("id")
-    private String id = null;
+    private String id;
 
     public EventRestEntry startTime(Long startTime) {
         this.startTime = startTime;

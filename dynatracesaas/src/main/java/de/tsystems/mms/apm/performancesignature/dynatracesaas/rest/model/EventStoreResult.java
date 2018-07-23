@@ -29,7 +29,7 @@ import static de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils.to
 
 public class EventStoreResult {
     @SerializedName("storedIds")
-    private List<String> storedIds = null;
+    private List<String> storedIds;
 
     public EventStoreResult storedIds(List<String> storedIds) {
         this.storedIds = storedIds;

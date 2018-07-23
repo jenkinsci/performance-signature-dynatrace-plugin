@@ -24,10 +24,10 @@ import static de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils.to
 
 public class ExternalEventResolvedNotification {
     @SerializedName("testId")
-    private String testId = null;
+    private String testId;
 
     @SerializedName("eventId")
-    private String eventId = null;
+    private String eventId;
 
     public ExternalEventResolvedNotification testId(String testId) {
         this.testId = testId;
