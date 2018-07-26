@@ -101,6 +101,13 @@
                     <compatibleSinceVersion>2.2.0</compatibleSinceVersion>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <configuration>
+                    <configLocation>checkstyle.config.xml</configLocation>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 </project>
