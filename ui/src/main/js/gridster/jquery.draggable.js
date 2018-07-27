@@ -38,7 +38,7 @@
 
     var $window = $(window);
     var dir_map = {x: 'left', y: 'top'};
-    var isTouch = ('ontouchstart' in window);
+    var isTouch = !!('ontouchstart' in window);
 
     var capitalize = function (str) {
         return str.charAt(0).toUpperCase() + str.slice(1);
@@ -312,7 +312,7 @@
             var diff_y = Math.abs(
                 mouse_actual_pos.top - self.mouse_init_pos.top);
             if (!(diff_x > self.options.distance ||
-                    diff_y > self.options.distance)
+                diff_y > self.options.distance)
             ) {
                 return false;
             }
