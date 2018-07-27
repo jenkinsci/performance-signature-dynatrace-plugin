@@ -33,7 +33,7 @@ import java.util.List;
 
 public class DynatraceServerConfiguration extends AbstractDescribableImpl<DynatraceServerConfiguration> {
     private final String name;
-    private String serverUrl;
+    private final String serverUrl;
     private final int readTimeout;
     private final boolean verifyCertificate;
     private final boolean useProxy;

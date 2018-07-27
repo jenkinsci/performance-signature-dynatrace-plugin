@@ -31,16 +31,21 @@ import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.DataBoundSetter;
 
 import javax.annotation.Nonnull;
 import java.util.Set;
 
 public class CreateDeploymentStep extends Step {
     private final String envId;
+    private final String entityIds;
+    private String meTypes;
+    private String tags;
 
     @DataBoundConstructor
-    public CreateDeploymentStep(String envId) {
+    public CreateDeploymentStep(String envId, String entityIds) {
         this.envId = envId;
+        this.entityIds = entityIds;
     }
 
     @Override
@@ -55,6 +60,30 @@ public class CreateDeploymentStep extends Step {
 
     public String getEnvId() {
         return envId;
+    }
+
+    public String getEntityIds() {
+        return entityIds;
+    }
+
+    public String getMeTypes() {
+        return meTypes;
+    }
+
+    @DataBoundSetter
+    public CreateDeploymentStep setMeTypes(String meTypes) {
+        this.meTypes = meTypes;
+        return this;
+    }
+
+    public String getTags() {
+        return tags;
+    }
+
+    @DataBoundSetter
+    public CreateDeploymentStep setTags(String tags) {
+        this.tags = tags;
+        return this;
     }
 
     @Extension

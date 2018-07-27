@@ -26,7 +26,7 @@ public class ClientLinkGenerator {
     private final String dashboardName;
     private final String sessionName;
     private final String target;
-    private String serverUrl;
+    private final String serverUrl;
 
     public ClientLinkGenerator(final String serverUrl, final String dashboardName, final String sessionName, final String target) {
         this.serverUrl = serverUrl;

@@ -23,7 +23,7 @@ import hudson.model.Run;
 
 import static hudson.init.InitMilestone.PLUGINS_STARTED;
 
-@SuppressWarnings({"WeakerAccess", "unused"})
+@SuppressWarnings({"unused", "deprecation"})
 public class PerfSigUIPlugin extends Plugin {
 
     @Initializer(before = PLUGINS_STARTED)

@@ -21,7 +21,7 @@ import hudson.model.InvisibleAction;
 import java.util.Date;
 
 public class PerfSigEnvInvisAction extends InvisibleAction {
-    private String testRunId;
+    private final String testRunId;
     private final String testCase;
     private final Date timeframeStart;
     private final String sessionName;

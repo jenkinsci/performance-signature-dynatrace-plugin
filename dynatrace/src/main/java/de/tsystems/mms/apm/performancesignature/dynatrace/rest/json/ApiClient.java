@@ -53,7 +53,7 @@ public class ApiClient {
     private boolean debugging = false;
     private boolean verifyingSsl;
 
-    private OkHttpClient.Builder okBuilder;
+    private final OkHttpClient.Builder okBuilder;
     private Retrofit.Builder adapterBuilder;
     private HttpLoggingInterceptor loggingInterceptor;
 

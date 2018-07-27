@@ -17,10 +17,7 @@
 package de.tsystems.mms.apm.performancesignature.dynatracesaas;
 
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.DynatraceServerConnection;
-import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.EventPushMessage;
-import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.EventStoreResult;
-import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.EventTypeEnum;
-import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.PushEventAttachRules;
+import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.*;
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.util.DynatraceUtils;
 import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
 import hudson.AbortException;
@@ -29,8 +26,10 @@ import hudson.model.TaskListener;
 import org.jenkinsci.plugins.workflow.steps.StepContext;
 import org.jenkinsci.plugins.workflow.steps.StepExecution;
 
+import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import static de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.DynatraceServerConnection.BUILD_URL_ENV_PROPERTY;
 
@@ -53,7 +52,11 @@ public class CreateDeploymentStepExecution extends StepExecution {
 
         DynatraceServerConnection connection = DynatraceUtils.createDynatraceServerConnection(step.getEnvId(), true);
 
-        EventPushMessage event = new EventPushMessage(EventTypeEnum.CUSTOM_DEPLOYMENT, new PushEventAttachRules())
+        PushEventAttachRules attachRules = new PushEventAttachRules();
+        attachRules.setEntityIds(Arrays.stream(step.getEntityIds().split(",")).map(String::trim).collect(Collectors.toList()));
+        attachRules.addTagRuleItem(new TagMatchRule());
+
+        EventPushMessage event = new EventPushMessage(EventTypeEnum.CUSTOM_DEPLOYMENT, attachRules)
                 .setSource("Jenkins");
         if (envVars != null) {
             event.setDeploymentName(envVars.get("JOB_NAME"))

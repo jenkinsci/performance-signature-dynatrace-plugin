@@ -19,4 +19,22 @@
     <f:entry title="${%Environment}" field="envId" description="${%description(rootURL)}">
         <f:select/>
     </f:entry>
+    <f:section title="attach rules">
+        <!--ToDo: List of Strings possible?-->
+        <f:entry title="${%entityIds, which the event is to be attached to}" field="entityIds"
+                 description="${%One attach rules is entityIds, which contains a comma separated list of entity identifiers, for example ''APPLICATION-B66B773D12C49189''.}">
+            <f:textbox/>
+        </f:entry>
+        <!--ToDo: make this configurable-->
+        <f:section title="tag rules">
+            <f:entry title="${%component types, which the event is to be attached to}" field="meTypes"
+                     description="${%Another possible attach rule is tagRule that takes a component type and a tag to attach your custom event on all components of that type that contain the given tag.}">
+                <f:textbox/>
+            </f:entry>
+            <f:entry title="${%tags, which the event is to be attached to}" field="tags"
+                     description="${%the tag attach rule can also contain multiple component types and tags}">
+                <f:textbox/>
+            </f:entry>
+        </f:section>
+    </f:section>
 </j:jelly>
