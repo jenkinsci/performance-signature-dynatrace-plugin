@@ -30,6 +30,7 @@ import org.jenkinsci.plugins.workflow.steps.StepExecution;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 
+import javax.annotation.Nonnull;
 import java.util.Set;
 
 public class PullPerfSigDataStep extends Step {
@@ -83,6 +84,7 @@ public class PullPerfSigDataStep extends Step {
             return "pullPerfSigReports";
         }
 
+        @Nonnull
         @Override
         public String getDisplayName() {
             return Messages.PullPerfSigDataStep_DisplayName();
