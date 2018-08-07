@@ -18,6 +18,7 @@ package de.tsystems.mms.apm.performancesignature.dynatrace.rest.json;
 
 import com.cloudbees.plugins.credentials.common.UsernamePasswordCredentials;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.auth.HttpBasicAuth;
 import okhttp3.OkHttpClient;
@@ -43,17 +44,14 @@ import java.lang.reflect.Type;
 import java.net.Proxy;
 import java.security.GeneralSecurityException;
 import java.security.cert.X509Certificate;
-import java.text.SimpleDateFormat;
-import java.time.format.DateTimeFormatter;
 import java.util.concurrent.TimeUnit;
 
 public class ApiClient {
     public static final String API_SUFFIX = "api/v2/";
     public static final String REST_DF = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX";
+    private final OkHttpClient.Builder okBuilder;
     private boolean debugging = false;
     private boolean verifyingSsl;
-
-    private final OkHttpClient.Builder okBuilder;
     private Retrofit.Builder adapterBuilder;
     private HttpLoggingInterceptor loggingInterceptor;
 
@@ -62,19 +60,19 @@ public class ApiClient {
      */
     public ApiClient() {
         verifyingSsl = true;
-        JSON json = new JSON();
-        json.setDateFormat(new SimpleDateFormat(REST_DF));
-        json.setLocalDateFormat(DateTimeFormatter.ofPattern(REST_DF));
         okBuilder = new OkHttpClient.Builder();
-
         String baseUrl = "https://localhost" + API_SUFFIX;
+
+        Gson gson = new GsonBuilder()
+                .setDateFormat(ApiClient.REST_DF)
+                .create();
 
         adapterBuilder = new Retrofit
                 .Builder()
                 .baseUrl(baseUrl)
                 .addConverterFactory(ScalarsConverterFactory.create())
                 .addConverterFactory(JaxbConverterFactory.create())
-                .addConverterFactory(GsonCustomConverterFactory.create(json.getGson()));
+                .addConverterFactory(GsonCustomConverterFactory.create(gson));
     }
 
     /**

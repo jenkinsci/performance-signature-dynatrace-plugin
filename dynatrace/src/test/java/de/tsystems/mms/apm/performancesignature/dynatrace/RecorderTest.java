@@ -194,7 +194,7 @@ public class RecorderTest {
     public void testIncidentsViaRest() throws Exception {
         DTServerConnection connection = PerfSigUtils.createDTServerConnection(dynatraceConfigurations.get(0).name);
         Date now = new Date();
-        now.setTime(now.getTime() - 1800000);
+        now.setTime(now.getTime() - 43200000L);
         List<Alert> alerts = connection.getIncidents(now, new Date());
 
         assertNotNull(alerts);

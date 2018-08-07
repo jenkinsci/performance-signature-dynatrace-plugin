@@ -81,7 +81,7 @@ public class DTServerConnection {
                 .setVerifyingSsl(verifyCertificate)
                 .setBasePath(serverUrl)
                 .setCredentials(pair.getCredentials())
-                .setDebugging(true)
+                //.setDebugging(true)
                 .setReadTimeout(readTimeout == 0 ? DescriptorImpl.defaultReadTimeout : readTimeout);
 
         Proxy proxy = Proxy.NO_PROXY;

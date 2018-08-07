@@ -1,6 +1,7 @@
 package de.tsystems.mms.apm.performancesignature.dynatracesaas.rest;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.auth.ApiKeyAuth;
 import okhttp3.OkHttpClient;
@@ -27,7 +28,7 @@ import java.security.GeneralSecurityException;
 import java.security.cert.X509Certificate;
 
 public class ApiClient {
-
+    private static final String REST_DF = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX";
     private static final String API_SUFFIX = "api/v1/";
     private boolean debugging = false;
     private boolean verifyingSsl;
@@ -37,16 +38,18 @@ public class ApiClient {
 
     public ApiClient() {
         verifyingSsl = true;
-        JSON json = new JSON();
         okBuilder = new OkHttpClient.Builder();
-
         String baseUrl = "https://localhost/" + API_SUFFIX;
+
+        Gson gson = new GsonBuilder()
+                .setDateFormat(ApiClient.REST_DF)
+                .create();
 
         adapterBuilder = new Retrofit
                 .Builder()
                 .baseUrl(baseUrl)
                 .addConverterFactory(ScalarsConverterFactory.create())
-                .addConverterFactory(GsonCustomConverterFactory.create(json.getGson()));
+                .addConverterFactory(GsonCustomConverterFactory.create(gson));
     }
 
     /**
