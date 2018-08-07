@@ -137,8 +137,12 @@ public final class PerfSigUtils {
             throw new AbortException(de.tsystems.mms.apm.performancesignature.dynatrace.Messages.PerfSigRecorder_FailedToLookupProfile());
         }
         DTServerConnection connection = new DTServerConnection(serverConfiguration, pair);
-        if (validateConnection && !connection.validateConnection()) {
-            throw new RESTErrorException(de.tsystems.mms.apm.performancesignature.dynatrace.Messages.PerfSigRecorder_DTConnectionError());
+        if (validateConnection) {
+            try {
+                connection.getServerVersion();
+            } catch (Exception e) {
+                throw new RESTErrorException(de.tsystems.mms.apm.performancesignature.dynatrace.Messages.PerfSigRecorder_DTConnectionError(), e);
+            }
         }
         return connection;
     }

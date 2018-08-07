@@ -141,10 +141,11 @@ public class CredProfilePair extends AbstractDescribableImpl<CredProfilePair> {
             CredProfilePair pair = new CredProfilePair("", credentialsId);
             final DTServerConnection connection = new DTServerConnection(serverUrl, pair, verifyCertificate, 0, useProxy);
 
-            if (connection.validateConnection()) {
+            try {
+                connection.getServerVersion();
                 return FormValidation.ok(Messages.PerfSigRecorder_TestConnectionSuccessful());
-            } else {
-                return FormValidation.warning(Messages.PerfSigRecorder_TestConnectionNotSuccessful());
+            } catch (Exception e) {
+                return FormValidation.error(e, Messages.PerfSigRecorder_TestConnectionNotSuccessful());
             }
         }
 

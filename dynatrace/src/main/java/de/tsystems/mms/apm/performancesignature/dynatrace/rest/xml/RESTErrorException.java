@@ -34,4 +34,8 @@ public class RESTErrorException extends IOException {
     public RESTErrorException(final String message) {
         super(message);
     }
+
+    public RESTErrorException(final String message, final Throwable throwable) {
+        super(message, throwable);
+    }
 }

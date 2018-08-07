@@ -96,11 +96,15 @@ public final class DynatraceUtils {
             throw new AbortException(Messages.DynatraceRecorder_FailedToLookupServer());
         }
 
-        DynatraceServerConnection serverConnection = new DynatraceServerConnection(serverConfiguration);
-        if (validateConnection && !serverConnection.validateConnection()) {
-            throw new RESTErrorException(Messages.DynatraceRecorder_ConnectionError());
+        DynatraceServerConnection connection = new DynatraceServerConnection(serverConfiguration);
+        if (validateConnection) {
+            try {
+                connection.getServerVersion();
+            } catch (Exception e) {
+                throw new RESTErrorException(Messages.DynatraceRecorder_ConnectionError(), e);
+            }
         }
-        return serverConnection;
+        return connection;
     }
 
     public static String humanReadableByteCount(final double bytes, final boolean si) {

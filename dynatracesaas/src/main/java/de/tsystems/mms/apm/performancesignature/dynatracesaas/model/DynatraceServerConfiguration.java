@@ -131,10 +131,11 @@ public class DynatraceServerConfiguration extends AbstractDescribableImpl<Dynatr
 
             final DynatraceServerConnection connection = new DynatraceServerConnection(serverUrl, apiTokenId, verifyCertificate, useProxy);
 
-            if (connection.validateConnection()) {
+            try {
+                connection.getServerVersion();
                 return FormValidation.ok(Messages.CredJobPair_TestConnectionSuccessful());
-            } else {
-                return FormValidation.error(Messages.CredJobPair_TestConnectionNotSuccessful());
+            } catch (Exception e) {
+                return FormValidation.error(e, Messages.CredJobPair_TestConnectionNotSuccessful());
             }
         }
 

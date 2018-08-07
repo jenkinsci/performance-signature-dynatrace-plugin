@@ -181,9 +181,11 @@ public class ApiClient {
      * @param creds UsernamePasswordCredentials
      */
     public ApiClient setCredentials(final UsernamePasswordCredentials creds) {
-        HttpBasicAuth basicAuth = new HttpBasicAuth();
-        basicAuth.setCredentials(creds.getUsername(), creds.getPassword().getPlainText());
-        okBuilder.addInterceptor(basicAuth);
+        if (creds != null) {
+            HttpBasicAuth basicAuth = new HttpBasicAuth();
+            basicAuth.setCredentials(creds.getUsername(), creds.getPassword().getPlainText());
+            okBuilder.addInterceptor(basicAuth);
+        }
         return this;
     }
 

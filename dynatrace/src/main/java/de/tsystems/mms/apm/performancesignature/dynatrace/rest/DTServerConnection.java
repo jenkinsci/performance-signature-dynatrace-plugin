@@ -47,7 +47,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 public class DTServerConnection {
@@ -59,7 +58,6 @@ public class DTServerConnection {
     public static final String BUILD_VAR_KEY_CATEGORY = "dtCategory";
     public static final String BUILD_VAR_KEY_MARKER = "dtMarker";
     public static final String BUILD_VAR_KEY_PLATFORM = "dtPlatform";
-    private static final Logger LOGGER = Logger.getLogger(DTServerConnection.class.getName());
     private static final String SESSION_PREFIX = "stored: ";
 
     private final String systemProfile;
@@ -144,23 +142,13 @@ public class DTServerConnection {
         }
     }
 
-    public boolean validateConnection() {
-        try {
-            getServerVersion();
-            return true;
-        } catch (CommandExecutionException e) {
-            LOGGER.severe(ExceptionUtils.getFullStackTrace(e));
-            return false;
-        }
-    }
-
     public String getServerVersion() {
         ServerManagementApi api = apiClient.createService(ServerManagementApi.class);
         try {
-            ApiResponse<de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model.Result> version = apiClient.execute(api.getVersion());
+            ApiResponse<Result> version = apiClient.execute(api.getVersion());
             return version.getData().getResult();
         } catch (ApiException ex) {
-            throw new CommandExecutionException("error getting version of server: " + ex.getResponseBody(), ex);
+            throw new CommandExecutionException("error getting version of server", ex);
         }
     }
 

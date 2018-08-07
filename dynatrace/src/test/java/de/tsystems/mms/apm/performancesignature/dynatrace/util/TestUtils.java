@@ -64,7 +64,7 @@ public class TestUtils {
 
         for (ListBoxModel.Option configuration : dynatraceConfigurations) {
             DTServerConnection connection = PerfSigUtils.createDTServerConnection(configuration.name, false);
-            assumeTrue("assume that the server is reachable", connection.validateConnection());
+            assumeTrue("assume that the server is reachable", connection.getServerVersion() != null);
         }
 
 
