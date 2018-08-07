@@ -26,6 +26,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Type;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -107,6 +108,7 @@ public class DynatraceReportStepExecution extends SynchronousNonBlockingStepExec
                         Measure measure = new Measure(baseResult.getEntities().get(key));
                         measure.setAggregation(baseResult.getAggregationType().getValue().toLowerCase());
                         measure.setUnit(caluclateUnit(baseResult, totalValuesPerDataPoint.get(AggregationTypeEnum.MAX)));
+                        measure.setColor("#006bba");
 
                         measure.setAvg(getTotalValues(baseResult, totalValuesPerDataPoint.get(AggregationTypeEnum.AVG)));
                         measure.setMin(getTotalValues(baseResult, totalValuesPerDataPoint.get(AggregationTypeEnum.MIN)));
@@ -170,7 +172,7 @@ public class DynatraceReportStepExecution extends SynchronousNonBlockingStepExec
                 try (InputStream is = f.read()) {
                     Type type = new TypeToken<List<Specification>>() {
                     }.getType();
-                    specs = new Gson().fromJson(IOUtils.toString(is, "UTF-8"), type);
+                    specs = new Gson().fromJson(IOUtils.toString(is, StandardCharsets.UTF_8), type);
                 }
             } else if (f.isDirectory()) {
                 throw new IllegalArgumentException(f.getRemote() + "  is a directory ...");

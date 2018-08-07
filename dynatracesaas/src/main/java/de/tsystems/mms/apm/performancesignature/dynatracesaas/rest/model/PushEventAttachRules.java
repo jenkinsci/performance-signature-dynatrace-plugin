@@ -14,6 +14,7 @@
 package de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model;
 
 import com.google.gson.annotations.SerializedName;
+import de.tsystems.mms.apm.performancesignature.dynatracesaas.model.TagMatchRule;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 

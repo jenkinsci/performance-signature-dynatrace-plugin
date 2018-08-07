@@ -17,6 +17,8 @@
 package de.tsystems.mms.apm.performancesignature.dynatracesaas;
 
 import com.google.common.collect.ImmutableSet;
+import de.tsystems.mms.apm.performancesignature.dynatracesaas.model.EntityId;
+import de.tsystems.mms.apm.performancesignature.dynatracesaas.model.TagMatchRule;
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.util.DynatraceUtils;
 import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
 import hudson.Extension;
@@ -34,16 +36,16 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 import java.util.Set;
 
 public class CreateDeploymentStep extends Step {
     private final String envId;
-    private final String entityIds;
-    private String meTypes;
-    private String tags;
+    private final List<EntityId> entityIds;
+    private List<TagMatchRule> tagMatchRules;
 
     @DataBoundConstructor
-    public CreateDeploymentStep(String envId, String entityIds) {
+    public CreateDeploymentStep(String envId, List<EntityId> entityIds) {
         this.envId = envId;
         this.entityIds = entityIds;
     }
@@ -62,27 +64,17 @@ public class CreateDeploymentStep extends Step {
         return envId;
     }
 
-    public String getEntityIds() {
+    public List<EntityId> getEntityIds() {
         return entityIds;
     }
 
-    public String getMeTypes() {
-        return meTypes;
+    public List<TagMatchRule> getTagMatchRules() {
+        return tagMatchRules;
     }
 
     @DataBoundSetter
-    public CreateDeploymentStep setMeTypes(String meTypes) {
-        this.meTypes = meTypes;
-        return this;
-    }
-
-    public String getTags() {
-        return tags;
-    }
-
-    @DataBoundSetter
-    public CreateDeploymentStep setTags(String tags) {
-        this.tags = tags;
+    public CreateDeploymentStep setTagMatchRules(List<TagMatchRule> tagMatchRules) {
+        this.tagMatchRules = tagMatchRules;
         return this;
     }
 

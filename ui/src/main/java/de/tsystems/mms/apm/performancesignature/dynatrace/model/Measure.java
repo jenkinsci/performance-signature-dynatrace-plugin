@@ -109,6 +109,10 @@ public class Measure extends MeasureBaseModel {
         return color;
     }
 
+    public void setColor(String color) {
+        this.color = color;
+    }
+
     /**
      * Ruft den Wert der aggregation-Eigenschaft ab.
      *

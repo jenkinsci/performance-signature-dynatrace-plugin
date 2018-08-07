@@ -10,21 +10,27 @@
  * Do not edit the class manually.
  */
 
-
-package de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model;
+package de.tsystems.mms.apm.performancesignature.dynatracesaas.model;
 
 import com.google.gson.TypeAdapter;
 import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
+import hudson.Extension;
+import hudson.model.AbstractDescribableImpl;
+import hudson.model.Descriptor;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.DataBoundSetter;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils.toIndentedString;
 
@@ -33,11 +39,15 @@ import static de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils.to
  */
 @ApiModel(description = "Allows to attach an event to an entity that fits the specified criteria")
 
-public class TagMatchRule {
+public class TagMatchRule extends AbstractDescribableImpl<TagMatchRule> {
     @SerializedName("meTypes")
     private List<MeTypesEnum> meTypes;
     @SerializedName("tags")
     private List<TagInfo> tags;
+
+    @DataBoundConstructor
+    public TagMatchRule() {
+    }
 
     public TagMatchRule meTypes(List<MeTypesEnum> meTypes) {
         this.meTypes = meTypes;
@@ -58,12 +68,22 @@ public class TagMatchRule {
      * @return meTypes
      **/
     @ApiModelProperty(value = "List of ME types the event can be attached to")
-    public List<MeTypesEnum> getMeTypes() {
+    public List<MeTypesEnum> getMeTypesEnum() {
         return meTypes;
     }
 
-    public void setMeTypes(List<MeTypesEnum> meTypes) {
+    public void setMeTypesEnum(List<MeTypesEnum> meTypes) {
         this.meTypes = meTypes;
+    }
+
+    public List<MeType> getMeTypes() {
+        if (meTypes == null) return new ArrayList<>();
+        return meTypes.stream().map(meType -> new MeType(meType.getValue())).collect(Collectors.toList());
+    }
+
+    @DataBoundSetter
+    public void setMeTypes(List<MeType> meTypes) {
+        this.meTypes = meTypes.stream().map(text -> MeTypesEnum.fromValue(text.getMeType())).collect(Collectors.toList());
     }
 
     public TagMatchRule tags(List<TagInfo> tags) {
@@ -89,6 +109,7 @@ public class TagMatchRule {
         return tags;
     }
 
+    @DataBoundSetter
     public void setTags(List<TagInfo> tags) {
         this.tags = tags;
     }
@@ -106,57 +127,57 @@ public class TagMatchRule {
      */
     @JsonAdapter(MeTypesEnum.Adapter.class)
     public enum MeTypesEnum {
-        HOST("HOST"),
-        PROCESS_GROUP_INSTANCE("PROCESS_GROUP_INSTANCE"),
-        DOCKER_CONTAINER_GROUP_INSTANCE("DOCKER_CONTAINER_GROUP_INSTANCE"),
-        DISK("DISK"),
-        NETWORK_INTERFACE("NETWORK_INTERFACE"),
-        HYPERVISOR("HYPERVISOR"),
-        VIRTUALMACHINE("VIRTUALMACHINE"),
-        EC2_INSTANCE("EC2_INSTANCE"),
-        ELASTIC_LOAD_BALANCER("ELASTIC_LOAD_BALANCER"),
-        RELATIONAL_DATABASE_SERVICE("RELATIONAL_DATABASE_SERVICE"),
-        AWS_LAMBDA_FUNCTION("AWS_LAMBDA_FUNCTION"),
-        EBS_VOLUME("EBS_VOLUME"),
-        DYNAMO_DB_TABLE("DYNAMO_DB_TABLE"),
-        SERVICE("SERVICE"),
         APPLICATION("APPLICATION"),
-        MOBILE_APPLICATION("MOBILE_APPLICATION"),
-        CUSTOM_APPLICATION("CUSTOM_APPLICATION"),
-        SYNTHETIC_TEST("SYNTHETIC_TEST"),
-        CUSTOM_DEVICE("CUSTOM_DEVICE"),
         APPLICATION_METHOD("APPLICATION_METHOD"),
-        SERVICE_METHOD("SERVICE_METHOD"),
-        GEOLOCATION("GEOLOCATION"),
-        PROCESS_GROUP("PROCESS_GROUP"),
-        OPENSTACK_REGION("OPENSTACK_REGION"),
-        OPENSTACK_VM("OPENSTACK_VM"),
+        AUXILIARY_SYNTHETIC_TEST("AUXILIARY_SYNTHETIC_TEST"),
+        AWS_AVAILABILITY_ZONE("AWS_AVAILABILITY_ZONE"),
+        AWS_LAMBDA_FUNCTION("AWS_LAMBDA_FUNCTION"),
+        AZURE_API_MANAGEMENT_SERVICE("AZURE_API_MANAGEMENT_SERVICE"),
+        AZURE_APPLICATION_GATEWAY("AZURE_APPLICATION_GATEWAY"),
+        AZURE_EVENT_HUB("AZURE_EVENT_HUB"),
+        AZURE_LOAD_BALANCER("AZURE_LOAD_BALANCER"),
+        AZURE_REDIS_CACHE("AZURE_REDIS_CACHE"),
+        AZURE_REGION("AZURE_REGION"),
+        AZURE_SQL_SERVER("AZURE_SQL_SERVER"),
+        AZURE_VM("AZURE_VM"),
         CINDER_VOLUME("CINDER_VOLUME"),
-        NEUTRON_SUBNET("NEUTRON_SUBNET"),
-        SWIFT_CONTAINER("SWIFT_CONTAINER"),
-        OPENSTACK_PROJECT("OPENSTACK_PROJECT"),
+        CUSTOM_APPLICATION("CUSTOM_APPLICATION"),
+        CUSTOM_DEVICE("CUSTOM_DEVICE"),
+        CUSTOM_DEVICE_GROUP("CUSTOM_DEVICE_GROUP"),
+        DCRUM_APPLICATION("DCRUM_APPLICATION"),
         DCRUM_SERVICE("DCRUM_SERVICE"),
         DCRUM_SERVICE_INSTANCE("DCRUM_SERVICE_INSTANCE"),
-        DCRUM_APPLICATION("DCRUM_APPLICATION"),
-        VMWARE_DATACENTER("VMWARE_DATACENTER"),
-        AZURE_REGION("AZURE_REGION"),
-        AZURE_VM("AZURE_VM"),
-        AWS_AVAILABILITY_ZONE("AWS_AVAILABILITY_ZONE"),
-        GEOLOC_SITE("GEOLOC_SITE"),
-        AUXILIARY_SYNTHETIC_TEST("AUXILIARY_SYNTHETIC_TEST"),
-        CUSTOM_DEVICE_GROUP("CUSTOM_DEVICE_GROUP"),
-        SYNTHETIC_TEST_STEP("SYNTHETIC_TEST_STEP"),
-        AZURE_SQL_SERVER("AZURE_SQL_SERVER"),
-        AZURE_APPLICATION_GATEWAY("AZURE_APPLICATION_GATEWAY"),
-        AZURE_LOAD_BALANCER("AZURE_LOAD_BALANCER"),
-        AZURE_API_MANAGEMENT_SERVICE("AZURE_API_MANAGEMENT_SERVICE"),
-        AZURE_REDIS_CACHE("AZURE_REDIS_CACHE"),
-        AZURE_EVENT_HUB("AZURE_EVENT_HUB"),
-        SERVICE_INSTANCE("SERVICE_INSTANCE"),
-        OS("OS"),
-        HOST_GROUP("HOST_GROUP"),
+        DISK("DISK"),
+        DOCKER_CONTAINER_GROUP_INSTANCE("DOCKER_CONTAINER_GROUP_INSTANCE"),
+        DYNAMO_DB_TABLE("DYNAMO_DB_TABLE"),
+        EBS_VOLUME("EBS_VOLUME"),
+        EC2_INSTANCE("EC2_INSTANCE"),
+        ELASTIC_LOAD_BALANCER("ELASTIC_LOAD_BALANCER"),
         ENVIRONMENT("ENVIRONMENT"),
-        GOOGLE_COMPUTE_ENGINE("GOOGLE_COMPUTE_ENGINE");
+        GEOLOCATION("GEOLOCATION"),
+        GEOLOC_SITE("GEOLOC_SITE"),
+        GOOGLE_COMPUTE_ENGINE("GOOGLE_COMPUTE_ENGINE"),
+        HOST("HOST"),
+        HOST_GROUP("HOST_GROUP"),
+        HYPERVISOR("HYPERVISOR"),
+        MOBILE_APPLICATION("MOBILE_APPLICATION"),
+        NETWORK_INTERFACE("NETWORK_INTERFACE"),
+        NEUTRON_SUBNET("NEUTRON_SUBNET"),
+        OPENSTACK_PROJECT("OPENSTACK_PROJECT"),
+        OPENSTACK_REGION("OPENSTACK_REGION"),
+        OPENSTACK_VM("OPENSTACK_VM"),
+        OS("OS"),
+        PROCESS_GROUP("PROCESS_GROUP"),
+        PROCESS_GROUP_INSTANCE("PROCESS_GROUP_INSTANCE"),
+        RELATIONAL_DATABASE_SERVICE("RELATIONAL_DATABASE_SERVICE"),
+        SERVICE("SERVICE"),
+        SERVICE_INSTANCE("SERVICE_INSTANCE"),
+        SERVICE_METHOD("SERVICE_METHOD"),
+        SWIFT_CONTAINER("SWIFT_CONTAINER"),
+        SYNTHETIC_TEST("SYNTHETIC_TEST"),
+        SYNTHETIC_TEST_STEP("SYNTHETIC_TEST_STEP"),
+        VIRTUALMACHINE("VIRTUALMACHINE"),
+        VMWARE_DATACENTER("VMWARE_DATACENTER");
 
         private String value;
 
@@ -188,6 +209,15 @@ public class TagMatchRule {
                 String value = jsonReader.nextString();
                 return MeTypesEnum.fromValue(value);
             }
+        }
+    }
+
+    @Extension
+    public static class DescriptorImpl extends Descriptor<TagMatchRule> {
+        @Nonnull
+        @Override
+        public String getDisplayName() {
+            return "";
         }
     }
 

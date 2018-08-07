@@ -22,6 +22,8 @@ import de.tsystems.mms.apm.performancesignature.dynatracesaas.DynatraceGlobalCon
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.Messages;
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.model.DynatraceApiToken;
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.model.DynatraceServerConfiguration;
+import de.tsystems.mms.apm.performancesignature.dynatracesaas.model.TagInfo;
+import de.tsystems.mms.apm.performancesignature.dynatracesaas.model.TagMatchRule;
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.DynatraceServerConnection;
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.RESTErrorException;
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.TimeseriesDefinition;
@@ -51,6 +53,10 @@ public final class DynatraceUtils {
                 listBoxModel.add((String) item);
             } else if (item instanceof DynatraceServerConfiguration) {
                 listBoxModel.add(((DynatraceServerConfiguration) item).getName());
+            } else if (item instanceof TagMatchRule.MeTypesEnum) {
+                listBoxModel.add(((TagMatchRule.MeTypesEnum) item).getValue());
+            } else if (item instanceof TagInfo.ContextEnum) {
+                listBoxModel.add(((TagInfo.ContextEnum) item).getValue());
             } else if (item instanceof TimeseriesDefinition) {
                 TimeseriesDefinition metric = (TimeseriesDefinition) item;
                 listBoxModel.add(metric.getDetailedSource() + " - " + metric.getDisplayName(), metric.getTimeseriesId());

@@ -10,17 +10,29 @@
  * Do not edit the class manually.
  */
 
-
-package de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model;
+package de.tsystems.mms.apm.performancesignature.dynatracesaas.model;
 
 import com.google.gson.TypeAdapter;
 import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
+import de.tsystems.mms.apm.performancesignature.dynatracesaas.util.DynatraceUtils;
+import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
+import hudson.Extension;
+import hudson.model.AbstractDescribableImpl;
+import hudson.model.Descriptor;
+import hudson.model.Item;
+import hudson.util.ListBoxModel;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
+import org.kohsuke.stapler.AncestorInPath;
+import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.DataBoundSetter;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.util.Arrays;
 
@@ -31,13 +43,17 @@ import static de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils.to
  */
 @ApiModel(description = "Tag of a Dynatrace entity.")
 
-public class TagInfo {
+public class TagInfo extends AbstractDescribableImpl<TagInfo> {
     @SerializedName("context")
     private ContextEnum context;
     @SerializedName("key")
     private String key;
     @SerializedName("value")
     private String value;
+
+    @DataBoundConstructor
+    public TagInfo() {
+    }
 
     public TagInfo context(ContextEnum context) {
         this.context = context;
@@ -50,8 +66,18 @@ public class TagInfo {
      * @return context
      **/
     @ApiModelProperty(value = "The origin of the tag, like AWS or Cloud Foundry.   Custom tags use the `CONTEXTLESS` value.")
-    public ContextEnum getContext() {
+    public ContextEnum getContextEnum() {
         return context;
+    }
+
+    public String getContext() {
+        if (context == null) return null;
+        return context.getValue();
+    }
+
+    @DataBoundSetter
+    public void setContext(String context) {
+        this.context = ContextEnum.fromValue(context);
     }
 
     public void setContext(ContextEnum context) {
@@ -73,6 +99,7 @@ public class TagInfo {
         return key;
     }
 
+    @DataBoundSetter
     public void setKey(String key) {
         this.key = key;
     }
@@ -92,6 +119,7 @@ public class TagInfo {
         return value;
     }
 
+    @DataBoundSetter
     public void setValue(String value) {
         this.value = value;
     }
@@ -110,12 +138,12 @@ public class TagInfo {
      */
     @JsonAdapter(ContextEnum.Adapter.class)
     public enum ContextEnum {
-        CONTEXTLESS("CONTEXTLESS"),
         AWS("AWS"),
-        ENVIRONMENT("ENVIRONMENT"),
         CLOUD_FOUNDRY("CLOUD_FOUNDRY"),
-        KUBERNETES("KUBERNETES"),
-        GOOGLE_CLOUD("GOOGLE_CLOUD");
+        CONTEXTLESS("CONTEXTLESS"),
+        ENVIRONMENT("ENVIRONMENT"),
+        GOOGLE_CLOUD("GOOGLE_CLOUD"),
+        KUBERNETES("KUBERNETES");
 
         private String value;
 
@@ -124,7 +152,7 @@ public class TagInfo {
         }
 
         public static ContextEnum fromValue(String text) {
-            return Arrays.stream(ContextEnum.values()).filter(b -> b.value.equals(text)).findFirst().orElse(null);
+            return Arrays.stream(ContextEnum.values()).filter(b -> b.value.equalsIgnoreCase(text)).findFirst().orElse(null);
         }
 
         public String getValue() {
@@ -147,6 +175,24 @@ public class TagInfo {
                 String value = jsonReader.nextString();
                 return ContextEnum.fromValue(value);
             }
+        }
+    }
+
+    @Extension
+    public static class DescriptorImpl extends Descriptor<TagInfo> {
+        @Nonnull
+        @Override
+        public String getDisplayName() {
+            return "";
+        }
+
+        @Nonnull
+        @Restricted(NoExternalUse.class)
+        public ListBoxModel doFillContextItems(@AncestorInPath Item item) {
+            if (PerfSigUIUtils.checkForMissingPermission(item)) {
+                return new ListBoxModel();
+            }
+            return DynatraceUtils.listToListBoxModel(Arrays.asList(ContextEnum.values()));
         }
     }
 }

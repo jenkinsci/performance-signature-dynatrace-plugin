@@ -16,17 +16,24 @@
 
 package de.tsystems.mms.apm.performancesignature.dynatracesaas;
 
+import de.tsystems.mms.apm.performancesignature.dynatracesaas.model.EntityId;
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.DynatraceServerConnection;
-import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.*;
+import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.EventPushMessage;
+import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.EventStoreResult;
+import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.EventTypeEnum;
+import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.PushEventAttachRules;
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.util.DynatraceUtils;
 import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
 import hudson.AbortException;
 import hudson.EnvVars;
 import hudson.model.TaskListener;
+import org.jenkinsci.plugins.workflow.steps.BodyExecution;
+import org.jenkinsci.plugins.workflow.steps.BodyExecutionCallback;
 import org.jenkinsci.plugins.workflow.steps.StepContext;
 import org.jenkinsci.plugins.workflow.steps.StepExecution;
 
-import java.util.Arrays;
+import javax.annotation.Nonnull;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -39,6 +46,7 @@ public class CreateDeploymentStepExecution extends StepExecution {
     private static final String BUILD_VAR_KEY_DEPLOYMENT_VERSION = "dtDeploymentVersion";
     private static final String BUILD_VAR_KEY_DEPLOYMENT_PROJECT = "dtDeploymentProject";
     private final transient CreateDeploymentStep step;
+    private BodyExecution body;
 
     CreateDeploymentStepExecution(CreateDeploymentStep createDeploymentStep, StepContext context) {
         super(context);
@@ -53,30 +61,39 @@ public class CreateDeploymentStepExecution extends StepExecution {
         DynatraceServerConnection connection = DynatraceUtils.createDynatraceServerConnection(step.getEnvId(), true);
 
         PushEventAttachRules attachRules = new PushEventAttachRules();
-        attachRules.setEntityIds(Arrays.stream(step.getEntityIds().split(",")).map(String::trim).collect(Collectors.toList()));
-        attachRules.addTagRuleItem(new TagMatchRule());
+        attachRules.setEntityIds(step.getEntityIds().stream().map(EntityId::getEntityId).collect(Collectors.toList()));
+        attachRules.setTagRule(step.getTagMatchRules());
 
-        EventPushMessage event = new EventPushMessage(EventTypeEnum.CUSTOM_DEPLOYMENT, attachRules)
-                .setSource("Jenkins");
+        EventPushMessage event = new EventPushMessage(EventTypeEnum.CUSTOM_DEPLOYMENT, attachRules).setSource("Jenkins");
         if (envVars != null) {
             event.setDeploymentName(envVars.get("JOB_NAME"))
-                    .setDeploymentVersion(envVars.get(BUILD_VAR_KEY_DEPLOYMENT_VERSION))
+                    .setDeploymentVersion(Optional.ofNullable(envVars.get(BUILD_VAR_KEY_DEPLOYMENT_VERSION)).orElse(" "))
                     .setDeploymentProject(envVars.get(BUILD_VAR_KEY_DEPLOYMENT_PROJECT))
                     .setCiBackLink(envVars.get(BUILD_URL_ENV_PROPERTY))
                     .addCustomProperties("Jenkins Build Number", envVars.get("BUILD_ID"))
                     .addCustomProperties("Git Commit", envVars.get("GIT_COMMIT"));
         }
 
-        EventStoreResult eventId = connection.createDeploymentEvent(event);
-        if (eventId == null) {
+        EventStoreResult eventStoreResult = connection.createDeploymentEvent(event);
+        if (eventStoreResult == null) {
             throw new AbortException("could not create deployment event");
         }
-        println("successfully created deployment event " + eventId);
+        println("successfully created deployment event " + eventStoreResult);
 
         if (context.hasBody()) {
-            context.newBodyInvoker().start();
+            body = context.newBodyInvoker()
+                    .withCallback(new Callback())
+                    .start();
         }
         return false;
+    }
+
+    @Override
+    public void stop(@Nonnull Throwable cause) throws Exception {
+        println("stopping deployment event");
+        if (body != null) {
+            body.cancel(cause);
+        }
     }
 
     private void println(String message) {
@@ -85,6 +102,15 @@ public class CreateDeploymentStepExecution extends StepExecution {
             LOGGER.log(Level.FINE, "failed to print message {0} due to null TaskListener", message);
         } else {
             PerfSigUIUtils.createLogger(listener.getLogger()).log(message);
+        }
+    }
+
+    private class Callback extends BodyExecutionCallback.TailCall {
+        private static final long serialVersionUID = 1L;
+
+        @Override
+        protected void finished(StepContext context) throws Exception {
+            println("finishing deployment event");
         }
     }
 }

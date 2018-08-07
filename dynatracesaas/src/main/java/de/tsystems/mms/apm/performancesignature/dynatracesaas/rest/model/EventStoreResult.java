@@ -18,6 +18,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils.toIndentedString;
@@ -28,7 +29,7 @@ import static de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils.to
 @ApiModel(description = "Contains ids of all custom events that were created by an event push call")
 
 public class EventStoreResult {
-    @SerializedName("storedIds")
+    @SerializedName("storedEventIds")
     private List<String> storedIds;
 
     public EventStoreResult storedIds(List<String> storedIds) {
@@ -61,7 +62,7 @@ public class EventStoreResult {
     @Override
     public String toString() {
         return "class EventStoreResult {\n" +
-                "    storedIds: " + toIndentedString(storedIds) + "\n" +
+                "    storedIds: " + toIndentedString(Arrays.toString(storedIds.toArray())) + "\n" +
                 "}";
     }
 }

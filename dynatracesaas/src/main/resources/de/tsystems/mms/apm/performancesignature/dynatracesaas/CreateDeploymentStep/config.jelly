@@ -19,22 +19,68 @@
     <f:entry title="${%Environment}" field="envId" description="${%description(rootURL)}">
         <f:select/>
     </f:entry>
-    <f:section title="attach rules">
-        <!--ToDo: List of Strings possible?-->
-        <f:entry title="${%entityIds, which the event is to be attached to}" field="entityIds"
+    <f:section title="attach rules, which the event is to be attached to">
+        <f:entry title="${%entityIds}" field="entityIds"
                  description="${%One attach rules is entityIds, which contains a comma separated list of entity identifiers, for example ''APPLICATION-B66B773D12C49189''.}">
-            <f:textbox/>
+            <f:repeatable field="entityIds" add="${%Add entity Id}" header="${%entity Id}" minimum="1">
+                <table width="100%">
+                    <f:entry field="entityId">
+                        <f:textbox/>
+                    </f:entry>
+                    <f:entry>
+                        <div align="right">
+                            <f:repeatableDeleteButton value="${%Remove entity Id}"/>
+                        </div>
+                    </f:entry>
+                </table>
+            </f:repeatable>
         </f:entry>
-        <!--ToDo: make this configurable-->
-        <f:section title="tag rules">
-            <f:entry title="${%component types, which the event is to be attached to}" field="meTypes"
-                     description="${%Another possible attach rule is tagRule that takes a component type and a tag to attach your custom event on all components of that type that contain the given tag.}">
-                <f:textbox/>
-            </f:entry>
-            <f:entry title="${%tags, which the event is to be attached to}" field="tags"
-                     description="${%the tag attach rule can also contain multiple component types and tags}">
-                <f:textbox/>
-            </f:entry>
-        </f:section>
+        <f:entry title="${%tag rules}" field="tagMatchRules" description="${%dynatrace_attachrules}">
+            <f:repeatable field="tagMatchRules" add="${%Add tag rule}" header="${%tag rule}" minimum="1">
+                <table width="100%">
+                    <f:entry title="${%component types, which the event is to be attached to}" field="meTypes"
+                             description="${%Another possible attach rule is tagRule that takes a component type and a tag to attach your custom event on all components of that type that contain the given tag.}">
+                        <f:repeatable field="meTypes" add="${%Add component type}" header="${%component type}" minimum="1">
+                            <table width="100%">
+                                <f:entry field="meType">
+                                    <f:select/>
+                                </f:entry>
+                                <f:entry>
+                                    <div align="right">
+                                        <f:repeatableDeleteButton value="${%Remove component type}"/>
+                                    </div>
+                                </f:entry>
+                            </table>
+                        </f:repeatable>
+                    </f:entry>
+                    <f:entry title="${%tags, which the event is to be attached to}" field="tags"
+                             description="${%the tag attach rule can also contain multiple component types and tags}">
+                        <f:repeatable field="tags" add="${%Add tag}" header="${%tag}" minimum="1">
+                            <table width="100%">
+                                <f:entry field="context" title="${%context}">
+                                    <f:select/>
+                                </f:entry>
+                                <f:entry field="key" title="${%key}">
+                                    <f:textbox/>
+                                </f:entry>
+                                <f:entry field="value" title="${%value}">
+                                    <f:textbox/>
+                                </f:entry>
+                                <f:entry>
+                                    <div align="right">
+                                        <f:repeatableDeleteButton value="${%Remove tag}"/>
+                                    </div>
+                                </f:entry>
+                            </table>
+                        </f:repeatable>
+                    </f:entry>
+                    <f:entry>
+                        <div align="right">
+                            <f:repeatableDeleteButton value="${%Remove tag rule}"/>
+                        </div>
+                    </f:entry>
+                </table>
+            </f:repeatable>
+        </f:entry>
     </f:section>
 </j:jelly>
