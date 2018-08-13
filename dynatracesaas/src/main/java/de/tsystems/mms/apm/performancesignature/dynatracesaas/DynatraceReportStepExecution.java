@@ -3,6 +3,7 @@ package de.tsystems.mms.apm.performancesignature.dynatracesaas;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import de.tsystems.mms.apm.performancesignature.dynatrace.model.*;
+import de.tsystems.mms.apm.performancesignature.dynatracesaas.model.DynatraceServerConfiguration;
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.model.Specification;
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.DynatraceServerConnection;
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.AggregationTypeEnum;
@@ -80,6 +81,9 @@ public class DynatraceReportStepExecution extends SynchronousNonBlockingStepExec
             Long start = dynatraceAction.getTimeframeStart() - 7200000; //ToDo: remove this magic number before release
             Long end = dynatraceAction.getTimeframeStop();
             DashboardReport dashboardReport = new DashboardReport(dynatraceAction.getTestCase());
+
+            DynatraceServerConfiguration configuration = serverConnection.getConfiguration();
+            dashboardReport.setClientUrl(String.format("%s/#dashboard;id=054c0f9d-dc54-4c90-b799-afaaacd2efac;gtf=c_%d_%d", configuration.getServerUrl(), start, end));
 
             specifications.forEach(spec -> {
                 TimeseriesDefinition tm = timeseries.get(spec.getTimeseriesId());

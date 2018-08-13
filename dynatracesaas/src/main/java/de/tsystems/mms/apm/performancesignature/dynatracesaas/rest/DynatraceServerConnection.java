@@ -38,6 +38,7 @@ public class DynatraceServerConnection {
     public static final String BUILD_URL_ENV_PROPERTY = "BUILD_URL";
     private static final Logger LOGGER = Logger.getLogger(DynatraceServerConnection.class.getName());
     private final ApiClient apiClient;
+    private DynatraceServerConfiguration configuration;
 
     public DynatraceServerConnection(final String serverUrl, final String apiTokenId, final boolean verifyCertificate,
                                      final boolean useProxy) {
@@ -68,6 +69,7 @@ public class DynatraceServerConnection {
 
     public DynatraceServerConnection(final DynatraceServerConfiguration config) {
         this(config.getServerUrl(), config.getApiTokenId(), config.isVerifyCertificate(), config.isUseProxy());
+        this.configuration = config;
     }
 
     public boolean validateConnection() {
@@ -150,5 +152,9 @@ public class DynatraceServerConnection {
         } catch (ApiException ex) {
             throw new CommandExecutionException("error while creating deployment event: " + ex.getResponseBody(), ex);
         }
+    }
+
+    public DynatraceServerConfiguration getConfiguration() {
+        return configuration;
     }
 }

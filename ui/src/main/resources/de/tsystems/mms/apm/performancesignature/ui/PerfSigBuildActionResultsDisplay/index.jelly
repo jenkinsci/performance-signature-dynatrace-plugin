@@ -58,7 +58,7 @@
                                                     title="Dynatrace client must be started on local machine"
                                                     class="btn btn-success" id="editbutton">
                                                 <span class="glyphicon glyphicon-eye-open" aria-hidden="true"/>
-                                                open in Dynatrace client
+                                                open in Dynatrace
                                             </button>
                                         </a>
                                     </div>
