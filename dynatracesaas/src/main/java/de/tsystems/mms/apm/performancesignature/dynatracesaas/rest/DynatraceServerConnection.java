@@ -144,13 +144,13 @@ public class DynatraceServerConnection {
         }
     }
 
-    public EventStoreResult createDeploymentEvent(EventPushMessage event) {
+    public EventStoreResult createEvent(EventPushMessage event) {
         EventApi api = apiClient.createService(EventApi.class);
         try {
             ApiResponse<EventStoreResult> response = apiClient.execute(api.postNaturalEvent(event));
             return response.getData();
         } catch (ApiException ex) {
-            throw new CommandExecutionException("error while creating deployment event: " + ex.getResponseBody(), ex);
+            throw new CommandExecutionException("error while creating event: " + ex.getResponseBody(), ex);
         }
     }
 

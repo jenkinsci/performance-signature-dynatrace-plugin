@@ -43,8 +43,8 @@ import static de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.Dynatr
 public class CreateDeploymentStepExecution extends StepExecution {
     private static final long serialVersionUID = 1L;
     private static final Logger LOGGER = Logger.getLogger(CreateDeploymentStepExecution.class.getName());
-    private static final String BUILD_VAR_KEY_DEPLOYMENT_VERSION = "dtDeploymentVersion";
-    private static final String BUILD_VAR_KEY_DEPLOYMENT_PROJECT = "dtDeploymentProject";
+    static final String BUILD_VAR_KEY_DEPLOYMENT_VERSION = "dtDeploymentVersion";
+    static final String BUILD_VAR_KEY_DEPLOYMENT_PROJECT = "dtDeploymentProject";
     private final transient CreateDeploymentStep step;
     private BodyExecution body;
 
@@ -74,7 +74,7 @@ public class CreateDeploymentStepExecution extends StepExecution {
                     .addCustomProperties("Git Commit", envVars.get("GIT_COMMIT"));
         }
 
-        EventStoreResult eventStoreResult = connection.createDeploymentEvent(event);
+        EventStoreResult eventStoreResult = connection.createEvent(event);
         if (eventStoreResult == null) {
             throw new AbortException("could not create deployment event");
         }

@@ -6,13 +6,11 @@ import de.tsystems.mms.apm.performancesignature.dynatrace.model.*;
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.model.DynatraceServerConfiguration;
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.model.Specification;
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.DynatraceServerConnection;
-import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.AggregationTypeEnum;
-import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.TimeseriesDataPointQueryResult;
-import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.TimeseriesDefinition;
-import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.UnitEnum;
+import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.*;
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.util.DynatraceUtils;
 import de.tsystems.mms.apm.performancesignature.ui.PerfSigBuildAction;
 import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
+import hudson.EnvVars;
 import hudson.FilePath;
 import hudson.model.Run;
 import hudson.model.TaskListener;
@@ -28,14 +26,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+
+import static de.tsystems.mms.apm.performancesignature.dynatracesaas.CreateDeploymentStepExecution.BUILD_VAR_KEY_DEPLOYMENT_PROJECT;
+import static de.tsystems.mms.apm.performancesignature.dynatracesaas.CreateDeploymentStepExecution.BUILD_VAR_KEY_DEPLOYMENT_VERSION;
+import static de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.DynatraceServerConnection.BUILD_URL_ENV_PROPERTY;
 
 public class DynatraceReportStepExecution extends SynchronousNonBlockingStepExecution<Void> {
     private static final long serialVersionUID = 1L;
@@ -56,6 +55,7 @@ public class DynatraceReportStepExecution extends SynchronousNonBlockingStepExec
     protected Void run() throws Exception {
         Run<?, ?> run = getContext().get(Run.class);
         TaskListener listener = getContext().get(TaskListener.class);
+        EnvVars envVars = getContext().get(EnvVars.class);
         ws = getContext().get(FilePath.class);
 
         if (run == null || listener == null) {
@@ -67,23 +67,37 @@ public class DynatraceReportStepExecution extends SynchronousNonBlockingStepExec
         if (ws == null && StringUtils.isNotBlank(step.getSpecFile())) {
             throw new MissingContextVariableException(FilePath.class);
         }
-
         DynatraceServerConnection serverConnection = DynatraceUtils.createDynatraceServerConnection(step.getEnvId(), true);
+
+        println("creating Performance Signature custom event");
+        EventPushMessage event = new EventPushMessage(EventTypeEnum.CUSTOM_INFO, null)
+                .setSource("Jenkins")
+                .setAnnotationDescription("Performance Signature was executed");
+        if (envVars != null) {
+            event.setDeploymentName(envVars.get("JOB_NAME"))
+                    .setDeploymentVersion(Optional.ofNullable(envVars.get(BUILD_VAR_KEY_DEPLOYMENT_VERSION)).orElse(" "))
+                    .setDeploymentProject(envVars.get(BUILD_VAR_KEY_DEPLOYMENT_PROJECT))
+                    .setCiBackLink(envVars.get(BUILD_URL_ENV_PROPERTY))
+                    .addCustomProperties("Jenkins Build Number", envVars.get("BUILD_ID"))
+                    .addCustomProperties("Git Commit", envVars.get("GIT_COMMIT"));
+        }
+        serverConnection.createEvent(event);
+
         println("getting metric data from Dynatrace Server");
 
         Map<String, TimeseriesDefinition> timeseries = serverConnection.getTimeseries()
                 .parallelStream().collect(Collectors.toMap(TimeseriesDefinition::getTimeseriesId, item -> item));
 
-        final List<DynatraceEnvInvisAction> envVars = run.getActions(DynatraceEnvInvisAction.class);
+        final List<DynatraceEnvInvisAction> envInvisActions = run.getActions(DynatraceEnvInvisAction.class);
         final List<DashboardReport> dashboardReports = new ArrayList<>();
         List<Specification> specifications = getSpecifications();
-        envVars.forEach(dynatraceAction -> {
+        envInvisActions.forEach(dynatraceAction -> {
             Long start = dynatraceAction.getTimeframeStart() - 7200000; //ToDo: remove this magic number before release
             Long end = dynatraceAction.getTimeframeStop();
             DashboardReport dashboardReport = new DashboardReport(dynatraceAction.getTestCase());
 
             DynatraceServerConfiguration configuration = serverConnection.getConfiguration();
-            dashboardReport.setClientUrl(String.format("%s/#dashboard;id=054c0f9d-dc54-4c90-b799-afaaacd2efac;gtf=c_%d_%d", configuration.getServerUrl(), start, end));
+            dashboardReport.setClientUrl(String.format("%s/#dashboard;gtf=c_%d_%d", configuration.getServerUrl(), start, end));
 
             specifications.forEach(spec -> {
                 TimeseriesDefinition tm = timeseries.get(spec.getTimeseriesId());
