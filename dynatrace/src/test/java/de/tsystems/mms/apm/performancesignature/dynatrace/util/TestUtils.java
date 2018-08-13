@@ -64,11 +64,20 @@ public class TestUtils {
 
         for (ListBoxModel.Option configuration : dynatraceConfigurations) {
             DTServerConnection connection = PerfSigUtils.createDTServerConnection(configuration.name, false);
-            assumeTrue("assume that the server is reachable", connection.getServerVersion() != null);
+            assumeTrue("assume that the server is reachable", validateConnection(connection));
         }
 
 
         return dynatraceConfigurations;
+    }
+
+    private static boolean validateConnection(DTServerConnection connection) {
+        try {
+            connection.getServerVersion();
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     public static boolean containsOption(ListBoxModel listBoxModel, String search) {
