@@ -21,7 +21,9 @@ import de.tsystems.mms.apm.performancesignature.dynatracesaas.model.EntityId;
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.model.TagMatchRule;
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.util.DynatraceUtils;
 import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
+import hudson.DescriptorExtensionList;
 import hudson.Extension;
+import hudson.model.Descriptor;
 import hudson.model.Item;
 import hudson.model.TaskListener;
 import hudson.util.ListBoxModel;
@@ -38,6 +40,7 @@ import org.kohsuke.stapler.DataBoundSetter;
 import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class CreateDeploymentStep extends Step {
     private final String envId;
@@ -64,8 +67,12 @@ public class CreateDeploymentStep extends Step {
         return envId;
     }
 
-    public List<EntityId> getEntityIds() {
+    public List<EntityId> getEntityIdObjects() {
         return entityIds;
+    }
+
+    public List<String> getEntityIds() {
+        return entityIds.stream().map(EntityId::getEntityId).collect(Collectors.toList());
     }
 
     public List<TagMatchRule> getTagMatchRules() {
@@ -109,6 +116,10 @@ public class CreateDeploymentStep extends Step {
                 return new ListBoxModel();
             }
             return DynatraceUtils.listToListBoxModel(DynatraceUtils.getDynatraceConfigurations());
+        }
+
+        public DescriptorExtensionList<EntityId, Descriptor<EntityId>> getEntityIdTypes() {
+            return EntityId.EntityIdDescriptor.all();
         }
     }
 }

@@ -17,9 +17,7 @@
 package de.tsystems.mms.apm.performancesignature.dynatracesaas.rest;
 
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.model.DynatraceServerConfiguration;
-import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.api.ClusterVersionApi;
-import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.api.EventApi;
-import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.api.TimeseriesApi;
+import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.api.*;
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.*;
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.util.DynatraceUtils;
 import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
@@ -156,5 +154,55 @@ public class DynatraceServerConnection {
 
     public DynatraceServerConfiguration getConfiguration() {
         return configuration;
+    }
+
+    public List<Application> getApplications() {
+        TopologySmartscapeApplicationApi api = apiClient.createService(TopologySmartscapeApplicationApi.class);
+        try {
+            ApiResponse<List<Application>> response = apiClient.execute(api.getApplications(null, null, null, null, null));
+            return response.getData();
+        } catch (ApiException ex) {
+            throw new CommandExecutionException("error while querying applications: " + ex.getResponseBody(), ex);
+        }
+    }
+
+    public List<Host> getHosts() {
+        TopologySmartscapeHostApi api = apiClient.createService(TopologySmartscapeHostApi.class);
+        try {
+            ApiResponse<List<Host>> response = apiClient.execute(api.getHosts(null, null, null, null, true, null));
+            return response.getData();
+        } catch (ApiException ex) {
+            throw new CommandExecutionException("error while querying hosts: " + ex.getResponseBody(), ex);
+        }
+    }
+
+    public List<ProcessGroupInstance> getProcesses() {
+        TopologySmartscapeProcessApi api = apiClient.createService(TopologySmartscapeProcessApi.class);
+        try {
+            ApiResponse<List<ProcessGroupInstance>> response = apiClient.execute(api.getProcesses(null, null, null, null, null, null, null, null, null));
+            return response.getData();
+        } catch (ApiException ex) {
+            throw new CommandExecutionException("error while querying processes: " + ex.getResponseBody(), ex);
+        }
+    }
+
+    public List<ProcessGroup> getProcessGroups() {
+        TopologySmartscapeProcessGroupApi api = apiClient.createService(TopologySmartscapeProcessGroupApi.class);
+        try {
+            ApiResponse<List<ProcessGroup>> response = apiClient.execute(api.getProcessGroups(null, null, null, null, null));
+            return response.getData();
+        } catch (ApiException ex) {
+            throw new CommandExecutionException("error while querying process groups: " + ex.getResponseBody(), ex);
+        }
+    }
+
+    public List<Service> getServices() {
+        TopologySmartscapeServiceApi api = apiClient.createService(TopologySmartscapeServiceApi.class);
+        try {
+            ApiResponse<List<Service>> response = apiClient.execute(api.getServices(null, null, null, null, null));
+            return response.getData();
+        } catch (ApiException ex) {
+            throw new CommandExecutionException("error while querying services: " + ex.getResponseBody(), ex);
+        }
     }
 }

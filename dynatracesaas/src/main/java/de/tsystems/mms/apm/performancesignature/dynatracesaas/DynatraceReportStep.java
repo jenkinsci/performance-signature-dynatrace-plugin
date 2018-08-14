@@ -92,7 +92,7 @@ public class DynatraceReportStep extends Step {
 
         @Override
         public String getFunctionName() {
-            return "createPerfSigDynatraceReports";
+            return "perfSigDynatraceReports";
         }
 
         @Nonnull

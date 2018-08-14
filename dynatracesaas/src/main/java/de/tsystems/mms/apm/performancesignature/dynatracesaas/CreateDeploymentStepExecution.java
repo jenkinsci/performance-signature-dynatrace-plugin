@@ -16,7 +16,6 @@
 
 package de.tsystems.mms.apm.performancesignature.dynatracesaas;
 
-import de.tsystems.mms.apm.performancesignature.dynatracesaas.model.EntityId;
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.DynatraceServerConnection;
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.EventPushMessage;
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.EventStoreResult;
@@ -36,7 +35,6 @@ import javax.annotation.Nonnull;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 import static de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.DynatraceServerConnection.BUILD_URL_ENV_PROPERTY;
 
@@ -61,7 +59,7 @@ public class CreateDeploymentStepExecution extends StepExecution {
         DynatraceServerConnection connection = DynatraceUtils.createDynatraceServerConnection(step.getEnvId(), true);
 
         PushEventAttachRules attachRules = new PushEventAttachRules();
-        attachRules.setEntityIds(step.getEntityIds().stream().map(EntityId::getEntityId).collect(Collectors.toList()));
+        attachRules.setEntityIds(step.getEntityIds());
         attachRules.setTagRule(step.getTagMatchRules());
 
         EventPushMessage event = new EventPushMessage(EventTypeEnum.CUSTOM_DEPLOYMENT, attachRules).setSource("Jenkins");
