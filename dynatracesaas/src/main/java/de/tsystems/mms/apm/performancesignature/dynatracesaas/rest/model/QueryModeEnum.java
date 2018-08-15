@@ -16,7 +16,7 @@ public enum QueryModeEnum {
     SERIES("SERIES"),
     TOTAL("TOTAL");
 
-    private String value;
+    private final String value;
 
     QueryModeEnum(String value) {
         this.value = value;

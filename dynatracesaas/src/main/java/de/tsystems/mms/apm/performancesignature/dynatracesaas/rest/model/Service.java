@@ -619,7 +619,7 @@ public class Service {
         CUSTOMAPPLICATION("CustomApplication"),
         CICS("Cics");
 
-        private String value;
+        private final String value;
 
         ServiceTypeEnum(String value) {
             this.value = value;
@@ -679,7 +679,7 @@ public class Service {
         GO("GO"),
         REMOTE_PLUGIN("REMOTE_PLUGIN");
 
-        private String value;
+        private final String value;
 
         AgentTechnologyTypeEnum(String value) {
             this.value = value;

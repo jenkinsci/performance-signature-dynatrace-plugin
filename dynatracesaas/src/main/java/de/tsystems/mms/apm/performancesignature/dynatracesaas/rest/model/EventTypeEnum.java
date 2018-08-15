@@ -104,7 +104,7 @@ public enum EventTypeEnum {
     WEB_CHECK_GLOBAL_OUTAGE("WEB_CHECK_GLOBAL_OUTAGE"),
     WEB_CHECK_LOCAL_OUTAGE("WEB_CHECK_LOCAL_OUTAGE");
 
-    private String value;
+    private final String value;
 
     EventTypeEnum(String value) {
         this.value = value;

@@ -112,7 +112,7 @@ public class MonitoringState {
         ON("ON"),
         OFF("OFF");
 
-        private String value;
+        private final String value;
 
         MonitoringStateEnum(String value) {
             this.value = value;

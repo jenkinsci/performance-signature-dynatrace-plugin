@@ -584,7 +584,7 @@ public class Event {
         APPLICATION("APPLICATION"),
         ENVIRONMENT("ENVIRONMENT");
 
-        private String value;
+        private final String value;
 
         BrowserEnum(String value) {
             this.value = value;
@@ -625,7 +625,7 @@ public class Event {
         _50TH("50th"),
         _90TH("90th");
 
-        private String value;
+        private final String value;
 
         PercentileEnum(String value) {
             this.value = value;

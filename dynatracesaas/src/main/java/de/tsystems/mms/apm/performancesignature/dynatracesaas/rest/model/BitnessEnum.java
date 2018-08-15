@@ -16,7 +16,7 @@ public enum BitnessEnum {
     _32BIT("32bit"),
     _64BIT("64bit");
 
-    private String value;
+    private final String value;
 
     BitnessEnum(String value) {
         this.value = value;

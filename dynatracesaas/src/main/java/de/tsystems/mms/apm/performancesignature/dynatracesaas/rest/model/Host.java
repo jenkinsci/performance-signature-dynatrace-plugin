@@ -690,7 +690,7 @@ public class Host {
         KVM("KVM"),
         QEMU("QEMU");
 
-        private String value;
+        private final String value;
 
         HypervisorTypeEnum(String value) {
             this.value = value;
@@ -736,7 +736,7 @@ public class Host {
         GOOGLE_APP_ENGINE("GOOGLE_APP_ENGINE"),
         AWS_LAMBDA("AWS_LAMBDA");
 
-        private String value;
+        private final String value;
 
         PaasTypeEnum(String value) {
             this.value = value;
@@ -779,7 +779,7 @@ public class Host {
         OPENSTACK("OPENSTACK"),
         ORACLE("ORACLE");
 
-        private String value;
+        private final String value;
 
         CloudTypeEnum(String value) {
             this.value = value;
@@ -826,7 +826,7 @@ public class Host {
         ARM("ARM"),
         PPCLE("PPCLE");
 
-        private String value;
+        private final String value;
 
         OsArchitectureEnum(String value) {
             this.value = value;
@@ -872,7 +872,7 @@ public class Host {
         ZOS("ZOS"),
         DARWIN("DARWIN");
 
-        private String value;
+        private final String value;
 
         OsTypeEnum(String value) {
             this.value = value;
@@ -913,7 +913,7 @@ public class Host {
         SHARED("SHARED"),
         DEDICATED("DEDICATED");
 
-        private String value;
+        private final String value;
 
         AzureComputeModeNameEnum(String value) {
             this.value = value;
@@ -958,7 +958,7 @@ public class Host {
         STANDARD("STANDARD"),
         PREMIUM("PREMIUM");
 
-        private String value;
+        private final String value;
 
         AzureSkuEnum(String value) {
             this.value = value;
@@ -1001,7 +1001,7 @@ public class Host {
         FULL_STACK("FULL_STACK"),
         INFRASTRUCTURE("INFRASTRUCTURE");
 
-        private String value;
+        private final String value;
 
         MonitoringModeEnum(String value) {
             this.value = value;
@@ -1043,7 +1043,7 @@ public class Host {
         NON_SUPERUSER("NON_SUPERUSER"),
         NON_SUPERUSER_STRICT("NON_SUPERUSER_STRICT");
 
-        private String value;
+        private final String value;
 
         UserLevelEnum(String value) {
             this.value = value;

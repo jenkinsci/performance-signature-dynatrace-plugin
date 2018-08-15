@@ -36,7 +36,7 @@ public enum ContextEnum {
     RESPONSE_TIME_50TH_PERCENTILE("RESPONSE_TIME_50TH_PERCENTILE"),
     RESPONSE_TIME_90TH_PERCENTILE("RESPONSE_TIME_90TH_PERCENTILE");
 
-    private String value;
+    private final String value;
 
     ContextEnum(String value) {
         this.value = value;

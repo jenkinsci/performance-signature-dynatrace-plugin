@@ -20,7 +20,7 @@ public enum SeverityLevelEnum {
     CUSTOM_ALERT("CUSTOM_ALERT"),
     MONITORING_UNAVAILABLE("MONITORING_UNAVAILABLE");
 
-    private String value;
+    private final String value;
 
     SeverityLevelEnum(String value) {
         this.value = value;

@@ -49,7 +49,7 @@ public enum UnitEnum {
     UNSPECIFIED("Unspecified"),
     NOTAPPLICABLE("NotApplicable");
 
-    private String value;
+    private final String value;
 
     UnitEnum(String value) {
         this.value = value;

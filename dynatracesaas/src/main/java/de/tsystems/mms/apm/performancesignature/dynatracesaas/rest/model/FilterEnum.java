@@ -19,7 +19,7 @@ public enum FilterEnum {
     BUILTIN("BUILTIN"),
     CUSTOM("CUSTOM");
 
-    private String value;
+    private final String value;
 
     FilterEnum(String value) {
         this.value = value;

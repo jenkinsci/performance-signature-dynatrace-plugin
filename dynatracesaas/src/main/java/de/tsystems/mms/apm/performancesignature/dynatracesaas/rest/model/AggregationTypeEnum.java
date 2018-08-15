@@ -21,7 +21,7 @@ public enum AggregationTypeEnum {
     COUNT("COUNT"),
     PERCENTILE("PERCENTILE");
 
-    private String value;
+    private final String value;
 
     AggregationTypeEnum(String value) {
         this.value = value;

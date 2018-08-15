@@ -18,7 +18,7 @@ public enum ImpactLevelEnum {
     APPLICATION("APPLICATION"),
     ENVIRONMENT("ENVIRONMENT");
 
-    private String value;
+    private final String value;
 
     ImpactLevelEnum(String value) {
         this.value = value;

@@ -332,7 +332,7 @@ public class Application {
         ALL_URLS_AND_DOMAINS("ALL_URLS_AND_DOMAINS"),
         EQUALS("EQUALS");
 
-        private String value;
+        private final String value;
 
         RuleAppliedMatchTypeEnum(String value) {
             this.value = value;
@@ -378,7 +378,7 @@ public class Application {
         AMP("AMP"),
         SAAS_VENDOR("SAAS_VENDOR");
 
-        private String value;
+        private final String value;
 
         ApplicationTypeEnum(String value) {
             this.value = value;
@@ -419,7 +419,7 @@ public class Application {
         URL("URL"),
         DOMAIN("DOMAIN");
 
-        private String value;
+        private final String value;
 
         ApplicationMatchTargetEnum(String value) {
             this.value = value;
