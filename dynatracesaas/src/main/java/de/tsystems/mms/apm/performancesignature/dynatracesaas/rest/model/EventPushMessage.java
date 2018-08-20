@@ -36,6 +36,8 @@ public class EventPushMessage {
     private String deploymentProject;
     @SerializedName("source")
     private String source;
+    @SerializedName("description")
+    private String description;
     @SerializedName("annotationDescription")
     private String annotationDescription;
     @SerializedName("deploymentName")
@@ -50,6 +52,8 @@ public class EventPushMessage {
     private String remediationAction;
     @SerializedName("ciBackLink")
     private String ciBackLink;
+    @SerializedName("title")
+    private String title;
     @SerializedName("attachRules")
     private PushEventAttachRules attachRules;
 
@@ -125,6 +129,32 @@ public class EventPushMessage {
 
     public EventPushMessage setSource(final String source) {
         this.source = source;
+        return this;
+    }
+
+    /**
+     * @return description
+     **/
+    @ApiModelProperty()
+    public String getTitle() {
+        return title;
+    }
+
+    public EventPushMessage setTitle(final String title) {
+        this.title = title;
+        return this;
+    }
+
+    /**
+     * @return description
+     **/
+    @ApiModelProperty()
+    public String getDescription() {
+        return description;
+    }
+
+    public EventPushMessage setDescription(final String description) {
+        this.description = description;
         return this;
     }
 

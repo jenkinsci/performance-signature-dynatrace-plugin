@@ -40,7 +40,6 @@ import org.kohsuke.stapler.DataBoundSetter;
 import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class CreateDeploymentStep extends Step {
     private final String envId;
@@ -67,13 +66,13 @@ public class CreateDeploymentStep extends Step {
         return envId;
     }
 
-    public List<EntityId> getEntityIdObjects() {
+    public List<EntityId> getEntityIds() {
         return entityIds;
     }
 
-    public List<String> getEntityIds() {
+    /*public List<String> getEntityIds() {
         return entityIds.stream().map(EntityId::getEntityId).collect(Collectors.toList());
-    }
+    }*/
 
     public List<TagMatchRule> getTagMatchRules() {
         return tagMatchRules;

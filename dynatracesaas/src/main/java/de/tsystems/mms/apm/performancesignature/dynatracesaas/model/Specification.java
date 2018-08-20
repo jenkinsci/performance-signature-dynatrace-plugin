@@ -1,32 +1,61 @@
 package de.tsystems.mms.apm.performancesignature.dynatracesaas.model;
 
 import com.google.gson.annotations.SerializedName;
-import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.AggregationTypeEnum;
+import org.apache.commons.lang.builder.ToStringBuilder;
+
+import java.util.List;
 
 public class Specification {
-    @SerializedName("timeseriesId")
-    private String timeseriesId;
-    @SerializedName("aggregation")
-    private AggregationTypeEnum aggregation;
-    @SerializedName("threshold")
-    private Double threshold;
+    @SerializedName("tolerateBound")
+    private double tolerateBound;
+    @SerializedName("frustrateBound")
+    private double frustrateBound;
+    @SerializedName("timeseries")
+    private List<SpecificationTM> timeseries = null;
 
+    /**
+     * No args constructor for use in serialization
+     */
     public Specification() {
     }
 
-    public Specification(String timeseriesId) {
-        this.timeseriesId = timeseriesId;
+    /**
+     * @param tolerateBound
+     * @param timeseries
+     * @param frustrateBound
+     */
+    public Specification(int tolerateBound, int frustrateBound, List<SpecificationTM> timeseries) {
+        this.tolerateBound = tolerateBound;
+        this.frustrateBound = frustrateBound;
+        this.timeseries = timeseries;
     }
 
-    public String getTimeseriesId() {
-        return timeseriesId;
+    public double getTolerateBound() {
+        return tolerateBound;
     }
 
-    public AggregationTypeEnum getAggregation() {
-        return aggregation;
+    public void setTolerateBound(int tolerateBound) {
+        this.tolerateBound = tolerateBound;
     }
 
-    public Double getThreshold() {
-        return threshold;
+    public double getFrustrateBound() {
+        return frustrateBound;
+    }
+
+    public void setFrustrateBound(int frustrateBound) {
+        this.frustrateBound = frustrateBound;
+    }
+
+    public List<SpecificationTM> getTimeseries() {
+        return timeseries;
+    }
+
+    public void setTimeseries(List<SpecificationTM> timeseries) {
+        this.timeseries = timeseries;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).append("tolerateBound", tolerateBound).append("frustrateBound", frustrateBound).append("timeseries", timeseries).toString();
     }
 }
