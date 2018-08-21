@@ -31,6 +31,7 @@ public class Specification {
     }
 
     public Double getTolerateBound() {
+        if (tolerateBound == null) return 1D;
         return tolerateBound;
     }
 
@@ -39,6 +40,7 @@ public class Specification {
     }
 
     public Double getFrustrateBound() {
+        if (frustrateBound == null) return 4D;
         return frustrateBound;
     }
 

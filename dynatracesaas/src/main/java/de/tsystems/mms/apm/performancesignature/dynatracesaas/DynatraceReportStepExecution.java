@@ -92,7 +92,7 @@ public class DynatraceReportStepExecution extends SynchronousNonBlockingStepExec
 
         final List<DynatraceEnvInvisAction> envInvisActions = run.getActions(DynatraceEnvInvisAction.class);
         final List<DashboardReport> dashboardReports = new ArrayList<>();
-        Specification specification = getSpecifications();
+        Specification spec = getSpecifications();
 
         envInvisActions.forEach(dynatraceAction -> {
             Long start = dynatraceAction.getTimeframeStart() - 7200000; //ToDo: remove this magic number before release
@@ -104,31 +104,34 @@ public class DynatraceReportStepExecution extends SynchronousNonBlockingStepExec
             dashboardReport.setClientUrl(String.format("%s/#dashboard;gtf=c_%d_%d", configuration.getServerUrl(), start, end));
 
             //iterate over specified timeseries ids
-            specification.getTimeseries().forEach(spec -> {
-                TimeseriesDefinition tm = timeseries.get(spec.getTimeseriesId());
+            spec.getTimeseries().forEach(specTM -> {
+                TimeseriesDefinition tm = timeseries.get(specTM.getTimeseriesId());
                 //get data points for every possible aggregation
                 Map<AggregationTypeEnum, TimeseriesDataPointQueryResult> aggregations = tm.getAggregationTypes().parallelStream()
-                        .collect(Collectors.toMap(Function.identity(),
-                                aggregation -> serverConnection.getTimeseriesData(spec.getTimeseriesId(), start, end, aggregation),
-                                (a, b) -> b, LinkedHashMap::new));
+                        .collect(Collectors.toMap(
+                                Function.identity(),
+                                aggregation -> serverConnection.getTimeseriesData(specTM.getTimeseriesId(), start, end, aggregation),
+                                (a, b) -> b, LinkedHashMap::new)
+                        );
 
                 TimeseriesDataPointQueryResult baseResult = aggregations.get(AggregationTypeEnum.AVG);
 
                 //get a scalar value for every possible aggregation
                 Map<AggregationTypeEnum, TimeseriesDataPointQueryResult> totalValues = tm.getAggregationTypes().parallelStream()
                         .collect(Collectors.toMap(Function.identity(),
-                                aggregation -> serverConnection.getTotalTimeseriesData(spec.getTimeseriesId(), start, end, aggregation),
+                                aggregation -> serverConnection.getTotalTimeseriesData(specTM.getTimeseriesId(), start, end, aggregation),
                                 (a, b) -> b, LinkedHashMap::new));
 
                 //evaluate possible incidents
-                dashboardReport.getIncidents().addAll(evaluateSpecification(specification, spec, aggregations, timeseries, dynatraceAction));
+                dashboardReport.getIncidents().addAll(evaluateSpecification(spec.getTolerateBound(), spec.getFrustrateBound(),
+                        specTM, aggregations, timeseries, start, end));
                 ChartDashlet chartDashlet = new ChartDashlet();
                 chartDashlet.setName(tm.getDetailedSource() + " - " + tm.getDisplayName());
 
                 if (baseResult != null && baseResult.getDataPoints() != null && !baseResult.getDataPoints().isEmpty()) {
                     //create aggregated overall measure
                     Measure overallMeasure = new Measure("overall");
-                    overallMeasure.setAggregation(translateAggregation(spec.getAggregation()));
+                    overallMeasure.setAggregation(translateAggregation(specTM.getAggregation()));
                     overallMeasure.setColor(DEFAULT_COLOR);
 
                     //calculate aggregated values from totalValues
@@ -161,7 +164,7 @@ public class DynatraceReportStepExecution extends SynchronousNonBlockingStepExec
                                         (a, b) -> b, LinkedHashMap::new));
 
                         Measure measure = new Measure(baseResult.getEntities().get(key));
-                        measure.setAggregation(translateAggregation(spec.getAggregation()));
+                        measure.setAggregation(translateAggregation(specTM.getAggregation()));
                         measure.setUnit(caluclateUnit(baseResult, totalValuesPerDataPoint.get(AggregationTypeEnum.MAX)));
                         measure.setColor(DEFAULT_COLOR);
 
@@ -244,20 +247,52 @@ public class DynatraceReportStepExecution extends SynchronousNonBlockingStepExec
         }
     }
 
-    private List<Alert> evaluateSpecification(Specification spec, SpecificationTM specificationTM, Map<AggregationTypeEnum, TimeseriesDataPointQueryResult> aggregations, Map<String,
-            TimeseriesDefinition> timeseries, DynatraceEnvInvisAction dynatraceAction) {
+    private List<Alert> evaluateSpecification(double globalTolerateBound, double globalFrustrateBound, SpecificationTM specTM, Map<AggregationTypeEnum,
+            TimeseriesDataPointQueryResult> aggregations, Map<String, TimeseriesDefinition> timeseries, Long timeframeStart, Long timeframeStop) {
+
         List<Alert> alerts = new ArrayList<>();
-        TimeseriesDataPointQueryResult result = aggregations.get(specificationTM.getAggregation());
-        if (specificationTM.getAggregation() == null || result == null) return alerts;
+        double tolerateBound = Optional.ofNullable(specTM.getTolerateBound()).orElse(globalTolerateBound);
+        double frustrateBound = Optional.ofNullable(specTM.getFrustrateBound()).orElse(globalFrustrateBound);
+        TimeseriesDataPointQueryResult result = aggregations.get(specTM.getAggregation());
+        if (specTM.getAggregation() == null || result == null) return alerts;
 
         result.getDataPoints().forEach((entity, map) -> map.forEach((timestamp, value) -> {
-
-            if (specificationTM.getAggregation() != AggregationTypeEnum.MIN && value > spec.getTolerateBound()) {
-                String rule = timeseries.get(result.getTimeseriesId()).getDetailedSource() + " - " + timeseries.get(result.getTimeseriesId()).getDisplayName();
-                alerts.add(new Alert(Alert.SeverityEnum.WARNING,
-                        "SpecFile threshold violation: " + rule + " upper bound exceeded",
-                        String.format("%s: Measured peak value: %.2f %s, Upper Bound: %.2f", rule, value, result.getUnit(), spec.getTolerateBound()),
-                        dynatraceAction.getTimeframeStart(), dynatraceAction.getTimeframeStop(), rule));
+            if (value != null) {
+                if (tolerateBound < frustrateBound) {
+                    if (value > tolerateBound && value < frustrateBound) {
+                        String rule = timeseries.get(result.getTimeseriesId()).getDetailedSource() + " - " + timeseries.get(result.getTimeseriesId()).getDisplayName();
+                        alerts.add(new Alert(Alert.SeverityEnum.WARNING,
+                                String.format("SpecFile threshold violation: %s upper tolerate bound exceeded", rule),
+                                String.format("%s: Measured peak value: %.2f %s on Entity: %s, Upper Bound: %.2f %s",
+                                        rule, value, result.getUnit(), entity, tolerateBound, result.getUnit()),
+                                timeframeStart, timeframeStop, rule));
+                    } else if (value > frustrateBound) {
+                        String rule = timeseries.get(result.getTimeseriesId()).getDetailedSource() + " - " + timeseries.get(result.getTimeseriesId()).getDisplayName();
+                        alerts.add(new Alert(Alert.SeverityEnum.SEVERE,
+                                String.format("SpecFile threshold violation: %s upper frustrate bound exceeded", rule),
+                                String.format("%s: Measured peak value: %.2f %s on Entity: %s, Upper Bound: %.2f %s",
+                                        rule, value, result.getUnit(), entity, frustrateBound, result.getUnit()),
+                                timeframeStart, timeframeStop, rule));
+                    }
+                } else {
+                    if (value < tolerateBound && value > frustrateBound) {
+                        String rule = timeseries.get(result.getTimeseriesId()).getDetailedSource() + " - " + timeseries.get(result.getTimeseriesId()).getDisplayName();
+                        alerts.add(new Alert(Alert.SeverityEnum.WARNING,
+                                String.format("SpecFile threshold violation: %s lower tolerate bound exceeded", rule),
+                                String.format("%s: Measured peak value: %.2f %s on Entity: %s, Lower Bound: %.2f %s",
+                                        rule, value, result.getUnit(), entity, tolerateBound, result.getUnit()),
+                                timeframeStart, timeframeStop, rule));
+                    } else {
+                        if (value < frustrateBound) {
+                            String rule = timeseries.get(result.getTimeseriesId()).getDetailedSource() + " - " + timeseries.get(result.getTimeseriesId()).getDisplayName();
+                            alerts.add(new Alert(Alert.SeverityEnum.SEVERE,
+                                    String.format("SpecFile threshold violation: %s lower frustrate bound exceeded", rule),
+                                    String.format("%s: Measured peak value: %.2f %s on Entity: %s, Lower Bound: %.2f %s",
+                                            rule, value, result.getUnit(), entity, frustrateBound, result.getUnit()),
+                                    timeframeStart, timeframeStop, rule));
+                        }
+                    }
+                }
             }
         }));
         return alerts;
