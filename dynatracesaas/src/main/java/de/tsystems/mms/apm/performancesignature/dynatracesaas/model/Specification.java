@@ -7,9 +7,9 @@ import java.util.List;
 
 public class Specification {
     @SerializedName("tolerateBound")
-    private double tolerateBound;
+    private Double tolerateBound;
     @SerializedName("frustrateBound")
-    private double frustrateBound;
+    private Double frustrateBound;
     @SerializedName("timeseries")
     private List<SpecificationTM> timeseries = null;
 
@@ -24,25 +24,25 @@ public class Specification {
      * @param timeseries
      * @param frustrateBound
      */
-    public Specification(int tolerateBound, int frustrateBound, List<SpecificationTM> timeseries) {
+    public Specification(Double tolerateBound, Double frustrateBound, List<SpecificationTM> timeseries) {
         this.tolerateBound = tolerateBound;
         this.frustrateBound = frustrateBound;
         this.timeseries = timeseries;
     }
 
-    public double getTolerateBound() {
+    public Double getTolerateBound() {
         return tolerateBound;
     }
 
-    public void setTolerateBound(int tolerateBound) {
+    public void setTolerateBound(Double tolerateBound) {
         this.tolerateBound = tolerateBound;
     }
 
-    public double getFrustrateBound() {
+    public Double getFrustrateBound() {
         return frustrateBound;
     }
 
-    public void setFrustrateBound(int frustrateBound) {
+    public void setFrustrateBound(Double frustrateBound) {
         this.frustrateBound = frustrateBound;
     }
 

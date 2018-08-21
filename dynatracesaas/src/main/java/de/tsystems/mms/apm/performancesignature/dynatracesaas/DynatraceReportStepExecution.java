@@ -92,8 +92,8 @@ public class DynatraceReportStepExecution extends SynchronousNonBlockingStepExec
 
         final List<DynatraceEnvInvisAction> envInvisActions = run.getActions(DynatraceEnvInvisAction.class);
         final List<DashboardReport> dashboardReports = new ArrayList<>();
+        Specification specification = getSpecifications();
 
-        List<SpecificationTM> specifications = getSpecifications().getTimeseries();
         envInvisActions.forEach(dynatraceAction -> {
             Long start = dynatraceAction.getTimeframeStart() - 7200000; //ToDo: remove this magic number before release
             Long end = dynatraceAction.getTimeframeStop();
@@ -104,7 +104,7 @@ public class DynatraceReportStepExecution extends SynchronousNonBlockingStepExec
             dashboardReport.setClientUrl(String.format("%s/#dashboard;gtf=c_%d_%d", configuration.getServerUrl(), start, end));
 
             //iterate over specified timeseries ids
-            specifications.forEach(spec -> {
+            specification.getTimeseries().forEach(spec -> {
                 TimeseriesDefinition tm = timeseries.get(spec.getTimeseriesId());
                 //get data points for every possible aggregation
                 Map<AggregationTypeEnum, TimeseriesDataPointQueryResult> aggregations = tm.getAggregationTypes().parallelStream()
@@ -121,7 +121,7 @@ public class DynatraceReportStepExecution extends SynchronousNonBlockingStepExec
                                 (a, b) -> b, LinkedHashMap::new));
 
                 //evaluate possible incidents
-                dashboardReport.getIncidents().addAll(evaluateSpecification(spec, totalValues, timeseries, dynatraceAction));
+                dashboardReport.getIncidents().addAll(evaluateSpecification(specification, spec, aggregations, timeseries, dynatraceAction));
                 ChartDashlet chartDashlet = new ChartDashlet();
                 chartDashlet.setName(tm.getDetailedSource() + " - " + tm.getDisplayName());
 
@@ -244,22 +244,22 @@ public class DynatraceReportStepExecution extends SynchronousNonBlockingStepExec
         }
     }
 
-    private List<Alert> evaluateSpecification(SpecificationTM spec, Map<AggregationTypeEnum, TimeseriesDataPointQueryResult> totalValues, Map<String,
+    private List<Alert> evaluateSpecification(Specification spec, SpecificationTM specificationTM, Map<AggregationTypeEnum, TimeseriesDataPointQueryResult> aggregations, Map<String,
             TimeseriesDefinition> timeseries, DynatraceEnvInvisAction dynatraceAction) {
         List<Alert> alerts = new ArrayList<>();
-        TimeseriesDataPointQueryResult result = totalValues.get(spec.getAggregation());
-        if (spec.getAggregation() == null || result == null) return alerts;
+        TimeseriesDataPointQueryResult result = aggregations.get(specificationTM.getAggregation());
+        if (specificationTM.getAggregation() == null || result == null) return alerts;
 
-        result.getDataPoints().forEach((entity, value) -> {
-            Double actualValue = value.entrySet().iterator().next().getValue();
-            if (spec.getAggregation() != AggregationTypeEnum.MIN && actualValue > spec.getTolerateBound()) {
+        result.getDataPoints().forEach((entity, map) -> map.forEach((timestamp, value) -> {
+
+            if (specificationTM.getAggregation() != AggregationTypeEnum.MIN && value > spec.getTolerateBound()) {
                 String rule = timeseries.get(result.getTimeseriesId()).getDetailedSource() + " - " + timeseries.get(result.getTimeseriesId()).getDisplayName();
                 alerts.add(new Alert(Alert.SeverityEnum.WARNING,
                         "SpecFile threshold violation: " + rule + " upper bound exceeded",
-                        String.format("%s: Measured peak value: %.2f %s, Upper Bound: %.2f", rule, actualValue, result.getUnit(), spec.getTolerateBound()),
+                        String.format("%s: Measured peak value: %.2f %s, Upper Bound: %.2f", rule, value, result.getUnit(), spec.getTolerateBound()),
                         dynatraceAction.getTimeframeStart(), dynatraceAction.getTimeframeStop(), rule));
             }
-        });
+        }));
         return alerts;
     }
 

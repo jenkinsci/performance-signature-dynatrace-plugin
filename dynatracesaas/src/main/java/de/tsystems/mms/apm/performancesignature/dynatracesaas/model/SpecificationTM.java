@@ -14,9 +14,9 @@ public class SpecificationTM {
     @SerializedName("entityIds")
     private String entityIds;
     @SerializedName("tolerateBound")
-    private double tolerateBound;
+    private Double tolerateBound;
     @SerializedName("frustrateBound")
-    private double frustrateBound;
+    private Double frustrateBound;
 
     /**
      * No args constructor for use in serialization
@@ -32,7 +32,7 @@ public class SpecificationTM {
      * @param timeseriesId
      * @param frustrateBound
      */
-    public SpecificationTM(String timeseriesId, AggregationTypeEnum aggregation, String tags, String entityIds, double tolerateBound, double frustrateBound) {
+    public SpecificationTM(String timeseriesId, AggregationTypeEnum aggregation, String tags, String entityIds, Double tolerateBound, Double frustrateBound) {
         this.timeseriesId = timeseriesId;
         this.aggregation = aggregation;
         this.tags = tags;
@@ -78,19 +78,19 @@ public class SpecificationTM {
         this.entityIds = entityIds;
     }
 
-    public double getTolerateBound() {
+    public Double getTolerateBound() {
         return tolerateBound;
     }
 
-    public void setTolerateBound(double tolerateBound) {
+    public void setTolerateBound(Double tolerateBound) {
         this.tolerateBound = tolerateBound;
     }
 
-    public double getFrustrateBound() {
+    public Double getFrustrateBound() {
         return frustrateBound;
     }
 
-    public void setFrustrateBound(double frustrateBound) {
+    public void setFrustrateBound(Double frustrateBound) {
         this.frustrateBound = frustrateBound;
     }
 
