@@ -23,7 +23,7 @@
         <f:textbox/>
     </f:entry>
     <f:entry title="${%Metrics}" field="metrics" description="${%File and Metrics are mutually exclusive}">
-        <f:repeatable field="metrics" add="${%Add metric}" header="${%Metric}" minimum="1">
+        <f:repeatable field="metrics" add="${%Add metric}" header="${%Metric}">
             <table width="100%">
                 <f:entry field="metricId">
                     <f:select/>
