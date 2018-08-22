@@ -58,7 +58,7 @@ public class DTServerConnection {
     public static final String BUILD_VAR_KEY_CATEGORY = "dtCategory";
     public static final String BUILD_VAR_KEY_MARKER = "dtMarker";
     public static final String BUILD_VAR_KEY_PLATFORM = "dtPlatform";
-    private static final String SESSION_PREFIX = "stored: ";
+    private static final String SESSION_PREFIX = "stored:";
 
     private final String systemProfile;
     private final ApiClient apiClient;
