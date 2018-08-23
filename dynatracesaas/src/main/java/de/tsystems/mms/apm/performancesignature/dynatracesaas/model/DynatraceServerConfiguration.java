@@ -79,7 +79,7 @@ public class DynatraceServerConfiguration extends AbstractDescribableImpl<Dynatr
 
     @Extension
     public static final class DescriptorImpl extends Descriptor<DynatraceServerConfiguration> {
-        public static final String defaultServerUrl = "https://myjenkins.com/e/1234-5678-9012-3456";
+        public static final String defaultServerUrl = "https://dynatrace.instance/e/1234-5678-9012-3456";
         public static final boolean defaultVerifyCertificate = false;
         public static final boolean defaultUseProxy = false;
 
