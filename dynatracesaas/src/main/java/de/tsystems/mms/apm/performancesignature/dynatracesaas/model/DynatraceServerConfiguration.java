@@ -99,7 +99,7 @@ public class DynatraceServerConfiguration extends AbstractDescribableImpl<Dynatr
                     .includeEmptyValue()
                     .includeMatchingAs(
                             ACL.SYSTEM,
-                            item != null ? item : (Item) Jenkins.getInstance(),
+                            Jenkins.getInstance(),
                             StandardCredentials.class,
                             Collections.emptyList(),
                             CredentialsMatchers.anyOf(
