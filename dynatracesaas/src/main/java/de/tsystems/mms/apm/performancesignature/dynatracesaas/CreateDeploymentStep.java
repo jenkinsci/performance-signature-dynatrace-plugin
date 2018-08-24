@@ -28,6 +28,7 @@ import hudson.model.Descriptor;
 import hudson.model.Item;
 import hudson.model.TaskListener;
 import hudson.util.ListBoxModel;
+import org.apache.commons.collections.CollectionUtils;
 import org.jenkinsci.plugins.workflow.steps.Step;
 import org.jenkinsci.plugins.workflow.steps.StepContext;
 import org.jenkinsci.plugins.workflow.steps.StepDescriptor;
@@ -40,17 +41,17 @@ import org.kohsuke.stapler.DataBoundSetter;
 
 import javax.annotation.Nonnull;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class CreateDeploymentStep extends Step {
     private final String envId;
-    private final List<EntityId> entityIds;
+    private List<EntityId> entityIds;
     private List<TagMatchRule> tagMatchRules;
 
     @DataBoundConstructor
-    public CreateDeploymentStep(String envId, List<EntityId> entityIds) {
+    public CreateDeploymentStep(String envId) {
         this.envId = envId;
-        this.entityIds = entityIds;
     }
 
     @Override
@@ -69,6 +70,12 @@ public class CreateDeploymentStep extends Step {
 
     public List<EntityId> getEntityIds() {
         return entityIds;
+    }
+
+    @DataBoundSetter
+    public CreateDeploymentStep setEntityIds(List<EntityId> entityIds) {
+        this.entityIds = entityIds;
+        return this;
     }
 
     public List<TagMatchRule> getTagMatchRules() {
@@ -112,6 +119,15 @@ public class CreateDeploymentStep extends Step {
                 return new ListBoxModel();
             }
             return DynatraceUtils.listToListBoxModel(DynatraceUtils.getDynatraceConfigurations());
+        }
+
+        @Override
+        public CreateDeploymentStep newInstance(final Map<String, Object> arguments) throws Exception {
+            CreateDeploymentStep step = (CreateDeploymentStep) super.newInstance(arguments);
+            if (CollectionUtils.isEmpty(step.getEntityIds()) && CollectionUtils.isEmpty(step.getTagMatchRules())) {
+                throw new IllegalArgumentException("At least one of entityIds or tag match rules needs to be provided to " + getFunctionName());
+            }
+            return step;
         }
 
         public DescriptorExtensionList<EntityId, Descriptor<EntityId>> getEntityIdTypes() {
