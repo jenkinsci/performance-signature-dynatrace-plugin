@@ -1,9 +1,14 @@
 package de.tsystems.mms.apm.performancesignature.dynatracesaas;
 
 import com.google.common.collect.ImmutableSet;
+import de.tsystems.mms.apm.performancesignature.dynatracesaas.model.EntityId;
+import de.tsystems.mms.apm.performancesignature.dynatracesaas.model.TagMatchRule;
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.util.DynatraceUtils;
 import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
+import hudson.DescriptorExtensionList;
+import hudson.EnvVars;
 import hudson.Extension;
+import hudson.model.Descriptor;
 import hudson.model.Item;
 import hudson.model.Run;
 import hudson.model.TaskListener;
@@ -16,13 +21,17 @@ import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.DataBoundSetter;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 import java.util.Set;
 
 public class DynatraceSessionStep extends Step {
     private final String envId;
     private final String testCase;
+    private List<EntityId> entityIds;
+    private List<TagMatchRule> tagMatchRules;
 
     @DataBoundConstructor
     public DynatraceSessionStep(final String envId, final String testCase) {
@@ -36,6 +45,24 @@ public class DynatraceSessionStep extends Step {
 
     public String getTestCase() {
         return testCase;
+    }
+
+    public List<EntityId> getEntityIds() {
+        return entityIds;
+    }
+
+    @DataBoundSetter
+    public void setEntityIds(List<EntityId> entityIds) {
+        this.entityIds = entityIds;
+    }
+
+    public List<TagMatchRule> getTagMatchRules() {
+        return tagMatchRules;
+    }
+
+    @DataBoundSetter
+    public void setTagMatchRules(List<TagMatchRule> tagMatchRules) {
+        this.tagMatchRules = tagMatchRules;
     }
 
     @Override
@@ -69,7 +96,7 @@ public class DynatraceSessionStep extends Step {
 
         @Override
         public Set<? extends Class<?>> getRequiredContext() {
-            return ImmutableSet.of(Run.class, TaskListener.class);
+            return ImmutableSet.of(Run.class, TaskListener.class, EnvVars.class);
         }
 
         @Nonnull
@@ -88,6 +115,10 @@ public class DynatraceSessionStep extends Step {
                 return new ListBoxModel();
             }
             return DynatraceUtils.listToListBoxModel(DynatraceUtils.getDynatraceConfigurations());
+        }
+
+        public DescriptorExtensionList<EntityId, Descriptor<EntityId>> getEntityIdTypes() {
+            return EntityId.EntityIdDescriptor.all();
         }
     }
 }

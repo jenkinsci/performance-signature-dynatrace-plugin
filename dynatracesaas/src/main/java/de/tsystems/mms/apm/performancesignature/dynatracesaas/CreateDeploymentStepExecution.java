@@ -41,12 +41,13 @@ import java.util.stream.Collectors;
 import static de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.DynatraceServerConnection.BUILD_URL_ENV_PROPERTY;
 
 public class CreateDeploymentStepExecution extends StepExecution {
-    private static final long serialVersionUID = 1L;
-    private static final Logger LOGGER = Logger.getLogger(CreateDeploymentStepExecution.class.getName());
     static final String BUILD_VAR_KEY_DEPLOYMENT_VERSION = "dtDeploymentVersion";
     static final String BUILD_VAR_KEY_DEPLOYMENT_PROJECT = "dtDeploymentProject";
+    private static final long serialVersionUID = 1L;
+    private static final Logger LOGGER = Logger.getLogger(CreateDeploymentStepExecution.class.getName());
     private final transient CreateDeploymentStep step;
     private BodyExecution body;
+    private long startTimestamp;
 
     CreateDeploymentStepExecution(CreateDeploymentStep createDeploymentStep, StepContext context) {
         super(context);
@@ -56,29 +57,7 @@ public class CreateDeploymentStepExecution extends StepExecution {
     @Override
     public boolean start() throws Exception {
         StepContext context = getContext();
-        EnvVars envVars = getContext().get(EnvVars.class);
-
-        DynatraceServerConnection connection = DynatraceUtils.createDynatraceServerConnection(step.getEnvId(), true);
-
-        PushEventAttachRules attachRules = new PushEventAttachRules();
-        attachRules.setEntityIds(step.getEntityIds().stream().map(EntityId::getEntityId).collect(Collectors.toList()));
-        attachRules.setTagRule(step.getTagMatchRules());
-
-        EventPushMessage event = new EventPushMessage(EventTypeEnum.CUSTOM_DEPLOYMENT, attachRules).setSource("Jenkins");
-        if (envVars != null) {
-            event.setDeploymentName(envVars.get("JOB_NAME"))
-                    .setDeploymentVersion(Optional.ofNullable(envVars.get(BUILD_VAR_KEY_DEPLOYMENT_VERSION)).orElse(" "))
-                    .setDeploymentProject(envVars.get(BUILD_VAR_KEY_DEPLOYMENT_PROJECT))
-                    .setCiBackLink(envVars.get(BUILD_URL_ENV_PROPERTY))
-                    .addCustomProperties("Jenkins Build Number", envVars.get("BUILD_ID"))
-                    .addCustomProperties("Git Commit", envVars.get("GIT_COMMIT"));
-        }
-
-        EventStoreResult eventStoreResult = connection.createEvent(event);
-        if (eventStoreResult == null) {
-            throw new AbortException("could not create deployment event");
-        }
-        println("successfully created deployment event " + eventStoreResult);
+        startTimestamp = System.currentTimeMillis();
 
         if (context.hasBody()) {
             body = context.newBodyInvoker()
@@ -110,7 +89,33 @@ public class CreateDeploymentStepExecution extends StepExecution {
 
         @Override
         protected void finished(StepContext context) throws Exception {
-            println("finishing deployment event");
+            EnvVars envVars = getContext().get(EnvVars.class);
+
+            DynatraceServerConnection connection = DynatraceUtils.createDynatraceServerConnection(step.getEnvId(), true);
+
+            PushEventAttachRules attachRules = new PushEventAttachRules();
+            attachRules.setEntityIds(step.getEntityIds().stream().map(EntityId::getEntityId).collect(Collectors.toList()));
+            attachRules.setTagRule(step.getTagMatchRules());
+
+            long endTimestamp = System.currentTimeMillis();
+            EventPushMessage event = new EventPushMessage(EventTypeEnum.CUSTOM_DEPLOYMENT, attachRules)
+                    .setStartTime(startTimestamp)
+                    .setEndTime(endTimestamp)
+                    .setSource("Jenkins");
+            if (envVars != null) {
+                event.setDeploymentName(envVars.get("JOB_NAME"))
+                        .setDeploymentVersion(Optional.ofNullable(envVars.get(BUILD_VAR_KEY_DEPLOYMENT_VERSION)).orElse(" "))
+                        .setDeploymentProject(envVars.get(BUILD_VAR_KEY_DEPLOYMENT_PROJECT))
+                        .setCiBackLink(envVars.get(BUILD_URL_ENV_PROPERTY))
+                        .addCustomProperties("Jenkins Build Number", envVars.get("BUILD_ID"))
+                        .addCustomProperties("Git Commit", envVars.get("GIT_COMMIT"));
+            }
+
+            EventStoreResult eventStoreResult = connection.createEvent(event);
+            if (eventStoreResult == null) {
+                throw new AbortException("could not create deployment event");
+            }
+            println("successfully created deployment event " + eventStoreResult);
         }
     }
 }

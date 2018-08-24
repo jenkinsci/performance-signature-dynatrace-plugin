@@ -1,7 +1,13 @@
 package de.tsystems.mms.apm.performancesignature.dynatracesaas;
 
+import de.tsystems.mms.apm.performancesignature.dynatracesaas.model.EntityId;
+import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.DynatraceServerConnection;
+import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.EventPushMessage;
+import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.EventTypeEnum;
+import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.PushEventAttachRules;
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.util.DynatraceUtils;
 import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
+import hudson.EnvVars;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import org.jenkinsci.plugins.workflow.steps.BodyExecution;
@@ -11,8 +17,14 @@ import org.jenkinsci.plugins.workflow.steps.StepExecution;
 
 import javax.annotation.Nonnull;
 import java.time.Instant;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
+
+import static de.tsystems.mms.apm.performancesignature.dynatracesaas.CreateDeploymentStepExecution.BUILD_VAR_KEY_DEPLOYMENT_PROJECT;
+import static de.tsystems.mms.apm.performancesignature.dynatracesaas.CreateDeploymentStepExecution.BUILD_VAR_KEY_DEPLOYMENT_VERSION;
+import static de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.DynatraceServerConnection.BUILD_URL_ENV_PROPERTY;
 
 public class DynatraceSessionStepExecution extends StepExecution {
     private static final long serialVersionUID = 1L;
@@ -47,7 +59,7 @@ public class DynatraceSessionStepExecution extends StepExecution {
     @Override
     public void stop(@Nonnull Throwable cause) throws Exception {
         println("stopping session recording ...");
-        action.setTimeframeStop(Instant.now().toEpochMilli());
+        action.setTimeframeStop(System.currentTimeMillis());
 
         if (body != null) {
             body.cancel(cause);
@@ -68,8 +80,33 @@ public class DynatraceSessionStepExecution extends StepExecution {
 
         @Override
         protected void finished(StepContext context) throws Exception {
+            EnvVars envVars = getContext().get(EnvVars.class);
             println("stopping session recording ...");
-            action.setTimeframeStop(Instant.now().toEpochMilli());
+            action.setTimeframeStop(System.currentTimeMillis());
+
+            DynatraceServerConnection serverConnection = DynatraceUtils.createDynatraceServerConnection(step.getEnvId(), true);
+
+            PushEventAttachRules attachRules = new PushEventAttachRules();
+            attachRules.setEntityIds(step.getEntityIds().stream().map(EntityId::getEntityId).collect(Collectors.toList()));
+            attachRules.setTagRule(step.getTagMatchRules());
+
+            println("creating Performance Signature custom event");
+            EventPushMessage event = new EventPushMessage(EventTypeEnum.CUSTOM_INFO, attachRules)
+                    .setSource("Jenkins")
+                    .setTitle("Performance Signature was executed")
+                    .setStartTime(action.getTimeframeStart())
+                    .setEndTime(action.getTimeframeStop());
+            if (envVars != null) {
+                event.setDeploymentName(envVars.get("JOB_NAME"))
+                        .setDeploymentVersion(Optional.ofNullable(envVars.get(BUILD_VAR_KEY_DEPLOYMENT_VERSION)).orElse(" "))
+                        .setDeploymentProject(envVars.get(BUILD_VAR_KEY_DEPLOYMENT_PROJECT))
+                        .setDescription(envVars.get(BUILD_URL_ENV_PROPERTY))
+                        .setCiBackLink(envVars.get(BUILD_URL_ENV_PROPERTY))
+                        .addCustomProperties("Jenkins Build Number", envVars.get("BUILD_ID"))
+                        .addCustomProperties("Git Commit", envVars.get("GIT_COMMIT"));
+            }
+            serverConnection.createEvent(event);
+            println("created Performance Signature event");
         }
     }
 }

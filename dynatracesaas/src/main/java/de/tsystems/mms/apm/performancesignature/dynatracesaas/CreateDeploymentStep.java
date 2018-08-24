@@ -22,6 +22,7 @@ import de.tsystems.mms.apm.performancesignature.dynatracesaas.model.TagMatchRule
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.util.DynatraceUtils;
 import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
 import hudson.DescriptorExtensionList;
+import hudson.EnvVars;
 import hudson.Extension;
 import hudson.model.Descriptor;
 import hudson.model.Item;
@@ -70,10 +71,6 @@ public class CreateDeploymentStep extends Step {
         return entityIds;
     }
 
-    /*public List<String> getEntityIds() {
-        return entityIds.stream().map(EntityId::getEntityId).collect(Collectors.toList());
-    }*/
-
     public List<TagMatchRule> getTagMatchRules() {
         return tagMatchRules;
     }
@@ -89,7 +86,7 @@ public class CreateDeploymentStep extends Step {
 
         @Override
         public String getFunctionName() {
-            return "createDeploymentEvent";
+            return "createDynatraceDeploymentEvent";
         }
 
         @Override
@@ -105,7 +102,7 @@ public class CreateDeploymentStep extends Step {
 
         @Override
         public Set<? extends Class<?>> getRequiredContext() {
-            return ImmutableSet.of(TaskListener.class);
+            return ImmutableSet.of(TaskListener.class, EnvVars.class);
         }
 
         @Nonnull

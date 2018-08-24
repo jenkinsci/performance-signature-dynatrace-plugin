@@ -7,11 +7,13 @@ import de.tsystems.mms.apm.performancesignature.dynatracesaas.model.DynatraceSer
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.model.Specification;
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.model.SpecificationTM;
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.DynatraceServerConnection;
-import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.*;
+import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.AggregationTypeEnum;
+import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.TimeseriesDataPointQueryResult;
+import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.TimeseriesDefinition;
+import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.UnitEnum;
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.util.DynatraceUtils;
 import de.tsystems.mms.apm.performancesignature.ui.PerfSigBuildAction;
 import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
-import hudson.EnvVars;
 import hudson.FilePath;
 import hudson.model.Run;
 import hudson.model.TaskListener;
@@ -33,10 +35,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import static de.tsystems.mms.apm.performancesignature.dynatracesaas.CreateDeploymentStepExecution.BUILD_VAR_KEY_DEPLOYMENT_PROJECT;
-import static de.tsystems.mms.apm.performancesignature.dynatracesaas.CreateDeploymentStepExecution.BUILD_VAR_KEY_DEPLOYMENT_VERSION;
-import static de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.DynatraceServerConnection.BUILD_URL_ENV_PROPERTY;
-
 public class DynatraceReportStepExecution extends SynchronousNonBlockingStepExecution<Void> {
     private static final long serialVersionUID = 1L;
     private static final Logger LOGGER = Logger.getLogger(DynatraceReportStepExecution.class.getName());
@@ -57,7 +55,7 @@ public class DynatraceReportStepExecution extends SynchronousNonBlockingStepExec
     protected Void run() throws Exception {
         Run<?, ?> run = getContext().get(Run.class);
         TaskListener listener = getContext().get(TaskListener.class);
-        EnvVars envVars = getContext().get(EnvVars.class);
+
         ws = getContext().get(FilePath.class);
 
         if (run == null || listener == null) {
@@ -70,21 +68,6 @@ public class DynatraceReportStepExecution extends SynchronousNonBlockingStepExec
             throw new MissingContextVariableException(FilePath.class);
         }
         DynatraceServerConnection serverConnection = DynatraceUtils.createDynatraceServerConnection(step.getEnvId(), true);
-
-        println("creating Performance Signature custom event");
-        EventPushMessage event = new EventPushMessage(EventTypeEnum.CUSTOM_INFO, null)
-                .setSource("Jenkins")
-                .setTitle("Performance Signature was executed");
-        if (envVars != null) {
-            event.setDeploymentName(envVars.get("JOB_NAME"))
-                    .setDeploymentVersion(Optional.ofNullable(envVars.get(BUILD_VAR_KEY_DEPLOYMENT_VERSION)).orElse(" "))
-                    .setDeploymentProject(envVars.get(BUILD_VAR_KEY_DEPLOYMENT_PROJECT))
-                    .setDescription(envVars.get(BUILD_URL_ENV_PROPERTY))
-                    .setCiBackLink(envVars.get(BUILD_URL_ENV_PROPERTY))
-                    .addCustomProperties("Jenkins Build Number", envVars.get("BUILD_ID"))
-                    .addCustomProperties("Git Commit", envVars.get("GIT_COMMIT"));
-        }
-        //serverConnection.createEvent(event);
         println("getting metric data from Dynatrace Server");
 
         Map<String, TimeseriesDefinition> timeseries = serverConnection.getTimeseries()
@@ -95,7 +78,7 @@ public class DynatraceReportStepExecution extends SynchronousNonBlockingStepExec
         Specification spec = getSpecifications();
 
         envInvisActions.forEach(dynatraceAction -> {
-            Long start = dynatraceAction.getTimeframeStart() - 7200000; //ToDo: remove this magic number before release
+            Long start = dynatraceAction.getTimeframeStart();
             Long end = dynatraceAction.getTimeframeStop();
             DashboardReport dashboardReport = new DashboardReport(dynatraceAction.getTestCase());
 
