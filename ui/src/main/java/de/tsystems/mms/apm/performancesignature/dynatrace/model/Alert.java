@@ -56,13 +56,12 @@ public class Alert {
     public Alert() {
     }
 
-    public Alert(SeverityEnum severity, String message, String description, Long timeframeStart, Long timeframeStop, String rule) {
+    public Alert(SeverityEnum severity, String message, String description, long timeframeStart, String rule) {
         this();
         this.severity = severity;
         this.message = message;
         this.description = description;
         this.start = new Date(timeframeStart);
-        this.end = new Date(timeframeStop);
         this.rule = rule;
     }
 
