@@ -177,7 +177,7 @@ public class DynatraceReportStepExecution extends SynchronousNonBlockingStepExec
             dashboardReports.add(dashboardReport);
 
             PerfSigUIUtils.handleIncidents(run, dashboardReport.getIncidents(),
-                    PerfSigUIUtils.createLogger(DynatraceUtils.getTaskListener(getContext()).getLogger()), 0);
+                    PerfSigUIUtils.createLogger(DynatraceUtils.getTaskListener(getContext()).getLogger()), step.getNonFunctionalFailure());
         });
         println("created " + dashboardReports.size() + " DashboardReports");
 

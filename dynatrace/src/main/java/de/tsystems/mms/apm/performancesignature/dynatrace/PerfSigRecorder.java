@@ -279,7 +279,7 @@ public class PerfSigRecorder extends Recorder implements SimpleBuildStep {
         public static final boolean defaultExportSessions = true;
         public static final boolean defaultDeleteSessions = false;
         public static final boolean defaultRemoveConfidentialStrings = true;
-        public static final int defaultNonFunctionalFailure = 0;
+        public static final int defaultNonFunctionalFailure = 2;
 
         public DescriptorImpl() {
             load();

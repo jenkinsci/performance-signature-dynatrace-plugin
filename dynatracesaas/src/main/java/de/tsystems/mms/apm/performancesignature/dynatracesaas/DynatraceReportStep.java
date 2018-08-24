@@ -47,6 +47,7 @@ public class DynatraceReportStep extends Step {
     private final String envId;
     private List<Metric> metrics;
     private String specFile;
+    private int nonFunctionalFailure;
 
     @DataBoundConstructor
     public DynatraceReportStep(final String envId) {
@@ -54,7 +55,7 @@ public class DynatraceReportStep extends Step {
     }
 
     @Override
-    public StepExecution start(StepContext context) throws Exception {
+    public StepExecution start(final StepContext context) throws Exception {
         return new DynatraceReportStepExecution(this, context);
     }
 
@@ -70,7 +71,7 @@ public class DynatraceReportStep extends Step {
     }
 
     @DataBoundSetter
-    public void setMetrics(List<Metric> metrics) {
+    public void setMetrics(final List<Metric> metrics) {
         this.metrics = metrics;
     }
 
@@ -79,12 +80,23 @@ public class DynatraceReportStep extends Step {
     }
 
     @DataBoundSetter
-    public void setSpecFile(String specFile) {
+    public void setSpecFile(final String specFile) {
         this.specFile = specFile;
+    }
+
+    public int getNonFunctionalFailure() {
+        return nonFunctionalFailure;
+    }
+
+    @DataBoundSetter
+    public void setNonFunctionalFailure(final int nonFunctionalFailure) {
+        this.nonFunctionalFailure = nonFunctionalFailure;
     }
 
     @Extension
     public static final class DescriptorImpl extends StepDescriptor {
+        public static final int defaultNonFunctionalFailure = 2;
+
         @Override
         public Set<? extends Class<?>> getRequiredContext() {
             return ImmutableSet.of(Run.class, TaskListener.class);
@@ -97,7 +109,7 @@ public class DynatraceReportStep extends Step {
 
         @Nonnull
         @Restricted(NoExternalUse.class)
-        public ListBoxModel doFillEnvIdItems(@AncestorInPath Item item) {
+        public ListBoxModel doFillEnvIdItems(@AncestorInPath final Item item) {
             if (PerfSigUIUtils.checkForMissingPermission(item)) {
                 return new ListBoxModel();
             }
@@ -111,7 +123,7 @@ public class DynatraceReportStep extends Step {
         }
 
         @Override
-        public DynatraceReportStep newInstance(Map<String, Object> arguments) throws Exception {
+        public DynatraceReportStep newInstance(final Map<String, Object> arguments) throws Exception {
             DynatraceReportStep step = (DynatraceReportStep) super.newInstance(arguments);
             if (StringUtils.isBlank(step.getSpecFile()) && CollectionUtils.isEmpty(step.getMetrics())) {
                 throw new IllegalArgumentException("At least one of file or metrics needs to be provided to " + getFunctionName());

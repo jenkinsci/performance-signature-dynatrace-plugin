@@ -152,30 +152,24 @@ public final class PerfSigUIUtils {
 
             switch (nonFunctionalFailure) {
                 case 1:
-                    if (numSevere > 0) {
-                        logger.log(Messages.PerfSigUIUtils_BuildsStatusSevereIncidentsFailed());
-                        run.setResult(Result.FAILURE);
-                    }
-                    break;
-                case 2:
                     if (numSevere > 0 || numWarning > 0) {
-                        logger.log(Messages.PerfSigUIUtils_BuildsStatusWarningIncidentsFailed());
-                        run.setResult(Result.FAILURE);
-                    }
-                    break;
-                case 3:
-                    if (numSevere > 0) {
-                        logger.log(Messages.PerfSigUIUtils_BuildsStatusSevereIncidentsUnstable());
+                        logger.log(Messages.PerfSigUIUtils_BuildsStatusIncidentsUnstable());
                         run.setResult(Result.UNSTABLE);
                     }
                     break;
-                case 4:
-                    if (numSevere > 0 || numWarning > 0) {
+                case 2:
+                    if (numSevere > 0) {
+                        logger.log(Messages.PerfSigUIUtils_BuildsStatusSevereIncidentsFailed());
+                        run.setResult(Result.FAILURE);
+                        break;
+                    }
+                    if (numWarning > 0) {
                         logger.log(Messages.PerfSigUIUtils_BuildsStatusWarningIncidentsUnstable());
                         run.setResult(Result.UNSTABLE);
                     }
                     break;
                 default:
+                    logger.log("WARNING: parameter 'nonFunctionalFailure' only accepts values from 0 to 2!");
                     break;
             }
         }
