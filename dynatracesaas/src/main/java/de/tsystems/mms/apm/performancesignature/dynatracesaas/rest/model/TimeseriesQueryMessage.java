@@ -188,8 +188,9 @@ public class TimeseriesQueryMessage {
         return entities;
     }
 
-    public void setEntities(List<String> entities) {
+    public TimeseriesQueryMessage setEntities(List<String> entities) {
         this.entities = entities;
+        return this;
     }
 
     public TimeseriesQueryMessage tags(List<String> tags) {
@@ -215,8 +216,9 @@ public class TimeseriesQueryMessage {
         return tags;
     }
 
-    public void setTags(List<String> tags) {
+    public TimeseriesQueryMessage setTags(List<String> tags) {
         this.tags = tags;
+        return this;
     }
 
     public TimeseriesQueryMessage filters(Map<String, String> filters) {

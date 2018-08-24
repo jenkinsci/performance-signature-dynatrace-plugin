@@ -23,6 +23,7 @@ import de.tsystems.mms.apm.performancesignature.dynatracesaas.util.DynatraceUtil
 import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
 import hudson.ProxyConfiguration;
 import jenkins.model.Jenkins;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import retrofit2.Call;
 
@@ -31,6 +32,8 @@ import java.net.PasswordAuthentication;
 import java.net.Proxy;
 import java.util.List;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class DynatraceServerConnection {
     public static final String BUILD_URL_ENV_PROPERTY = "BUILD_URL";
@@ -103,34 +106,26 @@ public class DynatraceServerConnection {
     }
 
     public TimeseriesDataPointQueryResult getTotalTimeseriesData(String timeseriesId, Long startTimestamp, Long endTimestamp,
-                                                                 AggregationTypeEnum aggregationType) {
-        TimeseriesApi api = apiClient.createService(TimeseriesApi.class);
-        TimeseriesQueryMessage body = new TimeseriesQueryMessage()
-                .timeseriesId(timeseriesId)
-                .startTimestamp(startTimestamp)
-                .endTimestamp(endTimestamp)
-                .aggregationType(aggregationType)
-                .queryMode(QueryModeEnum.TOTAL);
-        if (aggregationType == AggregationTypeEnum.PERCENTILE) body.percentile(98);
-
-        Call<TimeseriesDataPointQueryResult.Container> call = api.readTimeseriesComplex(body);
-        try {
-            ApiResponse<TimeseriesDataPointQueryResult.Container> response = apiClient.execute(call);
-            return response.getData().result;
-        } catch (ApiException ex) {
-            throw new CommandExecutionException("error while querying timeseries data: " + ex.getResponseBody(), ex);
-        }
+                                                                 AggregationTypeEnum aggregationType, String entityIds, String tags) {
+        return getTimeseriesData(timeseriesId, startTimestamp, endTimestamp, aggregationType, QueryModeEnum.TOTAL, entityIds, tags);
     }
 
     public TimeseriesDataPointQueryResult getTimeseriesData(String timeseriesId, Long startTimestamp, Long endTimestamp,
-                                                            AggregationTypeEnum aggregationType) {
+                                                            AggregationTypeEnum aggregationType, String entityIds, String tags) {
+        return getTimeseriesData(timeseriesId, startTimestamp, endTimestamp, aggregationType, QueryModeEnum.SERIES, entityIds, tags);
+    }
+
+    private TimeseriesDataPointQueryResult getTimeseriesData(String timeseriesId, Long startTimestamp, Long endTimestamp,
+                                                             AggregationTypeEnum aggregationType, QueryModeEnum queryMode, String entityIds, String tags) {
         TimeseriesApi api = apiClient.createService(TimeseriesApi.class);
         TimeseriesQueryMessage body = new TimeseriesQueryMessage()
                 .timeseriesId(timeseriesId)
                 .startTimestamp(startTimestamp)
                 .endTimestamp(endTimestamp)
                 .aggregationType(aggregationType)
-                .queryMode(QueryModeEnum.SERIES);
+                .queryMode(queryMode);
+        if (StringUtils.isNotBlank(entityIds)) body.setEntities(Stream.of(entityIds.split(",")).map(String::trim).collect(Collectors.toList()));
+        if (StringUtils.isNotBlank(tags)) body.setTags(Stream.of(tags.split(",")).map(String::trim).collect(Collectors.toList()));
         if (aggregationType == AggregationTypeEnum.PERCENTILE) body.percentile(98);
 
         Call<TimeseriesDataPointQueryResult.Container> call = api.readTimeseriesComplex(body);

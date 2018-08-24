@@ -47,7 +47,7 @@ public class TimeSeriesApiTest {
     @Test
     public void testTimeseriesApi() {
         TimeseriesDataPointQueryResult response = connection.getTimeseriesData("com.dynatrace.builtin:host.cpu.user",
-                Instant.now().minus(2, HOURS).toEpochMilli(), Instant.now().toEpochMilli(), AggregationTypeEnum.AVG);
+                Instant.now().minus(2, HOURS).toEpochMilli(), Instant.now().toEpochMilli(), AggregationTypeEnum.AVG, null, null);
         assertNotNull(response);
     }
 

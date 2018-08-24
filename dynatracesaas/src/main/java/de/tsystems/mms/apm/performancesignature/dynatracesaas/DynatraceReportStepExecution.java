@@ -93,7 +93,7 @@ public class DynatraceReportStepExecution extends SynchronousNonBlockingStepExec
                 Map<AggregationTypeEnum, TimeseriesDataPointQueryResult> aggregations = tm.getAggregationTypes().parallelStream()
                         .collect(Collectors.toMap(
                                 Function.identity(),
-                                aggregation -> serverConnection.getTimeseriesData(specTM.getTimeseriesId(), start, end, aggregation),
+                                aggregation -> serverConnection.getTimeseriesData(specTM.getTimeseriesId(), start, end, aggregation, specTM.getEntityIds(), specTM.getTags()),
                                 (a, b) -> b, LinkedHashMap::new)
                         );
 
@@ -102,7 +102,7 @@ public class DynatraceReportStepExecution extends SynchronousNonBlockingStepExec
                 //get a scalar value for every possible aggregation
                 Map<AggregationTypeEnum, TimeseriesDataPointQueryResult> totalValues = tm.getAggregationTypes().parallelStream()
                         .collect(Collectors.toMap(Function.identity(),
-                                aggregation -> serverConnection.getTotalTimeseriesData(specTM.getTimeseriesId(), start, end, aggregation),
+                                aggregation -> serverConnection.getTotalTimeseriesData(specTM.getTimeseriesId(), start, end, aggregation, specTM.getEntityIds(), specTM.getTags()),
                                 (a, b) -> b, LinkedHashMap::new));
 
                 //evaluate possible incidents
