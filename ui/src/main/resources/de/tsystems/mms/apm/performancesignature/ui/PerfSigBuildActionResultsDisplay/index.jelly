@@ -70,52 +70,52 @@
                                 </div>
                                 <br/>
                                 <br/>
-                                <div class="row">
-                                    <div class="col-md-9">
-                                        <div class="panel panel-danger">
-                                            <div class="panel-heading">
-                                                <h4 class="panel-title">${%Singlereports}</h4>
-                                            </div>
-                                            <div class="panel-body">
-                                                <j:set var="pdfFiles"
-                                                       value="${utils.getDownloadFiles('Single.*' + dashboardReport.name + '.*pdf',it.build)}"/>
-                                                <j:forEach var="pdfFile" items="${pdfFiles}">
-                                                    <a href="./getSingleReport?testCase=${dashboardReport.name}&amp;number=${pdfFiles.indexOf(pdfFile)}"
-                                                       target="_blank">
-                                                        <img src="${resURL}/plugin/performance-signature-ui/images/pdficon_small.png"/>
-                                                        ${utils.removeExtension(pdfFile.name)}
-                                                    </a>
-                                                    <br/>
-                                                </j:forEach>
-                                                <j:if test="${pdfFiles.isEmpty()}">
-                                                    ${%no Single report available!}
-                                                </j:if>
+                                <j:set var="pdfFiles" value="${utils.getDownloadFiles('Single.*' + dashboardReport.name + '.*pdf',it.build)}"/>
+                                <j:set var="sessionFiles" value="${utils.getDownloadFiles('.*' + dashboardReport.name + '.dts',it.build)}"/>
+                                <j:if test="${!(pdfFiles.isEmpty() and sessionFiles.isEmpty())}">
+                                    <div class="row">
+                                        <div class="col-md-9">
+                                            <div class="panel panel-danger">
+                                                <div class="panel-heading">
+                                                    <h4 class="panel-title">${%Singlereports}</h4>
+                                                </div>
+                                                <div class="panel-body">
+                                                    <j:forEach var="pdfFile" items="${pdfFiles}">
+                                                        <a href="./getSingleReport?testCase=${dashboardReport.name}&amp;number=${pdfFiles.indexOf(pdfFile)}"
+                                                           target="_blank">
+                                                            <img src="${resURL}/plugin/performance-signature-ui/images/pdficon_small.png"/>
+                                                            ${utils.removeExtension(pdfFile.name)}
+                                                        </a>
+                                                        <br/>
+                                                    </j:forEach>
+                                                    <j:if test="${pdfFiles.isEmpty()}">
+                                                        ${%no Single report available!}
+                                                    </j:if>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
 
-                                    <j:set var="sessionFiles"
-                                           value="${utils.getDownloadFiles('.*' + dashboardReport.name + '.dts',it.build)}"/>
-                                    <div class="col-md-9">
-                                        <div class="panel panel-success">
-                                            <div class="panel-heading">
-                                                <h4 class="panel-title">${%Dynatrace sessions}</h4>
-                                            </div>
-                                            <div class="panel-body">
-                                                <j:if test="${!sessionFiles.isEmpty()}">
-                                                    <a href="./getSession?testCase=${dashboardReport.name}"
-                                                       target="_blank">
-                                                        <img src="${resURL}/plugin/performance-signature-ui/images/dtsession.png"/>
-                                                        ${utils.removeExtension(sessionFiles.get(0).name)}
-                                                    </a>
-                                                </j:if>
-                                                <j:if test="${sessionFiles.isEmpty()}">
-                                                    ${%no Dynatrace sessions available!}
-                                                </j:if>
+                                        <div class="col-md-9">
+                                            <div class="panel panel-success">
+                                                <div class="panel-heading">
+                                                    <h4 class="panel-title">${%Dynatrace sessions}</h4>
+                                                </div>
+                                                <div class="panel-body">
+                                                    <j:if test="${!sessionFiles.isEmpty()}">
+                                                        <a href="./getSession?testCase=${dashboardReport.name}"
+                                                           target="_blank">
+                                                            <img src="${resURL}/plugin/performance-signature-ui/images/dtsession.png"/>
+                                                            ${utils.removeExtension(sessionFiles.get(0).name)}
+                                                        </a>
+                                                    </j:if>
+                                                    <j:if test="${sessionFiles.isEmpty()}">
+                                                        ${%no Dynatrace sessions available!}
+                                                    </j:if>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                </j:if>
 
                                 <j:if test="${dashboardReport.isUnitTest()}">
                                     <div class="row">
