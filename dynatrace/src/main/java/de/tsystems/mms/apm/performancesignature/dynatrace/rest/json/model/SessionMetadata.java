@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 T-Systems Multimedia Solutions GmbH
+ * Copyright (c) 2014-2018 T-Systems Multimedia Solutions GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,11 +28,12 @@ import io.swagger.annotations.ApiModelProperty;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import static de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model.SessionData.SessiontypeEnum;
-import static de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model.SessionData.StoredsessiontypeEnum;
+import static de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model.SessionData.SessionTypeEnum;
+import static de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model.SessionData.StoredSessiontypeEnum;
 
 /**
  * Comprehensive metadata of a session
@@ -41,9 +42,9 @@ import static de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model
 
 public class SessionMetadata extends BaseReference {
     @SerializedName("storedsessiontype")
-    private StoredsessiontypeEnum storedsessiontype;
+    private StoredSessiontypeEnum storedsessiontype;
     @SerializedName("sessiontype")
-    private SessiontypeEnum sessiontype;
+    private SessionTypeEnum sessiontype;
     @SerializedName("systemprofile")
     private String systemprofile;
     @SerializedName("name")
@@ -53,7 +54,7 @@ public class SessionMetadata extends BaseReference {
     @SerializedName("size")
     private Long size;
     @SerializedName("deletionlocked")
-    private Boolean deletionlocked = false;
+    private final Boolean deletionlocked = false;
     @SerializedName("directorypath")
     private String directorypath;
     @SerializedName("state")
@@ -71,7 +72,7 @@ public class SessionMetadata extends BaseReference {
     @SerializedName("numberofpurepaths")
     private Integer numberofpurepaths;
     @SerializedName("continuoussession")
-    private Boolean continuoussession = false;
+    private final Boolean continuoussession = false;
     @SerializedName("labels")
     private List<String> labels;
 
@@ -81,7 +82,7 @@ public class SessionMetadata extends BaseReference {
      * @return storedsessiontype
      **/
     @ApiModelProperty(value = "Stored session type")
-    public StoredsessiontypeEnum getStoredsessiontype() {
+    public StoredSessiontypeEnum getStoredsessiontype() {
         return storedsessiontype;
     }
 
@@ -91,7 +92,7 @@ public class SessionMetadata extends BaseReference {
      * @return sessiontype
      **/
     @ApiModelProperty(value = "Session type")
-    public SessiontypeEnum getSessiontype() {
+    public SessionTypeEnum getSessiontype() {
         return sessiontype;
     }
 
@@ -293,11 +294,8 @@ public class SessionMetadata extends BaseReference {
     @JsonAdapter(StateEnum.Adapter.class)
     public enum StateEnum {
         INPROGRESS("inprogress"),
-
         FINISHED("finished"),
-
         CORRUPT("corrupt"),
-
         INCOMPLETE("incomplete");
 
         private final String value;
@@ -307,12 +305,7 @@ public class SessionMetadata extends BaseReference {
         }
 
         public static StateEnum fromValue(String text) {
-            for (StateEnum b : StateEnum.values()) {
-                if (String.valueOf(b.value).equals(text)) {
-                    return b;
-                }
-            }
-            return null;
+            return Arrays.stream(StateEnum.values()).filter(b -> b.value.equals(text)).findFirst().orElse(null);
         }
 
         public String getValue() {
@@ -321,7 +314,7 @@ public class SessionMetadata extends BaseReference {
 
         @Override
         public String toString() {
-            return String.valueOf(value);
+            return value;
         }
 
         public static class Adapter extends TypeAdapter<StateEnum> {
@@ -333,7 +326,7 @@ public class SessionMetadata extends BaseReference {
             @Override
             public StateEnum read(final JsonReader jsonReader) throws IOException {
                 String value = jsonReader.nextString();
-                return StateEnum.fromValue(String.valueOf(value));
+                return StateEnum.fromValue(value);
             }
         }
     }

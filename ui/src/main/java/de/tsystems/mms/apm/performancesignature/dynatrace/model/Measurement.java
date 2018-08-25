@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 T-Systems Multimedia Solutions GmbH
+ * Copyright (c) 2014-2018 T-Systems Multimedia Solutions GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +30,19 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class Measurement extends MeasureBaseModel {
     @XmlAttribute
     private long timestamp;
+
+    public Measurement(final long timestamp, final Number avg, final Number min, final Number max, final Number sum,
+                       final Number count) {
+        this.timestamp = timestamp;
+        this.setAvg(avg.doubleValue());
+        this.setMin(min.doubleValue());
+        this.setMax(max.doubleValue());
+        this.setSum(sum.doubleValue());
+        this.setCount(count.longValue());
+    }
+
+    public Measurement() {
+    }
 
     /**
      * Ruft den Wert der timestamp-Eigenschaft ab.

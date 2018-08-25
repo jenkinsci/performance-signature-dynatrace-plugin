@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 T-Systems Multimedia Solutions GmbH
+ * Copyright (c) 2014-2018 T-Systems Multimedia Solutions GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ public class PerfSigGlobalConfiguration extends GlobalConfiguration {
     }
 
     @Override
-    public boolean configure(final StaplerRequest req, final JSONObject formData) throws FormException {
+    public boolean configure(final StaplerRequest req, final JSONObject formData) {
         setConfigurations(req.bindJSONToList(DynatraceServerConfiguration.class, formData.get("configurations")));
         return false;
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 T-Systems Multimedia Solutions GmbH
+ * Copyright (c) 2014-2018 T-Systems Multimedia Solutions GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,51 +20,39 @@ import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
 import hudson.Extension;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
+import hudson.model.Item;
 import hudson.util.FormValidation;
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
+import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 
-import javax.annotation.Nonnull;
+import javax.annotation.CheckForNull;
 import java.util.List;
 
 public class DynatraceServerConfiguration extends AbstractDescribableImpl<DynatraceServerConfiguration> {
     private final String name;
-    private String serverUrl;
+    private final String serverUrl;
     private final int readTimeout;
-    @Deprecated
-    private transient String protocol;
-    @Deprecated
-    private transient int port;
     private final boolean verifyCertificate;
+    private final boolean useProxy;
     private final int delay;
     private final int retryCount;
-    @Deprecated
-    private transient String host;
-    private final CustomProxy customProxy;
     private final List<CredProfilePair> credProfilePairs;
-
-    @Deprecated
-    public DynatraceServerConfiguration(final String name, final String protocol, final String host, final int port, final List<CredProfilePair> credProfilePairs,
-                                        final boolean verifyCertificate, final int delay, final int retryCount, final int readTimeout, final boolean proxy,
-                                        final int proxySource, final String proxyServer, final int proxyPort, final String proxyUser, final String proxyPassword) {
-        this(name, protocol + "://" + host + ":" + port, credProfilePairs, verifyCertificate, delay, retryCount, readTimeout, proxy, proxySource,
-                proxyServer, proxyPort, proxyUser, proxyPassword);
-    }
 
     @DataBoundConstructor
     public DynatraceServerConfiguration(final String name, final String serverUrl, final List<CredProfilePair> credProfilePairs,
-                                        final boolean verifyCertificate, final int delay, final int retryCount, final int readTimeout, final boolean proxy,
-                                        final int proxySource, final String proxyServer, final int proxyPort, final String proxyUser, final String proxyPassword) {
+                                        final boolean verifyCertificate, final int delay, final int retryCount, final int readTimeout,
+                                        final boolean useProxy) {
         this.name = name;
         this.serverUrl = serverUrl;
         this.credProfilePairs = credProfilePairs;
         this.verifyCertificate = verifyCertificate;
+        this.useProxy = useProxy;
         this.delay = delay;
         this.retryCount = retryCount;
         this.readTimeout = readTimeout;
-        this.customProxy = proxy ? new CustomProxy(proxyServer, proxyPort, proxyUser, proxyPassword, proxySource) : null;
     }
 
     public String getName() {
@@ -75,13 +63,10 @@ public class DynatraceServerConfiguration extends AbstractDescribableImpl<Dynatr
         return serverUrl;
     }
 
+    @CheckForNull
     public CredProfilePair getCredProfilePair(final String profile) {
         String systemProfile = profile.replaceAll("\\(.*", "").trim();
-        for (CredProfilePair pair : credProfilePairs) {
-            if (pair.getProfile().equals(systemProfile))
-                return pair;
-        }
-        return null;
+        return credProfilePairs.stream().filter(pair -> pair.getProfile().equals(systemProfile)).findFirst().orElse(null);
     }
 
     public List<CredProfilePair> getCredProfilePairs() {
@@ -104,21 +89,8 @@ public class DynatraceServerConfiguration extends AbstractDescribableImpl<Dynatr
         return readTimeout;
     }
 
-    public CustomProxy getCustomProxy() {
-        return customProxy;
-    }
-
-    @SuppressWarnings("deprecation")
-    @Restricted(NoExternalUse.class)
-    @Nonnull
-    protected Object readResolve() {
-        if (protocol != null && host != null && port != 0 && serverUrl == null) {
-            serverUrl = protocol + "://" + host + ":" + port;
-            protocol = null;
-            host = null;
-            port = 0;
-        }
-        return this;
+    public boolean isUseProxy() {
+        return useProxy;
     }
 
     @Extension
@@ -128,6 +100,7 @@ public class DynatraceServerConfiguration extends AbstractDescribableImpl<Dynatr
         public static final int defaultRetryCount = 5;
         public static final int defaultReadTimeout = 300;
         public static final boolean defaultVerifyCertificate = false;
+        public static final boolean defaultUseProxy = false;
 
         @Override
         public String getDisplayName() {
@@ -135,27 +108,42 @@ public class DynatraceServerConfiguration extends AbstractDescribableImpl<Dynatr
         }
 
         @Restricted(NoExternalUse.class)
-        public FormValidation doCheckServerUrl(@QueryParameter final String serverUrl) {
+        public FormValidation doCheckServerUrl(@AncestorInPath Item item, @QueryParameter final String serverUrl) {
+            FormValidation validationResult = FormValidation.ok();
+            if (PerfSigUIUtils.checkForMissingPermission(item)) {
+                return validationResult;
+            }
+
             if (PerfSigUIUtils.checkNotNullOrEmpty(serverUrl) && (serverUrl.charAt(serverUrl.length() - 1) != '/')) {
-                return FormValidation.ok();
+                return validationResult;
             } else {
                 return FormValidation.error(Messages.PerfSigRecorder_DTServerUrlNotValid());
             }
         }
 
         @Restricted(NoExternalUse.class)
-        public FormValidation doCheckDelay(@QueryParameter final String delay) {
+        public FormValidation doCheckDelay(@AncestorInPath Item item, @QueryParameter final String delay) {
+            FormValidation validationResult = FormValidation.ok();
+            if (PerfSigUIUtils.checkForMissingPermission(item)) {
+                return validationResult;
+            }
+
             if (PerfSigUIUtils.checkNotEmptyAndIsNumber(delay)) {
-                return FormValidation.ok();
+                return validationResult;
             } else {
                 return FormValidation.error(Messages.PerfSigRecorder_DelayNotValid());
             }
         }
 
         @Restricted(NoExternalUse.class)
-        public FormValidation doCheckRetryCount(@QueryParameter final String retryCount) {
+        public FormValidation doCheckRetryCount(@AncestorInPath Item item, @QueryParameter final String retryCount) {
+            FormValidation validationResult = FormValidation.ok();
+            if (PerfSigUIUtils.checkForMissingPermission(item)) {
+                return validationResult;
+            }
+
             if (PerfSigUIUtils.checkNotEmptyAndIsNumber(retryCount)) {
-                return FormValidation.ok();
+                return validationResult;
             } else {
                 return FormValidation.error(Messages.PerfSigRecorder_RetryCountNotValid());
             }

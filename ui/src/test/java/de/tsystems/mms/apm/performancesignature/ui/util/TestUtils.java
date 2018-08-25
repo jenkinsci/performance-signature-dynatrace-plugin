@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 T-Systems Multimedia Solutions GmbH
+ * Copyright (c) 2014-2018 T-Systems Multimedia Solutions GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,11 +26,6 @@ public class TestUtils {
     }
 
     public static boolean containsMeasure(List<?> list, String search) {
-        for (Object text : list) {
-            if (((DomText) text).getWholeText().trim().equals(search)) {
-                return true;
-            }
-        }
-        return false;
+        return list.stream().anyMatch(text -> ((DomText) text).getWholeText().trim().equals(search));
     }
 }

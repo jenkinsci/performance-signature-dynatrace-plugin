@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 T-Systems Multimedia Solutions GmbH
+ * Copyright (c) 2014-2018 T-Systems Multimedia Solutions GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,6 +44,13 @@ public class Measure extends MeasureBaseModel {
     private String aggregation;
     @XmlAttribute
     private String unit;
+
+    public Measure(String name) {
+        this.name = name;
+    }
+
+    public Measure() {
+    }
 
     /**
      * Gets the value of the measurement property.
@@ -102,6 +109,10 @@ public class Measure extends MeasureBaseModel {
         return color;
     }
 
+    public void setColor(String color) {
+        this.color = color;
+    }
+
     /**
      * Ruft den Wert der aggregation-Eigenschaft ab.
      *
@@ -113,6 +124,10 @@ public class Measure extends MeasureBaseModel {
         return aggregation;
     }
 
+    public void setAggregation(String aggregation) {
+        this.aggregation = aggregation;
+    }
+
     /**
      * Ruft den Wert der unit-Eigenschaft ab.
      *
@@ -122,6 +137,10 @@ public class Measure extends MeasureBaseModel {
     @Exported
     public String getUnit() {
         return unit;
+    }
+
+    public void setUnit(String unit) {
+        this.unit = unit;
     }
 
     public String getUnit(final String aggregation) {

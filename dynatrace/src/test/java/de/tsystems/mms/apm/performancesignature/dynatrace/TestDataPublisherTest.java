@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 T-Systems Multimedia Solutions GmbH
+ * Copyright (c) 2014-2018 T-Systems Multimedia Solutions GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,8 @@
 
 package de.tsystems.mms.apm.performancesignature.dynatrace;
 
+import com.google.gson.Gson;
 import de.tsystems.mms.apm.performancesignature.dynatrace.model.TestRun;
-import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.JSON;
 import hudson.FilePath;
 import org.junit.Test;
 
@@ -29,10 +29,9 @@ import static org.junit.Assert.assertEquals;
 public class TestDataPublisherTest {
 
     @Test
-    public void testXMLParser() throws IOException, InterruptedException {
+    public void testJSONParser() throws IOException, InterruptedException {
         FilePath file = new FilePath(new File("src/test/resources/sampleTestRun.json"));
-        JSON json = new JSON();
-        TestRun testRun = json.deserialize(file.readToString(), TestRun.class);
+        TestRun testRun = new Gson().fromJson(file.readToString(), TestRun.class);
 
         assertEquals(305, testRun.getTestResults().size());
     }

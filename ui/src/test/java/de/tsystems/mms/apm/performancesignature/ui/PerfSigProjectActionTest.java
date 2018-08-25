@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 T-Systems Multimedia Solutions GmbH
+ * Copyright (c) 2014-2018 T-Systems Multimedia Solutions GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,9 +43,9 @@ public class PerfSigProjectActionTest {
 
     private final String TEST_PROJECT_WITH_HISTORY = "projectAction";
     @Rule
-    public JenkinsRule j = new JenkinsRule();
+    public final JenkinsRule j = new JenkinsRule();
     @Rule
-    public ExpectedException exception = ExpectedException.none();
+    public final ExpectedException exception = ExpectedException.none();
 
     @LocalData
     @Test
@@ -158,11 +158,6 @@ public class PerfSigProjectActionTest {
     }
 
     private boolean containsDashlet(List<JSONDashlet> list, String search) {
-        for (JSONDashlet jsonDashlet : list) {
-            if (jsonDashlet.generateDashletName().equals(search)) {
-                return true;
-            }
-        }
-        return false;
+        return list.stream().anyMatch(jsonDashlet -> jsonDashlet.generateDashletName().equals(search));
     }
 }

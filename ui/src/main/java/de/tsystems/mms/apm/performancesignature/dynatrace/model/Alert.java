@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 T-Systems Multimedia Solutions GmbH
+ * Copyright (c) 2014-2018 T-Systems Multimedia Solutions GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Date;
 
 /**
@@ -51,6 +52,18 @@ public class Alert {
     private Date end;
     @SerializedName("rule")
     private String rule;
+
+    public Alert() {
+    }
+
+    public Alert(SeverityEnum severity, String message, String description, long timeframeStart, String rule) {
+        this();
+        this.severity = severity;
+        this.message = message;
+        this.description = description;
+        this.start = new Date(timeframeStart);
+        this.rule = rule;
+    }
 
     /**
      * The severity of the alert
@@ -128,18 +141,6 @@ public class Alert {
         return rule;
     }
 
-    public String getPanelColor() {
-        switch (severity) {
-            case INFORMATIONAL:
-                return "";
-            case WARNING:
-                return "panel-warning";
-            case SEVERE:
-                return "panel-danger";
-        }
-        return null;
-    }
-
     @Override
     public String toString() {
         return "class Alert {\n" +
@@ -169,12 +170,7 @@ public class Alert {
         }
 
         public static SeverityEnum fromValue(String text) {
-            for (SeverityEnum b : SeverityEnum.values()) {
-                if (String.valueOf(b.value).equals(text)) {
-                    return b;
-                }
-            }
-            return null;
+            return Arrays.stream(SeverityEnum.values()).filter(b -> b.value.equals(text)).findFirst().orElse(null);
         }
 
         public String getValue() {
@@ -183,7 +179,18 @@ public class Alert {
 
         @Override
         public String toString() {
-            return String.valueOf(value);
+            return value;
+        }
+
+        public String getPanelColor() {
+            switch (fromValue(value)) {
+                case WARNING:
+                    return "panel-warning";
+                case SEVERE:
+                    return "panel-danger";
+                default:
+                    return "";
+            }
         }
 
         public static class Adapter extends TypeAdapter<SeverityEnum> {
@@ -195,7 +202,7 @@ public class Alert {
             @Override
             public SeverityEnum read(final JsonReader jsonReader) throws IOException {
                 String value = jsonReader.nextString();
-                return SeverityEnum.fromValue(String.valueOf(value));
+                return SeverityEnum.fromValue(value);
             }
         }
     }
@@ -206,9 +213,7 @@ public class Alert {
     @JsonAdapter(StateEnum.Adapter.class)
     public enum StateEnum {
         CREATED("Created"),
-
         INPROGRESS("InProgress"),
-
         CONFIRMED("Confirmed");
 
         private final String value;
@@ -218,12 +223,7 @@ public class Alert {
         }
 
         public static StateEnum fromValue(String text) {
-            for (StateEnum b : StateEnum.values()) {
-                if (String.valueOf(b.value).equals(text)) {
-                    return b;
-                }
-            }
-            return null;
+            return Arrays.stream(StateEnum.values()).filter(b -> b.value.equals(text)).findFirst().orElse(null);
         }
 
         public String getValue() {
@@ -232,7 +232,7 @@ public class Alert {
 
         @Override
         public String toString() {
-            return String.valueOf(value);
+            return value;
         }
 
         public static class Adapter extends TypeAdapter<StateEnum> {
@@ -244,7 +244,7 @@ public class Alert {
             @Override
             public StateEnum read(final JsonReader jsonReader) throws IOException {
                 String value = jsonReader.nextString();
-                return StateEnum.fromValue(String.valueOf(value));
+                return StateEnum.fromValue(value);
             }
         }
     }

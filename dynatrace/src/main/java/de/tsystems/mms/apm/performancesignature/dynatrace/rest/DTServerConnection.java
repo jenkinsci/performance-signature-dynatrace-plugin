@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 T-Systems Multimedia Solutions GmbH
+ * Copyright (c) 2014-2018 T-Systems Multimedia Solutions GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,89 +17,88 @@
 package de.tsystems.mms.apm.performancesignature.dynatrace.rest;
 
 import de.tsystems.mms.apm.performancesignature.dynatrace.configuration.CredProfilePair;
-import de.tsystems.mms.apm.performancesignature.dynatrace.configuration.CustomProxy;
 import de.tsystems.mms.apm.performancesignature.dynatrace.configuration.DynatraceServerConfiguration;
 import de.tsystems.mms.apm.performancesignature.dynatrace.configuration.DynatraceServerConfiguration.DescriptorImpl;
-import de.tsystems.mms.apm.performancesignature.dynatrace.model.*;
+import de.tsystems.mms.apm.performancesignature.dynatrace.model.Alert;
+import de.tsystems.mms.apm.performancesignature.dynatrace.model.DashboardReport;
+import de.tsystems.mms.apm.performancesignature.dynatrace.model.Measure;
+import de.tsystems.mms.apm.performancesignature.dynatrace.model.TestRun;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.ApiClient;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.ApiException;
+import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.ApiResponse;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.api.*;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model.*;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.CommandExecutionException;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.ContentRetrievalException;
-import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.model.Agent;
-import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.model.Dashboard;
-import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.model.DashboardList;
-import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.model.Result;
+import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.model.*;
+import de.tsystems.mms.apm.performancesignature.dynatrace.util.PerfSigUtils;
 import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
 import hudson.FilePath;
 import hudson.ProxyConfiguration;
 import jenkins.model.Jenkins;
-import org.apache.commons.lang.StringUtils;
+import okhttp3.ResponseBody;
 import org.apache.commons.lang.exception.ExceptionUtils;
+import retrofit2.Response;
 
-import java.io.File;
 import java.net.Authenticator;
-import java.net.InetSocketAddress;
 import java.net.PasswordAuthentication;
 import java.net.Proxy;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public class DTServerConnection {
-    private static final Logger LOGGER = Logger.getLogger(DTServerConnection.class.getName());
+    public static final String BUILD_URL_ENV_PROPERTY = "BUILD_URL";
+    public static final String BUILD_VAR_KEY_VERSION_MAJOR = "dtVersionMajor";
+    public static final String BUILD_VAR_KEY_VERSION_MINOR = "dtVersionMinor";
+    public static final String BUILD_VAR_KEY_VERSION_REVISION = "dtVersionRevision";
+    public static final String BUILD_VAR_KEY_VERSION_MILESTONE = "dtVersionMilestone";
+    public static final String BUILD_VAR_KEY_CATEGORY = "dtCategory";
+    public static final String BUILD_VAR_KEY_MARKER = "dtMarker";
+    public static final String BUILD_VAR_KEY_PLATFORM = "dtPlatform";
+    private static final String SESSION_PREFIX = "stored:";
+
     private final String systemProfile;
     private final ApiClient apiClient;
     private final CredProfilePair credProfilePair;
     private DynatraceServerConfiguration configuration;
 
     public DTServerConnection(final DynatraceServerConfiguration config, final CredProfilePair pair) {
-        this(config.getServerUrl(), pair, config.isVerifyCertificate(), config.getReadTimeout(), config.getCustomProxy());
+        this(config.getServerUrl(), pair, config.isVerifyCertificate(), config.getReadTimeout(), config.isUseProxy());
         this.configuration = config;
     }
 
-    public DTServerConnection(final String serverUrl, final CredProfilePair pair, final boolean verifyCertificate, final int readTimeout, final CustomProxy customProxy) {
+    public DTServerConnection(final String serverUrl, final CredProfilePair pair, final boolean verifyCertificate,
+                              final int readTimeout, final boolean useProxy) {
         this.systemProfile = pair.getProfile();
         this.credProfilePair = pair;
 
-        this.apiClient = new ApiClient();
-        apiClient.setVerifyingSsl(verifyCertificate);
-        apiClient.setBasePath(serverUrl);
-        apiClient.setUsername(pair.getCredentials().getUsername());
-        apiClient.setPassword(pair.getCredentials().getPassword().getPlainText());
-        //apiClient.setDebugging(true);
-        apiClient.getHttpClient().setReadTimeout(readTimeout == 0 ? DescriptorImpl.defaultReadTimeout : readTimeout, TimeUnit.SECONDS);
+        this.apiClient = new ApiClient()
+                .setVerifyingSsl(verifyCertificate)
+                .setBasePath(serverUrl)
+                .setCredentials(pair.getCredentials())
+                //.setDebugging(true)
+                .setReadTimeout(readTimeout == 0 ? DescriptorImpl.defaultReadTimeout : readTimeout);
 
         Proxy proxy = Proxy.NO_PROXY;
-        if (customProxy != null) {
-            Jenkins jenkins = Jenkins.getActiveInstance();
-            ProxyConfiguration proxyConfiguration = jenkins.proxy;
-            if (customProxy.isUseJenkinsProxy() && proxyConfiguration != null) {
-                proxy = proxyConfiguration.createProxy(PerfSigUIUtils.getHostFromUrl(serverUrl));
-            } else {
-                proxy = createProxy(customProxy.getProxyServer(), customProxy.getProxyPort(), customProxy.getProxyUser(), customProxy.getProxyPassword());
-            }
-        }
-        apiClient.getHttpClient().setProxy(proxy);
-    }
-
-    private Proxy createProxy(String host, int port, final String proxyUser, final String proxyPassword) {
-        Proxy proxy = Proxy.NO_PROXY;
-        if (StringUtils.isNotBlank(host) && port > 0) {
-            proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(host, port));
-            if (StringUtils.isNotBlank(proxyUser)) {
-                Authenticator authenticator = new Authenticator() {
+        ProxyConfiguration proxyConfig = Jenkins.getInstance().proxy;
+        if (proxyConfig != null && useProxy) {
+            proxy = proxyConfig.createProxy(PerfSigUIUtils.getHostFromUrl(serverUrl));
+            if (proxyConfig.getUserName() != null) {
+                // Add an authenticator which provides the credentials for proxy authentication
+                Authenticator.setDefault(new Authenticator() {
+                    @Override
                     public PasswordAuthentication getPasswordAuthentication() {
-                        return new PasswordAuthentication(proxyUser, proxyPassword.toCharArray());
+                        if (getRequestorType() != RequestorType.PROXY) return null;
+                        return new PasswordAuthentication(proxyConfig.getUserName(),
+                                proxyConfig.getPassword().toCharArray());
                     }
-                };
-                Authenticator.setDefault(authenticator);
+                });
             }
         }
-        return proxy;
+        apiClient.setProxy(proxy);
     }
 
     public DynatraceServerConfiguration getConfiguration() {
@@ -115,28 +114,27 @@ public class DTServerConnection {
     }
 
     public DashboardReport getDashboardReportFromXML(final String dashBoardName, final String sessionId, final String testCaseName) {
-        CustomXMLApi api = new CustomXMLApi(apiClient);
+        CustomXMLApi api = apiClient.createService(CustomXMLApi.class);
         try {
-            DashboardReport dashboardReport = api.getXMLDashboard(dashBoardName, sessionId);
+            ApiResponse<DashboardReport> response = apiClient.execute(api.getXMLDashboard(dashBoardName, SESSION_PREFIX + sessionId));
+            DashboardReport dashboardReport = response.getData();
             dashboardReport.setName(testCaseName);
 
             //handle dynamic measures in the dashboard xml probably
-            for (ChartDashlet chartDashlet : dashboardReport.getChartDashlets()) {
+            dashboardReport.getChartDashlets().forEach(chartDashlet -> {
                 List<Measure> dynamicMeasures = new ArrayList<>();
                 List<Measure> oldMeasures = new ArrayList<>();
-                for (Measure measure : chartDashlet.getMeasures()) {
-                    if (!measure.getMeasures().isEmpty()) {
-                        oldMeasures.add(measure);
-                        List<Measure> copy = new ArrayList<>(measure.getMeasures());
-                        measure.getMeasures().clear();
-                        dynamicMeasures.addAll(copy);
-                    }
-                }
+                chartDashlet.getMeasures().stream().filter(measure -> !measure.getMeasures().isEmpty()).forEach(measure -> {
+                    oldMeasures.add(measure);
+                    List<Measure> copy = new ArrayList<>(measure.getMeasures());
+                    measure.getMeasures().clear();
+                    dynamicMeasures.addAll(copy);
+                });
                 if (!dynamicMeasures.isEmpty()) {
                     chartDashlet.getMeasures().removeAll(oldMeasures);
                     chartDashlet.getMeasures().addAll(dynamicMeasures);
                 }
-            }
+            });
 
             return dashboardReport;
         } catch (Exception ex) {
@@ -144,33 +142,24 @@ public class DTServerConnection {
         }
     }
 
-    public boolean validateConnection() {
-        try {
-            getServerVersion();
-            return true;
-        } catch (CommandExecutionException e) {
-            LOGGER.severe(ExceptionUtils.getFullStackTrace(e));
-            return false;
-        }
-    }
-
     public String getServerVersion() {
-        ServerManagementApi api = new ServerManagementApi(apiClient);
+        ServerManagementApi api = apiClient.createService(ServerManagementApi.class);
         try {
-            return api.getVersion().getResult();
+            ApiResponse<Result> version = apiClient.execute(api.getVersion());
+            return version.getData().getResult();
         } catch (ApiException ex) {
-            throw new CommandExecutionException("error getting version of server: " + ex.getResponseBody(), ex);
+            throw new CommandExecutionException("error getting version of server", ex);
         }
     }
 
     public String storeSession(final String sessionName, final Date timeframeStart, final Date timeframeEnd, final String recordingOption,
                                final boolean sessionLocked, final boolean appendTimestamp) {
-        LiveSessionsApi api = new LiveSessionsApi(apiClient);
+        LiveSessionsApi api = apiClient.createService(LiveSessionsApi.class);
+        SessionStoringOptions options = new SessionStoringOptions(sessionName, "Session recorded by Jenkins", appendTimestamp,
+                recordingOption, sessionLocked, timeframeStart, timeframeEnd);
         try {
-            SessionStoringOptions options = new SessionStoringOptions(sessionName, "Session recorded by Jenkins", appendTimestamp,
-                    recordingOption, sessionLocked, timeframeStart, timeframeEnd);
-
-            return api.storeSession(systemProfile, options);
+            ApiResponse<Void> response = apiClient.execute(api.storeSession(systemProfile, options));
+            return PerfSigUtils.getIdFromLocationHeader(response);
         } catch (ApiException ex) {
             throw new CommandExecutionException("error while storing purepaths: " + ex.getResponseBody(), ex);
         }
@@ -178,134 +167,146 @@ public class DTServerConnection {
 
     public String startRecording(final String sessionName, final String description, final String recordingOption,
                                  final boolean sessionLocked, final boolean appendTimestamp) {
-        LiveSessionsApi api = new LiveSessionsApi(apiClient);
+        LiveSessionsApi api = apiClient.createService(LiveSessionsApi.class);
+        SessionRecordingOptions options = new SessionRecordingOptions(sessionName, description, appendTimestamp, recordingOption, sessionLocked);
         try {
-            SessionRecordingOptions options = new SessionRecordingOptions(sessionName, description, appendTimestamp, recordingOption, sessionLocked);
-            return api.postRecording(systemProfile, options);
+            ApiResponse<Void> response = apiClient.execute(api.postRecording(systemProfile, options));
+            return PerfSigUtils.getIdFromLocationHeader(response);
         } catch (ApiException ex) {
             throw new CommandExecutionException("error while starting session recording: " + ex.getResponseBody(), ex);
         }
     }
 
     public String stopRecording() {
-        LiveSessionsApi api = new LiveSessionsApi(apiClient);
+        LiveSessionsApi api = apiClient.createService(LiveSessionsApi.class);
         try {
-            return api.stopRecording(systemProfile, new RecordingStatus(false));
+            ApiResponse<Void> response = apiClient.execute(api.stopRecording(systemProfile, new RecordingStatus(false)));
+            return PerfSigUtils.getIdFromLocationHeader(response);
         } catch (ApiException ex) {
             throw new CommandExecutionException("error while stopping session recording: " + ex.getResponseBody(), ex);
         }
     }
 
     public boolean getRecordingStatus() {
-        LiveSessionsApi api = new LiveSessionsApi(apiClient);
+        LiveSessionsApi api = apiClient.createService(LiveSessionsApi.class);
         try {
-            return api.getRecording(systemProfile).getRecording();
+            ApiResponse<RecordingStatus> response = apiClient.execute(api.getRecording(systemProfile));
+            return response.getData().getRecording();
         } catch (ApiException ex) {
             throw new CommandExecutionException("error querying session recording status: " + ex.getResponseBody(), ex);
         }
     }
 
     public Sessions getSessions() {
-        StoredSessionsApi api = new StoredSessionsApi(apiClient);
+        StoredSessionsApi api = apiClient.createService(StoredSessionsApi.class);
         try {
-            return api.listStoredSessions();
+            ApiResponse<Sessions> response = apiClient.execute(api.listStoredSessions());
+            return response.getData();
         } catch (ApiException ex) {
             throw new CommandExecutionException("error while querying sessions: " + ex.getResponseBody(), ex);
         }
     }
 
     public List<Dashboard> getDashboards() {
-        CustomXMLApi api = new CustomXMLApi(apiClient);
+        CustomXMLApi api = apiClient.createService(CustomXMLApi.class);
         try {
-            DashboardList dashboardList = api.listDashboards();
-            return dashboardList.getDashboards();
+            ApiResponse<DashboardList> response = apiClient.execute(api.listDashboards());
+            return response.getData().getDashboards();
         } catch (Exception ex) {
             throw new CommandExecutionException("error while querying dashboards: " + ex.getMessage(), ex);
         }
     }
 
     public SystemProfiles getSystemProfiles() {
-        SystemProfilesApi api = new SystemProfilesApi(apiClient);
+        SystemProfilesApi api = apiClient.createService(SystemProfilesApi.class);
         try {
-            return api.getProfiles();
+            ApiResponse<SystemProfiles> response = apiClient.execute(api.getProfiles());
+            return response.getData();
         } catch (ApiException ex) {
             throw new CommandExecutionException("error while querying profiles: " + ex.getResponseBody(), ex);
         }
     }
 
     public List<SystemProfileConfiguration> getProfileConfigurations() {
-        SystemProfilesApi api = new SystemProfilesApi(apiClient);
+        SystemProfilesApi api = apiClient.createService(SystemProfilesApi.class);
         try {
-            return api.getSystemProfileConfigurations(systemProfile).getConfigurations();
+            ApiResponse<SystemProfileConfigurations> response = apiClient.execute(api.getSystemProfileConfigurations(systemProfile));
+            return response.getData().getConfigurations();
         } catch (ApiException ex) {
             throw new CommandExecutionException("error while querying configurations of profile " + systemProfile + ": " + ex.getResponseBody(), ex);
         }
     }
 
-    public void activateConfiguration(final String configuration) {
-        SystemProfilesApi api = new SystemProfilesApi(apiClient);
+    public boolean activateConfiguration(final String configuration) {
+        SystemProfilesApi api = apiClient.createService(SystemProfilesApi.class);
         try {
-            api.putSystemProfileConfigurationStatus(systemProfile, configuration, new ActivationStatus("ENABLED"));
+            apiClient.execute(api.putSystemProfileConfigurationStatus(systemProfile, configuration, new ActivationStatus("ENABLED")));
+            return true;
         } catch (ApiException ex) {
             throw new CommandExecutionException("error while activating configuration: " + ex.getResponseBody());
         }
     }
 
     public List<Agent> getAllAgents() {
-        CustomXMLApi api = new CustomXMLApi(apiClient);
+        CustomXMLApi api = apiClient.createService(CustomXMLApi.class);
         try {
-            return api.getAgents();
+            ApiResponse<AgentList> response = apiClient.execute(api.getAllAgents());
+            return response.getData().getAgents();
         } catch (Exception ex) {
             throw new CommandExecutionException("error while querying agents: " + ex.getMessage(), ex);
         }
     }
 
     public List<Agent> getAgents() {
-        List<Agent> agents = getAllAgents();
-        List<Agent> filteredAgents = new ArrayList<>();
-        for (Agent agent : agents) {
-            if (systemProfile.equals(agent.getSystemProfile()))
-                filteredAgents.add(agent);
-        }
-        return filteredAgents;
+        return getAllAgents().stream()
+                .filter(agent -> systemProfile.equals(agent.getSystemProfile()))
+                .collect(Collectors.toList());
     }
 
     public boolean hotSensorPlacement(final int agentId) {
-        CustomXMLApi api = new CustomXMLApi(apiClient);
+        CustomXMLApi api = apiClient.createService(CustomXMLApi.class);
         try {
-            Result result = api.hotSensorPlacement(agentId);
-            return result.isResultTrue();
+            ApiResponse<XmlResult> response = apiClient.execute(api.hotSensorPlacement(agentId));
+            return response.getData().isResultTrue();
         } catch (Exception ex) {
             throw new CommandExecutionException("error while doing hot sensor placement: " + ex.getMessage(), ex);
         }
     }
 
-    public boolean getPDFReport(final String sessionName, final String comparedSessionName, final String dashboard, final FilePath file) {
-        CustomXMLApi api = new CustomXMLApi(apiClient);
+    public boolean getPDFReport(final String sessionName, final String comparedSessionName, final String dashboard, final FilePath outputFile) {
+        CustomXMLApi api = apiClient.createService(CustomXMLApi.class);
         try {
-            File tmpFile = api.getPDFReport(dashboard, sessionName, comparedSessionName, "PDF");
-            file.copyFrom(new FilePath(tmpFile));
-            return true;
+            Response<ResponseBody> response = api.getPDFReport(dashboard, SESSION_PREFIX + sessionName,
+                    SESSION_PREFIX + comparedSessionName, "PDF").execute();
+            if (response.body() != null) {
+                outputFile.copyFrom(response.body().byteStream());
+                return true;
+            }
+            return false;
         } catch (Exception ex) {
             throw new CommandExecutionException("error while downloading PDF Report: " + ex.getMessage(), ex);
         }
     }
 
     public boolean downloadSession(final String sessionId, final FilePath outputFile, boolean removeConfidentialStrings) {
-        StoredSessionsApi api = new StoredSessionsApi(apiClient);
+        StoredSessionsApi api = apiClient.createService(StoredSessionsApi.class);
         try {
-            File tmpFile = api.getStoredSession(sessionId, removeConfidentialStrings, null, null);
-            outputFile.copyFrom(new FilePath(tmpFile));
-            return true;
+            Response<ResponseBody> response = api.getStoredSession(sessionId, removeConfidentialStrings, null, null).execute();
+            if (response.body() != null) {
+                outputFile.copyFrom(response.body().byteStream());
+                return true;
+            }
+            return false;
+
         } catch (Exception ex) {
             throw new CommandExecutionException("error while downloading session: " + ex.getMessage(), ex);
         }
     }
 
     public boolean deleteSession(final String sessionId) {
-        StoredSessionsApi api = new StoredSessionsApi(apiClient);
+        StoredSessionsApi api = apiClient.createService(StoredSessionsApi.class);
         try {
-            api.deleteStoredSession(sessionId);
+            apiClient.execute(api.deleteStoredSession(sessionId));
             return true;
         } catch (Exception ex) {
             throw new CommandExecutionException("error while deleting session: " + ex.getMessage(), ex);
@@ -313,20 +314,20 @@ public class DTServerConnection {
     }
 
     public String threadDump(final String agentName, final String hostName, final int processId, final boolean sessionLocked) {
-        CustomXMLApi api = new CustomXMLApi(apiClient);
+        CustomXMLApi api = apiClient.createService(CustomXMLApi.class);
         try {
-            Result result = api.createThreadDump(systemProfile, agentName, hostName, processId, sessionLocked);
-            return result.getValue();
+            ApiResponse<XmlResult> response = apiClient.execute(api.createThreadDump(systemProfile, agentName, hostName, processId, sessionLocked));
+            return response.getData().getValue();
         } catch (Exception ex) {
             throw new CommandExecutionException("error while creating thread dump: " + ex.getMessage(), ex);
         }
     }
 
     public boolean threadDumpStatus(final String threadDump) {
-        CustomXMLApi api = new CustomXMLApi(apiClient);
+        CustomXMLApi api = apiClient.createService(CustomXMLApi.class);
         try {
-            Result result = api.getThreadDumpStatus(systemProfile, threadDump);
-            return result.isSuccessTrue();
+            ApiResponse<XmlResult> response = apiClient.execute(api.getThreadDumpStatus(systemProfile, threadDump));
+            return response.getData().isSuccessTrue();
         } catch (Exception ex) {
             throw new CommandExecutionException("error while querying thread dump status: " + ex.getMessage(), ex);
         }
@@ -335,66 +336,94 @@ public class DTServerConnection {
     public String memoryDump(final String agentName, final String hostName, final int processId, final String dumpType,
                              final boolean sessionLocked, final boolean captureStrings, final boolean capturePrimitives, final boolean autoPostProcess,
                              final boolean doGC) {
-        CustomXMLApi api = new CustomXMLApi(apiClient);
+        CustomXMLApi api = apiClient.createService(CustomXMLApi.class);
         try {
-            Result result = api.createMemoryDump(systemProfile, agentName, hostName, processId, dumpType, sessionLocked, captureStrings, capturePrimitives,
-                    autoPostProcess, doGC);
-            return result.getValue();
+            ApiResponse<XmlResult> response = apiClient.execute(api.createMemoryDump(systemProfile, agentName, hostName, processId, dumpType, sessionLocked,
+                    captureStrings, capturePrimitives, autoPostProcess, doGC));
+            return response.getData().getValue();
         } catch (Exception ex) {
             throw new CommandExecutionException("error while creating memory dump: " + ex.getMessage(), ex);
         }
     }
 
     public boolean memoryDumpStatus(final String memoryDump) {
-        CustomXMLApi api = new CustomXMLApi(apiClient);
+        CustomXMLApi api = apiClient.createService(CustomXMLApi.class);
         try {
-            Result result = api.getMemoryDumpStatus(systemProfile, memoryDump);
-            return result.isSuccessTrue();
+            ApiResponse<XmlResult> response = apiClient.execute(api.getMemoryDumpStatus(systemProfile, memoryDump));
+            return response.getData().isSuccessTrue();
         } catch (Exception ex) {
             throw new CommandExecutionException("error while querying memory dump status: " + ex.getMessage(), ex);
         }
     }
 
-    public String registerTestRun(final int versionBuild) {
-        TestAutomationApi api = new TestAutomationApi(apiClient);
+    public String registerTestRun(final TestRunDefinition body) {
+        TestAutomationApi api = apiClient.createService(TestAutomationApi.class);
         try {
-            TestRunDefinition body = new TestRunDefinition(versionBuild, "performance");
-            TestRun testRun = api.postTestRun(systemProfile, body);
-            return testRun.getId();
+            ApiResponse<TestRun> response = apiClient.execute(api.postTestRun(systemProfile, body));
+            return response.getData().getId();
         } catch (ApiException ex) {
             throw new CommandExecutionException("error registering test run: " + ex.getResponseBody(), ex);
         }
     }
 
     public TestRun finishTestRun(String testRunID) {
-        TestAutomationApi api = new TestAutomationApi(apiClient);
+        TestAutomationApi api = apiClient.createService(TestAutomationApi.class);
         try {
-            return api.finishTestRun(systemProfile, testRunID);
+            ApiResponse<TestRun> response = apiClient.execute(api.finishTestRun(systemProfile, testRunID));
+            return response.getData();
         } catch (ApiException ex) {
             throw new CommandExecutionException("error finishing test run: " + ex.getResponseBody(), ex);
         }
     }
 
     public TestRun getTestRun(String testRunId) {
-        TestAutomationApi api = new TestAutomationApi(apiClient);
+        TestAutomationApi api = apiClient.createService(TestAutomationApi.class);
         try {
-            return api.getTestrunById(systemProfile, testRunId);
+            ApiResponse<TestRun> response = apiClient.execute(api.getTestrunById(systemProfile, testRunId));
+            return response.getData();
         } catch (ApiException ex) {
             throw new CommandExecutionException("error while getting test run details: " + ex.getResponseBody(), ex);
         }
     }
 
     public List<Alert> getIncidents(Date from, Date to) {
-        AlertsIncidentsAndEventsApi api = new AlertsIncidentsAndEventsApi(apiClient);
+        SimpleDateFormat df = new SimpleDateFormat(ApiClient.REST_DF);
+        AlertsIncidentsAndEventsApi api = apiClient.createService(AlertsIncidentsAndEventsApi.class);
         try {
-            List<Alert> incidents = new ArrayList<>();
-            Alerts alerts = api.getIncidents(systemProfile, null, Alert.StateEnum.CREATED.getValue(), from, to);
-            for (AlertReference alertReference : alerts.getAlerts()) {
-                incidents.add(api.getIncident(alertReference.getId()));
-            }
-            return incidents;
+            ApiResponse<Alerts> response = apiClient.execute(api.getIncidents(systemProfile, null, Alert.StateEnum.CREATED.getValue(),
+                    df.format(from), df.format(to)));
+            return response.getData().getAlerts().parallelStream().map(alertReference -> getIncident(alertReference.getId(), api)).collect(Collectors.toList());
+        } catch (ApiException ex) {
+            throw new CommandExecutionException("error while getting incidents: " + ex.getResponseBody(), ex);
+        }
+    }
+
+    private Alert getIncident(String id, AlertsIncidentsAndEventsApi api) {
+        try {
+            ApiResponse<Alert> response = apiClient.execute(api.getIncident(id));
+            return response.getData();
         } catch (ApiException ex) {
             throw new CommandExecutionException("error while getting incident details: " + ex.getResponseBody(), ex);
+        }
+    }
+
+    public boolean updateDeploymentEvent(String eventId, EventUpdate body) {
+        AlertsIncidentsAndEventsApi api = apiClient.createService(AlertsIncidentsAndEventsApi.class);
+        try {
+            apiClient.execute(api.updateDeploymentEvent(eventId, body));
+            return true;
+        } catch (ApiException ex) {
+            throw new CommandExecutionException("error while updating deployment event: " + ex.getResponseBody(), ex);
+        }
+    }
+
+    public String createDeploymentEvent(DeploymentEvent event) {
+        AlertsIncidentsAndEventsApi api = apiClient.createService(AlertsIncidentsAndEventsApi.class);
+        try {
+            ApiResponse<Void> response = apiClient.execute(api.createDeploymentEvent(event));
+            return PerfSigUtils.getIdFromLocationHeader(response);
+        } catch (ApiException ex) {
+            throw new CommandExecutionException("error while creating deployment event: " + ex.getResponseBody(), ex);
         }
     }
 }

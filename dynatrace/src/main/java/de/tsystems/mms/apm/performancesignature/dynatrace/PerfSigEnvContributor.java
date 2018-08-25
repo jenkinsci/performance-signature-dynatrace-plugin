@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 T-Systems Multimedia Solutions GmbH
+ * Copyright (c) 2014-2018 T-Systems Multimedia Solutions GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,26 +24,15 @@ import hudson.model.TaskListener;
 import org.apache.commons.lang.StringUtils;
 
 import javax.annotation.Nonnull;
-import java.io.IOException;
-import java.util.List;
 
 @Extension
 public class PerfSigEnvContributor extends EnvironmentContributor {
     static final String TESTRUN_ID_KEY = "DYNATRACE_TESTRUN_ID";
 
     @Override
-    public void buildEnvironmentFor(@Nonnull final Run r, @Nonnull final EnvVars envs, @Nonnull final TaskListener listener)
-            throws IOException, InterruptedException {
-
-        List<PerfSigEnvInvisAction> envActions = r.getActions(PerfSigEnvInvisAction.class);
-        if (envActions.isEmpty()) {
-            return;
-        }
-
-        for (PerfSigEnvInvisAction action : envActions) {
-            if (StringUtils.isNotBlank(action.getTestRunId())) {
-                envs.put(TESTRUN_ID_KEY, action.getTestRunId());
-            }
-        }
+    public void buildEnvironmentFor(@Nonnull final Run run, @Nonnull final EnvVars envVars, @Nonnull final TaskListener listener) {
+        run.getActions(PerfSigEnvInvisAction.class).stream()
+                .filter(action -> StringUtils.isNotBlank(action.getTestRunId()))
+                .forEach(action -> envVars.put(TESTRUN_ID_KEY, action.getTestRunId()));
     }
 }

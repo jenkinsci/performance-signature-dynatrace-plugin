@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 T-Systems Multimedia Solutions GmbH
+ * Copyright (c) 2014-2018 T-Systems Multimedia Solutions GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,7 +45,7 @@ public class StopRecordingTest {
     public static final JenkinsRule j = new JenkinsRule();
     private static ListBoxModel dynatraceConfigurations;
     @Rule
-    public ExpectedException exception = ExpectedException.none();
+    public final ExpectedException exception = ExpectedException.none();
     private final static String testCase = "unittest";
     private DTServerConnection connection;
 
@@ -125,12 +125,7 @@ public class StopRecordingTest {
     }
 
     private boolean containsSession(List<SessionData> sessions, String sessionId) {
-        for (SessionData sessionData : sessions) {
-            if (sessionData.getId().equalsIgnoreCase(sessionId)) {
-                return true;
-            }
-        }
-        return false;
+        return sessions.stream().anyMatch(sessionData -> sessionData.getId().equalsIgnoreCase(sessionId));
     }
 
 }

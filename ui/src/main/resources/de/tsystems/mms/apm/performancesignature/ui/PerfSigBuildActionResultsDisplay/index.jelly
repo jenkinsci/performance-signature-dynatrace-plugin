@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright (c) 2014 T-Systems Multimedia Solutions GmbH
+  ~ Copyright (c) 2014-2018 T-Systems Multimedia Solutions GmbH
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@
             </style>
         </l:header>
         <st:include it="${it.build}" page="sidepanel.jelly"/>
+        <j:new var="h" className="hudson.Functions"/>
         <j:set var="utils" value="${it.PerfSigUIUtils}"/>
         <l:main-panel>
             <div class="tw-bs">
@@ -33,7 +34,8 @@
                         <ul class="nav nav-tabs" role="tablist" id="tabList">
                             <j:forEach var="dashboardReport" items="${it.currentDashboardReports}">
                                 <li role="presentation">
-                                    <a href="#${dashboardReport.name}" aria-controls="${dashboardReport.name}" role="tab" data-toggle="tab">
+                                    <a href="#${dashboardReport.name}" aria-controls="${dashboardReport.name}"
+                                       role="tab" data-toggle="tab">
                                         <h3>${dashboardReport.name}</h3>
                                     </a>
                                 </li>
@@ -56,7 +58,7 @@
                                                     title="Dynatrace client must be started on local machine"
                                                     class="btn btn-success" id="editbutton">
                                                 <span class="glyphicon glyphicon-eye-open" aria-hidden="true"/>
-                                                open in Dynatrace client
+                                                open in Dynatrace
                                             </button>
                                         </a>
                                     </div>
@@ -68,50 +70,52 @@
                                 </div>
                                 <br/>
                                 <br/>
-                                <div class="row">
-                                    <div class="col-md-9">
-                                        <div class="panel panel-danger">
-                                            <div class="panel-heading">
-                                                <h4 class="panel-title">${%Singlereports}</h4>
-                                            </div>
-                                            <div class="panel-body">
-                                                <j:set var="pdfFiles"
-                                                       value="${utils.getDownloadFiles('Single.*' + dashboardReport.name + '.*pdf',it.build)}"/>
-                                                <j:forEach var="pdfFile" items="${pdfFiles}">
-                                                    <a href="./getSingleReport?testCase=${dashboardReport.name}&amp;number=${pdfFiles.indexOf(pdfFile)}"
-                                                       target="_blank">
-                                                        <img src="${resURL}/plugin/performance-signature-ui/images/pdficon_small.png"/>
-                                                        ${utils.removeExtension(pdfFile.name)}
-                                                    </a>
-                                                    <br/>
-                                                </j:forEach>
-                                                <j:if test="${pdfFiles.isEmpty()}">
-                                                    ${%no Single report available!}
-                                                </j:if>
+                                <j:set var="pdfFiles" value="${utils.getDownloadFiles('Single.*' + dashboardReport.name + '.*pdf',it.build)}"/>
+                                <j:set var="sessionFiles" value="${utils.getDownloadFiles('.*' + dashboardReport.name + '.dts',it.build)}"/>
+                                <j:if test="${!(pdfFiles.isEmpty() and sessionFiles.isEmpty())}">
+                                    <div class="row">
+                                        <div class="col-md-9">
+                                            <div class="panel panel-danger">
+                                                <div class="panel-heading">
+                                                    <h4 class="panel-title">${%Singlereports}</h4>
+                                                </div>
+                                                <div class="panel-body">
+                                                    <j:forEach var="pdfFile" items="${pdfFiles}">
+                                                        <a href="./getSingleReport?testCase=${dashboardReport.name}&amp;number=${pdfFiles.indexOf(pdfFile)}"
+                                                           target="_blank">
+                                                            <img src="${resURL}/plugin/performance-signature-ui/images/pdficon_small.png"/>
+                                                            ${utils.removeExtension(pdfFile.name)}
+                                                        </a>
+                                                        <br/>
+                                                    </j:forEach>
+                                                    <j:if test="${pdfFiles.isEmpty()}">
+                                                        ${%no Single report available!}
+                                                    </j:if>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
 
-                                    <j:set var="sessionFiles" value="${utils.getDownloadFiles('.*' + dashboardReport.name + '.dts',it.build)}"/>
-                                    <div class="col-md-9">
-                                        <div class="panel panel-success">
-                                            <div class="panel-heading">
-                                                <h4 class="panel-title">${%Dynatrace sessions}</h4>
-                                            </div>
-                                            <div class="panel-body">
-                                                <j:if test="${!sessionFiles.isEmpty()}">
-                                                    <a href="./getSession?testCase=${dashboardReport.name}" target="_blank">
-                                                        <img src="${resURL}/plugin/performance-signature-ui/images/dtsession.png"/>
-                                                        ${utils.removeExtension(sessionFiles.get(0).name)}
-                                                    </a>
-                                                </j:if>
-                                                <j:if test="${sessionFiles.isEmpty()}">
-                                                    ${%no Dynatrace sessions available!}
-                                                </j:if>
+                                        <div class="col-md-9">
+                                            <div class="panel panel-success">
+                                                <div class="panel-heading">
+                                                    <h4 class="panel-title">${%Dynatrace sessions}</h4>
+                                                </div>
+                                                <div class="panel-body">
+                                                    <j:if test="${!sessionFiles.isEmpty()}">
+                                                        <a href="./getSession?testCase=${dashboardReport.name}"
+                                                           target="_blank">
+                                                            <img src="${resURL}/plugin/performance-signature-ui/images/dtsession.png"/>
+                                                            ${utils.removeExtension(sessionFiles.get(0).name)}
+                                                        </a>
+                                                    </j:if>
+                                                    <j:if test="${sessionFiles.isEmpty()}">
+                                                        ${%no Dynatrace sessions available!}
+                                                    </j:if>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                </j:if>
 
                                 <j:if test="${dashboardReport.isUnitTest()}">
                                     <div class="row">
@@ -122,7 +126,8 @@
                                                 </div>
                                                 <div class="panel-body">
                                                     <a href="${rootURL}/job/${it.build.project.name}/${it.build.number}/testReport">
-                                                        <img width="16" height="16" src="${resURL}/images/24x24/clipboard.png"/>
+                                                        <img width="16" height="16"
+                                                             src="${resURL}/images/24x24/clipboard.png"/>
                                                         ${%UnitTestReport with performance data}
                                                     </a>
                                                 </div>
@@ -133,42 +138,37 @@
 
                                 <j:if test="${!dashboardReport.incidents.isEmpty()}">
                                     <h3>${%Incidents}</h3>
-                                    <div class="panel-group" id="incidents-${dashboardReport.name}" role="tablist" aria-multiselectable="true">
-                                        <j:forEach var="incident" items="${dashboardReport.incidents}">
-                                            <j:set var="position" value="${dashboardReport.incidents.indexOf(incident)}"/>
-                                            <div class="panel panel-default ${incident.panelColor}">
-                                                <div class="panel-heading" role="tab" id="${dashboardReport.name}-heading${position}">
+
+                                    <j:forEach var="incidentSeverityEntry" items="${dashboardReport.incidentMap.entrySet()}">
+                                        <div class="panel-group" id="incidents-${dashboardReport.name}">
+                                            <j:forEach var="incidentEntry" items="${incidentSeverityEntry.value.entrySet()}">
+                                                <j:set var="rootId" value="${h.generateId()}"/>
+                                                <div class="panel panel-default ${incidentSeverityEntry.key.panelColor}">
+                                                    <div class="panel-heading">
                                                     <h4 class="panel-title">
-                                                        <a role="button" data-toggle="collapse" data-parent="#incidents-${dashboardReport.name}"
-                                                           href="#${dashboardReport.name}-collapse${position}" aria-expanded="true"
-                                                           aria-controls="${dashboardReport.name}-collapse${position}">
-                                                            ${incident.severity} ${%Incident:} ${incident.message}
+                                                        <a data-toggle="collapse" href="#collapse-${dashboardReport.name}-${rootId}">
+                                                            ${incidentEntry.key}
                                                         </a>
                                                     </h4>
                                                 </div>
-                                                <div id="${dashboardReport.name}-collapse${position}" class="panel-collapse collapse" role="tabpanel"
-                                                     aria-labelledby="${dashboardReport.name}-heading${position}">
+                                                    <div id="collapse-${dashboardReport.name}-${rootId}" class="panel-collapse collapse">
                                                     <div class="panel-body">
-                                                        <b>${%rule:}</b>
-                                                        ${incident.rule}
-                                                        <br/>
-                                                        <b>${%description:}</b>
-                                                        ${incident.description}
-                                                        <br/>
-                                                        <b>${%start:}</b>
-                                                        ${incident.start}
-                                                        <br/>
-                                                        <b>${%end:}</b>
-                                                        <j:if test="${incident.end==null}">not set</j:if>
-                                                        ${incident.end}
+                                                        <div class="panel-group" id="incidents${rootId}-${dashboardReport.name}">
+                                                            <j:forEach var="incident" items="${incidentEntry.value}">
+                                                                <jm:incidentPanel position="${incidentEntry.value.indexOf(incident)}"
+                                                                                  incident="${incident}"/>
+                                                            </j:forEach>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </j:forEach>
                                     </div>
+                                    </j:forEach>
                                 </j:if>
                                 <j:forEach var="chartDashlet" items="${dashboardReport.chartDashlets}">
-                                    <jm:chartDashletTable it="${chartDashlet}" build="${it.build}" dashboardReport="${dashboardReport}"
+                                    <jm:chartDashletTable it="${chartDashlet}" build="${it.build}"
+                                                          dashboardReport="${dashboardReport}"
                                                           previousDashboardReport="${previousTestCase}"/>
                                 </j:forEach>
                             </div>

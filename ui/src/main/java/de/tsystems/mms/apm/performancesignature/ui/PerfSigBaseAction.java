@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 T-Systems Multimedia Solutions GmbH
+ * Copyright (c) 2014-2018 T-Systems Multimedia Solutions GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ abstract class PerfSigBaseAction implements Action {
         return "performance-signature";
     }
 
+    @Override
     public String getDisplayName() {
         return Messages.PerfSigBaseAction_DisplayName();
     }

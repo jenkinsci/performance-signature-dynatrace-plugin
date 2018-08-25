@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 T-Systems Multimedia Solutions GmbH
+ * Copyright (c) 2014-2018 T-Systems Multimedia Solutions GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,14 +17,18 @@
 package de.tsystems.mms.apm.performancesignature.dynatrace.configuration;
 
 import de.tsystems.mms.apm.performancesignature.ui.model.ClientLinkGenerator;
+import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
 import hudson.DescriptorExtensionList;
 import hudson.RelativePath;
-import hudson.model.AbstractProject;
 import hudson.model.Describable;
 import hudson.model.Descriptor;
+import hudson.model.Item;
 import hudson.util.ListBoxModel;
 import jenkins.model.Jenkins;
 import org.apache.commons.lang.StringUtils;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
+import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.QueryParameter;
 
 import javax.annotation.Nonnull;
@@ -87,7 +91,7 @@ public abstract class ConfigurationTestCase implements Describable<Configuration
     }
 
     public ConfigurationTestCaseDescriptor getDescriptor() {
-        return (ConfigurationTestCaseDescriptor) Jenkins.getActiveInstance().getDescriptorOrDie(getClass());
+        return (ConfigurationTestCaseDescriptor) Jenkins.getInstance().getDescriptorOrDie(getClass());
     }
 
     public abstract static class ConfigurationTestCaseDescriptor extends Descriptor<ConfigurationTestCase> {
@@ -101,22 +105,28 @@ public abstract class ConfigurationTestCase implements Describable<Configuration
         }
 
         public static DescriptorExtensionList<ConfigurationTestCase, Descriptor<ConfigurationTestCase>> all() {
-            return Jenkins.getActiveInstance().getDescriptorList(ConfigurationTestCase.class);
+            return Jenkins.getInstance().getDescriptorList(ConfigurationTestCase.class);
         }
 
-        public boolean isApplicable(final Class<? extends AbstractProject<?, ?>> jobType) {
-            return true;
-        }
-
-        public ListBoxModel doFillNameItems() {
-            final ListBoxModel out = new ListBoxModel();
-            for (String s : testCases) {
-                out.add(s);
+        @Nonnull
+        @Restricted(NoExternalUse.class)
+        public ListBoxModel doFillNameItems(@AncestorInPath Item item) {
+            if (PerfSigUIUtils.checkForMissingPermission(item)) {
+                return new ListBoxModel();
             }
+
+            final ListBoxModel out = new ListBoxModel();
+            testCases.forEach(out::add);
             return out;
         }
 
-        public ListBoxModel doFillClientDashboardItems() {
+        @Nonnull
+        @Restricted(NoExternalUse.class)
+        public ListBoxModel doFillClientDashboardItems(@AncestorInPath Item item) {
+            if (PerfSigUIUtils.checkForMissingPermission(item)) {
+                return new ListBoxModel();
+            }
+
             ListBoxModel out = new ListBoxModel();
             out.add(ClientLinkGenerator.LOADTEST_OVERVIEW)
                     .add(ClientLinkGenerator.PUREPATH_OVERVIEW)
@@ -124,8 +134,14 @@ public abstract class ConfigurationTestCase implements Describable<Configuration
             return out;
         }
 
-        public ListBoxModel doFillXmlDashboardItems(@RelativePath("..") @QueryParameter final String dynatraceProfile) {
-            return new Dashboard.DescriptorImpl().doFillDashboardItems(dynatraceProfile);
+        @Nonnull
+        @Restricted(NoExternalUse.class)
+        public ListBoxModel doFillXmlDashboardItems(@AncestorInPath Item item,
+                                                    @RelativePath("..") @QueryParameter final String dynatraceProfile) {
+            if (PerfSigUIUtils.checkForMissingPermission(item)) {
+                return new ListBoxModel();
+            }
+            return new Dashboard.DescriptorImpl().doFillDashboardItems(item, dynatraceProfile);
         }
     }
 }

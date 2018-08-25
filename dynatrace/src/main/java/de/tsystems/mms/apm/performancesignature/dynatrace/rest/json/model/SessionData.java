@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 T-Systems Multimedia Solutions GmbH
+ * Copyright (c) 2014-2018 T-Systems Multimedia Solutions GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 /**
  * SessionData
@@ -33,9 +34,9 @@ import java.io.IOException;
 
 public class SessionData extends BaseReference {
     @SerializedName("storedsessiontype")
-    private StoredsessiontypeEnum storedsessiontype;
+    private StoredSessiontypeEnum storedsessiontype;
     @SerializedName("sessiontype")
-    private SessiontypeEnum sessiontype;
+    private SessionTypeEnum sessiontype;
     @SerializedName("systemprofile")
     private String systemprofile;
 
@@ -45,7 +46,7 @@ public class SessionData extends BaseReference {
      * @return storedsessiontype
      **/
     @ApiModelProperty(value = "Stored session type")
-    public StoredsessiontypeEnum getStoredsessiontype() {
+    public StoredSessiontypeEnum getStoredsessiontype() {
         return storedsessiontype;
     }
 
@@ -55,7 +56,7 @@ public class SessionData extends BaseReference {
      * @return sessiontype
      **/
     @ApiModelProperty(value = "Session type")
-    public SessiontypeEnum getSessiontype() {
+    public SessionTypeEnum getSessiontype() {
         return sessiontype;
     }
 
@@ -83,33 +84,23 @@ public class SessionData extends BaseReference {
     /**
      * Stored session type
      */
-    @JsonAdapter(StoredsessiontypeEnum.Adapter.class)
-    public enum StoredsessiontypeEnum {
+    @JsonAdapter(StoredSessiontypeEnum.Adapter.class)
+    public enum StoredSessiontypeEnum {
         PUREPATH("purepath"),
-
         MEMDUMP_SIMPLE("memdump_simple"),
-
         MEMDUMP_EXTENDED("memdump_extended"),
-
         MEMDUMP_SELECTIVE("memdump_selective"),
-
         THREADDUMP("threaddump"),
-
         SAMPLING("sampling");
 
         private final String value;
 
-        StoredsessiontypeEnum(String value) {
+        StoredSessiontypeEnum(String value) {
             this.value = value;
         }
 
-        public static StoredsessiontypeEnum fromValue(String text) {
-            for (StoredsessiontypeEnum b : StoredsessiontypeEnum.values()) {
-                if (String.valueOf(b.value).equals(text)) {
-                    return b;
-                }
-            }
-            return null;
+        public static StoredSessiontypeEnum fromValue(String text) {
+            return Arrays.stream(StoredSessiontypeEnum.values()).filter(b -> b.value.equals(text)).findFirst().orElse(null);
         }
 
         public String getValue() {
@@ -118,19 +109,19 @@ public class SessionData extends BaseReference {
 
         @Override
         public String toString() {
-            return String.valueOf(value);
+            return value;
         }
 
-        public static class Adapter extends TypeAdapter<StoredsessiontypeEnum> {
+        public static class Adapter extends TypeAdapter<StoredSessiontypeEnum> {
             @Override
-            public void write(final JsonWriter jsonWriter, final StoredsessiontypeEnum enumeration) throws IOException {
+            public void write(final JsonWriter jsonWriter, final StoredSessiontypeEnum enumeration) throws IOException {
                 jsonWriter.value(enumeration.getValue());
             }
 
             @Override
-            public StoredsessiontypeEnum read(final JsonReader jsonReader) throws IOException {
+            public StoredSessiontypeEnum read(final JsonReader jsonReader) throws IOException {
                 String value = jsonReader.nextString();
-                return StoredsessiontypeEnum.fromValue(String.valueOf(value));
+                return StoredSessiontypeEnum.fromValue(value);
             }
         }
     }
@@ -138,29 +129,21 @@ public class SessionData extends BaseReference {
     /**
      * Session type
      */
-    @JsonAdapter(SessiontypeEnum.Adapter.class)
-    public enum SessiontypeEnum {
+    @JsonAdapter(SessionTypeEnum.Adapter.class)
+    public enum SessionTypeEnum {
         LIVE("live"),
-
         SERVER("server"),
-
         STORED("stored"),
-
         UNTYPED("untyped");
 
         private final String value;
 
-        SessiontypeEnum(String value) {
+        SessionTypeEnum(String value) {
             this.value = value;
         }
 
-        public static SessiontypeEnum fromValue(String text) {
-            for (SessiontypeEnum b : SessiontypeEnum.values()) {
-                if (String.valueOf(b.value).equals(text)) {
-                    return b;
-                }
-            }
-            return null;
+        public static SessionTypeEnum fromValue(String text) {
+            return Arrays.stream(SessionTypeEnum.values()).filter(b -> b.value.equals(text)).findFirst().orElse(null);
         }
 
         public String getValue() {
@@ -169,19 +152,19 @@ public class SessionData extends BaseReference {
 
         @Override
         public String toString() {
-            return String.valueOf(value);
+            return value;
         }
 
-        public static class Adapter extends TypeAdapter<SessiontypeEnum> {
+        public static class Adapter extends TypeAdapter<SessionTypeEnum> {
             @Override
-            public void write(final JsonWriter jsonWriter, final SessiontypeEnum enumeration) throws IOException {
+            public void write(final JsonWriter jsonWriter, final SessionTypeEnum enumeration) throws IOException {
                 jsonWriter.value(enumeration.getValue());
             }
 
             @Override
-            public SessiontypeEnum read(final JsonReader jsonReader) throws IOException {
+            public SessionTypeEnum read(final JsonReader jsonReader) throws IOException {
                 String value = jsonReader.nextString();
-                return SessiontypeEnum.fromValue(String.valueOf(value));
+                return SessionTypeEnum.fromValue(value);
             }
         }
     }

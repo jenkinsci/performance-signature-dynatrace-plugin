@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 T-Systems Multimedia Solutions GmbH
+ * Copyright (c) 2014-2018 T-Systems Multimedia Solutions GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,13 +23,11 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
 import io.swagger.annotations.ApiModelProperty;
-import org.kohsuke.accmod.Restricted;
-import org.kohsuke.accmod.restrictions.NoExternalUse;
 import org.kohsuke.stapler.export.Exported;
 
-import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -76,9 +74,6 @@ public class TestRun extends BaseReference {
     private int numVolatile;
     @SerializedName("testResults")
     private List<TestResult> testResults;
-
-    @Deprecated
-    private transient Date timestamp;
 
     /**
      * Get category
@@ -195,7 +190,7 @@ public class TestRun extends BaseReference {
     public static TestRun mergeTestRuns(final List<TestRun> testRuns) {
         TestRun newTestRun = new TestRun();
         if (testRuns != null && !testRuns.isEmpty()) {
-            for (TestRun otherTestRun : testRuns) {
+            testRuns.forEach(otherTestRun -> {
                 newTestRun.numDegraded += otherTestRun.numDegraded;
                 newTestRun.numFailed += otherTestRun.numFailed;
                 newTestRun.numImproved += otherTestRun.numImproved;
@@ -203,7 +198,7 @@ public class TestRun extends BaseReference {
                 newTestRun.numPassed += otherTestRun.numPassed;
                 newTestRun.numVolatile += otherTestRun.numVolatile;
                 newTestRun.getTestResults().addAll(otherTestRun.getTestResults());
-            }
+            });
         }
         return newTestRun;
     }
@@ -318,29 +313,15 @@ public class TestRun extends BaseReference {
         return testResults;
     }
 
-    @SuppressWarnings("deprecation")
-    @Restricted(NoExternalUse.class)
-    @Nonnull
-    protected Object readResolve() {
-        if (timestamp != null) {
-            startTime = timestamp;
-        }
-        return this;
-    }
-
     /**
      * Gets or Sets category
      */
     @JsonAdapter(CategoryEnum.Adapter.class)
     public enum CategoryEnum {
         UNIT("unit"),
-
         UIDRIVEN("uidriven"),
-
         PERFORMANCE("performance"),
-
         WEBAPI("webapi"),
-
         EXTERNAL("external");
 
         private final String value;
@@ -350,12 +331,7 @@ public class TestRun extends BaseReference {
         }
 
         public static CategoryEnum fromValue(String text) {
-            for (CategoryEnum b : CategoryEnum.values()) {
-                if (String.valueOf(b.value).equals(text)) {
-                    return b;
-                }
-            }
-            return null;
+            return Arrays.stream(CategoryEnum.values()).filter(b -> b.value.equalsIgnoreCase(text)).findFirst().orElse(null);
         }
 
         public String getValue() {
@@ -364,7 +340,7 @@ public class TestRun extends BaseReference {
 
         @Override
         public String toString() {
-            return String.valueOf(value);
+            return value;
         }
 
         public static class Adapter extends TypeAdapter<CategoryEnum> {
@@ -376,7 +352,7 @@ public class TestRun extends BaseReference {
             @Override
             public CategoryEnum read(final JsonReader jsonReader) throws IOException {
                 String value = jsonReader.nextString();
-                return CategoryEnum.fromValue(String.valueOf(value));
+                return CategoryEnum.fromValue(value);
             }
         }
     }

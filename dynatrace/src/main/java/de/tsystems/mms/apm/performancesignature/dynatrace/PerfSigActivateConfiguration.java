@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 T-Systems Multimedia Solutions GmbH
+ * Copyright (c) 2014-2018 T-Systems Multimedia Solutions GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,13 +19,13 @@ package de.tsystems.mms.apm.performancesignature.dynatrace;
 import de.tsystems.mms.apm.performancesignature.dynatrace.configuration.CredProfilePair;
 import de.tsystems.mms.apm.performancesignature.dynatrace.configuration.DynatraceServerConfiguration;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.DTServerConnection;
-import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.model.Agent;
 import de.tsystems.mms.apm.performancesignature.dynatrace.util.PerfSigUtils;
 import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
 import hudson.model.AbstractProject;
+import hudson.model.Item;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.plugins.analysis.util.PluginLogger;
@@ -38,6 +38,7 @@ import org.apache.commons.lang.StringUtils;
 import org.jenkinsci.Symbol;
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
+import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 
@@ -64,14 +65,14 @@ public class PerfSigActivateConfiguration extends Builder implements SimpleBuild
         connection.activateConfiguration(configuration);
         logger.log(Messages.PerfSigActivateConfiguration_SuccessfullyActivated(dynatraceProfile));
 
-        for (Agent agent : connection.getAgents()) {
+        connection.getAgents().forEach(agent -> {
             boolean hotSensorPlacement = connection.hotSensorPlacement(agent.getAgentId());
             if (hotSensorPlacement) {
                 logger.log(Messages.PerfSigActivateConfiguration_HotSensorPlacementDone(agent.getName()));
             } else {
                 logger.log(Messages.PerfSigActivateConfiguration_FailureActivation(agent.getName()));
             }
-        }
+        });
     }
 
     public String getDynatraceProfile() {
@@ -86,23 +87,36 @@ public class PerfSigActivateConfiguration extends Builder implements SimpleBuild
     @Extension
     public static final class DescriptorImpl extends BuildStepDescriptor<Builder> {
         @Restricted(NoExternalUse.class)
-        public FormValidation doCheckConfiguration(@QueryParameter final String configuration) {
-            FormValidation validationResult;
-            if (StringUtils.isNotBlank(configuration)) {
-                validationResult = FormValidation.ok();
-            } else {
-                validationResult = FormValidation.error(Messages.PerfSigActivateConfiguration_ConfigurationNotValid());
+        public FormValidation doCheckConfiguration(@AncestorInPath Item item, @QueryParameter final String configuration) {
+            FormValidation validationResult = FormValidation.ok();
+            if (PerfSigUIUtils.checkForMissingPermission(item)) {
+                return validationResult;
             }
-            return validationResult;
+
+            if (StringUtils.isNotBlank(configuration)) {
+                return validationResult;
+            } else {
+                return FormValidation.error(Messages.PerfSigActivateConfiguration_ConfigurationNotValid());
+            }
         }
 
-        public ListBoxModel doFillDynatraceProfileItems() {
+        @Nonnull
+        @Restricted(NoExternalUse.class)
+        public ListBoxModel doFillDynatraceProfileItems(@AncestorInPath Item item) {
+            if (PerfSigUIUtils.checkForMissingPermission(item)) {
+                return new ListBoxModel();
+            }
             return PerfSigUtils.listToListBoxModel(PerfSigUtils.getDTConfigurations());
         }
 
-        @Restricted(NoExternalUse.class)
         @Nonnull
-        public ListBoxModel doFillConfigurationItems(@QueryParameter final String dynatraceProfile) {
+        @Restricted(NoExternalUse.class)
+        public ListBoxModel doFillConfigurationItems(@AncestorInPath Item item,
+                                                     @QueryParameter final String dynatraceProfile) {
+            if (PerfSigUIUtils.checkForMissingPermission(item)) {
+                return new ListBoxModel();
+            }
+
             DynatraceServerConfiguration serverConfiguration = PerfSigUtils.getServerConfiguration(dynatraceProfile);
             if (serverConfiguration != null) {
                 CredProfilePair pair = serverConfiguration.getCredProfilePair(dynatraceProfile);
@@ -114,10 +128,13 @@ public class PerfSigActivateConfiguration extends Builder implements SimpleBuild
             return new ListBoxModel();
         }
 
-        public boolean isApplicable(final Class<? extends AbstractProject> aClass) {
+        @Override
+        public boolean isApplicable(final Class<? extends AbstractProject> jobType) {
             return true;
         }
 
+        @Nonnull
+        @Override
         public String getDisplayName() {
             return Messages.PerfSigActivateConfiguration_DisplayName();
         }

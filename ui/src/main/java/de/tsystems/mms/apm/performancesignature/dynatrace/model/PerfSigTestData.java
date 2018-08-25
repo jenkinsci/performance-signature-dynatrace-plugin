@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 T-Systems Multimedia Solutions GmbH
+ * Copyright (c) 2014-2018 T-Systems Multimedia Solutions GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ public class PerfSigTestData extends TestResultAction.Data {
     }
 
     public List<TestRun> getTestRuns() {
-        return testRuns == null ? Collections.<TestRun>emptyList() : testRuns;
+        return testRuns == null ? Collections.emptyList() : testRuns;
     }
 
     @Override

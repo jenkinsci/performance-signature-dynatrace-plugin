@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 T-Systems Multimedia Solutions GmbH
+ * Copyright (c) 2014-2018 T-Systems Multimedia Solutions GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ package de.tsystems.mms.apm.performancesignature.dynatrace.util;
 import com.cloudbees.plugins.credentials.CredentialsMatchers;
 import com.cloudbees.plugins.credentials.CredentialsProvider;
 import com.cloudbees.plugins.credentials.common.UsernamePasswordCredentials;
-import com.cloudbees.plugins.credentials.domains.DomainRequirement;
 import de.tsystems.mms.apm.performancesignature.dynatrace.PerfSigGlobalConfiguration;
 import de.tsystems.mms.apm.performancesignature.dynatrace.configuration.CredProfilePair;
 import de.tsystems.mms.apm.performancesignature.dynatrace.configuration.DynatraceServerConfiguration;
@@ -35,48 +34,45 @@ import hudson.security.ACL;
 import hudson.util.ListBoxModel;
 import jenkins.model.Jenkins;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.CharEncoding;
 
+import javax.annotation.CheckForNull;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 public final class PerfSigUtils {
     private PerfSigUtils() {
     }
 
-    public static ListBoxModel listToListBoxModel(final List<?> arrayList) {
+    public static ListBoxModel listToListBoxModel(final List<?> list) {
         final ListBoxModel listBoxModel = new ListBoxModel();
-        for (Object item : arrayList) {
+
+        list.forEach(item -> {
             if (item instanceof String) {
                 listBoxModel.add((String) item);
             } else if (item instanceof Dashboard) {
                 listBoxModel.add(((Dashboard) item).getId());
+            } else if (item instanceof BaseReference) {
+                listBoxModel.add(((BaseReference) item).getId());
             } else if (item instanceof Agent) {
                 listBoxModel.add(((Agent) item).getName());
             } else if (item instanceof DynatraceServerConfiguration) {
                 DynatraceServerConfiguration conf = (DynatraceServerConfiguration) item;
-                if (CollectionUtils.isNotEmpty(conf.getCredProfilePairs()))
-                    for (CredProfilePair credProfilePair : conf.getCredProfilePairs()) {
-                        String listItem = credProfilePair.getProfile() + " (" + credProfilePair.getCredentials().getUsername() + ") @ " +
-                                conf.getName();
-                        listBoxModel.add(listItem);
-                    }
-            } else if (item instanceof BaseReference) {
-                listBoxModel.add(((BaseReference) item).getId());
+                if (CollectionUtils.isNotEmpty(conf.getCredProfilePairs())) {
+                    conf.getCredProfilePairs().stream()
+                            .map(credProfilePair -> credProfilePair.getProfile() + " " +
+                                    "(" + credProfilePair.getCredentials().getUsername() + ") @ " +
+                                    conf.getName()).forEach(listBoxModel::add);
+                }
             }
-        }
+        });
         return sortListBoxModel(listBoxModel);
     }
 
     private static ListBoxModel sortListBoxModel(final ListBoxModel list) {
-        Collections.sort(list, new Comparator<ListBoxModel.Option>() {
-            @Override
-            public int compare(final ListBoxModel.Option o1, final ListBoxModel.Option o2) {
-                return o1.name.compareToIgnoreCase(o2.name);
-            }
-        });
+        list.sort((o1, o2) -> o1.name.compareToIgnoreCase(o2.name));
         return list;
     }
 
@@ -85,19 +81,16 @@ public final class PerfSigUtils {
     }
 
     public static DynatraceServerConfiguration getServerConfiguration(final String dynatraceServer) {
-        for (DynatraceServerConfiguration serverConfiguration : getDTConfigurations()) {
-            String strippedName = dynatraceServer.replaceAll(".*@", "").trim();
-            if (strippedName.equals(serverConfiguration.getName())) {
-                return serverConfiguration;
-            }
-        }
-        return null;
+        return getDTConfigurations().stream()
+                .filter(serverConfiguration -> dynatraceServer.replaceAll(".*@", "").trim().equals(serverConfiguration.getName()))
+                .findFirst().orElse(null);
     }
 
+    @CheckForNull
     public static UsernamePasswordCredentials getCredentials(final String credsId) {
         return (credsId == null) ? null : CredentialsMatchers.firstOrNull(
-                CredentialsProvider.lookupCredentials(UsernamePasswordCredentials.class, Jenkins.getActiveInstance(), ACL.SYSTEM,
-                        Collections.<DomainRequirement>emptyList()), CredentialsMatchers.withId(credsId));
+                CredentialsProvider.lookupCredentials(UsernamePasswordCredentials.class, Jenkins.getInstance(), ACL.SYSTEM,
+                        Collections.emptyList()), CredentialsMatchers.withId(credsId));
     }
 
     public static ListBoxModel fillAgentItems(final String dynatraceProfile) {
@@ -120,11 +113,9 @@ public final class PerfSigUtils {
                 DTServerConnection connection = new DTServerConnection(serverConfiguration, pair);
                 List<Agent> agents = connection.getAgents();
                 ListBoxModel hosts = new ListBoxModel();
-                for (Agent a : agents) {
-                    if (a.getName().equals(agent)) {
-                        hosts.add(a.getHost());
-                    }
-                }
+                agents.stream()
+                        .filter(a -> a.getName().equals(agent))
+                        .map(Agent::getHost).forEach(hosts::add);
                 return hosts;
             }
         }
@@ -135,7 +126,8 @@ public final class PerfSigUtils {
         return createDTServerConnection(dynatraceConfiguration, true);
     }
 
-    public static DTServerConnection createDTServerConnection(final String dynatraceConfiguration, final boolean validateConnection) throws AbortException, RESTErrorException {
+    public static DTServerConnection createDTServerConnection(final String dynatraceConfiguration, final boolean validateConnection)
+            throws AbortException, RESTErrorException {
         DynatraceServerConfiguration serverConfiguration = getServerConfiguration(dynatraceConfiguration);
         if (serverConfiguration == null) {
             throw new AbortException(de.tsystems.mms.apm.performancesignature.dynatrace.Messages.PerfSigRecorder_FailedToLookupServer());
@@ -145,8 +137,12 @@ public final class PerfSigUtils {
             throw new AbortException(de.tsystems.mms.apm.performancesignature.dynatrace.Messages.PerfSigRecorder_FailedToLookupProfile());
         }
         DTServerConnection connection = new DTServerConnection(serverConfiguration, pair);
-        if (validateConnection && !connection.validateConnection()) {
-            throw new RESTErrorException(de.tsystems.mms.apm.performancesignature.dynatrace.Messages.PerfSigRecorder_DTConnectionError());
+        if (validateConnection) {
+            try {
+                connection.getServerVersion();
+            } catch (Exception e) {
+                throw new RESTErrorException(de.tsystems.mms.apm.performancesignature.dynatrace.Messages.PerfSigRecorder_DTConnectionError(), e);
+            }
         }
         return connection;
     }
@@ -160,7 +156,6 @@ public final class PerfSigUtils {
         String location = locationUrl.substring(locationUrl.lastIndexOf('/') + 1);
         return unescapeString(location);
     }
-
 
     /**
      * Escape the given string to be used as URL query value.
@@ -180,10 +175,11 @@ public final class PerfSigUtils {
      */
     public static String unescapeString(String str) {
         try {
-            String decoded = URLDecoder.decode(str, "utf8");
-            return URLDecoder.decode(decoded, "utf8");
+            String decoded = URLDecoder.decode(str, CharEncoding.UTF_8);
+            return URLDecoder.decode(decoded, CharEncoding.UTF_8);
         } catch (UnsupportedEncodingException e) {
             return str;
         }
     }
+
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 T-Systems Multimedia Solutions GmbH
+ * Copyright (c) 2014-2018 T-Systems Multimedia Solutions GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,6 @@
 
 package de.tsystems.mms.apm.performancesignature.ui.model;
 
-import org.kohsuke.accmod.Restricted;
-import org.kohsuke.accmod.restrictions.NoExternalUse;
-
-import javax.annotation.Nonnull;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -30,13 +26,7 @@ public class ClientLinkGenerator {
     private final String dashboardName;
     private final String sessionName;
     private final String target;
-    @Deprecated
-    private transient int port;
-    @Deprecated
-    private transient String protocol;
-    @Deprecated
-    private transient String server;
-    private String serverUrl;
+    private final String serverUrl;
 
     public ClientLinkGenerator(final String serverUrl, final String dashboardName, final String sessionName, final String target) {
         this.serverUrl = serverUrl;
@@ -59,18 +49,5 @@ public class ClientLinkGenerator {
             default:
                 return "";
         }
-    }
-
-    @SuppressWarnings("deprecation")
-    @Restricted(NoExternalUse.class)
-    @Nonnull
-    protected Object readResolve() {
-        if (protocol != null && server != null && port != 0 && serverUrl == null) {
-            serverUrl = protocol + "://" + server + ":" + port;
-            protocol = null;
-            server = null;
-            port = 0;
-        }
-        return this;
     }
 }

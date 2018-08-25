@@ -1,0 +1,80 @@
+<!--
+  ~ Copyright (c) 2014-2018 T-Systems Multimedia Solutions GmbH
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
+    <f:entry title="${%Environment}" field="envId" description="${%description(rootURL)}">
+        <f:select/>
+    </f:entry>
+    <f:section title="attach rules, which the event is to be attached to">
+        <f:entry title="${%entityIds}" field="entityIds"
+                 description="${%One attach rules is entityIds, which contains a list of entity identifiers, for example ''APPLICATION-B66B773D12C49189''.}">
+            <f:hetero-list name="entityIds"
+                           items="${instance.entityIds}"
+                           descriptors="${descriptor.entityIdTypes}"
+                           hasHeader="true"
+                           addCaption="${%add Entity Id}"
+                           deleteCaption="${%remove Entity Id}"/>
+        </f:entry>
+        <f:entry title="${%tag rules}" field="tagMatchRules" description="${%dynatrace_attachrules}">
+            <f:repeatable field="tagMatchRules" add="${%Add tag rule}" header="${%tag rule}">
+                <table width="100%">
+                    <f:entry title="${%component types, which the event is to be attached to}" field="meTypes"
+                             description="${%Another possible attach rule is tagRule that takes a component type and a tag to attach your custom event on all components of that type that contain the given tag.}">
+                        <f:repeatable field="meTypes" add="${%Add component type}" header="${%component type}">
+                            <table width="100%">
+                                <f:entry field="meType">
+                                    <f:select/>
+                                </f:entry>
+                                <f:entry>
+                                    <div align="right">
+                                        <f:repeatableDeleteButton value="${%Remove component type}"/>
+                                    </div>
+                                </f:entry>
+                            </table>
+                        </f:repeatable>
+                    </f:entry>
+                    <f:entry title="${%tags, which the event is to be attached to}" field="tags"
+                             description="${%the tag attach rule can also contain multiple component types and tags}">
+                        <f:repeatable field="tags" add="${%Add tag}" header="${%tag}">
+                            <table width="100%">
+                                <f:entry field="context" title="${%context}">
+                                    <f:select/>
+                                </f:entry>
+                                <f:entry field="key" title="${%key}">
+                                    <f:textbox/>
+                                </f:entry>
+                                <f:entry field="value" title="${%value}">
+                                    <f:textbox/>
+                                </f:entry>
+                                <f:entry>
+                                    <div align="right">
+                                        <f:repeatableDeleteButton value="${%Remove tag}"/>
+                                    </div>
+                                </f:entry>
+                            </table>
+                        </f:repeatable>
+                    </f:entry>
+                    <f:entry>
+                        <div align="right">
+                            <f:repeatableDeleteButton value="${%Remove tag rule}"/>
+                        </div>
+                    </f:entry>
+                </table>
+            </f:repeatable>
+        </f:entry>
+    </f:section>
+</j:jelly>

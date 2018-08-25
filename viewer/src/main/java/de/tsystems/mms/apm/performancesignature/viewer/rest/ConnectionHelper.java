@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2018 T-Systems Multimedia Solutions GmbH
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.tsystems.mms.apm.performancesignature.viewer.rest;
 
 import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
@@ -5,6 +21,7 @@ import hudson.AbortException;
 import hudson.ProxyConfiguration;
 import jenkins.model.Jenkins;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.CharEncoding;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.jenkinsci.plugins.ParameterizedRemoteTrigger.*;
 import org.jenkinsci.plugins.ParameterizedRemoteTrigger.auth2.Auth2;
@@ -17,6 +34,7 @@ import javax.annotation.Nullable;
 import java.io.*;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -65,7 +83,7 @@ public class ConnectionHelper {
         }
         URL crumbProviderUrl;
         try {
-            String xpathValue = URLEncoder.encode("concat(//crumbRequestField,\":\",//crumb)", "UTF-8");
+            String xpathValue = URLEncoder.encode("concat(//crumbRequestField,\":\",//crumb)", CharEncoding.UTF_8);
             crumbProviderUrl = new URL(address.concat("/crumbIssuer/api/xml?xpath=").concat(xpathValue));
             HttpURLConnection connection = getAuthorizedConnection(context, crumbProviderUrl);
             int responseCode = connection.getResponseCode();
@@ -239,13 +257,9 @@ public class ConnectionHelper {
     private RemoteJenkinsServer findRemoteHost(final String serverHost) {
         if (isBlank(serverHost)) return null;
         RemoteBuildConfiguration.DescriptorImpl descriptor = (RemoteBuildConfiguration.DescriptorImpl)
-                Jenkins.getActiveInstance().getDescriptorOrDie(RemoteBuildConfiguration.class);
-        for (RemoteJenkinsServer host : descriptor.getRemoteSites()) {
-            String hostname = PerfSigUIUtils.getHostFromUrl(host.getAddress());
-            if (serverHost.equals(hostname)) {
-                return host;
-            }
-        }
-        return null;
+                Jenkins.getInstance().getDescriptorOrDie(RemoteBuildConfiguration.class);
+        return Arrays.stream(descriptor.getRemoteSites())
+                .filter(host -> serverHost.equals(PerfSigUIUtils.getHostFromUrl(host.getAddress())))
+                .findFirst().orElse(null);
     }
 }

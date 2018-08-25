@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 T-Systems Multimedia Solutions GmbH
+ * Copyright (c) 2014-2018 T-Systems Multimedia Solutions GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,19 +14,14 @@
  * limitations under the License.
  */
 
-package de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.auth;
+package de.tsystems.mms.apm.performancesignature.dynatracesaas.rest;
 
-import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.Pair;
+public class CommandExecutionException extends RuntimeException {
+    public CommandExecutionException(final String reason, final Exception ex) {
+        super(reason, ex);
+    }
 
-import java.util.List;
-import java.util.Map;
-
-public interface Authentication {
-    /**
-     * Apply authentication settings to header and query params.
-     *
-     * @param queryParams  List of query parameters
-     * @param headerParams Map of header parameters
-     */
-    void applyToParams(List<Pair> queryParams, Map<String, String> headerParams);
+    public CommandExecutionException(final String reason) {
+        super(reason);
+    }
 }

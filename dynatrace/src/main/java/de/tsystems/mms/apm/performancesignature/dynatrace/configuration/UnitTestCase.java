@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 T-Systems Multimedia Solutions GmbH
+ * Copyright (c) 2014-2018 T-Systems Multimedia Solutions GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import hudson.Extension;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 public class UnitTestCase extends ConfigurationTestCase {
@@ -37,6 +38,7 @@ public class UnitTestCase extends ConfigurationTestCase {
 
     @Extension
     public static final class DescriptorImpl extends ConfigurationTestCaseDescriptor {
+        @Nonnull
         @Override
         public String getDisplayName() {
             return Messages.UnitTestCase_DisplayName();

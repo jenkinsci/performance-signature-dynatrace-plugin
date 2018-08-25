@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 T-Systems Multimedia Solutions GmbH
+ * Copyright (c) 2014-2018 T-Systems Multimedia Solutions GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@ import com.cloudbees.plugins.credentials.common.StandardListBoxModel;
 import com.cloudbees.plugins.credentials.common.StandardUsernameListBoxModel;
 import com.cloudbees.plugins.credentials.common.StandardUsernamePasswordCredentials;
 import com.cloudbees.plugins.credentials.common.UsernamePasswordCredentials;
-import com.cloudbees.plugins.credentials.domains.DomainRequirement;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.DTServerConnection;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.CommandExecutionException;
 import de.tsystems.mms.apm.performancesignature.dynatrace.util.PerfSigUtils;
@@ -31,6 +30,7 @@ import hudson.Extension;
 import hudson.RelativePath;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
+import hudson.model.Item;
 import hudson.security.ACL;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
@@ -38,6 +38,7 @@ import jenkins.model.Jenkins;
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
+import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 
@@ -68,97 +69,89 @@ public class CredProfilePair extends AbstractDescribableImpl<CredProfilePair> {
 
     @Extension
     public static class DescriptorImpl extends Descriptor<CredProfilePair> {
+        @Nonnull
         @Override
         public String getDisplayName() {
             return "";
         }
 
-        @Restricted(NoExternalUse.class)
         @Nonnull
-        public ListBoxModel doFillCredentialsIdItems(@QueryParameter String credentialsId) {
-            if (!Jenkins.getActiveInstance().hasPermission(Jenkins.ADMINISTER)) {
+        @Restricted(NoExternalUse.class)
+        public ListBoxModel doFillCredentialsIdItems(@AncestorInPath Item item, @QueryParameter String credentialsId) {
+            if (checkMissingPermission(item)) {
                 return new StandardListBoxModel().includeCurrentValue(credentialsId);
             }
+
             return new StandardUsernameListBoxModel()
                     .includeEmptyValue()
                     .includeMatchingAs(
                             ACL.SYSTEM,
-                            Jenkins.getActiveInstance(),
+                            Jenkins.getInstance(),
                             StandardUsernamePasswordCredentials.class,
-                            Collections.<DomainRequirement>emptyList(),
-                            CredentialsMatchers.always())
+                            Collections.emptyList(),
+                            CredentialsMatchers.instanceOf(StandardUsernamePasswordCredentials.class))
                     .includeCurrentValue(credentialsId);
         }
 
-        @Restricted(NoExternalUse.class)
-        public FormValidation doCheckCredentialsId(@QueryParameter String value) {
-            if (!Jenkins.getActiveInstance().hasPermission(Jenkins.ADMINISTER)) {
-                return FormValidation.ok();
-            }
-            for (ListBoxModel.Option o : CredentialsProvider.listCredentials(StandardUsernamePasswordCredentials.class,
-                    Jenkins.getInstance(),
-                    ACL.SYSTEM,
-                    Collections.<DomainRequirement>emptyList(),
-                    CredentialsMatchers.always())) {
-                if (StringUtils.equals(value, o.value)) {
-                    return FormValidation.ok();
-                }
-            }
-            return FormValidation.error("The selected credentials cannot be found");
-        }
-
-        @Restricted(NoExternalUse.class)
         @Nonnull
-        public ListBoxModel doFillProfileItems(@RelativePath("..") @QueryParameter final String serverUrl, @QueryParameter final String credentialsId,
-                                               @RelativePath("..") @QueryParameter final boolean verifyCertificate, @RelativePath("..") @QueryParameter final boolean proxy,
-                                               @RelativePath("..") @QueryParameter final String proxyServer, @RelativePath("..") @QueryParameter final int proxyPort,
-                                               @RelativePath("..") @QueryParameter final String proxyUser, @RelativePath("..") @QueryParameter final String proxyPassword) {
-
-            if (StringUtils.isBlank(serverUrl) || StringUtils.isBlank(credentialsId)) {
-                return new StandardListBoxModel().includeEmptyValue();
+        @Restricted(NoExternalUse.class)
+        public ListBoxModel doFillProfileItems(@AncestorInPath Item item,
+                                               @RelativePath("..") @QueryParameter final String serverUrl,
+                                               @QueryParameter final String credentialsId,
+                                               @RelativePath("..") @QueryParameter final boolean verifyCertificate,
+                                               @RelativePath("..") @QueryParameter final boolean useProxy) {
+            ListBoxModel result = new ListBoxModel();
+            if (checkMissingPermission(item)) {
+                return result;
             }
-            CustomProxy customProxyServer = null;
-            if (proxy) {
-                customProxyServer = new CustomProxy(proxyServer, proxyPort, proxyUser, proxyPassword, StringUtils.isBlank(proxyServer));
+            if (StringUtils.isBlank(serverUrl) || StringUtils.isBlank(credentialsId)) {
+                return result;
             }
             try {
                 CredProfilePair pair = new CredProfilePair("", credentialsId);
-                final DTServerConnection connection = new DTServerConnection(serverUrl, pair, verifyCertificate, 0, customProxyServer);
+                final DTServerConnection connection = new DTServerConnection(serverUrl, pair, verifyCertificate, 0, useProxy);
                 return PerfSigUtils.listToListBoxModel(connection.getSystemProfiles().getSystemprofiles());
             } catch (CommandExecutionException ex) {
-                return new StandardListBoxModel().includeEmptyValue();
+                return result;
             }
         }
 
         @Restricted(NoExternalUse.class)
-        public FormValidation doCheckProfile(@QueryParameter final String profile) {
-            FormValidation validationResult;
+        public FormValidation doCheckProfile(@AncestorInPath Item item, @QueryParameter final String profile) {
+            FormValidation validationResult = FormValidation.ok();
+            if (checkMissingPermission(item)) {
+                return validationResult;
+            }
+
             if (PerfSigUIUtils.checkNotNullOrEmpty(profile)) {
-                validationResult = FormValidation.ok();
+                return validationResult;
             } else {
-                validationResult = FormValidation.error(Messages.PerfSigRecorder_DTProfileNotValid());
+                return FormValidation.error(Messages.PerfSigRecorder_DTProfileNotValid());
             }
-            return validationResult;
         }
 
         @Restricted(NoExternalUse.class)
-        public FormValidation doTestDynaTraceConnection(@QueryParameter final String serverUrl, @QueryParameter final String credentialsId,
-                                                        @QueryParameter final boolean verifyCertificate, @QueryParameter final boolean proxy,
-                                                        @QueryParameter final String proxyServer, @QueryParameter final int proxyPort,
-                                                        @QueryParameter final String proxyUser, @QueryParameter final String proxyPassword) {
-
-            CustomProxy customProxyServer = null;
-            if (proxy) {
-                customProxyServer = new CustomProxy(proxyServer, proxyPort, proxyUser, proxyPassword, StringUtils.isBlank(proxyServer));
+        public FormValidation doTestDynaTraceConnection(@AncestorInPath Item item,
+                                                        @QueryParameter final String serverUrl, @QueryParameter final String credentialsId,
+                                                        @QueryParameter final boolean verifyCertificate, @QueryParameter final boolean useProxy) {
+            if (checkMissingPermission(item)) {
+                return FormValidation.ok();
             }
+
             CredProfilePair pair = new CredProfilePair("", credentialsId);
-            final DTServerConnection connection = new DTServerConnection(serverUrl, pair, verifyCertificate, 0, customProxyServer);
+            final DTServerConnection connection = new DTServerConnection(serverUrl, pair, verifyCertificate, 0, useProxy);
 
-            if (connection.validateConnection()) {
+            try {
+                connection.getServerVersion();
                 return FormValidation.ok(Messages.PerfSigRecorder_TestConnectionSuccessful());
-            } else {
-                return FormValidation.warning(Messages.PerfSigRecorder_TestConnectionNotSuccessful());
+            } catch (Exception e) {
+                return FormValidation.error(e, Messages.PerfSigRecorder_TestConnectionNotSuccessful());
             }
+        }
+
+        private boolean checkMissingPermission(final Item item) {
+            return item == null ? !Jenkins.getInstance().hasPermission(Jenkins.ADMINISTER) :
+                    !item.hasPermission(Item.EXTENDED_READ) && !item.hasPermission(CredentialsProvider.USE_ITEM);
         }
     }
 }

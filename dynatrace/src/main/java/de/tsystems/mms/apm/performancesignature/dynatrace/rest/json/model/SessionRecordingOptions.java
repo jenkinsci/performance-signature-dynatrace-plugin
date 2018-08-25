@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 T-Systems Multimedia Solutions GmbH
+ * Copyright (c) 2014-2018 T-Systems Multimedia Solutions GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 /**
  * SessionRecordingOptions
@@ -117,9 +118,7 @@ public class SessionRecordingOptions {
     @JsonAdapter(RecordingoptionEnum.Adapter.class)
     public enum RecordingoptionEnum {
         ALL("all"),
-
         VIOLATIONS("violations"),
-
         TIMESERIES("timeseries");
 
         private final String value;
@@ -129,12 +128,7 @@ public class SessionRecordingOptions {
         }
 
         public static RecordingoptionEnum fromValue(String text) {
-            for (RecordingoptionEnum b : RecordingoptionEnum.values()) {
-                if (String.valueOf(b.value).equals(text)) {
-                    return b;
-                }
-            }
-            return null;
+            return Arrays.stream(RecordingoptionEnum.values()).filter(b -> b.value.equals(text)).findFirst().orElse(null);
         }
 
         public String getValue() {
@@ -143,7 +137,7 @@ public class SessionRecordingOptions {
 
         @Override
         public String toString() {
-            return String.valueOf(value);
+            return value;
         }
 
         public static class Adapter extends TypeAdapter<RecordingoptionEnum> {
@@ -155,7 +149,7 @@ public class SessionRecordingOptions {
             @Override
             public RecordingoptionEnum read(final JsonReader jsonReader) throws IOException {
                 String value = jsonReader.nextString();
-                return RecordingoptionEnum.fromValue(String.valueOf(value));
+                return RecordingoptionEnum.fromValue(value);
             }
         }
     }

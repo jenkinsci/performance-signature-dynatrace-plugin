@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 T-Systems Multimedia Solutions GmbH
+ * Copyright (c) 2014-2018 T-Systems Multimedia Solutions GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,10 @@
 
 package de.tsystems.mms.apm.performancesignature.viewer;
 
-import com.google.gson.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 import de.tsystems.mms.apm.performancesignature.dynatrace.model.DashboardReport;
 import de.tsystems.mms.apm.performancesignature.ui.PerfSigBuildAction;
@@ -43,8 +46,8 @@ import org.jenkinsci.plugins.workflow.steps.SynchronousNonBlockingStepExecution;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Type;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -54,20 +57,13 @@ public class PullPerfSigDataStepExecution extends SynchronousNonBlockingStepExec
     private transient final PullPerfSigDataStep step;
     private final transient Gson gson;
 
-    PullPerfSigDataStepExecution(final PullPerfSigDataStep step, final StepContext context) throws AbortException {
+    PullPerfSigDataStepExecution(final PullPerfSigDataStep step, final StepContext context) {
         super(context);
-        if (step.getHandle() == null) {
-            throw new AbortException("'handle' has not been defined for this 'pullPerfSigReports' step");
-        }
         this.step = step;
         this.gson = new GsonBuilder()
                 .registerTypeAdapter(Date.class,
-                        new JsonDeserializer<Date>() {
-                            @Override
-                            public Date deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext context1) throws JsonParseException {
-                                return new Date(jsonElement.getAsJsonPrimitive().getAsLong());
-                            }
-                        })
+                        (JsonDeserializer<Date>) (jsonElement, type, context1) ->
+                                new Date(jsonElement.getAsJsonPrimitive().getAsLong()))
                 .create();
     }
 
@@ -81,6 +77,10 @@ public class PullPerfSigDataStepExecution extends SynchronousNonBlockingStepExec
         if (run == null || listener == null) {
             throw new AbortException("run or listener are not available");
         }
+        if (step.getHandle() == null) {
+            throw new AbortException("'handle' has not been defined for this 'pullPerfSigReports' step");
+        }
+
         PluginLogger logger = PerfSigUIUtils.createLogger(listener.getLogger());
         BuildContext context = new BuildContext(run, workspace, listener, listener.getLogger(), new RemoteJenkinsServer());
 
@@ -137,7 +137,7 @@ public class PullPerfSigDataStepExecution extends SynchronousNonBlockingStepExec
         }
     }
 
-    private List<String> getReportList(final BuildContext context, final ReportType type)
+    private List<String> getReportList(final BuildContext context, final String type)
             throws IOException, InterruptedException {
         URL url = new URL(step.getHandle().getBuildUrl() + "performance-signature/get" + type + "ReportList");
         ConnectionHelper connectionHelper = new ConnectionHelper(step.getHandle());
@@ -145,7 +145,7 @@ public class PullPerfSigDataStepExecution extends SynchronousNonBlockingStepExec
 
         List<String> obj = gson.fromJson(json, new TypeToken<List<String>>() {
         }.getType());
-        return obj != null ? obj : Collections.<String>emptyList();
+        return obj != null ? obj : Collections.emptyList();
     }
 
     private List<Artifact> getArtifactsList(final BuildContext context) throws IOException, InterruptedException {
@@ -155,7 +155,7 @@ public class PullPerfSigDataStepExecution extends SynchronousNonBlockingStepExec
 
         BuildData artifacts = gson.fromJson(json, new TypeToken<BuildData>() {
         }.getType());
-        return artifacts != null ? artifacts.getArtifacts() : Collections.<Artifact>emptyList();
+        return artifacts != null ? artifacts.getArtifacts() : Collections.emptyList();
     }
 
     private boolean downloadArtifacts(final BuildContext context, final FilePath dir, final PluginLogger logger)
@@ -177,7 +177,7 @@ public class PullPerfSigDataStepExecution extends SynchronousNonBlockingStepExec
             throws InterruptedException {
         boolean result = true;
         try {
-            for (ReportType reportType : ReportType.values()) {
+            for (String reportType : Arrays.asList("Single", "Comparison")) {
                 List reportlist = getReportList(context, reportType);
                 for (Object report : reportlist) {
                     URL url = new URL(step.getHandle().getBuildUrl() + "performance-signature/get" + reportType + "Report?number="
@@ -212,9 +212,5 @@ public class PullPerfSigDataStepExecution extends SynchronousNonBlockingStepExec
             logger.log("Could not download artifact: " + FilenameUtils.getBaseName(url.toString()));
             return false;
         }
-    }
-
-    private enum ReportType {
-        Single, Comparison
     }
 }

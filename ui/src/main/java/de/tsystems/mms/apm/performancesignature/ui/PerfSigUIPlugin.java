@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 T-Systems Multimedia Solutions GmbH
+ * Copyright (c) 2014-2018 T-Systems Multimedia Solutions GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,21 +17,13 @@
 package de.tsystems.mms.apm.performancesignature.ui;
 
 import de.tsystems.mms.apm.performancesignature.dynatrace.model.*;
-import hudson.FilePath;
 import hudson.Plugin;
 import hudson.init.Initializer;
-import hudson.model.Job;
 import hudson.model.Run;
-import jenkins.model.Jenkins;
-import org.apache.commons.io.filefilter.RegexFileFilter;
 
-import java.io.IOException;
-import java.util.List;
-
-import static hudson.init.InitMilestone.JOB_LOADED;
 import static hudson.init.InitMilestone.PLUGINS_STARTED;
 
-@SuppressWarnings({"WeakerAccess", "unused"})
+@SuppressWarnings({"unused", "deprecation"})
 public class PerfSigUIPlugin extends Plugin {
 
     @Initializer(before = PLUGINS_STARTED)
@@ -50,21 +42,5 @@ public class PerfSigUIPlugin extends Plugin {
         Run.XSTREAM2.addCompatibilityAlias("de.tsystems.mms.apm.performancesignature.model.PerfSigTestData", PerfSigTestData.class);
         Run.XSTREAM2.addCompatibilityAlias("de.tsystems.mms.apm.performancesignature.PerfSigBuildAction", PerfSigBuildAction.class);
         Run.XSTREAM2.addCompatibilityAlias("de.tsystems.mms.apm.performancesignature.PerfSigTestAction", PerfSigTestAction.class);
-    }
-
-    @Initializer(after = JOB_LOADED)
-    public static void init1() throws IOException, InterruptedException {
-        // Check for old dashboard configurations
-        for (Job<?, ?> job : Jenkins.getActiveInstance().getAllItems(Job.class)) {
-            FilePath jobPath = new FilePath(job.getConfigFile().getFile()).getParent();
-            if (jobPath == null) {
-                continue;
-            }
-            List<FilePath> files = jobPath.list(new RegexFileFilter(".*-config.json"));
-            files.addAll(jobPath.list(new RegexFileFilter("gridconfig.*.json")));
-            for (FilePath file : files) {
-                file.delete();
-            }
-        }
     }
 }

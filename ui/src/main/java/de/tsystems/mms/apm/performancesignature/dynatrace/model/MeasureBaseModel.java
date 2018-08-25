@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 T-Systems Multimedia Solutions GmbH
+ * Copyright (c) 2014-2018 T-Systems Multimedia Solutions GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,12 +52,20 @@ public abstract class MeasureBaseModel {
         return avg;
     }
 
+    public void setAvg(Number avg) {
+        this.avg = avg.doubleValue();
+    }
+
     /**
      * Ruft den Wert der min-Eigenschaft ab.
      */
     @Exported
     public double getMin() {
         return min;
+    }
+
+    public void setMin(Number min) {
+        this.min = min.doubleValue();
     }
 
     /**
@@ -68,12 +76,20 @@ public abstract class MeasureBaseModel {
         return max;
     }
 
+    public void setMax(Number max) {
+        this.max = max.doubleValue();
+    }
+
     /**
      * Ruft den Wert der sum-Eigenschaft ab.
      */
     @Exported
     public double getSum() {
         return sum;
+    }
+
+    public void setSum(Number sum) {
+        this.sum = sum.doubleValue();
     }
 
     /**
@@ -87,22 +103,32 @@ public abstract class MeasureBaseModel {
         return count;
     }
 
+    public void setCount(Number count) {
+        this.count = count.longValue();
+    }
+
     /**
      * used by PerfSigBuildActionResultsDisplay
      * get the avg value of a metric
      */
     public double getMetricValue(final String aggregation) {
-        if (aggregation == null || aggregation.equalsIgnoreCase("average")) {
-            return this.getAvg();
-        } else if (aggregation.equalsIgnoreCase("count")) {
-            return this.getCount();
-        } else if (aggregation.equalsIgnoreCase("sum")) {
-            return this.getSum();
-        } else if (aggregation.equalsIgnoreCase("maximum")) {
-            return this.getMax();
-        } else if (aggregation.equalsIgnoreCase("minimum")) {
-            return this.getMin();
+        if (aggregation == null) return this.getAvg();
+        switch (aggregation) {
+            case "avg":
+            case "average":
+                return this.getAvg();
+            case "min":
+            case "minimum":
+                return this.getMin();
+            case "max":
+            case "maximum":
+                return this.getMax();
+            case "sum":
+                return this.getSum();
+            case "count":
+                return this.getCount();
+            default:
+                return this.getAvg();
         }
-        return 0;
     }
 }

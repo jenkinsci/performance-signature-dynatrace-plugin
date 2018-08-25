@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 T-Systems Multimedia Solutions GmbH
+ * Copyright (c) 2014-2018 T-Systems Multimedia Solutions GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,13 +18,20 @@ package de.tsystems.mms.apm.performancesignature.dynatrace.configuration;
 
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.DTServerConnection;
 import de.tsystems.mms.apm.performancesignature.dynatrace.util.PerfSigUtils;
+import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
 import hudson.Extension;
 import hudson.RelativePath;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
+import hudson.model.Item;
 import hudson.util.ListBoxModel;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
+import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
+
+import javax.annotation.Nonnull;
 
 public class Dashboard extends AbstractDescribableImpl<Dashboard> {
     private final String name;
@@ -44,12 +51,20 @@ public class Dashboard extends AbstractDescribableImpl<Dashboard> {
 
     @Extension
     public static class DescriptorImpl extends Descriptor<Dashboard> {
+        @Nonnull
         @Override
         public String getDisplayName() {
             return "";
         }
 
-        public ListBoxModel doFillDashboardItems(@RelativePath("../..") @QueryParameter final String dynatraceProfile) {
+        @Nonnull
+        @Restricted(NoExternalUse.class)
+        public ListBoxModel doFillDashboardItems(@AncestorInPath Item item,
+                                                 @RelativePath("../..") @QueryParameter final String dynatraceProfile) {
+            if (PerfSigUIUtils.checkForMissingPermission(item)) {
+                return new ListBoxModel();
+            }
+
             DynatraceServerConfiguration serverConfiguration = PerfSigUtils.getServerConfiguration(dynatraceProfile);
             if (serverConfiguration != null) {
                 CredProfilePair pair = serverConfiguration.getCredProfilePair(dynatraceProfile);
@@ -58,7 +73,7 @@ public class Dashboard extends AbstractDescribableImpl<Dashboard> {
                     return PerfSigUtils.listToListBoxModel(connection.getDashboards());
                 }
             }
-            return null;
+            return new ListBoxModel();
         }
     }
 }

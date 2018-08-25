@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 T-Systems Multimedia Solutions GmbH
+ * Copyright (c) 2014-2018 T-Systems Multimedia Solutions GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,7 +43,7 @@ public class EventUpdate {
     @SerializedName("start")
     private Date start;
     @SerializedName("end")
-    private Date end;
+    private final Date end;
 
     public EventUpdate(Date end) {
         this.end = end == null ? null : (Date) end.clone();

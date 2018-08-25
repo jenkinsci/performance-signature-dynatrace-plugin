@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 T-Systems Multimedia Solutions GmbH
+ * Copyright (c) 2014-2018 T-Systems Multimedia Solutions GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ import static org.junit.Assert.assertNotNull;
 public class PerfSigTestActionTest {
     private final static String TEST_PROJECT_WITH_HISTORY = "projectAction";
     @Rule
-    public JenkinsRule j = new JenkinsRule();
+    public final JenkinsRule j = new JenkinsRule();
     @Rule
     public ExpectedException exception = ExpectedException.none();
 

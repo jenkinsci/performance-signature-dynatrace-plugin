@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 T-Systems Multimedia Solutions GmbH
+ * Copyright (c) 2014-2018 T-Systems Multimedia Solutions GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,18 +31,18 @@ public class Result {
     private String result;
 
     /**
-     * Result value
+     * XmlResult value
      *
      * @return result
      **/
-    @ApiModelProperty(required = true, value = "Result value")
+    @ApiModelProperty(required = true, value = "XmlResult value")
     public String getResult() {
         return result;
     }
 
     @Override
     public String toString() {
-        return "class Result {\n" +
+        return "class XmlResult {\n" +
                 "    result: " + PerfSigUIUtils.toIndentedString(result) + "\n" +
                 "}";
     }

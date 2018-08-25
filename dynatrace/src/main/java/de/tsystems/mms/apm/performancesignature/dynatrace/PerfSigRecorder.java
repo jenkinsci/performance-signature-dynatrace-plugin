@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 T-Systems Multimedia Solutions GmbH
+ * Copyright (c) 2014-2018 T-Systems Multimedia Solutions GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,9 +41,13 @@ import hudson.util.ListBoxModel;
 import jenkins.tasks.SimpleBuildStep;
 import org.apache.commons.lang.StringUtils;
 import org.jenkinsci.Symbol;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
+import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 
+import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -210,23 +214,15 @@ public class PerfSigRecorder extends Recorder implements SimpleBuildStep {
         run.addAction(action);
     }
 
+    @CheckForNull
     private PerfSigEnvInvisAction getBuildEnvVars(final Run<?, ?> build, final String testCase) {
         final List<PerfSigEnvInvisAction> envVars = build.getActions(PerfSigEnvInvisAction.class);
-        for (PerfSigEnvInvisAction vars : envVars) {
-            if (vars.getTestCase().equals(testCase))
-                return vars;
-        }
-        return null;
+        return envVars.stream().filter(vars -> vars.getTestCase().equals(testCase)).findFirst().orElse(null);
     }
 
     private boolean validateSessionId(final String id) {
         if (StringUtils.isBlank(id)) return false;
-        for (SessionData session : availableSessions) {
-            if (session.getId().equalsIgnoreCase(id)) {
-                return true;
-            }
-        }
-        return false;
+        return availableSessions.stream().anyMatch(session -> session.getId().equalsIgnoreCase(id));
     }
 
     public BuildStepMonitor getRequiredMonitorService() {
@@ -252,7 +248,7 @@ public class PerfSigRecorder extends Recorder implements SimpleBuildStep {
     }
 
     public List<ConfigurationTestCase> getConfigurationTestCases() {
-        return configurationTestCases == null ? Collections.<ConfigurationTestCase>emptyList() : configurationTestCases;
+        return configurationTestCases == null ? Collections.emptyList() : configurationTestCases;
     }
 
     public int getNonFunctionalFailure() {
@@ -283,20 +279,28 @@ public class PerfSigRecorder extends Recorder implements SimpleBuildStep {
         public static final boolean defaultExportSessions = true;
         public static final boolean defaultDeleteSessions = false;
         public static final boolean defaultRemoveConfidentialStrings = true;
-        public static final int defaultNonFunctionalFailure = 0;
+        public static final int defaultNonFunctionalFailure = 2;
 
         public DescriptorImpl() {
             load();
         }
 
-        public ListBoxModel doFillDynatraceProfileItems() {
+        @Nonnull
+        @Restricted(NoExternalUse.class)
+        public ListBoxModel doFillDynatraceProfileItems(@AncestorInPath Item item) {
+            if (PerfSigUIUtils.checkForMissingPermission(item)) {
+                return new ListBoxModel();
+            }
             return PerfSigUtils.listToListBoxModel(PerfSigUtils.getDTConfigurations());
         }
 
-        public boolean isApplicable(final Class<? extends AbstractProject> aClass) {
+        @Override
+        public boolean isApplicable(final Class<? extends AbstractProject> jobType) {
             return true;
         }
 
+        @Nonnull
+        @Override
         public String getDisplayName() {
             return Messages.PerfSigRecorder_DisplayName();
         }

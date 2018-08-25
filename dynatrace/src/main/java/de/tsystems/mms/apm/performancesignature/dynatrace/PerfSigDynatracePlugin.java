@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 T-Systems Multimedia Solutions GmbH
+ * Copyright (c) 2014-2018 T-Systems Multimedia Solutions GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import hudson.model.Run;
 
 import static hudson.init.InitMilestone.PLUGINS_STARTED;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "deprecation"})
 public class PerfSigDynatracePlugin extends Plugin {
 
     @Initializer(before = PLUGINS_STARTED)
@@ -34,7 +34,6 @@ public class PerfSigDynatracePlugin extends Plugin {
         Items.XSTREAM2.addCompatibilityAlias("de.tsystems.mms.apm.performancesignature.model.GenericTestCase", GenericTestCase.class);
         Items.XSTREAM2.addCompatibilityAlias("de.tsystems.mms.apm.performancesignature.model.ConfigurationTestCase", ConfigurationTestCase.class);
         Items.XSTREAM2.addCompatibilityAlias("de.tsystems.mms.apm.performancesignature.model.CredProfilePair", CredProfilePair.class);
-        Items.XSTREAM2.addCompatibilityAlias("de.tsystems.mms.apm.performancesignature.model.CustomProxy", CustomProxy.class);
         Items.XSTREAM2.addCompatibilityAlias("de.tsystems.mms.apm.performancesignature.model.Dashboard", Dashboard.class);
         Items.XSTREAM2.addCompatibilityAlias("de.tsystems.mms.apm.performancesignature.model.DynatraceServerConfiguration", DynatraceServerConfiguration.class);
         Items.XSTREAM2.addCompatibilityAlias("de.tsystems.mms.apm.performancesignature.model.UnitTestCase", UnitTestCase.class);

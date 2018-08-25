@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 T-Systems Multimedia Solutions GmbH
+ * Copyright (c) 2014-2018 T-Systems Multimedia Solutions GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ import org.kohsuke.stapler.export.ExportedBean;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -120,11 +121,9 @@ public class TestResult {
     }
 
     public TestMeasure getMeasure(final String metricGroup, final String metric) {
-        for (TestMeasure measure : measures) {
-            if (measure.getMetricGroup().equals(metricGroup) && measure.getName().equals(metric))
-                return measure;
-        }
-        return null;
+        return measures.stream()
+                .filter(measure -> measure.getMetricGroup().equals(metricGroup) && measure.getName().equals(metric))
+                .findFirst().orElse(null);
     }
 
     /**
@@ -205,12 +204,7 @@ public class TestResult {
         }
 
         public static TestResult.StatusEnum fromValue(String text) {
-            for (TestResult.StatusEnum b : TestResult.StatusEnum.values()) {
-                if (String.valueOf(b.value).equalsIgnoreCase(text)) {
-                    return b;
-                }
-            }
-            return null;
+            return Arrays.stream(StatusEnum.values()).filter(b -> b.value.equalsIgnoreCase(text)).findFirst().orElse(null);
         }
 
         public String getValue() {
@@ -219,7 +213,7 @@ public class TestResult {
 
         @Override
         public String toString() {
-            return String.valueOf(value);
+            return value;
         }
 
         public static class Adapter extends TypeAdapter<TestResult.StatusEnum> {
@@ -231,7 +225,7 @@ public class TestResult {
             @Override
             public TestResult.StatusEnum read(final JsonReader jsonReader) throws IOException {
                 String value = jsonReader.nextString();
-                return TestResult.StatusEnum.fromValue(String.valueOf(value));
+                return TestResult.StatusEnum.fromValue(value);
             }
         }
     }

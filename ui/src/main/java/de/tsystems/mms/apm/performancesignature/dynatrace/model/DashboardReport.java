@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 T-Systems Multimedia Solutions GmbH
+ * Copyright (c) 2014-2018 T-Systems Multimedia Solutions GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,17 +16,18 @@
 
 package de.tsystems.mms.apm.performancesignature.dynatrace.model;
 
-import de.tsystems.mms.apm.performancesignature.ui.model.ClientLinkGenerator;
-import org.kohsuke.accmod.Restricted;
-import org.kohsuke.accmod.restrictions.NoExternalUse;
+import de.tsystems.mms.apm.performancesignature.dynatrace.model.Alert.SeverityEnum;
 import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
 
-import javax.annotation.Nonnull;
 import javax.xml.bind.annotation.*;
-import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.groupingBy;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "dashboardreport")
@@ -40,8 +41,6 @@ public class DashboardReport {
     @XmlElement(name = "incident")
     private final List<Alert> incidents;
     private boolean unitTest;
-    @Deprecated
-    private transient ClientLinkGenerator clientLink;
     private String clientUrl;
 
     public DashboardReport(final String testCaseName) {
@@ -57,6 +56,12 @@ public class DashboardReport {
     @Exported
     public List<Alert> getIncidents() {
         return incidents;
+    }
+
+    public Map<SeverityEnum, Map<String, List<Alert>>> getIncidentMap() {
+        return incidents.stream()
+                .collect(groupingBy(Alert::getSeverity,
+                        groupingBy(alert -> String.format("%s Incident: %s", alert.getSeverity(), alert.getMessage()), TreeMap::new, Collectors.toList())));
     }
 
     public void addIncident(final Alert incident) {
@@ -129,25 +134,10 @@ public class DashboardReport {
         this.clientUrl = clientUrl;
     }
 
-    @SuppressWarnings("deprecation")
-    @Restricted(NoExternalUse.class)
-    @Nonnull
-    protected Object readResolve() throws MalformedURLException {
-        if (clientLink != null) {
-            clientUrl = clientLink.generateLink();
-        }
-        return this;
-    }
-
     public Measure getMeasure(final String chartDashlet, final String measure) {
-        for (ChartDashlet cd : this.chartDashlets) {
-            if (cd.getName().equalsIgnoreCase(chartDashlet) && cd.getMeasures() != null) {
-                for (Measure m : cd.getMeasures()) {
-                    if (m.getName().equalsIgnoreCase(measure))
-                        return m;
-                }
-            }
-        }
-        return null;
+        return chartDashlets.stream()
+                .filter(cd -> cd.getName().equalsIgnoreCase(chartDashlet) && cd.getMeasures() != null)
+                .flatMap(cd -> cd.getMeasures().stream()).filter(m -> m.getName().equalsIgnoreCase(measure))
+                .findFirst().orElse(null);
     }
 }

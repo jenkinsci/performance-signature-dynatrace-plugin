@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 T-Systems Multimedia Solutions GmbH
+ * Copyright (c) 2014-2018 T-Systems Multimedia Solutions GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,6 +36,7 @@ import org.xml.sax.SAXException;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.List;
 
 import static de.tsystems.mms.apm.performancesignature.ui.util.TestUtils.containsMeasure;
@@ -45,9 +46,9 @@ public class PerfSigBuildActionResultsDisplayTest {
 
     private final String TEST_PROJECT_WITH_HISTORY = "projectAction";
     @Rule
-    public JenkinsRule j = new JenkinsRule();
+    public final JenkinsRule j = new JenkinsRule();
     @Rule
-    public ExpectedException exception = ExpectedException.none();
+    public final ExpectedException exception = ExpectedException.none();
 
     @LocalData
     @Test
@@ -143,7 +144,7 @@ public class PerfSigBuildActionResultsDisplayTest {
         j.assertXPath(xmlProjectPage, "/perfSigBuildActionResultsDisplay/dashboardReport/chartDashlet");
         j.assertXPathValue(xmlProjectPage, "/perfSigBuildActionResultsDisplay/dashboardReport/chartDashlet/measure/measure/text()", "Number of Requests");
         j.assertXPathValue(xmlProjectPage, "/perfSigBuildActionResultsDisplay/dashboardReport/chartDashlet/measure/count", "1485");
-        assertEquals(14.0, xmlProjectPage.getFirstByXPath("count(/perfSigBuildActionResultsDisplay/dashboardReport/chartDashlet)"));
+        assertEquals(14.0, xmlProjectPage.getFirstByXPath("count(/perfSigBuildActionResultsDisplay/dashboardReport/chartDashlet)"), 0);
 
         Run<?, ?> build = proj.getBuildByNumber(11157);
         exception.expect(FailingHttpStatusCodeException.class);
@@ -185,16 +186,12 @@ public class PerfSigBuildActionResultsDisplayTest {
         HtmlPage buildPage = wc.getPage(build);
         Gson gson = new Gson();
 
-        for (ReportType type : ReportType.values()) {
+        for (String type : Arrays.asList("Single", "Comparison")) {
             URL url = new URL(buildPage.getUrl() + "performance-signature/get" + type + "ReportList");
             List<String> obj = gson.fromJson(org.apache.commons.io.IOUtils.toString(url), new TypeToken<List<String>>() {
             }.getType());
             assertTrue(!obj.isEmpty());
             assertEquals(2, obj.size());
         }
-    }
-
-    private enum ReportType {
-        Single, Comparison
     }
 }

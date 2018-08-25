@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 T-Systems Multimedia Solutions GmbH
+ * Copyright (c) 2014-2018 T-Systems Multimedia Solutions GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,6 +34,7 @@ public class ActivateConfigurationTest {
     @ClassRule
     public static final JenkinsRule j = new JenkinsRule();
     private static ListBoxModel dynatraceConfigurations;
+    private FreeStyleProject project;
 
     @BeforeClass
     public static void setUp() throws Exception {
@@ -42,7 +43,7 @@ public class ActivateConfigurationTest {
 
     @Test
     public void testJenkinsConfiguration() throws Exception {
-        FreeStyleProject project = j.createFreeStyleProject();
+        project = j.createFreeStyleProject();
         project.getBuildersList().add(new PerfSigActivateConfiguration(dynatraceConfigurations.get(0).name, "ActivateConfigurationTest"));
         FreeStyleBuild build = j.assertBuildStatusSuccess(project.scheduleBuild2(0));
 
@@ -53,7 +54,7 @@ public class ActivateConfigurationTest {
     @Test
     public void testFillConfigurationItems() {
         PerfSigActivateConfiguration.DescriptorImpl descriptor = new PerfSigActivateConfiguration.DescriptorImpl();
-        ListBoxModel listBoxModel = descriptor.doFillConfigurationItems(dynatraceConfigurations.get(0).name);
+        ListBoxModel listBoxModel = descriptor.doFillConfigurationItems(project, dynatraceConfigurations.get(0).name);
 
         assertNotNull(listBoxModel);
         assertFalse(listBoxModel.isEmpty());
@@ -65,7 +66,7 @@ public class ActivateConfigurationTest {
     public void testCheckConfiguration() {
         PerfSigActivateConfiguration.DescriptorImpl descriptor = new PerfSigActivateConfiguration.DescriptorImpl();
 
-        assertEquals(descriptor.doCheckConfiguration("Default"), (FormValidation.ok()));
-        assertEquals(descriptor.doCheckConfiguration("ActivateConfigurationTest"), (FormValidation.ok()));
+        assertEquals(descriptor.doCheckConfiguration(project, "Default"), FormValidation.ok());
+        assertEquals(descriptor.doCheckConfiguration(null, "ActivateConfigurationTest"), FormValidation.ok());
     }
 }

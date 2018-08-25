@@ -1,0 +1,37 @@
+{
+  "tolerateBound": 1,
+  "frustrateBound": 4,
+  "_comment": "global configuration environment-wide",
+  "timeseries": [
+    {
+      "timeseriesId": "com.dynatrace.builtin:servicemethod.responsetime",
+      "aggregation": "avg",
+      "tags": "Frontend"
+    },
+    {
+      "timeseriesId": "com.dynatrace.builtin:servicemethod.responsetime",
+      "aggregation": "avg",
+      "entityIds": "APPLICATION-EA7C4B59F27D43EB",
+      "tolerateBound": 4,
+      "frustrateBound": 8
+    },
+    {
+      "timeseriesId": "com.dynatrace.builtin:host.cpu.user",
+      "aggregation": "avg",
+      "tolerateBound": 1,
+      "frustrateBound": 4
+    },
+    {
+      "timeseriesId": "com.dynatrace.builtin:service.failurerate",
+      "aggregation": "max",
+      "tolerateBound": 3,
+      "frustrateBound": 5
+    },
+    {
+      "timeseriesId": "com.dynatrace.builtin:service.requestspermin",
+      "aggregation": "min",
+      "tolerateBound": 5,
+      "frustrateBound": 2
+    }
+  ]
+}

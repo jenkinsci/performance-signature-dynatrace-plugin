@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 T-Systems Multimedia Solutions GmbH
+ * Copyright (c) 2014-2018 T-Systems Multimedia Solutions GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
 import hudson.model.AbstractProject;
+import hudson.model.Item;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.plugins.analysis.util.PluginLogger;
@@ -38,6 +39,7 @@ import org.apache.commons.lang.StringUtils;
 import org.jenkinsci.Symbol;
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
+import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
@@ -122,49 +124,69 @@ public class PerfSigThreadDump extends Builder implements SimpleBuildStep {
         public static final boolean defaultLockSession = false;
 
         @Restricted(NoExternalUse.class)
-        public FormValidation doCheckAgent(@QueryParameter final String agent) {
-            FormValidation validationResult;
+        public FormValidation doCheckAgent(@AncestorInPath Item item, @QueryParameter final String agent) {
+            FormValidation validationResult = FormValidation.ok();
+            if (PerfSigUIUtils.checkForMissingPermission(item)) {
+                return validationResult;
+            }
+
             if (StringUtils.isNotBlank(agent)) {
-                validationResult = FormValidation.ok();
+                return validationResult;
             } else {
-                validationResult = FormValidation.error(Messages.PerfSigThreadDump_AgentNotValid());
+                return FormValidation.error(Messages.PerfSigThreadDump_AgentNotValid());
             }
-            return validationResult;
         }
 
         @Restricted(NoExternalUse.class)
-        public FormValidation doCheckHost(@QueryParameter final String host) {
-            FormValidation validationResult;
+        public FormValidation doCheckHost(@AncestorInPath Item item, @QueryParameter final String host) {
+            FormValidation validationResult = FormValidation.ok();
+            if (PerfSigUIUtils.checkForMissingPermission(item)) {
+                return validationResult;
+            }
+
             if (StringUtils.isNotBlank(host)) {
-                validationResult = FormValidation.ok();
+                return validationResult;
             } else {
-                validationResult = FormValidation.error(Messages.PerfSigThreadDump_HostNotValid());
+                return FormValidation.error(Messages.PerfSigThreadDump_HostNotValid());
             }
-            return validationResult;
         }
 
-        @Restricted(NoExternalUse.class)
         @Nonnull
-        public ListBoxModel doFillDynatraceProfileItems() {
+        @Restricted(NoExternalUse.class)
+        public ListBoxModel doFillDynatraceProfileItems(@AncestorInPath Item item) {
+            if (PerfSigUIUtils.checkForMissingPermission(item)) {
+                return new ListBoxModel();
+            }
             return PerfSigUtils.listToListBoxModel(PerfSigUtils.getDTConfigurations());
         }
 
-        @Restricted(NoExternalUse.class)
         @Nonnull
-        public ListBoxModel doFillAgentItems(@QueryParameter final String dynatraceProfile) {
+        @Restricted(NoExternalUse.class)
+        public ListBoxModel doFillAgentItems(@AncestorInPath Item item, @QueryParameter final String dynatraceProfile) {
+            if (PerfSigUIUtils.checkForMissingPermission(item)) {
+                return new ListBoxModel();
+            }
             return PerfSigUtils.fillAgentItems(dynatraceProfile);
         }
 
-        @Restricted(NoExternalUse.class)
         @Nonnull
-        public ListBoxModel doFillHostItems(@QueryParameter final String dynatraceProfile, @QueryParameter final String agent) {
+        @Restricted(NoExternalUse.class)
+        public ListBoxModel doFillHostItems(@AncestorInPath Item item,
+                                            @QueryParameter final String dynatraceProfile,
+                                            @QueryParameter final String agent) {
+            if (PerfSigUIUtils.checkForMissingPermission(item)) {
+                return new ListBoxModel();
+            }
             return PerfSigUtils.fillHostItems(dynatraceProfile, agent);
         }
 
-        public boolean isApplicable(final Class<? extends AbstractProject> aClass) {
+        @Override
+        public boolean isApplicable(final Class<? extends AbstractProject> jobType) {
             return true;
         }
 
+        @Nonnull
+        @Override
         public String getDisplayName() {
             return Messages.PerfSigThreadDump_DisplayName();
         }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 T-Systems Multimedia Solutions GmbH
+ * Copyright (c) 2014-2018 T-Systems Multimedia Solutions GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
+import hudson.model.Item;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.util.FormValidation;
@@ -31,10 +32,12 @@ import org.jenkinsci.plugins.workflow.steps.StepDescriptor;
 import org.jenkinsci.plugins.workflow.steps.StepExecution;
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
+import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
 
+import javax.annotation.Nonnull;
 import java.util.Set;
 
 public class InputTriggerStep extends Step {
@@ -67,14 +70,20 @@ public class InputTriggerStep extends Step {
     @Extension
     public static final class DescriptorImpl extends StepDescriptor {
         @Restricted(NoExternalUse.class)
-        public FormValidation doCheckTriggerId(@QueryParameter("triggerId") final String value) {
+        public FormValidation doCheckTriggerId(@AncestorInPath Item item,
+                                               @QueryParameter("triggerId") final String value) {
+            FormValidation validationResult = FormValidation.ok();
+            if (PerfSigUIUtils.checkForMissingPermission(item)) {
+                return validationResult;
+            }
             if (PerfSigUIUtils.checkNotNullOrEmpty(value)) {
-                return FormValidation.ok();
+                return validationResult;
             } else {
                 return FormValidation.error("empty triggerId");
             }
         }
 
+        @Nonnull
         @Override
         public String getDisplayName() {
             return Messages.InputTriggerStep_DisplayName();

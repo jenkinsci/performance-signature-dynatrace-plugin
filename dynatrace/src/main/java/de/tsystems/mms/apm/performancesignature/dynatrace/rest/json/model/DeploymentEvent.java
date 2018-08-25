@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 T-Systems Multimedia Solutions GmbH
+ * Copyright (c) 2014-2018 T-Systems Multimedia Solutions GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,32 +32,26 @@ import static de.tsystems.mms.apm.performancesignature.dynatrace.model.Alert.Sta
 @ApiModel(description = "Deployment event record description")
 
 public class DeploymentEvent {
-    @SerializedName("severity")
-    private final SeverityEnum severity;
-    @SerializedName("state")
-    private final StateEnum state;
     @SerializedName("message")
     private final String message;
-    @SerializedName("description")
-    private final String description;
-    @SerializedName("start")
-    private final Date start;
-    @SerializedName("end")
-    private final Date end;
     @SerializedName("systemprofile")
     private final String systemprofile;
+    @SerializedName("severity")
+    private SeverityEnum severity;
+    @SerializedName("state")
+    private StateEnum state;
+    @SerializedName("description")
+    private String description;
+    @SerializedName("start")
+    private Date start;
+    @SerializedName("end")
+    private Date end;
     @SerializedName("application")
-    private final String application;
+    private String application;
 
-    public DeploymentEvent(SeverityEnum severity, StateEnum state, String message, String description, Date start, Date end, String systemprofile, String application) {
-        this.severity = severity;
-        this.state = state;
-        this.message = message;
-        this.description = description;
-        this.start = start == null ? null : (Date) start.clone();
-        this.end = end == null ? null : (Date) end.clone();
+    public DeploymentEvent(final String systemprofile, final String message) {
         this.systemprofile = systemprofile;
-        this.application = application;
+        this.message = message;
     }
 
     /**
@@ -70,6 +64,11 @@ public class DeploymentEvent {
         return severity;
     }
 
+    public DeploymentEvent setSeverity(final SeverityEnum severity) {
+        this.severity = severity;
+        return this;
+    }
+
     /**
      * The state of the event
      *
@@ -78,6 +77,11 @@ public class DeploymentEvent {
     @ApiModelProperty(value = "The state of the event")
     public StateEnum getState() {
         return state;
+    }
+
+    public DeploymentEvent setState(final StateEnum state) {
+        this.state = state;
+        return this;
     }
 
     /**
@@ -100,6 +104,11 @@ public class DeploymentEvent {
         return description;
     }
 
+    public DeploymentEvent setDescription(final String description) {
+        this.description = description;
+        return this;
+    }
+
     /**
      * Start time in ISO 8601 compatible date/time of format: yyyy-MM-dd&#39;T&#39;HH:mm:ss.SSSXXX
      *
@@ -110,6 +119,11 @@ public class DeploymentEvent {
         return start == null ? null : (Date) start.clone();
     }
 
+    public DeploymentEvent setStart(final Date start) {
+        this.start = start != null ? (Date) start.clone() : null;
+        return this;
+    }
+
     /**
      * End time in ISO 8601 compatible date/time of format: yyyy-MM-dd&#39;T&#39;HH:mm:ss.SSSXXX
      *
@@ -118,6 +132,11 @@ public class DeploymentEvent {
     @ApiModelProperty(example = "2016-05-11T11:35:31.170+02:00", value = "End time in ISO 8601 compatible date/time of format: yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
     public Date getEnd() {
         return end == null ? null : (Date) end.clone();
+    }
+
+    public DeploymentEvent setEnd(final Date end) {
+        this.end = end != null ? (Date) end.clone() : null;
+        return this;
     }
 
     /**
@@ -138,6 +157,11 @@ public class DeploymentEvent {
     @ApiModelProperty(value = "Application name")
     public String getApplication() {
         return application;
+    }
+
+    public DeploymentEvent setApplication(final String application) {
+        this.application = application;
+        return this;
     }
 
     @Override

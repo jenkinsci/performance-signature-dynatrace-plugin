@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 T-Systems Multimedia Solutions GmbH
+ * Copyright (c) 2014-2018 T-Systems Multimedia Solutions GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
 import hudson.model.AbstractProject;
+import hudson.model.Item;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.plugins.analysis.util.PluginLogger;
@@ -34,6 +35,9 @@ import hudson.util.ListBoxModel;
 import jenkins.tasks.SimpleBuildStep;
 import org.apache.commons.lang.StringUtils;
 import org.jenkinsci.Symbol;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
+import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import javax.annotation.Nonnull;
@@ -98,14 +102,22 @@ public class PerfSigStopRecording extends Builder implements SimpleBuildStep {
     @Symbol("stopSession")
     @Extension
     public static final class DescriptorImpl extends BuildStepDescriptor<Builder> {
-        public ListBoxModel doFillDynatraceProfileItems() {
+        @Nonnull
+        @Restricted(NoExternalUse.class)
+        public ListBoxModel doFillDynatraceProfileItems(@AncestorInPath Item item) {
+            if (PerfSigUIUtils.checkForMissingPermission(item)) {
+                return new ListBoxModel();
+            }
             return PerfSigUtils.listToListBoxModel(PerfSigUtils.getDTConfigurations());
         }
 
-        public boolean isApplicable(final Class<? extends AbstractProject> aClass) {
+        @Override
+        public boolean isApplicable(final Class<? extends AbstractProject> jobType) {
             return true;
         }
 
+        @Nonnull
+        @Override
         public String getDisplayName() {
             return Messages.PerfSigStopRecording_DisplayName();
         }

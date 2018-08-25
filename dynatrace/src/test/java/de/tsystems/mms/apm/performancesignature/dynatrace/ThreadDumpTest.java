@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 T-Systems Multimedia Solutions GmbH
+ * Copyright (c) 2014-2018 T-Systems Multimedia Solutions GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,6 +34,7 @@ public class ThreadDumpTest {
     @ClassRule
     public static final JenkinsRule j = new JenkinsRule();
     private static ListBoxModel dynatraceConfigurations;
+    private FreeStyleProject project;
 
     @BeforeClass
     public static void setUp() throws Exception {
@@ -42,7 +43,7 @@ public class ThreadDumpTest {
 
     @Test
     public void testJenkinsConfiguration() throws Exception {
-        FreeStyleProject project = j.createFreeStyleProject();
+        project = j.createFreeStyleProject();
         project.getBuildersList().add(new PerfSigThreadDump(dynatraceConfigurations.get(0).name, "CustomerFrontend_easyTravel_8080", "wum192202"));
         FreeStyleBuild build = j.assertBuildStatusSuccess(project.scheduleBuild2(0));
 
@@ -53,7 +54,7 @@ public class ThreadDumpTest {
     @Test
     public void testFillAgentItems() {
         PerfSigThreadDump.DescriptorImpl descriptor = new PerfSigThreadDump.DescriptorImpl();
-        ListBoxModel listBoxModel = descriptor.doFillAgentItems(dynatraceConfigurations.get(0).name);
+        ListBoxModel listBoxModel = descriptor.doFillAgentItems(null, dynatraceConfigurations.get(0).name);
 
         assertFalse(listBoxModel.isEmpty());
         assertTrue(TestUtils.containsOption(listBoxModel, "BusinessBackend_easyTravel"));
@@ -63,7 +64,7 @@ public class ThreadDumpTest {
     @Test
     public void testFillHostItems() {
         PerfSigThreadDump.DescriptorImpl descriptor = new PerfSigThreadDump.DescriptorImpl();
-        ListBoxModel listBoxModel = descriptor.doFillHostItems(dynatraceConfigurations.get(0).name, "CreditCardAuthorization_easyTravel");
+        ListBoxModel listBoxModel = descriptor.doFillHostItems(null, dynatraceConfigurations.get(0).name, "CreditCardAuthorization_easyTravel");
 
         assertFalse(listBoxModel.isEmpty());
         assertTrue(TestUtils.containsOption(listBoxModel, "wum192202"));
@@ -73,15 +74,15 @@ public class ThreadDumpTest {
     public void testCheckAgent() {
         PerfSigThreadDump.DescriptorImpl descriptor = new PerfSigThreadDump.DescriptorImpl();
 
-        assertEquals(descriptor.doCheckAgent("BusinessBackend_easyTravel"), (FormValidation.ok()));
-        assertNotEquals(descriptor.doCheckHost(""), FormValidation.ok());
+        assertEquals(descriptor.doCheckAgent(project, "BusinessBackend_easyTravel"), FormValidation.ok());
+        assertNotEquals(descriptor.doCheckHost(null, ""), FormValidation.ok());
     }
 
     @Test
     public void testCheckHost() {
         PerfSigThreadDump.DescriptorImpl descriptor = new PerfSigThreadDump.DescriptorImpl();
 
-        assertEquals(descriptor.doCheckHost("wum192202"), (FormValidation.ok()));
-        assertNotEquals(descriptor.doCheckHost(""), FormValidation.ok());
+        assertEquals(descriptor.doCheckHost(project, "wum192202"), (FormValidation.ok()));
+        assertNotEquals(descriptor.doCheckHost(null, ""), FormValidation.ok());
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 T-Systems Multimedia Solutions GmbH
+ * Copyright (c) 2014-2018 T-Systems Multimedia Solutions GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,10 @@ package de.tsystems.mms.apm.performancesignature.dynatrace;
 
 import com.google.common.collect.ImmutableSet;
 import de.tsystems.mms.apm.performancesignature.dynatrace.util.PerfSigUtils;
+import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
+import hudson.EnvVars;
 import hudson.Extension;
+import hudson.model.Item;
 import hudson.model.TaskListener;
 import hudson.util.ListBoxModel;
 import org.jenkinsci.plugins.workflow.steps.Step;
@@ -27,8 +30,10 @@ import org.jenkinsci.plugins.workflow.steps.StepDescriptor;
 import org.jenkinsci.plugins.workflow.steps.StepExecution;
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
+import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
 
+import javax.annotation.Nonnull;
 import java.util.Set;
 
 public class CreateDeploymentStep extends Step {
@@ -66,6 +71,7 @@ public class CreateDeploymentStep extends Step {
             return true;
         }
 
+        @Nonnull
         @Override
         public String getDisplayName() {
             return "create Dynatrace Deployment event";
@@ -73,11 +79,15 @@ public class CreateDeploymentStep extends Step {
 
         @Override
         public Set<? extends Class<?>> getRequiredContext() {
-            return ImmutableSet.of(TaskListener.class);
+            return ImmutableSet.of(TaskListener.class, EnvVars.class);
         }
 
-        @Restricted(NoExternalUse.class) // Only for UI calls
-        public ListBoxModel doFillDynatraceProfileItems() {
+        @Nonnull
+        @Restricted(NoExternalUse.class)
+        public ListBoxModel doFillDynatraceProfileItems(@AncestorInPath Item item) {
+            if (PerfSigUIUtils.checkForMissingPermission(item)) {
+                return new ListBoxModel();
+            }
             return PerfSigUtils.listToListBoxModel(PerfSigUtils.getDTConfigurations());
         }
     }

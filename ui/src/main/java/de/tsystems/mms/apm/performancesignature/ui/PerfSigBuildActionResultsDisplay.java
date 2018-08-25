@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 T-Systems Multimedia Solutions GmbH
+ * Copyright (c) 2014-2018 T-Systems Multimedia Solutions GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ package de.tsystems.mms.apm.performancesignature.ui;
 import com.google.gson.Gson;
 import de.tsystems.mms.apm.performancesignature.dynatrace.model.DashboardReport;
 import de.tsystems.mms.apm.performancesignature.dynatrace.model.Measure;
-import de.tsystems.mms.apm.performancesignature.dynatrace.model.Measurement;
 import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
 import hudson.FilePath;
 import hudson.model.Api;
@@ -52,10 +51,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 @ExportedBean
 public class PerfSigBuildActionResultsDisplay implements ModelObject {
@@ -68,6 +69,7 @@ public class PerfSigBuildActionResultsDisplay implements ModelObject {
         this.currentDashboardReports = this.buildAction.getDashboardReports();
     }
 
+    @Override
     public String getDisplayName() {
         return Messages.PerfSigBuildActionResultsDisplay_DisplayName();
     }
@@ -114,12 +116,9 @@ public class PerfSigBuildActionResultsDisplay implements ModelObject {
         if (currentDashboardReports == null) {
             return null;
         }
-        for (DashboardReport dashboardReport : currentDashboardReports) {
-            if (dashboardReport.getName().equals(reportName)) {
-                return dashboardReport;
-            }
-        }
-        return null;
+        return currentDashboardReports.stream()
+                .filter(dashboardReport -> dashboardReport.getName().equals(reportName))
+                .findFirst().orElse(null);
     }
 
     public void doSummarizerGraph(final StaplerRequest request, final StaplerResponse response) throws IOException {
@@ -137,9 +136,10 @@ public class PerfSigBuildActionResultsDisplay implements ModelObject {
                     return null;
                 }
 
-                for (Measurement measurement : m.getMeasurements()) {
-                    timeSeries.add(new Second(new Date(measurement.getTimestamp())), measurement.getMetricValue(m.getAggregation()));
-                }
+                m.getMeasurements().stream().filter(Objects::nonNull).forEach(measurement ->
+                        timeSeries.add(
+                                new Second(new Date(measurement.getTimestamp())),
+                                measurement.getMetricValue(m.getAggregation())));
                 return new TimeSeriesCollection(timeSeries);
             }
         };
@@ -174,12 +174,8 @@ public class PerfSigBuildActionResultsDisplay implements ModelObject {
 
         FilePath reportDir = PerfSigUIUtils.getReportDirectory(getBuild());
         List<FilePath> files = reportDir.list(new RegexFileFilter(type + ".*" + testCase + ".*.pdf"));
-        List<String> fileNames = new ArrayList<>();
-        for (FilePath fp : files) {
-            fileNames.add(PerfSigUIUtils.removeExtension(fp.getName()));
-        }
-        Gson gson = new Gson();
-        String output = gson.toJson(fileNames);
+        List<String> fileNames = files.stream().map(fp -> PerfSigUIUtils.removeExtension(fp.getName())).collect(Collectors.toList());
+        String output = new Gson().toJson(fileNames);
         IOUtils.write(output, response.getOutputStream(), StandardCharsets.UTF_8);
     }
 
@@ -289,7 +285,7 @@ public class PerfSigBuildActionResultsDisplay implements ModelObject {
             DateAxis dateAxis = (DateAxis) xyPlot.getDomainAxis();
             dateAxis.setTickMarkPosition(DateTickMarkPosition.MIDDLE);
             dateAxis.setDateFormatOverride(new SimpleDateFormat("HH:mm:ss"));
-            xyitemrenderer.setSeriesPaint(0, Color.decode(color));
+            xyitemrenderer.setSeriesPaint(0, Color.decode(Optional.ofNullable(color).orElse("#FF0000")));
             xyitemrenderer.setSeriesStroke(0, new BasicStroke(2));
 
             chart.setBackgroundPaint(Color.white);

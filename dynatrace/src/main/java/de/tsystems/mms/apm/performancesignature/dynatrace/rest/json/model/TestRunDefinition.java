@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 T-Systems Multimedia Solutions GmbH
+ * Copyright (c) 2014-2018 T-Systems Multimedia Solutions GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,10 +17,13 @@
 package de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model;
 
 import com.google.gson.annotations.SerializedName;
-import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
 import io.swagger.annotations.ApiModelProperty;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static de.tsystems.mms.apm.performancesignature.dynatrace.model.TestRun.CategoryEnum;
+import static de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils.toIndentedString;
 
 /**
  * TestRunDefinition
@@ -28,7 +31,9 @@ import static de.tsystems.mms.apm.performancesignature.dynatrace.model.TestRun.C
 
 public class TestRunDefinition {
     @SerializedName("versionBuild")
-    private String versionBuild;
+    private final String versionBuild;
+    @SerializedName("category")
+    private CategoryEnum category;
     @SerializedName("versionMajor")
     private String versionMajor;
     @SerializedName("versionMilestone")
@@ -41,12 +46,23 @@ public class TestRunDefinition {
     private String marker;
     @SerializedName("platform")
     private String platform;
-    @SerializedName("category")
-    private CategoryEnum category;
+    @SerializedName("additionalMetaData")
+    private Map<String, String> additionalMetaData;
 
-    public TestRunDefinition(int versionBuild, String performance) {
+    public TestRunDefinition(final int versionBuild) {
         this.versionBuild = String.valueOf(versionBuild);
-        this.category = CategoryEnum.fromValue(performance);
+    }
+
+    public Map<String, String> getAdditionalMetaData() {
+        return additionalMetaData;
+    }
+
+    public TestRunDefinition addAdditionalMetaData(final String key, final String value) {
+        if (this.additionalMetaData == null) {
+            this.additionalMetaData = new HashMap<>();
+        }
+        this.additionalMetaData.put(key, value);
+        return this;
     }
 
     /**
@@ -69,6 +85,11 @@ public class TestRunDefinition {
         return versionMajor;
     }
 
+    public TestRunDefinition setVersionMajor(final String versionMajor) {
+        this.versionMajor = versionMajor;
+        return this;
+    }
+
     /**
      * Get versionMilestone
      *
@@ -76,6 +97,11 @@ public class TestRunDefinition {
      **/
     public String getVersionMilestone() {
         return versionMilestone;
+    }
+
+    public TestRunDefinition setVersionMilestone(final String versionMilestone) {
+        this.versionMilestone = versionMilestone;
+        return this;
     }
 
     /**
@@ -87,6 +113,11 @@ public class TestRunDefinition {
         return versionMinor;
     }
 
+    public TestRunDefinition setVersionMinor(final String versionMinor) {
+        this.versionMinor = versionMinor;
+        return this;
+    }
+
     /**
      * Get versionRevision
      *
@@ -94,6 +125,11 @@ public class TestRunDefinition {
      **/
     public String getVersionRevision() {
         return versionRevision;
+    }
+
+    public TestRunDefinition setVersionRevision(final String versionRevision) {
+        this.versionRevision = versionRevision;
+        return this;
     }
 
     /**
@@ -105,6 +141,11 @@ public class TestRunDefinition {
         return marker;
     }
 
+    public TestRunDefinition setMarker(final String marker) {
+        this.marker = marker;
+        return this;
+    }
+
     /**
      * Get platform
      *
@@ -112,6 +153,11 @@ public class TestRunDefinition {
      **/
     public String getPlatform() {
         return platform;
+    }
+
+    public TestRunDefinition setPlatform(final String platform) {
+        this.platform = platform;
+        return this;
     }
 
     /**
@@ -124,17 +170,23 @@ public class TestRunDefinition {
         return category;
     }
 
+    public TestRunDefinition setCategory(final CategoryEnum category) {
+        this.category = category;
+        return this;
+    }
+
     @Override
     public String toString() {
         return "class TestRunDefinition {\n" +
-                "    versionBuild: " + PerfSigUIUtils.toIndentedString(versionBuild) + "\n" +
-                "    versionMajor: " + PerfSigUIUtils.toIndentedString(versionMajor) + "\n" +
-                "    versionMilestone: " + PerfSigUIUtils.toIndentedString(versionMilestone) + "\n" +
-                "    versionMinor: " + PerfSigUIUtils.toIndentedString(versionMinor) + "\n" +
-                "    versionRevision: " + PerfSigUIUtils.toIndentedString(versionRevision) + "\n" +
-                "    marker: " + PerfSigUIUtils.toIndentedString(marker) + "\n" +
-                "    platform: " + PerfSigUIUtils.toIndentedString(platform) + "\n" +
-                "    category: " + PerfSigUIUtils.toIndentedString(category) + "\n" +
+                "    category: " + toIndentedString(category) + "\n" +
+                "    versionMinor: " + toIndentedString(versionMinor) + "\n" +
+                "    versionMajor: " + toIndentedString(versionMajor) + "\n" +
+                "    versionBuild: " + toIndentedString(versionBuild) + "\n" +
+                "    versionMilestone: " + toIndentedString(versionMilestone) + "\n" +
+                "    versionRevision: " + toIndentedString(versionRevision) + "\n" +
+                "    additionalMetaData: " + toIndentedString(additionalMetaData) + "\n" +
+                "    marker: " + toIndentedString(marker) + "\n" +
+                "    platform: " + toIndentedString(platform) + "\n" +
                 "}";
     }
 }

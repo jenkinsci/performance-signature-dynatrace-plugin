@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 T-Systems Multimedia Solutions GmbH
+ * Copyright (c) 2014-2018 T-Systems Multimedia Solutions GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,22 +45,18 @@ public class TestUtils {
         List<DynatraceServerConfiguration> configurations = new ArrayList<>();
         configurations.add(new DynatraceServerConfiguration("PoC PerfSig",
                 "https://192.168.192.202:8021", credProfilePairs, false, DescriptorImpl.defaultDelay,
-                DescriptorImpl.defaultRetryCount, DescriptorImpl.defaultReadTimeout,
-                false, 0, null, 0, null, null));
+                DescriptorImpl.defaultRetryCount, DescriptorImpl.defaultReadTimeout, false));
         configurations.add(new DynatraceServerConfiguration("TestMigration",
                 "https://192.168.194.68:8021", credProfilePairs, false, DescriptorImpl.defaultDelay,
-                DescriptorImpl.defaultRetryCount, DescriptorImpl.defaultReadTimeout,
-                false, 0, null, 0, null, null));
+                DescriptorImpl.defaultRetryCount, DescriptorImpl.defaultReadTimeout, false));
         SystemCredentialsProvider.getInstance().getCredentials().add(new UsernamePasswordCredentialsImpl(CredentialsScope.GLOBAL,
                 "myCreds", null, "admin", "admin"));
         SystemCredentialsProvider.getInstance().save();
 
         PerfSigGlobalConfiguration.get().setConfigurations(configurations);
-        Jenkins.getActiveInstance().save();
+        Jenkins.getInstance().save();
 
-        for (ListBoxModel.Option option : PerfSigUtils.listToListBoxModel(PerfSigUtils.getDTConfigurations())) {
-            System.out.println(option.name);
-        }
+        PerfSigUtils.listToListBoxModel(PerfSigUtils.getDTConfigurations()).stream().map(option -> option.name).forEach(System.out::println);
 
         ListBoxModel dynatraceConfigurations = PerfSigUtils.listToListBoxModel(PerfSigUtils.getDTConfigurations());
         assertTrue(containsOption(dynatraceConfigurations, "easy Travel (admin) @ PoC PerfSig"));
@@ -68,20 +64,24 @@ public class TestUtils {
 
         for (ListBoxModel.Option configuration : dynatraceConfigurations) {
             DTServerConnection connection = PerfSigUtils.createDTServerConnection(configuration.name, false);
-            assumeTrue("assume that the server is reachable", connection.validateConnection());
+            assumeTrue("assume that the server is reachable", validateConnection(connection));
         }
 
 
         return dynatraceConfigurations;
     }
 
-    public static boolean containsOption(ListBoxModel listBoxModel, String search) {
-        for (ListBoxModel.Option option : listBoxModel) {
-            if (option.name.equalsIgnoreCase(search)) {
-                return true;
-            }
+    private static boolean validateConnection(DTServerConnection connection) {
+        try {
+            connection.getServerVersion();
+            return true;
+        } catch (Exception e) {
+            return false;
         }
-        return false;
+    }
+
+    public static boolean containsOption(ListBoxModel listBoxModel, String search) {
+        return listBoxModel.stream().anyMatch(option -> option.name.equalsIgnoreCase(search));
     }
 
     public static boolean isWindows() {

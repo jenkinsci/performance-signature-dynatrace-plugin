@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 T-Systems Multimedia Solutions GmbH
+ * Copyright (c) 2014-2018 T-Systems Multimedia Solutions GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 /**
  * Activation state of a resource
@@ -63,7 +64,6 @@ public class ActivationStatus {
     @JsonAdapter(StatusEnum.Adapter.class)
     public enum StatusEnum {
         ENABLED("ENABLED"),
-
         DISABLED("DISABLED");
 
         private final String value;
@@ -73,12 +73,7 @@ public class ActivationStatus {
         }
 
         public static StatusEnum fromValue(String text) {
-            for (StatusEnum b : StatusEnum.values()) {
-                if (String.valueOf(b.value).equals(text)) {
-                    return b;
-                }
-            }
-            return null;
+            return Arrays.stream(StatusEnum.values()).filter(b -> b.value.equals(text)).findFirst().orElse(null);
         }
 
         public String getValue() {
@@ -87,7 +82,7 @@ public class ActivationStatus {
 
         @Override
         public String toString() {
-            return String.valueOf(value);
+            return value;
         }
 
         public static class Adapter extends TypeAdapter<StatusEnum> {
@@ -99,7 +94,7 @@ public class ActivationStatus {
             @Override
             public StatusEnum read(final JsonReader jsonReader) throws IOException {
                 String value = jsonReader.nextString();
-                return StatusEnum.fromValue(String.valueOf(value));
+                return StatusEnum.fromValue(value);
             }
         }
     }

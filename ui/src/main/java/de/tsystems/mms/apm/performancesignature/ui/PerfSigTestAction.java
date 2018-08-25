@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 T-Systems Multimedia Solutions GmbH
+ * Copyright (c) 2014-2018 T-Systems Multimedia Solutions GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,14 +42,12 @@ public class PerfSigTestAction extends TestAction {
             String packageName = caseResult.getPackageName();
             String fullName = caseResult.getSimpleName() + "." + caseResult.getSearchName();
 
-            for (TestRun testRun : testData.getTestRuns()) {
-                for (TestResult testResult : testRun.getTestResults()) {
-                    if (testResult.getPackage().equalsIgnoreCase(packageName) && testResult.getName().equalsIgnoreCase(fullName)) {
+            testData.getTestRuns().forEach(testRun -> testRun.getTestResults().stream()
+                    .filter(testResult -> testResult.getPackage().equalsIgnoreCase(packageName) && testResult.getName().equalsIgnoreCase(fullName))
+                    .forEach(testResult -> {
                         this.matchingTestRun = testRun;
                         this.matchingTestResult = testResult;
-                    }
-                }
-            }
+                    }));
         }
     }
 
@@ -58,13 +56,10 @@ public class PerfSigTestAction extends TestAction {
         if (testResult == null) return null;
         PerfSigTestAction testAction = testResult.getTestAction(PerfSigTestAction.class);
         if (testAction != null && testAction.getTestData() != null) {
-            for (TestRun testRun : testAction.getTestData().getTestRuns()) {
-                for (TestResult result : testRun.getTestResults()) {
-                    if (result.getPackage().equals(matchingTestResult.getPackage()) && result.getName().equals(matchingTestResult.getName())) {
-                        return result;
-                    }
-                }
-            }
+            return testAction.getTestData().getTestRuns().stream()
+                    .flatMap(testRun -> testRun.getTestResults().stream())
+                    .filter(result -> result.getPackage().equals(matchingTestResult.getPackage()) && result.getName().equals(matchingTestResult.getName()))
+                    .findFirst().orElse(null);
         }
         return null;
     }
@@ -97,7 +92,7 @@ public class PerfSigTestAction extends TestAction {
 
     @Override
     public String getDisplayName() {
-        return null;
+        return "";
     }
 
     @Override

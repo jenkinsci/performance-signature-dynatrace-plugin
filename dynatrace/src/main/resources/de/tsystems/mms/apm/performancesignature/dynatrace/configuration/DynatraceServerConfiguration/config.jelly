@@ -1,6 +1,6 @@
 <?jelly escape-by-default='true'?>
 <!--
-  ~ Copyright (c) 2014 T-Systems Multimedia Solutions GmbH
+  ~ Copyright (c) 2014-2018 T-Systems Multimedia Solutions GmbH
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -25,6 +25,10 @@
         </f:entry>
 
         <f:advanced>
+            <f:entry title="${%use Proxy}" field="useProxy"
+                     description="${%use proxy server configured in Jenkins}">
+                <f:checkbox default="${descriptor.defaultUseProxy}"/>
+            </f:entry>
             <f:entry title="${%verify Certificate}" field="verifyCertificate"
                      description="${%Verify or ignore the Dynatrace Server Certificate?}">
                 <f:checkbox default="${descriptor.defaultVerifyCertificate}"/>
@@ -41,26 +45,6 @@
                      description="${%The Jenkins Server might take a while to fully stop the session or download a session. By default the plugin will wait 300 seconds.}">
                 <f:number default="${descriptor.defaultReadTimeout}"/>
             </f:entry>
-
-            <f:optionalBlock inline="true" name="proxy" title="${%use Proxy Server}" checked="${instance.customProxy != null}">
-                <f:radioBlock inline="true" name="proxySource" title="${%use proxy server configured in Jenkins}" value="0"
-                              checked="${instance.customProxy.useJenkinsProxy}"/>
-                <f:radioBlock inline="true" name="proxySource" title="use custom Proxy Server" value="1"
-                              checked="${!instance.customProxy.useJenkinsProxy}">
-                    <f:entry title="${%Server}" field="proxyServer">
-                        <f:textbox value="${instance.customProxy.proxyServer}"/>
-                    </f:entry>
-                    <f:entry title="${%Port}" field="proxyPort">
-                        <f:number value="${instance.customProxy.proxyPort}"/>
-                    </f:entry>
-                    <f:entry title="${%User}" field="proxyUser">
-                        <f:textbox value="${instance.customProxy.proxyUser}"/>
-                    </f:entry>
-                    <f:entry title="${%Password}" field="proxyPassword">
-                        <f:password value="${instance.customProxy.proxyPassword}"/>
-                    </f:entry>
-                </f:radioBlock>
-            </f:optionalBlock>
         </f:advanced>
         <f:entry title="${%Credentials/profiles pairs}">
             <f:repeatable field="credProfilePairs" header="${%Credentials/profile pair}" add="${%Add credentials/profile pair}">

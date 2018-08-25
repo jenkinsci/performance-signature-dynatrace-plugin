@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 T-Systems Multimedia Solutions GmbH
+ * Copyright (c) 2014-2018 T-Systems Multimedia Solutions GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,17 +18,16 @@ package de.tsystems.mms.apm.performancesignature.dynatrace;
 
 import de.tsystems.mms.apm.performancesignature.dynatrace.configuration.CredProfilePair;
 import de.tsystems.mms.apm.performancesignature.dynatrace.configuration.GenericTestCase;
+import de.tsystems.mms.apm.performancesignature.dynatrace.model.TestRun.CategoryEnum;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.DTServerConnection;
+import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model.TestRunDefinition;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.CommandExecutionException;
 import de.tsystems.mms.apm.performancesignature.dynatrace.util.PerfSigUtils;
 import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
-import hudson.model.AbstractProject;
-import hudson.model.Failure;
-import hudson.model.Run;
-import hudson.model.TaskListener;
+import hudson.model.*;
 import hudson.plugins.analysis.util.PluginLogger;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
@@ -40,6 +39,7 @@ import org.apache.commons.lang.StringUtils;
 import org.jenkinsci.Symbol;
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
+import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
@@ -47,6 +47,9 @@ import org.kohsuke.stapler.QueryParameter;
 import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.util.Date;
+import java.util.Map;
+
+import static de.tsystems.mms.apm.performancesignature.dynatrace.rest.DTServerConnection.*;
 
 public class PerfSigStartRecording extends Builder implements SimpleBuildStep {
     private final String dynatraceProfile;
@@ -96,7 +99,18 @@ public class PerfSigStartRecording extends Builder implements SimpleBuildStep {
         logger.log(Messages.PerfSigStartRecording_RegisteringTestRun());
         String testRunId = null;
         try {
-            testRunId = connection.registerTestRun(run.getNumber());
+            Map<String, String> variables = run.getEnvironment(listener);
+            TestRunDefinition body = new TestRunDefinition(run.getNumber())
+                    .setVersionMajor(variables.get(BUILD_VAR_KEY_VERSION_MAJOR))
+                    .setVersionMinor(variables.get(BUILD_VAR_KEY_VERSION_MINOR))
+                    .setVersionRevision(variables.get(BUILD_VAR_KEY_VERSION_REVISION))
+                    .setVersionMilestone(variables.get(BUILD_VAR_KEY_VERSION_MILESTONE))
+                    .setCategory(variables.get(BUILD_VAR_KEY_CATEGORY) != null ? CategoryEnum.fromValue(variables.get(BUILD_VAR_KEY_CATEGORY)) : CategoryEnum.PERFORMANCE)
+                    .setPlatform(variables.get(BUILD_VAR_KEY_PLATFORM))
+                    .setMarker(variables.get(BUILD_VAR_KEY_MARKER))
+                    .addAdditionalMetaData("JENKINS_JOB", variables.get(BUILD_URL_ENV_PROPERTY));
+
+            testRunId = connection.registerTestRun(body);
         } catch (CommandExecutionException e) {
             logger.log(Messages.PerfSigStartRecording_CouldNotRegisterTestRun() + e.getMessage());
         }
@@ -104,7 +118,7 @@ public class PerfSigStartRecording extends Builder implements SimpleBuildStep {
             logger.log(Messages.PerfSigStartRecording_StartedTestRun(pair.getProfile(), testRunId, PerfSigEnvContributor.TESTRUN_ID_KEY));
         }
 
-        run.addAction(new PerfSigEnvInvisAction(sessionId, timeframeStart, extTestCase, testRunId, sessionName));
+        run.addAction(new PerfSigEnvInvisAction(extTestCase, sessionId, sessionName, timeframeStart, testRunId));
     }
 
     public String getTestCase() {
@@ -141,31 +155,45 @@ public class PerfSigStartRecording extends Builder implements SimpleBuildStep {
 
         @Restricted(NoExternalUse.class)
         @Nonnull
-        public ListBoxModel doFillRecordingOptionItems() {
+        public ListBoxModel doFillRecordingOptionItems(@AncestorInPath Item item) {
+            if (PerfSigUIUtils.checkForMissingPermission(item)) {
+                return new ListBoxModel();
+            }
             return new ListBoxModel(new ListBoxModel.Option("all"), new ListBoxModel.Option("violations"), new ListBoxModel.Option("timeseries"));
         }
 
         @Restricted(NoExternalUse.class)
-        public FormValidation doCheckTestCase(@QueryParameter final String testCase) {
+        public FormValidation doCheckTestCase(@AncestorInPath Item item, @QueryParameter final String testCase) {
+            FormValidation validationResult = FormValidation.ok();
+            if (PerfSigUIUtils.checkForMissingPermission(item)) {
+                return validationResult;
+            }
+
             try {
                 Jenkins.checkGoodName(testCase);
                 GenericTestCase.DescriptorImpl.addTestCases(testCase);
-                return FormValidation.ok();
+                return validationResult;
             } catch (Failure e) {
                 return FormValidation.error(e.getMessage());
             }
         }
 
-        @Restricted(NoExternalUse.class)
         @Nonnull
-        public ListBoxModel doFillDynatraceProfileItems() {
+        @Restricted(NoExternalUse.class)
+        public ListBoxModel doFillDynatraceProfileItems(@AncestorInPath Item item) {
+            if (PerfSigUIUtils.checkForMissingPermission(item)) {
+                return new ListBoxModel();
+            }
             return PerfSigUtils.listToListBoxModel(PerfSigUtils.getDTConfigurations());
         }
 
-        public boolean isApplicable(final Class<? extends AbstractProject> aClass) {
+        @Override
+        public boolean isApplicable(final Class<? extends AbstractProject> jobType) {
             return true;
         }
 
+        @Nonnull
+        @Override
         public String getDisplayName() {
             return Messages.PerfSigStartRecording_DisplayName();
         }

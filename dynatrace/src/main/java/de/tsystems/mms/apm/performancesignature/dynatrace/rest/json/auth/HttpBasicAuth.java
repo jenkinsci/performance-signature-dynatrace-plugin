@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 T-Systems Multimedia Solutions GmbH
+ * Copyright (c) 2014-2018 T-Systems Multimedia Solutions GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,16 @@
 
 package de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.auth;
 
-import com.squareup.okhttp.Credentials;
-import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.Pair;
+import okhttp3.Credentials;
+import okhttp3.Interceptor;
+import okhttp3.Request;
+import okhttp3.Response;
 
-import java.util.List;
-import java.util.Map;
+import javax.annotation.Nonnull;
+import java.io.IOException;
 
-public class HttpBasicAuth implements Authentication {
+public class HttpBasicAuth implements Interceptor {
+
     private String username;
     private String password;
 
@@ -42,13 +45,22 @@ public class HttpBasicAuth implements Authentication {
         this.password = password;
     }
 
+    public void setCredentials(String username, String password) {
+        this.username = username;
+        this.password = password;
+    }
+
     @Override
-    public void applyToParams(List<Pair> queryParams, Map<String, String> headerParams) {
-        if (username == null && password == null) {
-            return;
+    public Response intercept(@Nonnull Chain chain) throws IOException {
+        Request request = chain.request();
+
+        // If the request already have an authorization (eg. Basic auth), do nothing
+        if (request.header("Authorization") == null) {
+            String credentials = Credentials.basic(username, password);
+            request = request.newBuilder()
+                    .addHeader("Authorization", credentials)
+                    .build();
         }
-        headerParams.put("Authorization", Credentials.basic(
-                username == null ? "" : username,
-                password == null ? "" : password));
+        return chain.proceed(request);
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 T-Systems Multimedia Solutions GmbH
+ * Copyright (c) 2014-2018 T-Systems Multimedia Solutions GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,15 +19,18 @@ package de.tsystems.mms.apm.performancesignature.ui.util;
 import de.tsystems.mms.apm.performancesignature.dynatrace.model.Alert;
 import de.tsystems.mms.apm.performancesignature.dynatrace.model.ChartDashlet;
 import hudson.FilePath;
+import hudson.model.Item;
 import hudson.model.Result;
 import hudson.model.Run;
 import hudson.plugins.analysis.util.PluginLogger;
+import jenkins.model.Jenkins;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.filefilter.RegexFileFilter;
 import org.apache.commons.lang.CharEncoding;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 
+import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -149,30 +152,24 @@ public final class PerfSigUIUtils {
 
             switch (nonFunctionalFailure) {
                 case 1:
-                    if (numSevere > 0) {
-                        logger.log(Messages.PerfSigUIUtils_BuildsStatusSevereIncidentsFailed());
-                        run.setResult(Result.FAILURE);
-                    }
-                    break;
-                case 2:
                     if (numSevere > 0 || numWarning > 0) {
-                        logger.log(Messages.PerfSigUIUtils_BuildsStatusWarningIncidentsFailed());
-                        run.setResult(Result.FAILURE);
-                    }
-                    break;
-                case 3:
-                    if (numSevere > 0) {
-                        logger.log(Messages.PerfSigUIUtils_BuildsStatusSevereIncidentsUnstable());
+                        logger.log(Messages.PerfSigUIUtils_BuildsStatusIncidentsUnstable());
                         run.setResult(Result.UNSTABLE);
                     }
                     break;
-                case 4:
-                    if (numSevere > 0 || numWarning > 0) {
+                case 2:
+                    if (numSevere > 0) {
+                        logger.log(Messages.PerfSigUIUtils_BuildsStatusSevereIncidentsFailed());
+                        run.setResult(Result.FAILURE);
+                        break;
+                    }
+                    if (numWarning > 0) {
                         logger.log(Messages.PerfSigUIUtils_BuildsStatusWarningIncidentsUnstable());
                         run.setResult(Result.UNSTABLE);
                     }
                     break;
                 default:
+                    logger.log("WARNING: parameter 'nonFunctionalFailure' only accepts values from 0 to 2!");
                     break;
             }
         }
@@ -199,5 +196,11 @@ public final class PerfSigUIUtils {
         } catch (MalformedURLException e) {
             return null;
         }
+    }
+
+    public static boolean checkForMissingPermission(@Nullable final Item item) {
+        return item == null ?
+                !Jenkins.getInstance().hasPermission(Item.CONFIGURE) && !Jenkins.getInstance().hasPermission(Item.EXTENDED_READ) :
+                !item.hasPermission(Item.CONFIGURE) && !item.hasPermission(Item.EXTENDED_READ);
     }
 }
