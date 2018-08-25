@@ -195,7 +195,7 @@ public class TagMatchRule extends AbstractDescribableImpl<TagMatchRule> {
         VIRTUALMACHINE("VIRTUALMACHINE"),
         VMWARE_DATACENTER("VMWARE_DATACENTER");
 
-        private String value;
+        private final String value;
 
         MeTypesEnum(String value) {
             this.value = value;

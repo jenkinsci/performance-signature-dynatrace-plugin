@@ -161,7 +161,7 @@ public class TagInfo extends AbstractDescribableImpl<TagInfo> {
         GOOGLE_CLOUD("GOOGLE_CLOUD"),
         KUBERNETES("KUBERNETES");
 
-        private String value;
+        private final String value;
 
         ContextEnum(String value) {
             this.value = value;

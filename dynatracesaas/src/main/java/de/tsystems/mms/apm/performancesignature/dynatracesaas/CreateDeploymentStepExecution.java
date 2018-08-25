@@ -27,6 +27,7 @@ import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
 import hudson.AbortException;
 import hudson.EnvVars;
 import hudson.model.TaskListener;
+import org.apache.commons.collections.CollectionUtils;
 import org.jenkinsci.plugins.workflow.steps.BodyExecution;
 import org.jenkinsci.plugins.workflow.steps.BodyExecutionCallback;
 import org.jenkinsci.plugins.workflow.steps.StepContext;
@@ -94,7 +95,9 @@ public class CreateDeploymentStepExecution extends StepExecution {
             DynatraceServerConnection connection = DynatraceUtils.createDynatraceServerConnection(step.getEnvId(), true);
 
             PushEventAttachRules attachRules = new PushEventAttachRules();
-            attachRules.setEntityIds(step.getEntityIds().stream().map(EntityId::getEntityId).collect(Collectors.toList()));
+            if (CollectionUtils.isNotEmpty(step.getEntityIds())) {
+                attachRules.setEntityIds(step.getEntityIds().stream().map(EntityId::getEntityId).collect(Collectors.toList()));
+            }
             attachRules.setTagRule(step.getTagMatchRules());
 
             long endTimestamp = System.currentTimeMillis();
@@ -105,7 +108,7 @@ public class CreateDeploymentStepExecution extends StepExecution {
             if (envVars != null) {
                 event.setDeploymentName(envVars.get("JOB_NAME"))
                         .setDeploymentVersion(Optional.ofNullable(envVars.get(BUILD_VAR_KEY_DEPLOYMENT_VERSION)).orElse(" "))
-                        .setDeploymentProject(envVars.get(BUILD_VAR_KEY_DEPLOYMENT_PROJECT))
+                        .setDeploymentProject(Optional.ofNullable(envVars.get(BUILD_VAR_KEY_DEPLOYMENT_PROJECT)).orElse(" "))
                         .setCiBackLink(envVars.get(BUILD_URL_ENV_PROPERTY))
                         .addCustomProperties("Jenkins Build Number", envVars.get("BUILD_ID"))
                         .addCustomProperties("Git Commit", envVars.get("GIT_COMMIT"));

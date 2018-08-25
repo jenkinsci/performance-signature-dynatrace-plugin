@@ -43,6 +43,7 @@ import org.jenkinsci.plugins.workflow.steps.SynchronousNonBlockingStepExecution;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintStream;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -192,8 +193,8 @@ public class DynatraceReportStepExecution extends SynchronousNonBlockingStepExec
             });
             dashboardReports.add(dashboardReport);
 
-            PerfSigUIUtils.handleIncidents(run, dashboardReport.getIncidents(),
-                    PerfSigUIUtils.createLogger(DynatraceUtils.getTaskListener(getContext()).getLogger()), step.getNonFunctionalFailure());
+            PrintStream stream = Optional.ofNullable(DynatraceUtils.getTaskListener(getContext())).map(TaskListener::getLogger).orElseGet(() -> new PrintStream(System.out));
+            PerfSigUIUtils.handleIncidents(run, dashboardReport.getIncidents(), PerfSigUIUtils.createLogger(stream), step.getNonFunctionalFailure());
         });
         println("created " + dashboardReports.size() + " DashboardReports");
 

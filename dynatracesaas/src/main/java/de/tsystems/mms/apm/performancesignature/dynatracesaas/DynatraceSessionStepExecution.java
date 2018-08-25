@@ -26,6 +26,7 @@ import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
 import hudson.EnvVars;
 import hudson.model.Run;
 import hudson.model.TaskListener;
+import org.apache.commons.collections.CollectionUtils;
 import org.jenkinsci.plugins.workflow.steps.BodyExecution;
 import org.jenkinsci.plugins.workflow.steps.BodyExecutionCallback;
 import org.jenkinsci.plugins.workflow.steps.StepContext;
@@ -33,7 +34,6 @@ import org.jenkinsci.plugins.workflow.steps.StepExecution;
 
 import javax.annotation.Nonnull;
 import java.time.Instant;
-import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -103,7 +103,8 @@ public class DynatraceSessionStepExecution extends StepExecution {
             DynatraceServerConnection serverConnection = DynatraceUtils.createDynatraceServerConnection(step.getEnvId(), true);
 
             PushEventAttachRules attachRules = new PushEventAttachRules();
-            attachRules.setEntityIds(step.getEntityIds().stream().map(EntityId::getEntityId).collect(Collectors.toList()));
+            if (CollectionUtils.isNotEmpty(step.getEntityIds()))
+                attachRules.setEntityIds(step.getEntityIds().stream().map(EntityId::getEntityId).collect(Collectors.toList()));
             attachRules.setTagRule(step.getTagMatchRules());
 
             println("creating Performance Signature custom event");
@@ -113,13 +114,13 @@ public class DynatraceSessionStepExecution extends StepExecution {
                     .setStartTime(action.getTimeframeStart())
                     .setEndTime(action.getTimeframeStop());
             if (envVars != null) {
-                event.setDeploymentName(envVars.get("JOB_NAME"))
-                        .setDeploymentVersion(Optional.ofNullable(envVars.get(BUILD_VAR_KEY_DEPLOYMENT_VERSION)).orElse(" "))
-                        .setDeploymentProject(envVars.get(BUILD_VAR_KEY_DEPLOYMENT_PROJECT))
-                        .setDescription(envVars.get(BUILD_URL_ENV_PROPERTY))
-                        .setCiBackLink(envVars.get(BUILD_URL_ENV_PROPERTY))
+                event.setDescription("Results are accessible via " + envVars.get(BUILD_URL_ENV_PROPERTY))
                         .addCustomProperties("Jenkins Build Number", envVars.get("BUILD_ID"))
-                        .addCustomProperties("Git Commit", envVars.get("GIT_COMMIT"));
+                        .addCustomProperties("Git Commit", envVars.get("GIT_COMMIT"))
+                        .addCustomProperties("Deployment Version", envVars.get(BUILD_VAR_KEY_DEPLOYMENT_VERSION))
+                        .addCustomProperties("Deployment Project", envVars.get(BUILD_VAR_KEY_DEPLOYMENT_PROJECT))
+                        .addCustomProperties("Deployment Name", envVars.get("JOB_NAME"))
+                        .addCustomProperties("CiBackLink", envVars.get(BUILD_URL_ENV_PROPERTY));
             }
             serverConnection.createEvent(event);
             println("created Performance Signature event");

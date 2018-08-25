@@ -48,7 +48,7 @@ public class ApiClient {
     private static final String API_SUFFIX = "api/v1/";
     private boolean debugging = false;
     private boolean verifyingSsl;
-    private OkHttpClient.Builder okBuilder;
+    private final OkHttpClient.Builder okBuilder;
     private Retrofit.Builder adapterBuilder;
     private HttpLoggingInterceptor loggingInterceptor;
 
