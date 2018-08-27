@@ -151,6 +151,8 @@ public final class PerfSigUIUtils {
             }
 
             switch (nonFunctionalFailure) {
+                case 0:
+                    break;
                 case 1:
                     if (numSevere > 0 || numWarning > 0) {
                         logger.log(Messages.PerfSigUIUtils_BuildsStatusIncidentsUnstable());

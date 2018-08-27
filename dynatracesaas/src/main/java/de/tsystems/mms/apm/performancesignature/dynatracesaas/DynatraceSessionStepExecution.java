@@ -114,7 +114,7 @@ public class DynatraceSessionStepExecution extends StepExecution {
                     .setStartTime(action.getTimeframeStart())
                     .setEndTime(action.getTimeframeStop());
             if (envVars != null) {
-                event.setDescription("Results are accessible via " + envVars.get(BUILD_URL_ENV_PROPERTY))
+                event.setDescription("Performance Signature was executed in a Jenkins Pipeline")
                         .addCustomProperties("Jenkins Build Number", envVars.get("BUILD_ID"))
                         .addCustomProperties("Git Commit", envVars.get("GIT_COMMIT"))
                         .addCustomProperties("Deployment Version", envVars.get(BUILD_VAR_KEY_DEPLOYMENT_VERSION))
