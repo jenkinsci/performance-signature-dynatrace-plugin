@@ -34,6 +34,7 @@ import hudson.FilePath;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jenkinsci.plugins.workflow.steps.MissingContextVariableException;
@@ -56,6 +57,14 @@ public class DynatraceReportStepExecution extends SynchronousNonBlockingStepExec
     private static final long serialVersionUID = 1L;
     private static final Logger LOGGER = Logger.getLogger(DynatraceReportStepExecution.class.getName());
     private static final String DEFAULT_COLOR = "#006bba";
+    private static final List<UnitEnum> BYTE_UNITS = Arrays.asList(
+            UnitEnum.BYTEPERSECOND,
+            UnitEnum.BYTEPERMINUTE,
+            UnitEnum.BYTE);
+    private static final List<UnitEnum> KILOBYTE_UNITS = Arrays.asList(
+            UnitEnum.KILOBYTEPERSECOND,
+            UnitEnum.KILOBYTEPERMINUTE,
+            UnitEnum.KILOBYTE);
     private final transient DynatraceReportStep step;
     private FilePath ws;
 
@@ -140,7 +149,7 @@ public class DynatraceReportStepExecution extends SynchronousNonBlockingStepExec
                     overallMeasure.setMax(getScalarValue(totalValues.get(AggregationTypeEnum.MAX)));
                     overallMeasure.setSum(getScalarValue(totalValues.get(AggregationTypeEnum.SUM)));
                     overallMeasure.setCount(getScalarValue(totalValues.get(AggregationTypeEnum.COUNT)));
-                    overallMeasure.setUnit(caluclateUnit(baseResult, overallMeasure.getMax()));
+                    overallMeasure.setUnit(calculateUnitString(baseResult, overallMeasure.getMax()));
 
                     //calculate aggregated values from seriesValues
                     Map<AggregationTypeEnum, Map<Long, Double>> scalarValues = getScalarValues(aggregations);
@@ -163,9 +172,9 @@ public class DynatraceReportStepExecution extends SynchronousNonBlockingStepExec
                                         aggregation -> totalValues.get(aggregation).getDataPoints().get(key).entrySet().iterator().next().getValue(),
                                         (a, b) -> b, LinkedHashMap::new));
 
-                        Measure measure = new Measure(baseResult.getEntities().get(key));
+                        Measure measure = new Measure(handleEntityIdString(baseResult.getEntities(), key));
                         measure.setAggregation(translateAggregation(specTM.getAggregation()));
-                        measure.setUnit(caluclateUnit(baseResult, totalValuesPerDataPoint.get(AggregationTypeEnum.MAX)));
+                        measure.setUnit(calculateUnitString(baseResult, totalValuesPerDataPoint.get(AggregationTypeEnum.MAX)));
                         measure.setColor(DEFAULT_COLOR);
 
                         measure.setAvg(getTotalValues(baseResult, totalValuesPerDataPoint.get(AggregationTypeEnum.AVG)));
@@ -201,6 +210,13 @@ public class DynatraceReportStepExecution extends SynchronousNonBlockingStepExec
         PerfSigBuildAction action = new PerfSigBuildAction(dashboardReports);
         run.addAction(action);
         return null;
+    }
+
+    private String handleEntityIdString(Map<String, String> entities, String entityId) {
+        if (StringUtils.isBlank(entityId) || MapUtils.isEmpty(entities)) return null;
+
+        String cleanedEntityId = entityId.split(",")[0];
+        return entities.get(cleanedEntityId);
     }
 
     private Map<AggregationTypeEnum, Map<Long, Double>> getScalarValues(Map<AggregationTypeEnum, TimeseriesDataPointQueryResult> dataPointQueryResultMap) {
@@ -326,9 +342,12 @@ public class DynatraceReportStepExecution extends SynchronousNonBlockingStepExec
         }
     }
 
-    private String caluclateUnit(TimeseriesDataPointQueryResult baseResult, Double maxValue) {
-        if (baseResult.getUnit() == UnitEnum.BYTEPERMINUTE) {
+    private String calculateUnitString(TimeseriesDataPointQueryResult baseResult, Double maxValue) {
+        if (BYTE_UNITS.contains(baseResult.getUnit())) {
             String tmp = DynatraceUtils.humanReadableByteCount(maxValue, false);
+            return tmp.replaceAll("[^a-zA-Z]", "");
+        } else if (KILOBYTE_UNITS.contains(baseResult.getUnit())) {
+            String tmp = DynatraceUtils.humanReadableByteCount(maxValue * 1000, false);
             return tmp.replaceAll("[^a-zA-Z]", "");
         }
         return baseResult.getUnit().getValue();
@@ -336,8 +355,11 @@ public class DynatraceReportStepExecution extends SynchronousNonBlockingStepExec
 
     private Number getTotalValues(TimeseriesDataPointQueryResult baseResult, Double value) {
         if (value == null) return 0;
-        if (baseResult.getUnit() == UnitEnum.BYTEPERMINUTE) {
+        if (BYTE_UNITS.contains(baseResult.getUnit())) {
             String tmp = DynatraceUtils.humanReadableByteCount(value, false);
+            return Double.valueOf(tmp.replaceAll("[^0-9.]", ""));
+        } else if (KILOBYTE_UNITS.contains(baseResult.getUnit())) {
+            String tmp = DynatraceUtils.humanReadableByteCount(value * 1000, false);
             return Double.valueOf(tmp.replaceAll("[^0-9.]", ""));
         } else {
             return value;
