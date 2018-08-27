@@ -38,7 +38,7 @@
                 <table width="100%">
                     <f:entry title="${%component types, which the event is to be attached to}" field="meTypes"
                              description="${%Another possible attach rule is tagRule that takes a component type and a tag to attach your custom event on all components of that type that contain the given tag.}">
-                        <f:repeatable field="meTypes" add="${%Add component type}" header="${%component type}">
+                        <f:repeatable field="meTypes" add="${%Add component type}" header="${%component type}" minimum="1">
                             <table width="100%">
                                 <f:entry field="meType">
                                     <f:select/>

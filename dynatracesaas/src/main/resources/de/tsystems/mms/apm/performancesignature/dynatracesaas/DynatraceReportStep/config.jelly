@@ -38,13 +38,13 @@
     </f:entry>
     <f:entry title="${%Non-functional failure behaviour}" field="nonFunctionalFailure"
              description="${%Should the plugin modify the build result in case of any Dynatrace incidents?}">
-        <f:radio name="nonFunctionalFailure" value="0" checked="${instance.nonFunctionalFailure == 0 || instance.nonFunctionalFailure == null}"
+        <f:radio name="nonFunctionalFailure" value="0" checked="${instance.nonFunctionalFailure == 0}"
                  title="do nothing"/>
         <br/>
         <f:radio name="nonFunctionalFailure" value="1" checked="${instance.nonFunctionalFailure == 1}"
                  title="set build result to unstable in case of warning/severe incidents"/>
         <br/>
-        <f:radio name="nonFunctionalFailure" value="2" checked="${instance.nonFunctionalFailure == 2}"
+        <f:radio name="nonFunctionalFailure" value="2" checked="${instance.nonFunctionalFailure == 2 || instance.nonFunctionalFailure == null}"
                  title="set build result to unstable in case of warning incidents and set build result to failed in case of severe incidents"/>
     </f:entry>
 </j:jelly>
