@@ -19,6 +19,7 @@ package de.tsystems.mms.apm.performancesignature.dynatracesaas;
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.model.DynatraceServerConfiguration;
 import hudson.Extension;
 import jenkins.model.GlobalConfiguration;
+import jenkins.model.Jenkins;
 import net.sf.json.JSONObject;
 import org.kohsuke.stapler.StaplerRequest;
 
@@ -39,6 +40,7 @@ public class DynatraceGlobalConfiguration extends GlobalConfiguration {
 
     @Override
     public boolean configure(final StaplerRequest req, final JSONObject formData) {
+        Jenkins.getInstance().checkPermission(Jenkins.ADMINISTER);
         setConfigurations(req.bindJSONToList(DynatraceServerConfiguration.class, formData.get("configurations")));
         save();
         return false;

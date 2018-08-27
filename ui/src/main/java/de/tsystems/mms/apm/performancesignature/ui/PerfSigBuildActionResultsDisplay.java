@@ -22,6 +22,7 @@ import de.tsystems.mms.apm.performancesignature.dynatrace.model.Measure;
 import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
 import hudson.FilePath;
 import hudson.model.Api;
+import hudson.model.Item;
 import hudson.model.ModelObject;
 import hudson.model.Run;
 import hudson.util.Graph;
@@ -40,6 +41,8 @@ import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.time.Second;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 import org.kohsuke.stapler.export.Exported;
@@ -121,7 +124,9 @@ public class PerfSigBuildActionResultsDisplay implements ModelObject {
                 .findFirst().orElse(null);
     }
 
+    @Restricted(NoExternalUse.class)
     public void doSummarizerGraph(final StaplerRequest request, final StaplerResponse response) throws IOException {
+        checkPermission();
         final Graph graph = new GraphImpl(request, getBuild().getTimestamp().getTimeInMillis()) {
             @Override
             protected TimeSeriesCollection createDataSet() {
@@ -146,23 +151,37 @@ public class PerfSigBuildActionResultsDisplay implements ModelObject {
         graph.doPng(request, response);
     }
 
+    private void checkPermission() {
+        buildAction.getBuild().checkPermission(Item.READ);
+    }
+
+    @Restricted(NoExternalUse.class)
     public void doGetSingleReport(final StaplerRequest request, final StaplerResponse response) throws IOException, InterruptedException {
+        checkPermission();
         serveFile("Singlereport", request, response);
     }
 
+    @Restricted(NoExternalUse.class)
     public void doGetComparisonReport(final StaplerRequest request, final StaplerResponse response) throws IOException, InterruptedException {
+        checkPermission();
         serveFile("Comparisonreport", request, response);
     }
 
+    @Restricted(NoExternalUse.class)
     public void doGetSession(final StaplerRequest request, final StaplerResponse response) throws IOException, InterruptedException {
+        checkPermission();
         serveFile("", request, response);
     }
 
+    @Restricted(NoExternalUse.class)
     public void doGetSingleReportList(final StaplerRequest request, final StaplerResponse response) throws IOException, InterruptedException {
+        checkPermission();
         getReportList("Singlereport", request, response);
     }
 
+    @Restricted(NoExternalUse.class)
     public void doGetComparisonReportList(final StaplerRequest request, final StaplerResponse response) throws IOException, InterruptedException {
+        checkPermission();
         getReportList("Comparisonreport", request, response);
     }
 
@@ -173,7 +192,7 @@ public class PerfSigBuildActionResultsDisplay implements ModelObject {
         }
 
         FilePath reportDir = PerfSigUIUtils.getReportDirectory(getBuild());
-        List<FilePath> files = reportDir.list(new RegexFileFilter(type + ".*" + testCase + ".*.pdf"));
+        List<FilePath> files = reportDir.list(new RegexFileFilter(String.format("%s.*%s.*.pdf", type, testCase)));
         List<String> fileNames = files.stream().map(fp -> PerfSigUIUtils.removeExtension(fp.getName())).collect(Collectors.toList());
         String output = new Gson().toJson(fileNames);
         IOUtils.write(output, response.getOutputStream(), StandardCharsets.UTF_8);
@@ -195,7 +214,7 @@ public class PerfSigBuildActionResultsDisplay implements ModelObject {
 
         FilePath filePath = PerfSigUIUtils.getReportDirectory(getBuild());
         String extension = StringUtils.isBlank(type) ? ".dts" : ".pdf";
-        List<FilePath> files = filePath.list(new RegexFileFilter(type + ".*" + testCase + ".*" + extension));
+        List<FilePath> files = filePath.list(new RegexFileFilter(String.format("%s.*%s.*%s", type, testCase, extension)));
         if (files.isEmpty()) {
             response.sendError(404, "requested resource not found");
             return;

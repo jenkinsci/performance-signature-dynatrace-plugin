@@ -103,6 +103,7 @@ public class PerfSigProjectAction extends PerfSigBaseAction implements Prominent
     }
 
     public void doSummarizerGraph(final StaplerRequest request, final StaplerResponse response) throws IOException {
+        checkPermission();
         String id = request.getParameter("id");
         JSONDashlet knownJsonDashlet = getJsonDashletMap().get(id);
         final JSONDashlet jsonDashletToRender;
@@ -164,6 +165,7 @@ public class PerfSigProjectAction extends PerfSigBaseAction implements Prominent
     }
 
     public void doTestRunGraph(final StaplerRequest request, final StaplerResponse response) throws IOException {
+        checkPermission();
         final String customName, customBuildCount;
 
         JSONDashlet jsonDashlet = getJsonDashletMap().get(UNITTEST_DASHLETNAME);
@@ -203,6 +205,10 @@ public class PerfSigProjectAction extends PerfSigBaseAction implements Prominent
             }
         };
         graph.doPng(request, response);
+    }
+
+    private void checkPermission() {
+        job.checkPermission(Job.READ);
     }
 
     @SuppressWarnings("WeakerAccess")
