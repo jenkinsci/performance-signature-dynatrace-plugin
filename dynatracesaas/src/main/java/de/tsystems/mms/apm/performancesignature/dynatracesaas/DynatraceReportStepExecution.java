@@ -65,6 +65,9 @@ public class DynatraceReportStepExecution extends SynchronousNonBlockingStepExec
             UnitEnum.KILOBYTEPERSECOND,
             UnitEnum.KILOBYTEPERMINUTE,
             UnitEnum.KILOBYTE);
+    private static final List<UnitEnum> TIME_UNITS = Arrays.asList(
+            UnitEnum.NANOSECOND,
+            UnitEnum.MICROSECOND);
     private final transient DynatraceReportStep step;
     private FilePath ws;
 
@@ -124,23 +127,24 @@ public class DynatraceReportStepExecution extends SynchronousNonBlockingStepExec
                         );
 
                 TimeseriesDataPointQueryResult baseResult = aggregations.get(AggregationTypeEnum.AVG);
+                if (baseResult != null && MapUtils.isNotEmpty(baseResult.getDataPoints())) {
+                    //get a scalar value for every possible aggregation
+                    Map<AggregationTypeEnum, TimeseriesDataPointQueryResult> totalValues = tm.getAggregationTypes().parallelStream()
+                            .collect(Collectors.toMap(Function.identity(),
+                                    aggregation -> serverConnection.getTotalTimeseriesData(specTM.getTimeseriesId(), start, end, aggregation, specTM.getEntityIds(), specTM.getTags()),
+                                    (a, b) -> b, LinkedHashMap::new));
 
-                //get a scalar value for every possible aggregation
-                Map<AggregationTypeEnum, TimeseriesDataPointQueryResult> totalValues = tm.getAggregationTypes().parallelStream()
-                        .collect(Collectors.toMap(Function.identity(),
-                                aggregation -> serverConnection.getTotalTimeseriesData(specTM.getTimeseriesId(), start, end, aggregation, specTM.getEntityIds(), specTM.getTags()),
-                                (a, b) -> b, LinkedHashMap::new));
+                    //evaluate possible incidents
+                    dashboardReport.getIncidents().addAll(evaluateSpecification(spec.getTolerateBound(), spec.getFrustrateBound(),
+                            specTM, aggregations, timeseries));
 
-                //evaluate possible incidents
-                dashboardReport.getIncidents().addAll(evaluateSpecification(spec.getTolerateBound(), spec.getFrustrateBound(),
-                        specTM, aggregations, timeseries));
-                ChartDashlet chartDashlet = new ChartDashlet();
-                chartDashlet.setName(tm.getDetailedSource() + " - " + tm.getDisplayName());
+                    ChartDashlet chartDashlet = new ChartDashlet();
+                    chartDashlet.setName(tm.getDetailedSource() + " - " + tm.getDisplayName());
 
-                if (baseResult != null && baseResult.getDataPoints() != null && !baseResult.getDataPoints().isEmpty()) {
                     //create aggregated overall measure
                     Measure overallMeasure = new Measure("overall");
                     overallMeasure.setAggregation(translateAggregation(specTM.getAggregation()));
+                    overallMeasure.setUnit(calculateUnitString(baseResult, getScalarValue(totalValues.get(AggregationTypeEnum.AVG))));
                     overallMeasure.setColor(DEFAULT_COLOR);
 
                     //calculate aggregated values from totalValues
@@ -149,7 +153,6 @@ public class DynatraceReportStepExecution extends SynchronousNonBlockingStepExec
                     overallMeasure.setMax(getScalarValue(totalValues.get(AggregationTypeEnum.MAX)));
                     overallMeasure.setSum(getScalarValue(totalValues.get(AggregationTypeEnum.SUM)));
                     overallMeasure.setCount(getScalarValue(totalValues.get(AggregationTypeEnum.COUNT)));
-                    overallMeasure.setUnit(calculateUnitString(baseResult, overallMeasure.getMax()));
 
                     //calculate aggregated values from seriesValues
                     Map<AggregationTypeEnum, Map<Long, Double>> scalarValues = getScalarValues(aggregations);
@@ -197,8 +200,8 @@ public class DynatraceReportStepExecution extends SynchronousNonBlockingStepExec
                                 });
                         chartDashlet.getMeasures().add(measure);
                     });
+                    dashboardReport.addChartDashlet(chartDashlet);
                 }
-                dashboardReport.addChartDashlet(chartDashlet);
             });
             dashboardReports.add(dashboardReport);
 
@@ -253,13 +256,13 @@ public class DynatraceReportStepExecution extends SynchronousNonBlockingStepExec
     private String translateAggregation(AggregationTypeEnum aggregation) {
         switch (aggregation) {
             case MIN:
-                return "minimum";
+                return "Minimum";
             case MAX:
-                return "maximum";
+                return "Maximum";
             case AVG:
-                return "average";
+                return "Average";
             default:
-                return aggregation.getValue().toLowerCase();
+                return StringUtils.capitalize(aggregation.getValue().toLowerCase());
         }
     }
 
