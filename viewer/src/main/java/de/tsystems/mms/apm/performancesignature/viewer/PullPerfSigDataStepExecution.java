@@ -84,6 +84,13 @@ public class PullPerfSigDataStepExecution extends SynchronousNonBlockingStepExec
         PluginLogger logger = PerfSigUIUtils.createLogger(listener.getLogger());
         BuildContext context = new BuildContext(run, workspace, listener, listener.getLogger(), new RemoteJenkinsServer());
 
+        boolean downloadedArtifacts = downloadArtifacts(context, workspace, logger);
+        if (!downloadedArtifacts) {
+            logger.log(Messages.PullPerfSigDataStep_ArtifactDownloadError());
+        } else {
+            logger.log(Messages.PullPerfSigDataStep_ArtifactDownloadSuccessful());
+        }
+
         if (!step.isIgnorePerfSigData()) {
             logger.log("parsing Performance Signature data from job " + step.getHandle().getJobName() + " #" + step.getHandle().getBuildNumber());
             final List<DashboardReport> dashboardReports = getMeasureDataFromJSON(context, step.getHandle());
@@ -91,33 +98,28 @@ public class PullPerfSigDataStepExecution extends SynchronousNonBlockingStepExec
                 throw new RESTErrorException(Messages.PullPerfSigDataStep_JSONReportError());
             }
 
-            for (DashboardReport dashboardReport : dashboardReports) {
-                boolean exportedSession = downloadSession(context, PerfSigUIUtils.getReportDirectory(run), dashboardReport.getName(), logger);
-                if (!exportedSession) {
-                    logger.log(Messages.PullPerfSigDataStep_SessionDownloadError(dashboardReport.getName()));
-                } else {
-                    logger.log(Messages.PullPerfSigDataStep_SessionDownloadSuccessful(dashboardReport.getName()));
+            try {
+                for (DashboardReport dashboardReport : dashboardReports) {
+                    boolean exportedSession = downloadSession(context, PerfSigUIUtils.getReportDirectory(run), dashboardReport.getName(), logger);
+                    if (!exportedSession) {
+                        logger.log(Messages.PullPerfSigDataStep_SessionDownloadError(dashboardReport.getName()));
+                    } else {
+                        logger.log(Messages.PullPerfSigDataStep_SessionDownloadSuccessful(dashboardReport.getName()));
+                    }
+
+                    PerfSigUIUtils.handleIncidents(run, dashboardReport.getIncidents(), logger, step.getNonFunctionalFailure());
                 }
 
-                PerfSigUIUtils.handleIncidents(run, dashboardReport.getIncidents(), logger, step.getNonFunctionalFailure());
+                boolean exportedPDFReports = downloadPDFReports(context, PerfSigUIUtils.getReportDirectory(run), logger);
+                if (!exportedPDFReports) {
+                    logger.log(Messages.PullPerfSigDataStep_ReportDownloadError());
+                } else {
+                    logger.log(Messages.PullPerfSigDataStep_ReportDownloadSuccessful());
+                }
+            } finally {
+                PerfSigBuildAction action = new PerfSigBuildAction(dashboardReports);
+                run.addAction(action);
             }
-
-            boolean exportedPDFReports = downloadPDFReports(context, PerfSigUIUtils.getReportDirectory(run), logger);
-            if (!exportedPDFReports) {
-                logger.log(Messages.PullPerfSigDataStep_ReportDownloadError());
-            } else {
-                logger.log(Messages.PullPerfSigDataStep_ReportDownloadSuccessful());
-            }
-
-            PerfSigBuildAction action = new PerfSigBuildAction(dashboardReports);
-            run.addAction(action);
-        }
-
-        boolean downloadedArtifacts = downloadArtifacts(context, workspace, logger);
-        if (!downloadedArtifacts) {
-            logger.log(Messages.PullPerfSigDataStep_ArtifactDownloadError());
-        } else {
-            logger.log(Messages.PullPerfSigDataStep_ArtifactDownloadSuccessful());
         }
 
         return null;

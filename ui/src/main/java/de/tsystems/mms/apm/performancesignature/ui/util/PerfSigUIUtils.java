@@ -18,6 +18,7 @@ package de.tsystems.mms.apm.performancesignature.ui.util;
 
 import de.tsystems.mms.apm.performancesignature.dynatrace.model.Alert;
 import de.tsystems.mms.apm.performancesignature.dynatrace.model.ChartDashlet;
+import hudson.AbortException;
 import hudson.FilePath;
 import hudson.model.Item;
 import hudson.model.Result;
@@ -131,7 +132,8 @@ public final class PerfSigUIUtils {
         return String.valueOf(o).replace("\n", "\n    ");
     }
 
-    public static void handleIncidents(final Run<?, ?> run, final List<Alert> incidents, final PluginLogger logger, final int nonFunctionalFailure) {
+    public static void handleIncidents(final Run<?, ?> run, final List<Alert> incidents, final PluginLogger logger, final int nonFunctionalFailure)
+            throws AbortException {
         int numWarning = 0;
         int numSevere = 0;
         if (incidents != null && !incidents.isEmpty()) {
@@ -161,9 +163,8 @@ public final class PerfSigUIUtils {
                     break;
                 case 2:
                     if (numSevere > 0) {
-                        logger.log(Messages.PerfSigUIUtils_BuildsStatusSevereIncidentsFailed());
                         run.setResult(Result.FAILURE);
-                        break;
+                        throw new AbortException(Messages.PerfSigUIUtils_BuildsStatusSevereIncidentsFailed());
                     }
                     if (numWarning > 0) {
                         logger.log(Messages.PerfSigUIUtils_BuildsStatusWarningIncidentsUnstable());

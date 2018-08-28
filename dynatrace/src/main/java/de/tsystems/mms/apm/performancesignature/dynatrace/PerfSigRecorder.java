@@ -39,6 +39,7 @@ import hudson.tasks.Publisher;
 import hudson.tasks.Recorder;
 import hudson.util.ListBoxModel;
 import jenkins.tasks.SimpleBuildStep;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jenkinsci.Symbol;
 import org.kohsuke.accmod.Restricted;
@@ -116,70 +117,72 @@ public class PerfSigRecorder extends Recorder implements SimpleBuildStep {
             logger.log(Messages.PerfSigRecorder_NoComparisonPossible());
         }
 
-        for (ConfigurationTestCase configurationTestCase : getConfigurationTestCases()) {
-            if (!configurationTestCase.validate()) {
-                throw new AbortException(Messages.PerfSigRecorder_TestCaseValidationError());
-            }
-            logger.log(Messages.PerfSigRecorder_ConnectionSuccessful(configurationTestCase.getName()));
-
-            final PerfSigEnvInvisAction buildEnvVars = getBuildEnvVars(run, configurationTestCase.getName());
-            if (buildEnvVars != null) {
-                sessionId = buildEnvVars.getSessionId();
-            } else {
-                throw new AbortException(Messages.PerfSigRecorder_NoSessionNameFound());
-            }
-
-            if (comparisonBuildNumber != 0) {
-                final PerfSigEnvInvisAction otherEnvVars = getBuildEnvVars(previousRun, configurationTestCase.getName());
-                if (otherEnvVars != null) {
-                    comparisonSessionId = otherEnvVars.getSessionId();
-                    comparisonSessionName = otherEnvVars.getSessionName();
+        try {
+            for (ConfigurationTestCase configurationTestCase : getConfigurationTestCases()) {
+                if (!configurationTestCase.validate()) {
+                    throw new AbortException(Messages.PerfSigRecorder_TestCaseValidationError());
                 }
-            }
+                logger.log(Messages.PerfSigRecorder_ConnectionSuccessful(configurationTestCase.getName()));
 
-            availableSessions = connection.getSessions().getSessions();
-            int retryCount = 0;
-            while ((!validateSessionId(sessionId)) && (retryCount < serverConfiguration.getRetryCount())) {
-                retryCount++;
-                availableSessions = connection.getSessions().getSessions();
-                logger.log(Messages.PerfSigRecorder_WaitingForSession(retryCount, serverConfiguration.getRetryCount()));
-                Thread.sleep(10000L);
-            }
-
-            if (!validateSessionId(sessionId)) {
-                throw new AbortException(Messages.PerfSigRecorder_SessionNotAvailable(sessionId));
-            }
-            if (!validateSessionId(comparisonSessionId)) {
-                logger.log(Messages.PerfSigRecorder_ComparisonNotPossible(comparisonSessionId));
-            }
-
-            for (Dashboard singleDashboard : configurationTestCase.getSingleDashboards()) {
-                singleFilename = "Singlereport_" + buildEnvVars.getSessionName() + "_" + singleDashboard.getName() + ".pdf";
-                logger.log(Messages.PerfSigRecorder_GettingPDFReport() + " " + singleFilename);
-                boolean singleResult = connection.getPDFReport(sessionId, null, singleDashboard.getName(),
-                        new FilePath(PerfSigUIUtils.getReportDirectory(run), singleFilename));
-                if (!singleResult) {
-                    throw new RESTErrorException(Messages.PerfSigRecorder_SingleReportError());
+                final PerfSigEnvInvisAction buildEnvVars = getBuildEnvVars(run, configurationTestCase.getName());
+                if (buildEnvVars != null) {
+                    sessionId = buildEnvVars.getSessionId();
+                } else {
+                    throw new AbortException(Messages.PerfSigRecorder_NoSessionNameFound());
                 }
-            }
-            for (Dashboard comparisonDashboard : configurationTestCase.getComparisonDashboards()) {
-                if (comparisonSessionId != null && comparisonSessionName != null && validateSessionId(comparisonSessionId)) {
-                    comparisonFilename = "Comparisonreport_" + comparisonSessionName.replace(comparisonBuildNumber + "_",
-                            buildNumber + "_" + comparisonBuildNumber + "_") + "_" + comparisonDashboard.getName() + ".pdf";
-                    logger.log(Messages.PerfSigRecorder_GettingPDFReport() + " " + comparisonFilename);
-                    boolean comparisonResult = connection.getPDFReport(sessionId, comparisonSessionId, comparisonDashboard.getName(),
-                            new FilePath(PerfSigUIUtils.getReportDirectory(run), comparisonFilename));
-                    if (!comparisonResult) {
-                        throw new RESTErrorException(Messages.PerfSigRecorder_ComparisonReportError());
+
+                if (comparisonBuildNumber != 0) {
+                    final PerfSigEnvInvisAction otherEnvVars = getBuildEnvVars(previousRun, configurationTestCase.getName());
+                    if (otherEnvVars != null) {
+                        comparisonSessionId = otherEnvVars.getSessionId();
+                        comparisonSessionName = otherEnvVars.getSessionName();
                     }
                 }
-            }
-            logger.log(Messages.PerfSigRecorder_ParseXMLReport());
-            final List<Alert> incidents = connection.getIncidents(buildEnvVars.getTimeframeStart(), buildEnvVars.getTimeframeStop());
-            final DashboardReport dashboardReport = connection.getDashboardReportFromXML(configurationTestCase.getXmlDashboard(), sessionId, configurationTestCase.getName());
-            if (dashboardReport == null || dashboardReport.getChartDashlets() == null || dashboardReport.getChartDashlets().isEmpty()) {
-                throw new RESTErrorException(Messages.PerfSigRecorder_XMLReportError());
-            } else {
+
+                availableSessions = connection.getSessions().getSessions();
+                int retryCount = 0;
+                while ((!validateSessionId(sessionId)) && (retryCount < serverConfiguration.getRetryCount())) {
+                    retryCount++;
+                    availableSessions = connection.getSessions().getSessions();
+                    logger.log(Messages.PerfSigRecorder_WaitingForSession(retryCount, serverConfiguration.getRetryCount()));
+                    Thread.sleep(10000L);
+                }
+
+                if (!validateSessionId(sessionId)) {
+                    throw new AbortException(Messages.PerfSigRecorder_SessionNotAvailable(sessionId));
+                }
+                if (!validateSessionId(comparisonSessionId)) {
+                    logger.log(Messages.PerfSigRecorder_ComparisonNotPossible(comparisonSessionId));
+                }
+
+                for (Dashboard singleDashboard : configurationTestCase.getSingleDashboards()) {
+                    singleFilename = "Singlereport_" + buildEnvVars.getSessionName() + "_" + singleDashboard.getName() + ".pdf";
+                    logger.log(Messages.PerfSigRecorder_GettingPDFReport() + " " + singleFilename);
+                    boolean singleResult = connection.getPDFReport(sessionId, null, singleDashboard.getName(),
+                            new FilePath(PerfSigUIUtils.getReportDirectory(run), singleFilename));
+                    if (!singleResult) {
+                        throw new RESTErrorException(Messages.PerfSigRecorder_SingleReportError());
+                    }
+                }
+                for (Dashboard comparisonDashboard : configurationTestCase.getComparisonDashboards()) {
+                    if (comparisonSessionId != null && comparisonSessionName != null && validateSessionId(comparisonSessionId)) {
+                        comparisonFilename = "Comparisonreport_" + comparisonSessionName.replace(comparisonBuildNumber + "_",
+                                buildNumber + "_" + comparisonBuildNumber + "_") + "_" + comparisonDashboard.getName() + ".pdf";
+                        logger.log(Messages.PerfSigRecorder_GettingPDFReport() + " " + comparisonFilename);
+                        boolean comparisonResult = connection.getPDFReport(sessionId, comparisonSessionId, comparisonDashboard.getName(),
+                                new FilePath(PerfSigUIUtils.getReportDirectory(run), comparisonFilename));
+                        if (!comparisonResult) {
+                            throw new RESTErrorException(Messages.PerfSigRecorder_ComparisonReportError());
+                        }
+                    }
+                }
+                logger.log(Messages.PerfSigRecorder_ParseXMLReport());
+                final List<Alert> incidents = connection.getIncidents(buildEnvVars.getTimeframeStart(), buildEnvVars.getTimeframeStop());
+                final DashboardReport dashboardReport = connection.getDashboardReportFromXML(configurationTestCase.getXmlDashboard(), sessionId, configurationTestCase.getName());
+                if (dashboardReport == null || CollectionUtils.isEmpty(dashboardReport.getChartDashlets())) {
+                    throw new RESTErrorException(Messages.PerfSigRecorder_XMLReportError());
+                }
+
                 dashboardReport.getIncidents().addAll(incidents);
                 dashboardReport.setUnitTest(configurationTestCase instanceof UnitTestCase);
                 ClientLinkGenerator clientLinkGenerator = new ClientLinkGenerator(serverConfiguration.getServerUrl(), configurationTestCase.getXmlDashboard(),
@@ -187,31 +190,31 @@ public class PerfSigRecorder extends Recorder implements SimpleBuildStep {
                 dashboardReport.setClientUrl(clientLinkGenerator.generateLink());
                 dashboardReports.add(dashboardReport);
 
+                if (exportSessions) {
+                    boolean exportedSession = connection.downloadSession(sessionId,
+                            new FilePath(PerfSigUIUtils.getReportDirectory(run), buildEnvVars.getSessionName() + ".dts"), removeConfidentialStrings);
+                    if (!exportedSession) {
+                        throw new RESTErrorException(Messages.PerfSigRecorder_SessionDownloadError());
+                    } else {
+                        logger.log(Messages.PerfSigRecorder_SessionDownloadSuccessful());
+                    }
+                }
+
+                if (deleteSessions && validateSessionId(comparisonSessionId)) {
+                    boolean deletedSession = connection.deleteSession(comparisonSessionId);
+                    if (!deletedSession) {
+                        logger.log(Messages.PerfSigRecorder_SessionDeleteError(comparisonSessionName));
+                    } else {
+                        logger.log(Messages.PerfSigRecorder_SessionDeleteSuccessful(comparisonSessionName));
+                    }
+                }
+
                 PerfSigUIUtils.handleIncidents(run, dashboardReport.getIncidents(), logger, nonFunctionalFailure);
             }
-
-            if (exportSessions) {
-                boolean exportedSession = connection.downloadSession(sessionId,
-                        new FilePath(PerfSigUIUtils.getReportDirectory(run), buildEnvVars.getSessionName() + ".dts"), removeConfidentialStrings);
-                if (!exportedSession) {
-                    throw new RESTErrorException(Messages.PerfSigRecorder_SessionDownloadError());
-                } else {
-                    logger.log(Messages.PerfSigRecorder_SessionDownloadSuccessful());
-                }
-            }
-
-            if (deleteSessions && validateSessionId(comparisonSessionId)) {
-                boolean deletedSession = connection.deleteSession(comparisonSessionId);
-                if (!deletedSession) {
-                    logger.log(Messages.PerfSigRecorder_SessionDeleteError(comparisonSessionName));
-                } else {
-                    logger.log(Messages.PerfSigRecorder_SessionDeleteSuccessful(comparisonSessionName));
-                }
-            }
+        } finally {
+            PerfSigBuildAction action = new PerfSigBuildAction(dashboardReports);
+            run.addAction(action);
         }
-
-        PerfSigBuildAction action = new PerfSigBuildAction(dashboardReports);
-        run.addAction(action);
     }
 
     @CheckForNull
