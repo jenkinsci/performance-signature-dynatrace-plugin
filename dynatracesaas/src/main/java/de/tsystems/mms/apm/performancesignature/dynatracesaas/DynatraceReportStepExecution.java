@@ -201,6 +201,8 @@ public class DynatraceReportStepExecution extends SynchronousNonBlockingStepExec
                         chartDashlet.getMeasures().add(measure);
                     });
                     dashboardReport.addChartDashlet(chartDashlet);
+                } else {
+                    println(String.format("Timeseries %s has no data points", tm.getTimeseriesId()));
                 }
             });
             dashboardReports.add(dashboardReport);
@@ -244,7 +246,7 @@ public class DynatraceReportStepExecution extends SynchronousNonBlockingStepExec
     }
 
     private double getScalarValue(TimeseriesDataPointQueryResult dataPointQueryResult) {
-        if (dataPointQueryResult != null && dataPointQueryResult.getDataPoints() != null) {
+        if (dataPointQueryResult != null && MapUtils.isNotEmpty(dataPointQueryResult.getDataPoints())) {
             OptionalDouble average = dataPointQueryResult.getDataPoints().values().stream()
                     .flatMap(values -> values.values().stream())
                     .mapToDouble(a -> a).average();
@@ -276,7 +278,7 @@ public class DynatraceReportStepExecution extends SynchronousNonBlockingStepExec
         if (specTM.getAggregation() == null || result == null) return alerts;
 
         for (Map.Entry<String, Map<Long, Double>> entry : result.getDataPoints().entrySet()) {
-            String entity = result.getEntities().get(entry.getKey());
+            String entity = handleEntityIdString(result.getEntities(), entry.getKey());
 
             for (Map.Entry<Long, Double> e : entry.getValue().entrySet()) {
                 Long timestamp = e.getKey();
