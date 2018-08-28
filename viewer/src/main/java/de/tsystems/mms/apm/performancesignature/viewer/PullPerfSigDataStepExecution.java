@@ -202,13 +202,14 @@ public class PullPerfSigDataStepExecution extends SynchronousNonBlockingStepExec
         }
     }
 
-    private boolean downloadArtifact(final BuildContext context, final FilePath file, final URL url, final PluginLogger logger) {
+    private boolean downloadArtifact(final BuildContext context, final FilePath file, final URL url, final PluginLogger logger)
+            throws InterruptedException {
         try {
             ConnectionHelper connectionHelper = new ConnectionHelper(step.getHandle());
             InputStream inputStream = connectionHelper.getInputStreamFromUrl(url, context);
             file.copyFrom(inputStream);
             return true;
-        } catch (IOException | InterruptedException e) {
+        } catch (IOException e) {
             logger.log("Could not download artifact: " + FilenameUtils.getBaseName(url.toString()));
             return false;
         }

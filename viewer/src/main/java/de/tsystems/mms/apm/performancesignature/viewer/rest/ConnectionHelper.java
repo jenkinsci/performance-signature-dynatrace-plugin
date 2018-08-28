@@ -121,15 +121,15 @@ public class ConnectionHelper {
         return (HttpURLConnection) connection;
     }
 
-    public String getStringFromUrl(final URL url, final BuildContext context) throws IOException {
+    public String getStringFromUrl(final URL url, final BuildContext context) throws IOException, InterruptedException {
         return new String(sendHTTPCall(url, "GET", context, NUMBEROFATTEMPTS), StandardCharsets.UTF_8);
     }
 
-    public InputStream getInputStreamFromUrl(final URL url, final BuildContext context) throws IOException {
+    public InputStream getInputStreamFromUrl(final URL url, final BuildContext context) throws IOException, InterruptedException {
         return new ByteArrayInputStream(sendHTTPCall(url, "GET", context, NUMBEROFATTEMPTS));
     }
 
-    public void postToUrl(final URL url, final BuildContext context) throws IOException {
+    public void postToUrl(final URL url, final BuildContext context) throws IOException, InterruptedException {
         sendHTTPCall(url, "POST", context, NUMBEROFATTEMPTS);
     }
 
@@ -150,7 +150,7 @@ public class ConnectionHelper {
      *                     if the request fails due to another reason and the number of attempts is exceeded.
      */
     private byte[] sendHTTPCall(final URL url, final String requestType, final BuildContext context, int numberOfAttempts)
-            throws IOException {
+            throws IOException, InterruptedException {
 
         byte[] response = null;
         Map<String, List<String>> responseHeader = null;
@@ -193,12 +193,8 @@ public class ConnectionHelper {
 
                 // Sleep for 'pollInterval' seconds.
                 // Sleep takes miliseconds so need to convert this.pollInterval to milisecopnds (x 1000)
-                try {
-                    // Could do with a better way of sleeping...
-                    Thread.sleep(POLLINTERVAL * 1000L);
-                } catch (InterruptedException ex) {
-                    this.failBuild(ex, context.logger);
-                }
+                // Could do with a better way of sleeping...
+                Thread.sleep(POLLINTERVAL * 1000L);
 
                 context.logger.println("Retry attempt #" + numberOfAttempts + " out of " + CONNECTIONRETRYLIMIT);
                 numberOfAttempts++;

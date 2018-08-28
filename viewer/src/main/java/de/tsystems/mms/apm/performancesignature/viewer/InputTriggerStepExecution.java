@@ -68,7 +68,8 @@ public class InputTriggerStepExecution extends SynchronousNonBlockingStepExecuti
         return null;
     }
 
-    private void triggerInputStep(final BuildContext context, final Handle handle, final String triggerId) {
+    private void triggerInputStep(final BuildContext context, final Handle handle, final String triggerId)
+            throws InterruptedException {
         try {
             URL url = new URL(handle.getJobUrl() + "/input/" + triggerId + "/proceedEmpty");
             ConnectionHelper connectionHelper = new ConnectionHelper(handle);
