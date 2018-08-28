@@ -160,8 +160,8 @@ public class Alert {
     @JsonAdapter(SeverityEnum.Adapter.class)
     public enum SeverityEnum {
         INFORMATIONAL("informational"),
-        WARNING("warning"),
-        SEVERE("severe");
+        SEVERE("severe"),
+        WARNING("warning");
 
         private final String value;
 
@@ -183,7 +183,9 @@ public class Alert {
         }
 
         public String getPanelColor() {
-            switch (fromValue(value)) {
+            SeverityEnum severity = fromValue(value);
+            if (severity == null) return "";
+            switch (severity) {
                 case WARNING:
                     return "panel-warning";
                 case SEVERE:
