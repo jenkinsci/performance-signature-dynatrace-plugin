@@ -113,7 +113,7 @@ public abstract class MeasureBaseModel {
      */
     public double getMetricValue(final String aggregation) {
         if (aggregation == null) return this.getAvg();
-        switch (aggregation) {
+        switch (aggregation.toLowerCase()) {
             case "avg":
             case "average":
                 return this.getAvg();
