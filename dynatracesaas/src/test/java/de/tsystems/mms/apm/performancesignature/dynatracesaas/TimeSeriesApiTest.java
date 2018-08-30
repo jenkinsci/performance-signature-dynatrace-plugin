@@ -57,7 +57,7 @@ public class TimeSeriesApiTest {
 
     @BeforeClass
     public static void setUp() throws Exception {
-        dynatraceConfigurations = TestUtils.prepareDTConfigurations();
+        dynatraceConfigurations = TestUtils.prepareDynatraceConfigurations();
     }
 
     @Test

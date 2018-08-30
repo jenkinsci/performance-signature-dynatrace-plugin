@@ -38,7 +38,7 @@ public class TestUtils {
     private TestUtils() {
     }
 
-    public static ListBoxModel prepareDTConfigurations() throws IOException {
+    public static ListBoxModel prepareDynatraceConfigurations() throws IOException {
 
         List<DynatraceServerConfiguration> configurations = Collections.singletonList(new DynatraceServerConfiguration("PoC PerfSig",
                 "https://192.168.122.138/e/15b1674c-ac9f-4e61-97e4-2b3df7d81f90/", "myApiToken", false, false));

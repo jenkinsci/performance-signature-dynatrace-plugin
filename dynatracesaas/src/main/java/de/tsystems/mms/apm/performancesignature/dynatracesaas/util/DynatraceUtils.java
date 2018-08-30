@@ -107,15 +107,6 @@ public final class DynatraceUtils {
         return connection;
     }
 
-    public static String humanReadableByteCount(final double bytes, final boolean si) {
-        int unit = si ? 1000 : 1024;
-        if (bytes < unit) return bytes + " B";
-        int exp = (int) (Math.log(bytes) / Math.log(unit));
-        if (exp > 1) exp -= 1;
-        String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp - 1) + (si ? "" : "i");
-        return String.format("%.1f %sB", bytes / (Math.pow(unit, exp) - 1), pre).replace(',', '.');
-    }
-
     /**
      * Escape the given string to be used as URL query value.
      *
