@@ -9,7 +9,7 @@
       "tags": "Frontend"
     },
     {
-      "timeseriesId": "com.dynatrace.builtin:servicemethod.responsetime",
+      "timeseriesId": "com.dynatrace.builtin:app.apdex",
       "aggregation": "avg",
       "entityIds": "APPLICATION-EA7C4B59F27D43EB",
       "tolerateBound": 4,

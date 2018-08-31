@@ -72,7 +72,7 @@ public class TimeSeriesApiTest {
         WorkflowJob p = j.createProject(WorkflowJob.class);
         p.setDefinition(new CpsFlowDefinition("node('master'){" +
                 "recordDynatraceSession(envId: 'PoC PerfSig', testCase: 'loadtest') { sleep 20 }\n" +
-                "createPerfSigDynatraceReports envId: 'PoC PerfSig', metrics: [[metricId: 'com.dynatrace.builtin:host.cpu.user']]}", true));
+                "perfSigDynatraceReports envId: 'PoC PerfSig', metrics: [[metricId: 'com.dynatrace.builtin:host.cpu.user']]}", true));
         WorkflowRun b = j.assertBuildStatusSuccess(p.scheduleBuild2(0));
         j.assertLogContains("getting metric data from Dynatrace Server", b);
         //assertTrue(s.contains("getting PDF report: Singlereport")); //no Comparisonreport available
@@ -94,7 +94,7 @@ public class TimeSeriesApiTest {
         WorkflowJob p = j.createProject(WorkflowJob.class);
         p.setDefinition(new CpsFlowDefinition("node('master'){" +
                 "recordDynatraceSession(envId: 'PoC PerfSig', testCase: 'loadtest') { sleep 20 }\n" +
-                "createPerfSigDynatraceReports envId: 'PoC PerfSig', specFile: '" + file + "'}", true));
+                "perfSigDynatraceReports envId: 'PoC PerfSig', specFile: '" + file + "'}", true));
         WorkflowRun b = j.assertBuildStatusSuccess(p.scheduleBuild2(0));
         j.assertLogContains("getting metric data from Dynatrace Server", b);
         //assertTrue(s.contains("getting PDF report: Singlereport")); //no Comparisonreport available
@@ -106,14 +106,14 @@ public class TimeSeriesApiTest {
         DashboardReport dashboardReport = buildAction.getDashboardReports().get(0);
         assertNotNull(dashboardReport);
         assertNotNull(dashboardReport.getChartDashlets());
-        assertEquals(4, dashboardReport.getChartDashlets().size());
+        assertEquals(2, dashboardReport.getChartDashlets().size());
     }
 
     @Test
     public void testEmptyConfiguration() throws Exception {
         WorkflowJob p = j.createProject(WorkflowJob.class);
         p.setDefinition(new CpsFlowDefinition("node('master'){" +
-                "createPerfSigDynatraceReports envId: '', metrics: null}", true));
+                "perfSigDynatraceReports envId: '', metrics: null}", true));
         WorkflowRun b = j.assertBuildStatus(Result.FAILURE, p.scheduleBuild2(0));
         j.assertLogContains("At least one of file or metrics needs to be provided", b);
     }
