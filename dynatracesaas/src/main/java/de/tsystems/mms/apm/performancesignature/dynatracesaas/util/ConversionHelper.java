@@ -20,27 +20,28 @@ import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.UnitEnu
 import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.UnitEnum.*;
 
 public class ConversionHelper {
-    public static final List<UnitEnum> TIME_UNITS = Arrays.asList(
+    public static final List<UnitEnum> TIME_UNITS = Collections.unmodifiableList(Arrays.asList(
             UnitEnum.NANOSECOND,
-            UnitEnum.MICROSECOND);
+            UnitEnum.MICROSECOND));
     private static final int UNIT = 1000;
-    private static List<UnitEnum> UNITS = Arrays.asList(
+    private static List<UnitEnum> UNITS = Collections.unmodifiableList(Arrays.asList(
             BYTE,
             KILOBYTE,
             MEGABYTE,
             GIGABYTE
-    );
-    private static List<UnitEnum> UNITS_PER_SECOND = Arrays.asList(
+    ));
+    private static List<UnitEnum> UNITS_PER_SECOND = Collections.unmodifiableList(Arrays.asList(
             BYTEPERSECOND,
             KILOBYTEPERSECOND,
             MEGABYTEPERSECOND
-    );
+    ));
 
     private ConversionHelper() {
     }
@@ -70,7 +71,7 @@ public class ConversionHelper {
         return PerfSigUIUtils.roundAsDouble(value);
     }
 
-    static Double convertByteUnit(double value, UnitEnum from) {
+    public static Double convertByteUnit(double value, UnitEnum from) {
         value = convertToByte(value, from);
         int exp = (int) (Math.log(value) / Math.log(UNIT));
         if (UNITS.contains(from)) {
