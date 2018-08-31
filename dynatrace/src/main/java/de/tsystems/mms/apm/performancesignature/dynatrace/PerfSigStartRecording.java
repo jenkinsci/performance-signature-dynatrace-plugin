@@ -22,6 +22,7 @@ import de.tsystems.mms.apm.performancesignature.dynatrace.model.TestRun.Category
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.DTServerConnection;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model.TestRunDefinition;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.CommandExecutionException;
+import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.model.LicenseInformation;
 import de.tsystems.mms.apm.performancesignature.dynatrace.util.PerfSigUtils;
 import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
 import hudson.Extension;
@@ -48,6 +49,7 @@ import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.util.Date;
 import java.util.Map;
+import java.util.Optional;
 
 import static de.tsystems.mms.apm.performancesignature.dynatrace.rest.DTServerConnection.*;
 
@@ -71,8 +73,8 @@ public class PerfSigStartRecording extends Builder implements SimpleBuildStep {
         CredProfilePair pair = connection.getCredProfilePair();
 
         logger.log(Messages.PerfSigStartRecording_StartingSession());
-        String extTestCase = run.getEnvironment(listener).expand(this.testCase);
-        String sessionName = pair.getProfile() + "_" + run.getParent().getName() + "_Build-" + run.getNumber() + "_" + extTestCase;
+        String testCase = run.getEnvironment(listener).expand(this.testCase);
+        String sessionName = pair.getProfile() + "_" + run.getParent().getName() + "_Build-" + run.getNumber() + "_" + testCase;
         sessionName = sessionName.replace("/", "_");
 
         if (connection.getRecordingStatus()) {
@@ -82,43 +84,42 @@ public class PerfSigStartRecording extends Builder implements SimpleBuildStep {
         }
 
         String sessionId = null;
-        try {
-            sessionId = connection.startRecording(sessionName, Messages.PerfSigStartRecording_SessionTriggered(), getRecordingOption(), lockSession, false);
-        } catch (CommandExecutionException e) {
-            if (!e.getMessage().contains("licenses")) {
-                throw new CommandExecutionException("error while starting session recording: " + e.getMessage());
-            }
-        }
-        Date timeframeStart = new Date();
-        if (sessionId != null) {
-            logger.log(Messages.PerfSigStartRecording_StartedSessionRecording(pair.getProfile(), sessionName));
-        } else {
-            logger.log(Messages.PerfSigStartRecording_SessionRecordingError(pair.getProfile()));
-        }
-
-        logger.log(Messages.PerfSigStartRecording_RegisteringTestRun());
         String testRunId = null;
-        try {
-            Map<String, String> variables = run.getEnvironment(listener);
-            TestRunDefinition body = new TestRunDefinition(run.getNumber())
-                    .setVersionMajor(variables.get(BUILD_VAR_KEY_VERSION_MAJOR))
-                    .setVersionMinor(variables.get(BUILD_VAR_KEY_VERSION_MINOR))
-                    .setVersionRevision(variables.get(BUILD_VAR_KEY_VERSION_REVISION))
-                    .setVersionMilestone(variables.get(BUILD_VAR_KEY_VERSION_MILESTONE))
-                    .setCategory(variables.get(BUILD_VAR_KEY_CATEGORY) != null ? CategoryEnum.fromValue(variables.get(BUILD_VAR_KEY_CATEGORY)) : CategoryEnum.PERFORMANCE)
-                    .setPlatform(variables.get(BUILD_VAR_KEY_PLATFORM))
-                    .setMarker(variables.get(BUILD_VAR_KEY_MARKER))
-                    .addAdditionalMetaData("JENKINS_JOB", variables.get(BUILD_URL_ENV_PROPERTY));
+        Date timeframeStart = new Date();
+        LicenseInformation licenseInformation = connection.getServerLicense();
 
-            testRunId = connection.registerTestRun(body);
-        } catch (CommandExecutionException e) {
-            logger.log(Messages.PerfSigStartRecording_CouldNotRegisterTestRun() + e.getMessage());
-        }
-        if (testRunId != null) {
-            logger.log(Messages.PerfSigStartRecording_StartedTestRun(pair.getProfile(), testRunId, PerfSigEnvContributor.TESTRUN_ID_KEY));
+        if (licenseInformation.isPreProductionLicence()) {
+            sessionId = connection.startRecording(sessionName, Messages.PerfSigStartRecording_SessionTriggered(), getRecordingOption(), lockSession, false);
+            if (sessionId != null) {
+                logger.log(Messages.PerfSigStartRecording_StartedSessionRecording(pair.getProfile(), sessionName));
+                logger.log(Messages.PerfSigStartRecording_RegisteringTestRun());
+
+                Map<String, String> envVars = run.getEnvironment(listener);
+                TestRunDefinition body = new TestRunDefinition(run.getNumber())
+                        .setVersionMajor(envVars.get(BUILD_VAR_KEY_VERSION_MAJOR))
+                        .setVersionMinor(envVars.get(BUILD_VAR_KEY_VERSION_MINOR))
+                        .setVersionRevision(envVars.get(BUILD_VAR_KEY_VERSION_REVISION))
+                        .setVersionMilestone(envVars.get(BUILD_VAR_KEY_VERSION_MILESTONE))
+                        .setCategory(Optional.ofNullable(envVars.get(BUILD_VAR_KEY_CATEGORY)).map(CategoryEnum::fromValue).orElse(CategoryEnum.PERFORMANCE))
+                        .setPlatform(envVars.get(BUILD_VAR_KEY_PLATFORM))
+                        .setMarker(envVars.get(BUILD_VAR_KEY_MARKER))
+                        .addAdditionalMetaData("JENKINS_JOB", envVars.get(BUILD_URL_ENV_PROPERTY));
+                try {
+                    testRunId = connection.registerTestRun(body);
+                    if (testRunId != null) {
+                        logger.log(Messages.PerfSigStartRecording_StartedTestRun(pair.getProfile(), testRunId, PerfSigEnvContributor.TESTRUN_ID_KEY));
+                    }
+                } catch (CommandExecutionException e) {
+                    logger.log(Messages.PerfSigStartRecording_CouldNotRegisterTestRun() + e.getMessage());
+                }
+            } else {
+                logger.log(Messages.PerfSigStartRecording_SessionRecordingError(pair.getProfile()));
+            }
+        } else if (!licenseInformation.isProductionLicence()) {
+            logger.log("only Pre-Production or Production licences are supported");
         }
 
-        run.addAction(new PerfSigEnvInvisAction(extTestCase, sessionId, sessionName, timeframeStart, testRunId));
+        run.addAction(new PerfSigEnvInvisAction(testCase, sessionId, sessionName, timeframeStart, testRunId));
     }
 
     public String getTestCase() {

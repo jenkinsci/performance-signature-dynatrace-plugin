@@ -19,6 +19,7 @@ package de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.api;
 import de.tsystems.mms.apm.performancesignature.dynatrace.model.DashboardReport;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.model.AgentList;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.model.DashboardList;
+import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.model.LicenseInformation;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.model.XmlResult;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -29,8 +30,7 @@ public interface CustomXMLApi {
             "Accept: text/xml"
     })
     @GET("rest/management/dashboards")
-    Call<DashboardList> listDashboards(
-    );
+    Call<DashboardList> listDashboards();
 
     @Headers({
             "Accept: text/xml"
@@ -40,12 +40,18 @@ public interface CustomXMLApi {
             @Path("dashboardId") String dashboard, @Query("source") String source
     );
 
+    /*@Headers({
+            "Accept: text/xml"
+    })*/
+    //header leads to http error 406 Not Acceptable
+    @GET("rest/management/server/license")
+    Call<LicenseInformation> getServerLicense();
+
     @Headers({
             "Accept: text/xml"
     })
     @GET("rest/management/agents")
-    Call<AgentList> getAllAgents(
-    );
+    Call<AgentList> getAllAgents();
 
     @Headers({
             "Accept: text/xml"

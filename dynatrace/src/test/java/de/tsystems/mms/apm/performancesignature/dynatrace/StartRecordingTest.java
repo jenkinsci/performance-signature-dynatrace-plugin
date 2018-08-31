@@ -19,6 +19,7 @@ package de.tsystems.mms.apm.performancesignature.dynatrace;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.DTServerConnection;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.CommandExecutionException;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.RESTErrorException;
+import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.model.LicenseInformation;
 import de.tsystems.mms.apm.performancesignature.dynatrace.util.PerfSigUtils;
 import de.tsystems.mms.apm.performancesignature.dynatrace.util.TestUtils;
 import hudson.AbortException;
@@ -43,7 +44,8 @@ public class StartRecordingTest {
     @Rule
     public final ExpectedException exception = ExpectedException.none();
     private static ListBoxModel dynatraceConfigurations;
-    private DTServerConnection connection;
+    private final DTServerConnection connection2;
+    private final DTServerConnection connection;
 
     @BeforeClass
     public static void setUp() throws Exception {
@@ -52,6 +54,7 @@ public class StartRecordingTest {
 
     public StartRecordingTest() throws AbortException, RESTErrorException {
         this.connection = PerfSigUtils.createDTServerConnection(dynatraceConfigurations.get(0).name);
+        this.connection2 = PerfSigUtils.createDTServerConnection(dynatraceConfigurations.get(1).name);
     }
 
     @Test
@@ -104,5 +107,16 @@ public class StartRecordingTest {
         assertEquals(invisAction.getTestCase(), testCase);
         assertNull(invisAction.getTestRunId());
         assertNotNull(invisAction.getTimeframeStart());
+    }
+
+    @Test
+    public void testServerLicense() {
+        LicenseInformation result = connection.getServerLicense();
+        assertNotNull(result);
+        assertTrue(result.isPreProductionLicence());
+
+        result = connection2.getServerLicense();
+        assertNotNull(result);
+        assertTrue(result.isProductionLicence());
     }
 }

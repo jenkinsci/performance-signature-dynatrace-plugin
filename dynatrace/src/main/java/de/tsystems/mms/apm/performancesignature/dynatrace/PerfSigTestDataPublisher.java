@@ -20,6 +20,7 @@ import de.tsystems.mms.apm.performancesignature.dynatrace.model.PerfSigTestData;
 import de.tsystems.mms.apm.performancesignature.dynatrace.model.TestRun;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.DTServerConnection;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.RESTErrorException;
+import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.model.LicenseInformation;
 import de.tsystems.mms.apm.performancesignature.dynatrace.util.PerfSigUtils;
 import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
 import hudson.AbortException;
@@ -35,6 +36,7 @@ import hudson.tasks.junit.TestDataPublisher;
 import hudson.tasks.junit.TestResult;
 import hudson.tasks.junit.TestResultAction;
 import hudson.util.ListBoxModel;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
@@ -58,21 +60,25 @@ public class PerfSigTestDataPublisher extends TestDataPublisher {
                                                     final TaskListener listener, final TestResult testResult) throws AbortException, RESTErrorException {
         PluginLogger logger = PerfSigUIUtils.createLogger(listener.getLogger());
         DTServerConnection connection = PerfSigUtils.createDTServerConnection(dynatraceProfile);
-
         List<TestRun> testRuns = new ArrayList<>();
-        List<PerfSigEnvInvisAction> envVars = run.getActions(PerfSigEnvInvisAction.class);
-        for (PerfSigEnvInvisAction registerEnvVars : envVars) {
-            if (StringUtils.isNotBlank(registerEnvVars.getTestRunId())) {
-                TestRun testRun = connection.getTestRun(registerEnvVars.getTestRunId());
-                if (testRun == null || testRun.getTestResults() == null || testRun.getTestResults().isEmpty()) {
-                    throw new RESTErrorException(Messages.PerfSigRecorder_XMLReportError());
-                } else {
-                    testRuns.add(testRun);
-                    logger.log(Messages.PerfSigTestDataPublisher_XMLReportResults(testRun.getTestResults().size(), " " + testRun.getId()));
+
+        LicenseInformation license = connection.getServerLicense();
+        if (license.isPreProductionLicence()) {
+            List<PerfSigEnvInvisAction> envVars = run.getActions(PerfSigEnvInvisAction.class);
+            for (PerfSigEnvInvisAction registerEnvVars : envVars) {
+                if (StringUtils.isNotBlank(registerEnvVars.getTestRunId())) {
+                    TestRun testRun = connection.getTestRun(registerEnvVars.getTestRunId());
+                    if (testRun == null || CollectionUtils.isNotEmpty(testRun.getTestResults())) {
+                        throw new RESTErrorException(Messages.PerfSigRecorder_XMLReportError());
+                    } else {
+                        testRuns.add(testRun);
+                        logger.log(Messages.PerfSigTestDataPublisher_XMLReportResults(testRun.getTestResults().size(), " " + testRun.getId()));
+                    }
                 }
             }
+        } else if (license.isProductionLicence()) {
+            logger.log("querying testRuns with a Dynatrace Production License is not possible!");
         }
-
         return new PerfSigTestData(testRuns);
     }
 

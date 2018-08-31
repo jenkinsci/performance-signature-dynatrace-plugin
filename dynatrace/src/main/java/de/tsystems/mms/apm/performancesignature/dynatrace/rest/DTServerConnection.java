@@ -247,6 +247,16 @@ public class DTServerConnection {
         }
     }
 
+    public LicenseInformation getServerLicense() {
+        CustomXMLApi api = apiClient.createService(CustomXMLApi.class);
+        try {
+            ApiResponse<LicenseInformation> response = apiClient.execute(api.getServerLicense());
+            return response.getData();
+        } catch (Exception ex) {
+            throw new CommandExecutionException("error while querying server license: " + ex.getMessage(), ex);
+        }
+    }
+
     public List<Agent> getAllAgents() {
         CustomXMLApi api = apiClient.createService(CustomXMLApi.class);
         try {
