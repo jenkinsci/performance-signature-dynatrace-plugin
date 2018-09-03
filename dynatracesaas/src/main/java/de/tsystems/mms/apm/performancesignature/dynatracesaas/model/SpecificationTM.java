@@ -29,10 +29,10 @@ public class SpecificationTM {
     private String tags;
     @SerializedName("entityIds")
     private String entityIds;
-    @SerializedName("tolerateBound")
-    private Double tolerateBound;
-    @SerializedName("frustrateBound")
-    private Double frustrateBound;
+    @SerializedName("lowerLimit")
+    private Double lowerLimit;
+    @SerializedName("upperLimit")
+    private Double upperLimit;
 
     /**
      * No args constructor for use in serialization
@@ -40,21 +40,13 @@ public class SpecificationTM {
     public SpecificationTM() {
     }
 
-    /**
-     * @param tags
-     * @param aggregation
-     * @param tolerateBound
-     * @param entityIds
-     * @param timeseriesId
-     * @param frustrateBound
-     */
-    public SpecificationTM(String timeseriesId, AggregationTypeEnum aggregation, String tags, String entityIds, Double tolerateBound, Double frustrateBound) {
+    public SpecificationTM(String timeseriesId, AggregationTypeEnum aggregation, String tags, String entityIds, Double lowerLimit, Double upperLimit) {
         this.timeseriesId = timeseriesId;
         this.aggregation = aggregation;
         this.tags = tags;
         this.entityIds = entityIds;
-        this.tolerateBound = tolerateBound;
-        this.frustrateBound = frustrateBound;
+        this.lowerLimit = lowerLimit;
+        this.upperLimit = upperLimit;
     }
 
     public SpecificationTM(String metricId) {
@@ -94,24 +86,24 @@ public class SpecificationTM {
         this.entityIds = entityIds;
     }
 
-    public Double getTolerateBound() {
-        return tolerateBound;
+    public Double getLowerLimit() {
+        return lowerLimit;
     }
 
-    public void setTolerateBound(Double tolerateBound) {
-        this.tolerateBound = tolerateBound;
+    public void setLowerLimit(Double lowerLimit) {
+        this.lowerLimit = lowerLimit;
     }
 
-    public Double getFrustrateBound() {
-        return frustrateBound;
+    public Double getUpperLimit() {
+        return upperLimit;
     }
 
-    public void setFrustrateBound(Double frustrateBound) {
-        this.frustrateBound = frustrateBound;
+    public void setUpperLimit(Double upperLimit) {
+        this.upperLimit = upperLimit;
     }
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("timeseriesId", timeseriesId).append("aggregation", aggregation).append("tags", tags).append("entityIds", entityIds).append("tolerateBound", tolerateBound).append("frustrateBound", frustrateBound).toString();
+        return new ToStringBuilder(this).append("timeseriesId", timeseriesId).append("aggregation", aggregation).append("tags", tags).append("entityIds", entityIds).append("lowerLimit", lowerLimit).append("upperLimit", upperLimit).toString();
     }
 }

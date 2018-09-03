@@ -157,8 +157,8 @@ public class DynatraceReportStepExecution extends SynchronousNonBlockingStepExec
             TimeseriesDataPointQueryResult> aggregations, Map<String, TimeseriesDefinition> timeseries) {
 
         List<Alert> alerts = new ArrayList<>();
-        double tolerateBound = Optional.ofNullable(specTM.getTolerateBound()).orElse(globalTolerateBound);
-        double frustrateBound = Optional.ofNullable(specTM.getFrustrateBound()).orElse(globalFrustrateBound);
+        double tolerateBound = Optional.ofNullable(specTM.getLowerLimit()).orElse(globalTolerateBound);
+        double frustrateBound = Optional.ofNullable(specTM.getUpperLimit()).orElse(globalFrustrateBound);
         TimeseriesDataPointQueryResult result = aggregations.get(specTM.getAggregation());
         if (specTM.getAggregation() == null || result == null) return alerts;
 
@@ -257,7 +257,7 @@ public class DynatraceReportStepExecution extends SynchronousNonBlockingStepExec
 
         try {
             for (DynatraceEnvInvisAction dynatraceAction : envInvisActions) {
-                Long start = dynatraceAction.getTimeframeStart() - 7200000;
+                Long start = dynatraceAction.getTimeframeStart();
                 Long end = dynatraceAction.getTimeframeStop();
                 DashboardReport dashboardReport = new DashboardReport(dynatraceAction.getTestCase());
 
@@ -287,7 +287,7 @@ public class DynatraceReportStepExecution extends SynchronousNonBlockingStepExec
                         convertUnitOfDataPoints(totalValues);
 
                         //evaluate possible incidents
-                        dashboardReport.getIncidents().addAll(evaluateSpecification(spec.getTolerateBound(), spec.getFrustrateBound(),
+                        dashboardReport.getIncidents().addAll(evaluateSpecification(spec.getLowerLimit(), spec.getUpperLimit(),
                                 specTM, aggregations, timeseries));
 
                         ChartDashlet chartDashlet = new ChartDashlet();

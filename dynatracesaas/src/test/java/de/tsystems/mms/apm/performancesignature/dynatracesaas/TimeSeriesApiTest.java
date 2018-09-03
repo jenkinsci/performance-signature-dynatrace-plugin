@@ -71,7 +71,7 @@ public class TimeSeriesApiTest {
     public void testJenkinsConfiguration() throws Exception {
         WorkflowJob p = j.createProject(WorkflowJob.class);
         p.setDefinition(new CpsFlowDefinition("node('master'){" +
-                "recordDynatraceSession(envId: 'PoC PerfSig', testCase: 'loadtest') { sleep 20 }\n" +
+                "recordDynatraceSession(envId: 'PoC PerfSig', testCase: 'loadtest') { sleep 60 }\n" +
                 "perfSigDynatraceReports envId: 'PoC PerfSig', metrics: [[metricId: 'com.dynatrace.builtin:host.cpu.user']]}", true));
         WorkflowRun b = j.assertBuildStatusSuccess(p.scheduleBuild2(0));
         j.assertLogContains("getting metric data from Dynatrace Server", b);

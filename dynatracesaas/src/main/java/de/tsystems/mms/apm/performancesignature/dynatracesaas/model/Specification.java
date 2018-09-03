@@ -22,10 +22,10 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import java.util.List;
 
 public class Specification {
-    @SerializedName("tolerateBound")
-    private Double tolerateBound;
-    @SerializedName("frustrateBound")
-    private Double frustrateBound;
+    @SerializedName("lowerLimit")
+    private Double lowerLimit;
+    @SerializedName("upperLimit")
+    private Double upperLimit;
     @SerializedName("timeseries")
     private List<SpecificationTM> timeseries = null;
 
@@ -35,33 +35,28 @@ public class Specification {
     public Specification() {
     }
 
-    /**
-     * @param tolerateBound
-     * @param timeseries
-     * @param frustrateBound
-     */
-    public Specification(Double tolerateBound, Double frustrateBound, List<SpecificationTM> timeseries) {
-        this.tolerateBound = tolerateBound;
-        this.frustrateBound = frustrateBound;
+    public Specification(Double lowerLimit, Double upperLimit, List<SpecificationTM> timeseries) {
+        this.lowerLimit = lowerLimit;
+        this.upperLimit = upperLimit;
         this.timeseries = timeseries;
     }
 
-    public Double getTolerateBound() {
-        if (tolerateBound == null) return 1D;
-        return tolerateBound;
+    public Double getLowerLimit() {
+        if (lowerLimit == null) return 1D;
+        return lowerLimit;
     }
 
-    public void setTolerateBound(Double tolerateBound) {
-        this.tolerateBound = tolerateBound;
+    public void setLowerLimit(Double lowerLimit) {
+        this.lowerLimit = lowerLimit;
     }
 
-    public Double getFrustrateBound() {
-        if (frustrateBound == null) return 4D;
-        return frustrateBound;
+    public Double getUpperLimit() {
+        if (upperLimit == null) return 4D;
+        return upperLimit;
     }
 
-    public void setFrustrateBound(Double frustrateBound) {
-        this.frustrateBound = frustrateBound;
+    public void setUpperLimit(Double upperLimit) {
+        this.upperLimit = upperLimit;
     }
 
     public List<SpecificationTM> getTimeseries() {
@@ -74,6 +69,6 @@ public class Specification {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("tolerateBound", tolerateBound).append("frustrateBound", frustrateBound).append("timeseries", timeseries).toString();
+        return new ToStringBuilder(this).append("lowerLimit", lowerLimit).append("upperLimit", upperLimit).append("timeseries", timeseries).toString();
     }
 }
