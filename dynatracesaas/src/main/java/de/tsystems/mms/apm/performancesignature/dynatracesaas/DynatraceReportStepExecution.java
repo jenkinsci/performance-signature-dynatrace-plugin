@@ -153,12 +153,12 @@ public class DynatraceReportStepExecution extends SynchronousNonBlockingStepExec
         }
     }
 
-    private static List<Alert> evaluateSpecification(double globalTolerateBound, double globalFrustrateBound, SpecificationTM specTM, Map<AggregationTypeEnum,
+    private static List<Alert> evaluateSpecification(double globalLowerBound, double globalUpperBound, SpecificationTM specTM, Map<AggregationTypeEnum,
             TimeseriesDataPointQueryResult> aggregations, Map<String, TimeseriesDefinition> timeseries) {
 
         List<Alert> alerts = new ArrayList<>();
-        double tolerateBound = Optional.ofNullable(specTM.getLowerLimit()).orElse(globalTolerateBound);
-        double frustrateBound = Optional.ofNullable(specTM.getUpperLimit()).orElse(globalFrustrateBound);
+        double lowerbound = Optional.ofNullable(specTM.getLowerLimit()).orElse(globalLowerBound);
+        double upperBound = Optional.ofNullable(specTM.getUpperLimit()).orElse(globalUpperBound);
         TimeseriesDataPointQueryResult result = aggregations.get(specTM.getAggregation());
         if (specTM.getAggregation() == null || result == null) return alerts;
 
@@ -169,37 +169,37 @@ public class DynatraceReportStepExecution extends SynchronousNonBlockingStepExec
                 Long timestamp = e.getKey();
                 Double value = e.getValue();
                 if (value != null) {
-                    if (tolerateBound < frustrateBound) {
-                        if (value > tolerateBound && value < frustrateBound) {
+                    if (lowerbound < upperBound) {
+                        if (value > lowerbound && value < upperBound) {
                             String rule = timeseries.get(result.getTimeseriesId()).getDetailedSource() + " - " + timeseries.get(result.getTimeseriesId()).getDisplayName();
                             alerts.add(new Alert(Alert.SeverityEnum.WARNING,
-                                    String.format("SpecFile threshold violation: %s upper tolerate bound exceeded", rule),
-                                    String.format("%s: Measured peak value: %.2f %s on Entity: %s, Upper Bound: %.2f %s",
-                                            rule, value, result.getUnit(), entity, tolerateBound, result.getUnit()),
+                                    String.format("SpecFile threshold violation: %s lower bound exceeded", rule),
+                                    String.format("%s: Measured peak value: %.2f %s on Entity: %s, Lower Bound: %.2f %s",
+                                            rule, value, result.getUnit(), entity, lowerbound, result.getUnit()),
                                     timestamp, rule));
-                        } else if (value > frustrateBound) {
+                        } else if (value > upperBound) {
                             String rule = timeseries.get(result.getTimeseriesId()).getDetailedSource() + " - " + timeseries.get(result.getTimeseriesId()).getDisplayName();
                             alerts.add(new Alert(Alert.SeverityEnum.SEVERE,
-                                    String.format("SpecFile threshold violation: %s upper frustrate bound exceeded", rule),
+                                    String.format("SpecFile threshold violation: %s upper bound exceeded", rule),
                                     String.format("%s: Measured peak value: %.2f %s on Entity: %s, Upper Bound: %.2f %s",
-                                            rule, value, result.getUnit(), entity, frustrateBound, result.getUnit()),
+                                            rule, value, result.getUnit(), entity, upperBound, result.getUnit()),
                                     timestamp, rule));
                         }
                     } else {
-                        if (value < tolerateBound && value > frustrateBound) {
+                        if (value < lowerbound && value > upperBound) {
                             String rule = timeseries.get(result.getTimeseriesId()).getDetailedSource() + " - " + timeseries.get(result.getTimeseriesId()).getDisplayName();
                             alerts.add(new Alert(Alert.SeverityEnum.WARNING,
-                                    String.format("SpecFile threshold violation: %s lower tolerate bound exceeded", rule),
+                                    String.format("SpecFile threshold violation: %s lower bound exceeded", rule),
                                     String.format("%s: Measured peak value: %.2f %s on Entity: %s, Lower Bound: %.2f %s",
-                                            rule, value, result.getUnit(), entity, tolerateBound, result.getUnit()),
+                                            rule, value, result.getUnit(), entity, lowerbound, result.getUnit()),
                                     timestamp, rule));
                         } else {
-                            if (value < frustrateBound) {
+                            if (value < upperBound) {
                                 String rule = timeseries.get(result.getTimeseriesId()).getDetailedSource() + " - " + timeseries.get(result.getTimeseriesId()).getDisplayName();
                                 alerts.add(new Alert(Alert.SeverityEnum.SEVERE,
-                                        String.format("SpecFile threshold violation: %s lower frustrate bound exceeded", rule),
-                                        String.format("%s: Measured peak value: %.2f %s on Entity: %s, Lower Bound: %.2f %s",
-                                                rule, value, result.getUnit(), entity, frustrateBound, result.getUnit()),
+                                        String.format("SpecFile threshold violation: %s upper bound exceeded", rule),
+                                        String.format("%s: Measured peak value: %.2f %s on Entity: %s, Upper Bound: %.2f %s",
+                                                rule, value, result.getUnit(), entity, upperBound, result.getUnit()),
                                         timestamp, rule));
                             }
                         }
