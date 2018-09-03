@@ -49,15 +49,15 @@ public final class PerfSigUIUtils {
     private PerfSigUIUtils() {
     }
 
-    public static double roundAsDouble(final double d) {
+    public static double roundAsDouble(final Double d) {
         return round(d).doubleValue();
     }
 
-    public static BigDecimal round(final double d) {
+    public static BigDecimal round(final Double d) {
         return round(d, 2);
     }
 
-    public static BigDecimal round(final double d, final int scale) {
+    public static BigDecimal round(final Double d, final int scale) {
         try {
             return (new BigDecimal(Double.toString(d)).setScale(d % 1 == 0 ? 0 : scale, BigDecimal.ROUND_HALF_UP));
         } catch (NumberFormatException ex) {
