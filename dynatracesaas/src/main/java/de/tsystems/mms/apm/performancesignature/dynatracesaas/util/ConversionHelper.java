@@ -31,13 +31,13 @@ public class ConversionHelper {
             UnitEnum.NANOSECOND,
             UnitEnum.MICROSECOND));
     private static final int UNIT = 1000;
-    private static List<UnitEnum> UNITS = Collections.unmodifiableList(Arrays.asList(
+    private static final List<UnitEnum> UNITS = Collections.unmodifiableList(Arrays.asList(
             BYTE,
             KILOBYTE,
             MEGABYTE,
             GIGABYTE
     ));
-    private static List<UnitEnum> UNITS_PER_SECOND = Collections.unmodifiableList(Arrays.asList(
+    private static final List<UnitEnum> UNITS_PER_SECOND = Collections.unmodifiableList(Arrays.asList(
             BYTEPERSECOND,
             KILOBYTEPERSECOND,
             MEGABYTEPERSECOND

@@ -20,6 +20,8 @@ import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.Service
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Headers;
+import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 import java.util.List;
 
@@ -40,7 +42,7 @@ public interface TopologySmartscapeServiceApi {
     })
     @GET("entity/services")
     Call<List<Service>> getServices(
-            @retrofit2.http.Query("startTimestamp") Long startTimestamp, @retrofit2.http.Query("endTimestamp") Long endTimestamp, @retrofit2.http.Query("relativeTime") String relativeTime, @retrofit2.http.Query("tag") List<String> tag, @retrofit2.http.Query("entity") List<String> entity
+            @Query("startTimestamp") Long startTimestamp, @Query("endTimestamp") Long endTimestamp, @Query("relativeTime") String relativeTime, @Query("tag") List<String> tag, @Query("entity") List<String> entity
     );
 
     /**
@@ -54,6 +56,6 @@ public interface TopologySmartscapeServiceApi {
     })
     @GET("entity/services/{meIdentifier}")
     Call<Service> getSingleService(
-            @retrofit2.http.Path("meIdentifier") String meIdentifier
+            @Path("meIdentifier") String meIdentifier
     );
 }

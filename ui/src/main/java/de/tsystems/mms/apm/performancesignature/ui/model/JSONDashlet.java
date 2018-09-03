@@ -16,7 +16,6 @@
 
 package de.tsystems.mms.apm.performancesignature.ui.model;
 
-import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -28,48 +27,28 @@ import javax.annotation.Nonnull;
 public class JSONDashlet implements Comparable<JSONDashlet> {
 
     @SerializedName("col")
-    @Expose
     private int col;
     @SerializedName("row")
-    @Expose
     private int row;
     @SerializedName("id")
-    @Expose
     private String id;
     @SerializedName("dashboard")
-    @Expose
     private String dashboard;
     @SerializedName("chartDashlet")
-    @Expose
     private String chartDashlet;
     @SerializedName("measure")
-    @Expose
     private String measure;
     @SerializedName("customName")
-    @Expose
     private String customName;
     @SerializedName("customBuildCount")
-    @Expose
     private String customBuildCount;
     @SerializedName("show")
-    @Expose
     private boolean show;
     @SerializedName("aggregation")
-    @Expose
     private String aggregation;
     @SerializedName("description")
-    @Expose
     private String description;
 
-    /**
-     * @param aggregation
-     * @param chartDashlet
-     * @param col
-     * @param measure
-     * @param description
-     * @param dashboard
-     * @param row
-     */
     public JSONDashlet(final int col, final int row, final String dashboard, final String chartDashlet, final String measure,
                        final String aggregation, final String description) {
         this.col = col;

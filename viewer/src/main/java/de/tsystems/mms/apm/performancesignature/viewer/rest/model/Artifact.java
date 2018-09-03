@@ -16,20 +16,16 @@
 
 package de.tsystems.mms.apm.performancesignature.viewer.rest.model;
 
-import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 public class Artifact {
 
     @SerializedName("displayPath")
-    @Expose
     private String displayPath;
     @SerializedName("fileName")
-    @Expose
     private String fileName;
     @SerializedName("relativePath")
-    @Expose
     private String relativePath;
 
     public String getDisplayPath() {

@@ -58,7 +58,7 @@ public class DynatraceSessionStepExecution extends StepExecution {
     }
 
     @Override
-    public boolean start() throws Exception {
+    public boolean start() {
         StepContext context = getContext();
 
         println("getting build details ...");
@@ -73,7 +73,7 @@ public class DynatraceSessionStepExecution extends StepExecution {
     }
 
     @Override
-    public void stop(@Nonnull Throwable cause) throws Exception {
+    public void stop(@Nonnull Throwable cause) {
         println("stopping session recording ...");
         action.setTimeframeStop(System.currentTimeMillis());
 

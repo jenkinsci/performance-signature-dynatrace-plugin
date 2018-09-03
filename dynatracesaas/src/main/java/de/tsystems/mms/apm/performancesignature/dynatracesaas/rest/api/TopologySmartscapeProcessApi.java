@@ -20,6 +20,8 @@ import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.Process
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Headers;
+import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 import java.util.List;
 
@@ -44,7 +46,7 @@ public interface TopologySmartscapeProcessApi {
     })
     @GET("entity/infrastructure/processes")
     Call<List<ProcessGroupInstance>> getProcesses(
-            @retrofit2.http.Query("startTimestamp") Long startTimestamp, @retrofit2.http.Query("endTimestamp") Long endTimestamp, @retrofit2.http.Query("relativeTime") String relativeTime, @retrofit2.http.Query("tag") List<String> tag, @retrofit2.http.Query("entity") List<String> entity, @retrofit2.http.Query("hostTag") List<String> hostTag, @retrofit2.http.Query("host") List<String> host, @retrofit2.http.Query("actualMonitoringState") String actualMonitoringState, @retrofit2.http.Query("expectedMonitoringState") String expectedMonitoringState
+            @Query("startTimestamp") Long startTimestamp, @Query("endTimestamp") Long endTimestamp, @Query("relativeTime") String relativeTime, @Query("tag") List<String> tag, @Query("entity") List<String> entity, @Query("hostTag") List<String> hostTag, @Query("host") List<String> host, @Query("actualMonitoringState") String actualMonitoringState, @Query("expectedMonitoringState") String expectedMonitoringState
     );
 
     /**
@@ -58,6 +60,6 @@ public interface TopologySmartscapeProcessApi {
     })
     @GET("entity/infrastructure/processes/{meIdentifier}")
     Call<ProcessGroupInstance> getSingleProcess(
-            @retrofit2.http.Path("meIdentifier") String meIdentifier
+            @Path("meIdentifier") String meIdentifier
     );
 }

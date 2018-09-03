@@ -70,7 +70,7 @@ public class PullPerfSigDataStep extends Step {
     }
 
     @Override
-    public StepExecution start(final StepContext context) throws Exception {
+    public StepExecution start(final StepContext context) {
         return new PullPerfSigDataStepExecution(this, context);
     }
 

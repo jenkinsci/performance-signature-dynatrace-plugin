@@ -56,7 +56,7 @@ public class CreateDeploymentStepExecution extends StepExecution {
     }
 
     @Override
-    public boolean start() throws Exception {
+    public boolean start() {
         StepContext context = getContext();
         startTimestamp = System.currentTimeMillis();
 
@@ -69,7 +69,7 @@ public class CreateDeploymentStepExecution extends StepExecution {
     }
 
     @Override
-    public void stop(@Nonnull Throwable cause) throws Exception {
+    public void stop(@Nonnull Throwable cause) {
         println("stopping deployment event");
         if (body != null) {
             body.cancel(cause);

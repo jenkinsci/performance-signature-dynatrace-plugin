@@ -55,7 +55,7 @@ public class DynatraceReportStep extends Step {
     }
 
     @Override
-    public StepExecution start(final StepContext context) throws Exception {
+    public StepExecution start(final StepContext context) {
         return new DynatraceReportStepExecution(this, context);
     }
 

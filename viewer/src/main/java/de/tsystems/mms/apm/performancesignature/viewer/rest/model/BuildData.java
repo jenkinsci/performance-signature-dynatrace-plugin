@@ -16,7 +16,6 @@
 
 package de.tsystems.mms.apm.performancesignature.viewer.rest.model;
 
-import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
@@ -26,7 +25,6 @@ import java.util.List;
 public class BuildData {
 
     @SerializedName("artifacts")
-    @Expose
     private final List<Artifact> artifacts = new ArrayList<>();
 
     public List<Artifact> getArtifacts() {
