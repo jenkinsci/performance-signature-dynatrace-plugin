@@ -68,11 +68,11 @@ public class PerfSigTestDataPublisher extends TestDataPublisher {
             for (PerfSigEnvInvisAction registerEnvVars : envVars) {
                 if (StringUtils.isNotBlank(registerEnvVars.getTestRunId())) {
                     TestRun testRun = connection.getTestRun(registerEnvVars.getTestRunId());
-                    if (testRun == null || CollectionUtils.isNotEmpty(testRun.getTestResults())) {
-                        throw new RESTErrorException(Messages.PerfSigRecorder_XMLReportError());
-                    } else {
+                    if (testRun != null && CollectionUtils.isNotEmpty(testRun.getTestResults())) {
                         testRuns.add(testRun);
                         logger.log(Messages.PerfSigTestDataPublisher_XMLReportResults(testRun.getTestResults().size(), " " + testRun.getId()));
+                    } else {
+                        throw new RESTErrorException(Messages.PerfSigRecorder_XMLReportError());
                     }
                 }
             }
