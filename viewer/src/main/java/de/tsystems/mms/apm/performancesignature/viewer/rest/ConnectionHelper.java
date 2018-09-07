@@ -17,9 +17,11 @@
 package de.tsystems.mms.apm.performancesignature.viewer.rest;
 
 import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import hudson.AbortException;
 import hudson.ProxyConfiguration;
 import jenkins.model.Jenkins;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.CharEncoding;
 import org.apache.commons.lang.exception.ExceptionUtils;
@@ -149,6 +151,7 @@ public class ConnectionHelper {
      *                     if the request fails due to an unknown host or unauthorized credentials, or
      *                     if the request fails due to another reason and the number of attempts is exceeded.
      */
+    @SuppressFBWarnings(value = "DLS_DEAD_LOCAL_STORE", justification = "false positive in responseHeader Map")
     private byte[] sendHTTPCall(final URL url, final String requestType, final BuildContext context, int numberOfAttempts)
             throws IOException, InterruptedException {
 
@@ -182,7 +185,7 @@ public class ConnectionHelper {
         } catch (IOException e) {
             //E.g. "HTTP/1.1 403 No valid crumb was included in the request"
             List<String> hints = responseHeader != null ? responseHeader.get(null) : null;
-            String hintsString = (hints != null && hints.size() > 0) ? " - " + hints.toString() : "";
+            String hintsString = CollectionUtils.isNotEmpty(hints) ? " - " + hints.toString() : "";
 
             context.logger.println(e.getMessage() + hintsString);
             //If we have CONNECTIONRETRYLIMIT set to > 0 then retry that many times.

@@ -23,7 +23,6 @@ import hudson.model.Run;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.jvnet.hudson.test.JenkinsRule;
 import org.jvnet.hudson.test.recipes.LocalData;
 
@@ -34,8 +33,6 @@ public class PerfSigTestActionTest {
     private final static String TEST_PROJECT_WITH_HISTORY = "projectAction";
     @Rule
     public final JenkinsRule j = new JenkinsRule();
-    @Rule
-    public ExpectedException exception = ExpectedException.none();
 
     @LocalData
     @Test
