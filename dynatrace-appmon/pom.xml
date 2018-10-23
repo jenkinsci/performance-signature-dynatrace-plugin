@@ -10,7 +10,7 @@
     </parent>
 
     <artifactId>performance-signature-dynatrace</artifactId>
-    <version>3.0.1-SNAPSHOT</version>
+    <version>3.0.2-SNAPSHOT</version>
     <packaging>hpi</packaging>
 
     <name>Performance Signature: Dynatrace AppMon</name>
