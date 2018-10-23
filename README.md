@@ -12,7 +12,7 @@ Smoking latest software products are created with the help of flexible and agile
 
 **T-Systems Multimedia Solutions GmbH**
 
-Send a [mail](performance@t-systems-mms.com) to the Application Performance Team
+Send a [mail](mailto:performance@t-systems-mms.com) to the Application Performance Team
 
 ### Prices
 * Winner of the Dynatrace Solution Innovation Award EMEA 2016 
