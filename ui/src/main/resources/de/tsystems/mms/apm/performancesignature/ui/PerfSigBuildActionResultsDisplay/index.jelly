@@ -29,7 +29,7 @@
         <l:main-panel>
             <div class="tw-bs">
                 <div class="container-fluid" style="height: 170px;">
-                    <h1>${%Performance Signature for build} ${it.build.number}</h1>
+                    <h1>${%Performance Signature for build} #${it.build.number}</h1>
                     <div class="row col-md-24">
                         <ul class="nav nav-tabs" role="tablist" id="tabList">
                             <j:forEach var="dashboardReport" items="${it.currentDashboardReports}">
