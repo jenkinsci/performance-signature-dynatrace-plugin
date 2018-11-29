@@ -156,6 +156,6 @@ public class Measure extends MeasureBaseModel {
     }
 
     public BigDecimal getStrMetricValue() {
-        return PerfSigUIUtils.round(getMetricValue(), 2);
+        return PerfSigUIUtils.round(getMetricValue());
     }
 }
