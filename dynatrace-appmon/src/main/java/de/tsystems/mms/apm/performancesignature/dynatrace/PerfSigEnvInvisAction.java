@@ -17,6 +17,7 @@
 package de.tsystems.mms.apm.performancesignature.dynatrace;
 
 import hudson.model.InvisibleAction;
+import org.jenkinsci.plugins.scriptsecurity.sandbox.whitelists.Whitelisted;
 
 import java.util.Date;
 
@@ -28,6 +29,7 @@ public class PerfSigEnvInvisAction extends InvisibleAction {
     private String sessionId;
     private Date timeframeStop;
 
+    @Whitelisted
     PerfSigEnvInvisAction(final String testCase, final String sessionId, final String sessionName, final Date timeframeStart, final String testRunId) {
         this.sessionId = sessionId;
         this.timeframeStart = timeframeStart == null ? null : (Date) timeframeStart.clone();
@@ -68,6 +70,7 @@ public class PerfSigEnvInvisAction extends InvisibleAction {
         return (sessionId == null);
     }
 
+    @Whitelisted
     void setTimeframeStop(Date timeframeStop) {
         this.timeframeStop = timeframeStop;
     }

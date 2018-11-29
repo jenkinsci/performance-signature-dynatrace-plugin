@@ -48,8 +48,8 @@ import javax.annotation.Nonnull;
 import java.io.IOException;
 
 public class PerfSigMemoryDump extends Builder implements SimpleBuildStep {
-    public static final long WAIT_FOR_DUMP_TIMEOUT = 60000L;
-    public static final long WAIT_FOR_DUMP_POLLING_INTERVAL = 5000L;
+    static final long WAIT_FOR_DUMP_TIMEOUT = 60000L;
+    static final long WAIT_FOR_DUMP_POLLING_INTERVAL = 5000L;
     private final String dynatraceProfile;
     private final String agent;
     private final String host;

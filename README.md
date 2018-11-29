@@ -14,7 +14,7 @@ Smoking latest software products are created with the help of flexible and agile
 
 Send a [mail](mailto:performance@t-systems-mms.com) to the Application Performance Team
 
-### Prices
+### Awards
 * Winner of the Dynatrace Solution Innovation Award EMEA 2016 
 * Winner of the Dynatrace EMEA API Challenge 2018
 
