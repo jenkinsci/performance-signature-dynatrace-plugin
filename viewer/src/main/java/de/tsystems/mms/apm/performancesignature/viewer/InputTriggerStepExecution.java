@@ -17,13 +17,13 @@
 package de.tsystems.mms.apm.performancesignature.viewer;
 
 import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
+import de.tsystems.mms.apm.performancesignature.ui.util.PluginLogger;
 import de.tsystems.mms.apm.performancesignature.viewer.rest.CommandExecutionException;
 import de.tsystems.mms.apm.performancesignature.viewer.rest.ConnectionHelper;
 import hudson.AbortException;
 import hudson.FilePath;
 import hudson.model.Run;
 import hudson.model.TaskListener;
-import hudson.plugins.analysis.util.PluginLogger;
 import org.jenkinsci.plugins.ParameterizedRemoteTrigger.BuildContext;
 import org.jenkinsci.plugins.ParameterizedRemoteTrigger.RemoteJenkinsServer;
 import org.jenkinsci.plugins.ParameterizedRemoteTrigger.pipeline.Handle;

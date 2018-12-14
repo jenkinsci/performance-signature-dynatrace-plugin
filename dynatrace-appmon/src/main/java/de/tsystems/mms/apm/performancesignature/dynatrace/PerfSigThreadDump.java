@@ -21,6 +21,7 @@ import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.RESTErrorExce
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.model.Agent;
 import de.tsystems.mms.apm.performancesignature.dynatrace.util.PerfSigUtils;
 import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
+import de.tsystems.mms.apm.performancesignature.ui.util.PluginLogger;
 import hudson.AbortException;
 import hudson.Extension;
 import hudson.FilePath;
@@ -29,7 +30,6 @@ import hudson.model.AbstractProject;
 import hudson.model.Item;
 import hudson.model.Run;
 import hudson.model.TaskListener;
-import hudson.plugins.analysis.util.PluginLogger;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
 import hudson.util.FormValidation;

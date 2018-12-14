@@ -23,7 +23,6 @@ import hudson.FilePath;
 import hudson.model.Item;
 import hudson.model.Result;
 import hudson.model.Run;
-import hudson.plugins.analysis.util.PluginLogger;
 import jenkins.model.Jenkins;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.filefilter.RegexFileFilter;

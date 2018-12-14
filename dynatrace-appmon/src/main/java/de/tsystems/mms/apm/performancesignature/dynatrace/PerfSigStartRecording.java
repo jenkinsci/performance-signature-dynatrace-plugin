@@ -25,11 +25,11 @@ import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.CommandExecut
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.model.LicenseInformation;
 import de.tsystems.mms.apm.performancesignature.dynatrace.util.PerfSigUtils;
 import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
+import de.tsystems.mms.apm.performancesignature.ui.util.PluginLogger;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
 import hudson.model.*;
-import hudson.plugins.analysis.util.PluginLogger;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
 import hudson.util.FormValidation;

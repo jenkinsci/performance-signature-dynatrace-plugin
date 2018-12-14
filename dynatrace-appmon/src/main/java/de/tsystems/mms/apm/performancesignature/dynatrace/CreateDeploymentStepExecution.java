@@ -24,10 +24,10 @@ import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model.EventU
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.RESTErrorException;
 import de.tsystems.mms.apm.performancesignature.dynatrace.util.PerfSigUtils;
 import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
+import de.tsystems.mms.apm.performancesignature.ui.util.PluginLogger;
 import hudson.AbortException;
 import hudson.EnvVars;
 import hudson.model.TaskListener;
-import hudson.plugins.analysis.util.PluginLogger;
 import org.jenkinsci.plugins.workflow.steps.BodyExecution;
 import org.jenkinsci.plugins.workflow.steps.BodyExecutionCallback;
 import org.jenkinsci.plugins.workflow.steps.StepContext;
