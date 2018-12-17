@@ -37,8 +37,8 @@ Send a [mail](mailto:performance@t-systems-mms.com) to the Application Performan
 
 ## Introduction
 
-The Performance Signature evaluates aggregated load and performance data from Dynatrace (AppMon) after each build.
-We are supporting currently three data sources:
+The Performance Signature evaluates aggregated load and performance data from Dynatrace after each build.
+We are currently supporting three data sources:
 * Dynatrace AppMon
 * Dynatrace SaaS/Manged
 * Remote Jenkins Jobs with enabled Performance Signature
@@ -53,16 +53,16 @@ Find below the documentation of each component.
 ## Installation
 ### Using Jenkins Update Center
 
-The recommended way of installing the plugin is by the Update Center (plugin directory). Navigate to `Manage Jenkins -> Manage Plugins` page and switch to the `Available` tab. Search for the "Performance Signature:" keyword and install the plugin.
+The recommended way of installing the plugin is by using the Update Center (plugin directory). Navigate to `Manage Jenkins -> Manage Plugins` page and switch to the `Available` tab. Search for the keyword "Performance Signature:" and install the plugin.
 
 ### Manual Installation
 
-This procedure is meant for developers, who want to install locally built plugin version.
+This procedure is meant for developers, who want to install a locally built plugin version.
 
 * build the plugin from source using `mvn package` command
-* in Jenkins, go to `Manage Jenkins -> Manage Plugins` page
+* in Jenkins, go to the `Manage Jenkins -> Manage Plugins`
 * switch to the `Advanced` tab
-* upload the built plugin package from `target/performance-signature-*.hpi` path in the `Upload Plugin` section
+* upload the built plugin package from the `target/performance-signature-*.hpi` path to the `Upload Plugin` section
 * restart Jenkins
 
 ## Problems? Questions? Suggestions?
