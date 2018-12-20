@@ -14,7 +14,7 @@
     <packaging>pom</packaging>
 
     <name>Performance Signature: Parent Pom</name>
-    <url>https://wiki.jenkins-ci.org/display/JENKINS/Performance+Signature+with+Dynatrace+Plugin</url>
+    <url>https://wiki.jenkins.io/display/JENKINS/Performance+Signature+with+Dynatrace+Plugin</url>
     <licenses>
         <license>
             <name>Apache License, Version 2.0</name>
