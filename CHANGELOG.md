@@ -1,5 +1,11 @@
 Changelog
 ====
+### Version 3.0.2 (Jan 03, 2019)
+* fix CVE-2018-1000850 and CVE-2018-1000844
+* drop analysis-core dependency
+* fix NPE in round method
+* whitelist some methods in PerfSigEnvInvisAction class
+
 ### Version 3.0.1 (Sep 14, 2018)
 * fixed release problems
 
