@@ -62,13 +62,12 @@ public class PerfSigStopRecording extends Builder implements SimpleBuildStep {
         PerfSigEnvInvisAction perfSigAction = null;
         String sessionId;
         String testRunId = null;
-        Date timeframeStop = new Date();
         PluginLogger logger = PerfSigUIUtils.createLogger(listener.getLogger());
 
         logger.log(Messages.PerfSigStopRecording_StoppingSessionRecording());
         if (!actions.isEmpty()) {
             perfSigAction = actions.get(actions.size() - 1); //get the last PerfSigAction
-            perfSigAction.setTimeframeStop(timeframeStop);
+            if (perfSigAction.getTimeframeStop() == null) perfSigAction.setTimeframeStop(new Date());
             testRunId = perfSigAction.getTestRunId();
         }
 
@@ -79,6 +78,7 @@ public class PerfSigStopRecording extends Builder implements SimpleBuildStep {
 
         if (perfSigAction != null && perfSigAction.isContinuousRecording()) {
             Date timeframeStart = perfSigAction.getTimeframeStart();
+            Date timeframeStop = perfSigAction.getTimeframeStop();
             logger.log(Messages.PerfSigStopRecording_TimeframeStart(timeframeStart));
             logger.log(Messages.PerfSigStopRecording_TimeframeStop(timeframeStop));
             sessionId = connection.storeSession(perfSigAction.getSessionName(), timeframeStart, timeframeStop,
