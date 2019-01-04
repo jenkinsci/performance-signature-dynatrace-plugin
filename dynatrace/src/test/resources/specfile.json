@@ -6,7 +6,7 @@
     {
       "timeseriesId": "com.dynatrace.builtin:servicemethod.responsetime",
       "aggregation": "avg",
-      "tags": "Frontend"
+      "tags": "BE Service Tagging"
     },
     {
       "timeseriesId": "com.dynatrace.builtin:app.apdex",

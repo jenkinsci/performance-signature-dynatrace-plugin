@@ -97,8 +97,6 @@ public class TimeSeriesApiTest {
                 "perfSigDynatraceReports envId: 'PoC PerfSig', specFile: '" + file + "'}", true));
         WorkflowRun b = j.assertBuildStatusSuccess(p.scheduleBuild2(0));
         j.assertLogContains("getting metric data from Dynatrace Server", b);
-        //assertTrue(s.contains("getting PDF report: Singlereport")); //no Comparisonreport available
-        //assertTrue(s.contains("session successfully downloaded"));
 
         PerfSigBuildAction buildAction = b.getAction(PerfSigBuildAction.class);
         assertNotNull(buildAction);
@@ -106,7 +104,7 @@ public class TimeSeriesApiTest {
         DashboardReport dashboardReport = buildAction.getDashboardReports().get(0);
         assertNotNull(dashboardReport);
         assertNotNull(dashboardReport.getChartDashlets());
-        assertEquals(2, dashboardReport.getChartDashlets().size());
+        assertEquals(1, dashboardReport.getChartDashlets().size());
     }
 
     @Test
