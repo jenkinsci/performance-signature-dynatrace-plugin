@@ -17,6 +17,7 @@
 package de.tsystems.mms.apm.performancesignature.dynatracesaas;
 
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.model.EntityId;
+import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.CommandExecutionException;
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.DynatraceServerConnection;
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.EventPushMessage;
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.EventStoreResult;
@@ -24,7 +25,6 @@ import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.EventTy
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.PushEventAttachRules;
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.util.DynatraceUtils;
 import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
-import hudson.AbortException;
 import hudson.EnvVars;
 import hudson.model.TaskListener;
 import org.apache.commons.collections.CollectionUtils;
@@ -76,12 +76,21 @@ public class CreateDeploymentStepExecution extends StepExecution {
         }
     }
 
-    private void println(String message) {
+    private void println(final String message) {
         TaskListener listener = DynatraceUtils.getTaskListener(getContext());
         if (listener == null) {
             LOGGER.log(Level.FINE, "failed to print message {0} due to null TaskListener", message);
         } else {
             PerfSigUIUtils.createLogger(listener.getLogger()).log(message);
+        }
+    }
+
+    private void printStacktrace(final Throwable throwable) {
+        TaskListener listener = DynatraceUtils.getTaskListener(getContext());
+        if (listener == null) {
+            LOGGER.log(Level.SEVERE, "failed to print message {0} due to null TaskListener", throwable);
+        } else {
+            PerfSigUIUtils.createLogger(listener.getLogger()).printStackTrace(throwable);
         }
     }
 
@@ -112,13 +121,22 @@ public class CreateDeploymentStepExecution extends StepExecution {
                         .setCiBackLink(envVars.get(BUILD_URL_ENV_PROPERTY))
                         .addCustomProperties("Jenkins Build Number", envVars.get("BUILD_ID"))
                         .addCustomProperties("Git Commit", envVars.get("GIT_COMMIT"));
+                if (step.getCustomProperties() != null) {
+                    step.getCustomProperties().forEach(customProperty -> event.addCustomProperties(customProperty.getKey(), customProperty.getValue()));
+                }
             }
 
-            EventStoreResult eventStoreResult = connection.createEvent(event);
-            if (eventStoreResult == null) {
-                throw new AbortException("could not create deployment event");
+            EventStoreResult eventStoreResult = null;
+            try {
+                eventStoreResult = connection.createEvent(event);
+            } catch (CommandExecutionException e) {
+                printStacktrace(e);
             }
-            println("successfully created deployment event " + eventStoreResult);
+            if (eventStoreResult == null) {
+                println("failed to create the deployment event");
+            } else {
+                println("successfully created deployment event " + eventStoreResult);
+            }
         }
     }
 }

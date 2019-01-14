@@ -41,9 +41,9 @@ public class TestUtils {
     public static ListBoxModel prepareDynatraceConfigurations() throws IOException {
 
         List<DynatraceServerConfiguration> configurations = Collections.singletonList(new DynatraceServerConfiguration("PoC PerfSig",
-                "https://192.168.122.138/e/15b1674c-ac9f-4e61-97e4-2b3df7d81f90/", "myApiToken", false, false));
+                "https://192.168.122.138/e/b060b9c0-d824-468a-8c7c-9df3816c815a/", "myApiToken", false, false));
         SystemCredentialsProvider.getInstance().getCredentials().add(new DynatraceApiTokenImpl(CredentialsScope.GLOBAL,
-                "myApiToken", null, Secret.fromString("1TVZ_pc4S_WeY3h5cUXzd")));
+                "myApiToken", null, Secret.fromString("IOCgWbQ2Q6SZFzoje09tV")));
         SystemCredentialsProvider.getInstance().save();
 
         DynatraceGlobalConfiguration.get().setConfigurations(configurations);

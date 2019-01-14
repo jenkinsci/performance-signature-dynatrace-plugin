@@ -96,7 +96,7 @@ public class TimeSeriesApiTest {
                 "recordDynatraceSession(envId: 'PoC PerfSig', testCase: 'loadtest') { sleep 60 }\n" +
                 "perfSigDynatraceReports envId: 'PoC PerfSig', specFile: '" + file + "'}", true));
         WorkflowRun b = j.assertBuildStatusSuccess(p.scheduleBuild2(0));
-        j.assertLogContains("getting metric data from Dynatrace Server", b);
+        j.assertLogContains("getting metric data from Dynatrace", b);
 
         PerfSigBuildAction buildAction = b.getAction(PerfSigBuildAction.class);
         assertNotNull(buildAction);
@@ -104,7 +104,7 @@ public class TimeSeriesApiTest {
         DashboardReport dashboardReport = buildAction.getDashboardReports().get(0);
         assertNotNull(dashboardReport);
         assertNotNull(dashboardReport.getChartDashlets());
-        assertEquals(1, dashboardReport.getChartDashlets().size());
+        assertEquals(2, dashboardReport.getChartDashlets().size());
     }
 
     @Test

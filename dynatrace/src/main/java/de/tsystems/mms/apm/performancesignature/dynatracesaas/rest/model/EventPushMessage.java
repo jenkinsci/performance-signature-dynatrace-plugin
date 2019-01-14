@@ -47,7 +47,7 @@ public class EventPushMessage {
     private Long endTime;
 
     @SerializedName("eventType")
-    private EventTypeEnum eventType;
+    private final EventTypeEnum eventType;
     @SerializedName("deploymentProject")
     private String deploymentProject;
     @SerializedName("source")
@@ -71,7 +71,7 @@ public class EventPushMessage {
     @SerializedName("title")
     private String title;
     @SerializedName("attachRules")
-    private PushEventAttachRules attachRules;
+    private final PushEventAttachRules attachRules;
 
     public EventPushMessage(EventTypeEnum eventType, PushEventAttachRules attachRules) {
         this.eventType = eventType;

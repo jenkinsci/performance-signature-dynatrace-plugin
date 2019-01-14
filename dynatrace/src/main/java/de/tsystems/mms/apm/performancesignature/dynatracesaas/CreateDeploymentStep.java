@@ -17,6 +17,7 @@
 package de.tsystems.mms.apm.performancesignature.dynatracesaas;
 
 import com.google.common.collect.ImmutableSet;
+import de.tsystems.mms.apm.performancesignature.dynatracesaas.model.CustomProperty;
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.model.EntityId;
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.model.TagMatchRule;
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.util.DynatraceUtils;
@@ -48,6 +49,7 @@ public class CreateDeploymentStep extends Step {
     private final String envId;
     private List<EntityId> entityIds;
     private List<TagMatchRule> tagMatchRules;
+    private List<CustomProperty> customProperties;
 
     @DataBoundConstructor
     public CreateDeploymentStep(String envId) {
@@ -75,6 +77,16 @@ public class CreateDeploymentStep extends Step {
     @DataBoundSetter
     public CreateDeploymentStep setEntityIds(List<EntityId> entityIds) {
         this.entityIds = entityIds;
+        return this;
+    }
+
+    public List<CustomProperty> getCustomProperties() {
+        return customProperties;
+    }
+
+    @DataBoundSetter
+    public CreateDeploymentStep setCustomProperties(List<CustomProperty> customProperties) {
+        this.customProperties = customProperties;
         return this;
     }
 

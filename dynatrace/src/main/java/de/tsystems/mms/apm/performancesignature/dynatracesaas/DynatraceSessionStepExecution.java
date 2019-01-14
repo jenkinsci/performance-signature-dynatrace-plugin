@@ -33,7 +33,6 @@ import org.jenkinsci.plugins.workflow.steps.StepContext;
 import org.jenkinsci.plugins.workflow.steps.StepExecution;
 
 import javax.annotation.Nonnull;
-import java.time.Instant;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -54,7 +53,7 @@ public class DynatraceSessionStepExecution extends StepExecution {
         super(context);
         this.step = step;
         this.run = context.get(Run.class);
-        this.action = new DynatraceEnvInvisAction(step.getTestCase(), Instant.now().toEpochMilli());
+        this.action = new DynatraceEnvInvisAction(step.getTestCase(), System.currentTimeMillis());
     }
 
     @Override

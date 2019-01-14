@@ -77,4 +77,23 @@
             </f:repeatable>
         </f:entry>
     </f:section>
+    <f:advanced>
+        <f:entry title="${%custom property}" field="customProperties" description="${%dynatrace custom properties}">
+            <f:repeatable field="customProperties" add="${%Add custom property}" header="${%custom property}">
+                <table width="100%">
+                    <f:entry title="${%Key}" field="key" description="${%key}">
+                        <f:textbox/>
+                    </f:entry>
+                    <f:entry title="${%Value}" field="value" description="${%value}">
+                        <f:textbox/>
+                    </f:entry>
+                    <f:entry>
+                        <div align="right">
+                            <f:repeatableDeleteButton value="${%Remove custom property}"/>
+                        </div>
+                    </f:entry>
+                </table>
+            </f:repeatable>
+        </f:entry>
+    </f:advanced>
 </j:jelly>

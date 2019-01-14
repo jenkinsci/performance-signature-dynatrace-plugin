@@ -94,7 +94,7 @@ public class DynatraceReportStepExecution extends SynchronousNonBlockingStepExec
         }
     }
 
-    private static double getMeasurementValue(Map<AggregationTypeEnum, Map<Long, Double>> scalarValues, long key, AggregationTypeEnum aggregation) {
+    static double getMeasurementValue(Map<AggregationTypeEnum, Map<Long, Double>> scalarValues, long key, AggregationTypeEnum aggregation) {
         Map<Long, Double> aggregationValues = scalarValues.get(aggregation);
         if (MapUtils.isNotEmpty(aggregationValues)) {
             return PerfSigUIUtils.roundAsDouble(aggregationValues.get(key));
@@ -138,19 +138,6 @@ public class DynatraceReportStepExecution extends SynchronousNonBlockingStepExec
             if (average.isPresent()) return PerfSigUIUtils.roundAsDouble(average.getAsDouble());
         }
         return 0;
-    }
-
-    private static String translateAggregation(AggregationTypeEnum aggregation) {
-        switch (aggregation) {
-            case MIN:
-                return "Minimum";
-            case MAX:
-                return "Maximum";
-            case AVG:
-                return "Average";
-            default:
-                return StringUtils.capitalize(aggregation.getValue().toLowerCase());
-        }
     }
 
     private static List<Alert> evaluateSpecification(double globalLowerBound, double globalUpperBound, SpecificationTM specTM, Map<AggregationTypeEnum,
@@ -229,6 +216,41 @@ public class DynatraceReportStepExecution extends SynchronousNonBlockingStepExec
         return step;
     }
 
+    static String translateAggregation(AggregationTypeEnum aggregation) {
+        switch (aggregation) {
+            case MIN:
+                return "Minimum";
+            case MAX:
+                return "Maximum";
+            case AVG:
+                return "Average";
+            default:
+                return StringUtils.capitalize(aggregation.getValue().toLowerCase());
+        }
+    }
+
+    private Specification getSpecifications() throws IOException, InterruptedException {
+        Specification specification = new Specification();
+        if (ws != null && StringUtils.isNotBlank(step.getSpecFile())) {
+            FilePath f = ws.child(step.getSpecFile());
+            if (f.exists() && !f.isDirectory()) {
+                try (InputStream is = f.read()) {
+                    Type type = new TypeToken<Specification>() {
+                    }.getType();
+                    return new Gson().fromJson(IOUtils.toString(is, StandardCharsets.UTF_8), type);
+                }
+            } else if (f.isDirectory()) {
+                throw new IllegalArgumentException(f.getRemote() + "  is a directory ...");
+            } else if (!f.exists()) {
+                throw new FileNotFoundException(f.getRemote() + " does not exist ...");
+            }
+            return specification;
+        } else {
+            specification.setTimeseries(step.getMetrics().stream().map(metric -> new SpecificationTM(metric.getMetricId())).collect(Collectors.toList()));
+            return specification;
+        }
+    }
+
     @Override
     protected Void run() throws Exception {
         Run<?, ?> run = getContext().get(Run.class);
@@ -246,7 +268,7 @@ public class DynatraceReportStepExecution extends SynchronousNonBlockingStepExec
             throw new MissingContextVariableException(FilePath.class);
         }
         DynatraceServerConnection serverConnection = DynatraceUtils.createDynatraceServerConnection(step.getEnvId(), true);
-        println("getting metric data from Dynatrace Server");
+        println("getting metric data from Dynatrace");
 
         Map<String, TimeseriesDefinition> timeseries = serverConnection.getTimeseries()
                 .parallelStream().collect(Collectors.toMap(TimeseriesDefinition::getTimeseriesId, item -> item));
@@ -263,7 +285,7 @@ public class DynatraceReportStepExecution extends SynchronousNonBlockingStepExec
 
                 //set url for Dynatrace dashboard
                 DynatraceServerConfiguration configuration = serverConnection.getConfiguration();
-                dashboardReport.setClientUrl(String.format("%s/#dashboard;gtf=c_%d_%d", configuration.getServerUrl(), start, end));
+                dashboardReport.setClientUrl(String.format("%s/#topglobalwebrequests;gtf=c_%d_%d", configuration.getServerUrl(), start, end));
 
                 //iterate over specified timeseries ids
                 spec.getTimeseries().forEach(specTM -> {
@@ -372,28 +394,6 @@ public class DynatraceReportStepExecution extends SynchronousNonBlockingStepExec
             run.addAction(action);
         }
         return null;
-    }
-
-    private Specification getSpecifications() throws IOException, InterruptedException {
-        Specification specification = new Specification();
-        if (ws != null && StringUtils.isNotBlank(step.getSpecFile())) {
-            FilePath f = ws.child(step.getSpecFile());
-            if (f.exists() && !f.isDirectory()) {
-                try (InputStream is = f.read()) {
-                    Type type = new TypeToken<Specification>() {
-                    }.getType();
-                    return new Gson().fromJson(IOUtils.toString(is, StandardCharsets.UTF_8), type);
-                }
-            } else if (f.isDirectory()) {
-                throw new IllegalArgumentException(f.getRemote() + "  is a directory ...");
-            } else if (!f.exists()) {
-                throw new FileNotFoundException(f.getRemote() + " does not exist ...");
-            }
-            return specification;
-        } else {
-            specification.setTimeseries(step.getMetrics().stream().map(metric -> new SpecificationTM(metric.getMetricId())).collect(Collectors.toList()));
-            return specification;
-        }
     }
 
     private void println(String message) {
