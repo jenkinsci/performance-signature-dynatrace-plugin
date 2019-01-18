@@ -34,6 +34,7 @@ import org.jenkinsci.plugins.workflow.steps.StepContext;
 import org.jenkinsci.plugins.workflow.steps.StepExecution;
 
 import javax.annotation.Nonnull;
+import java.time.Instant;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -58,7 +59,7 @@ public class CreateDeploymentStepExecution extends StepExecution {
     @Override
     public boolean start() {
         StepContext context = getContext();
-        startTimestamp = System.currentTimeMillis();
+        startTimestamp = Instant.now().toEpochMilli();
 
         if (context.hasBody()) {
             body = context.newBodyInvoker()
@@ -109,7 +110,7 @@ public class CreateDeploymentStepExecution extends StepExecution {
             }
             attachRules.setTagRule(step.getTagMatchRules());
 
-            long endTimestamp = System.currentTimeMillis();
+            long endTimestamp = Instant.now().toEpochMilli();
             EventPushMessage event = new EventPushMessage(EventTypeEnum.CUSTOM_DEPLOYMENT, attachRules)
                     .setStartTime(startTimestamp)
                     .setEndTime(endTimestamp)

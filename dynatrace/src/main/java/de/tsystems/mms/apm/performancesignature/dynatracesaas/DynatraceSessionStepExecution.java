@@ -33,6 +33,7 @@ import org.jenkinsci.plugins.workflow.steps.StepContext;
 import org.jenkinsci.plugins.workflow.steps.StepExecution;
 
 import javax.annotation.Nonnull;
+import java.time.Instant;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -53,7 +54,7 @@ public class DynatraceSessionStepExecution extends StepExecution {
         super(context);
         this.step = step;
         this.run = context.get(Run.class);
-        this.action = new DynatraceEnvInvisAction(step.getTestCase(), System.currentTimeMillis());
+        this.action = new DynatraceEnvInvisAction(step.getTestCase(), Instant.now().toEpochMilli());
     }
 
     @Override
@@ -74,7 +75,7 @@ public class DynatraceSessionStepExecution extends StepExecution {
     @Override
     public void stop(@Nonnull Throwable cause) {
         println("stopping session recording ...");
-        action.setTimeframeStop(System.currentTimeMillis());
+        action.setTimeframeStop(Instant.now().toEpochMilli());
 
         if (body != null) {
             body.cancel(cause);
@@ -97,7 +98,7 @@ public class DynatraceSessionStepExecution extends StepExecution {
         protected void finished(StepContext context) throws Exception {
             EnvVars envVars = getContext().get(EnvVars.class);
             println("stopping session recording ...");
-            action.setTimeframeStop(System.currentTimeMillis());
+            action.setTimeframeStop(Instant.now().toEpochMilli());
 
             if (CollectionUtils.isNotEmpty(step.getEntityIds()) || CollectionUtils.isNotEmpty(step.getTagMatchRules())) {
                 DynatraceServerConnection serverConnection = DynatraceUtils.createDynatraceServerConnection(step.getEnvId(), true);
