@@ -42,14 +42,14 @@ import java.util.List;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-public class RecorderTest2 {
+public class RecorderTwoTest {
 
     @ClassRule
     public static final JenkinsRule j = new JenkinsRule();
     private static ListBoxModel dynatraceConfigurations;
     private DTServerConnection connection;
 
-    public RecorderTest2() throws AbortException, RESTErrorException {
+    public RecorderTwoTest() throws AbortException, RESTErrorException {
         connection = PerfSigUtils.createDTServerConnection(dynatraceConfigurations.get(0).name);
     }
 

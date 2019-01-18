@@ -41,7 +41,7 @@ import java.util.Collections;
 
 import static org.junit.Assert.*;
 
-public class RecorderTest {
+public class RecorderOneTest {
 
     @ClassRule
     public static final JenkinsRule j = new JenkinsRule();
@@ -54,7 +54,7 @@ public class RecorderTest {
 
     @Test
     public void testJenkinsConfiguration() throws Exception {
-        String testCase = "RecorderTest";
+        String testCase = "RecorderOneTest";
 
         FreeStyleProject project = j.createFreeStyleProject();
         project.getBuildersList().add(new PerfSigStartRecording(dynatraceConfigurations.get(0).name, testCase));
@@ -94,15 +94,15 @@ public class RecorderTest {
 
     @Test
     public void testPipelineConfiguration() throws Exception {
-        String testCase = "RecorderTest";
+        String testCase = "RecorderOneTest";
 
         WorkflowJob p = j.createProject(WorkflowJob.class);
         p.setDefinition(new CpsFlowDefinition("node('master') {" +
-                "startSession dynatraceProfile: 'easy Travel (admin) @ PoC PerfSig', testCase: 'RecorderTest'\n" +
+                "startSession dynatraceProfile: 'easy Travel (admin) @ PoC PerfSig', testCase: 'RecorderOneTest'\n" +
                 "sleep 10\n" +
                 "stopSession 'easy Travel (admin) @ PoC PerfSig'\n" +
                 "perfSigReports configurationTestCases: [[$class: 'GenericTestCase', clientDashboard: 'PurePath Overview'," +
-                "name: 'RecorderTest', xmlDashboard: 'PerformanceSignature_xml']]," +
+                "name: 'RecorderOneTest', xmlDashboard: 'PerformanceSignature_xml']]," +
                 "dynatraceProfile: 'easy Travel (fn_perfsig) @ PoC PerfSig', deleteSessions: true, exportSessions: false, removeConfidentialStrings: true\n" +
                 "}", true));
         WorkflowRun b = j.assertBuildStatusSuccess(p.scheduleBuild2(0));

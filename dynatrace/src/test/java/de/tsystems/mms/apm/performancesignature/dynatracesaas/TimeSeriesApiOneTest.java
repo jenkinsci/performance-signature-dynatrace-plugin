@@ -19,12 +19,12 @@ package de.tsystems.mms.apm.performancesignature.dynatracesaas;
 import de.tsystems.mms.apm.performancesignature.dynatrace.model.DashboardReport;
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.DynatraceServerConnection;
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.RESTErrorException;
-import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.TimeseriesDefinition;
+import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.AggregationTypeEnum;
+import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.TimeseriesDataPointQueryResult;
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.util.DynatraceUtils;
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.util.TestUtils;
 import de.tsystems.mms.apm.performancesignature.ui.PerfSigBuildAction;
 import hudson.AbortException;
-import hudson.model.Result;
 import hudson.util.ListBoxModel;
 import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
@@ -34,12 +34,13 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
 
-import java.io.File;
-import java.util.List;
+import java.time.Instant;
 
-import static org.junit.Assert.*;
+import static java.time.temporal.ChronoUnit.HOURS;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
-public class TimeSeriesApiTest2 {
+public class TimeSeriesApiOneTest {
 
     @ClassRule
     public static final JenkinsRule j = new JenkinsRule();
@@ -47,7 +48,7 @@ public class TimeSeriesApiTest2 {
     private static ListBoxModel dynatraceConfigurations;
     private DynatraceServerConnection connection;
 
-    public TimeSeriesApiTest2() throws AbortException, RESTErrorException {
+    public TimeSeriesApiOneTest() throws AbortException, RESTErrorException {
         connection = DynatraceUtils.createDynatraceServerConnection(dynatraceConfigurations.get(0).name, false);
     }
 
@@ -57,15 +58,22 @@ public class TimeSeriesApiTest2 {
     }
 
     @Test
-    public void testFileConfiguration() throws Exception {
-        String file = TestUtils.toPath(new File("src/test/resources/specfile.json"));
+    public void testTimeseriesApi() {
+        TimeseriesDataPointQueryResult response = connection.getTimeseriesData("com.dynatrace.builtin:host.cpu.user",
+                Instant.now().minus(2, HOURS).toEpochMilli(), Instant.now().toEpochMilli(), AggregationTypeEnum.AVG, null, null);
+        assertNotNull(response);
+    }
 
+    @Test
+    public void testJenkinsConfiguration() throws Exception {
         WorkflowJob p = j.createProject(WorkflowJob.class);
         p.setDefinition(new CpsFlowDefinition("node('master'){" +
                 "recordDynatraceSession(envId: 'PoC PerfSig', testCase: 'loadtest') { sleep 90 }\n" +
-                "perfSigDynatraceReports envId: 'PoC PerfSig', specFile: '" + file + "'}", true));
+                "perfSigDynatraceReports envId: 'PoC PerfSig', metrics: [[metricId: 'com.dynatrace.builtin:host.cpu.user']]}", true));
         WorkflowRun b = j.assertBuildStatusSuccess(p.scheduleBuild2(0));
         j.assertLogContains("getting metric data from Dynatrace", b);
+        //assertTrue(s.contains("getting PDF report: Singlereport")); //no Comparisonreport available
+        //assertTrue(s.contains("session successfully downloaded"));
 
         PerfSigBuildAction buildAction = b.getAction(PerfSigBuildAction.class);
         assertNotNull(buildAction);
@@ -73,21 +81,6 @@ public class TimeSeriesApiTest2 {
         DashboardReport dashboardReport = buildAction.getDashboardReports().get(0);
         assertNotNull(dashboardReport);
         assertNotNull(dashboardReport.getChartDashlets());
-        assertEquals(4, dashboardReport.getChartDashlets().size());
-    }
-
-    @Test
-    public void testEmptyConfiguration() throws Exception {
-        WorkflowJob p = j.createProject(WorkflowJob.class);
-        p.setDefinition(new CpsFlowDefinition("node('master'){" +
-                "perfSigDynatraceReports envId: '', metrics: null}", true));
-        WorkflowRun b = j.assertBuildStatus(Result.FAILURE, p.scheduleBuild2(0));
-        j.assertLogContains("At least one of file or metrics needs to be provided", b);
-    }
-
-    @Test
-    public void testGetDashboardViaRest() {
-        List<TimeseriesDefinition> dashboardList = connection.getTimeseries();
-        assertTrue(!dashboardList.isEmpty());
+        assertEquals(1, dashboardReport.getChartDashlets().size());
     }
 }
