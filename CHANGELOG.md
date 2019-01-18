@@ -1,5 +1,11 @@
 Changelog
 ====
+### Version 3.0.3 (Jan 18, 2019)
+* [JENKINS-55562] - Apply workaround in the version number
+* always use Instant.now().toEpochMilli() to get a UTC timestamp
+* create a separate specfile for draft version 2.0
+* added custom properties to `CreateDynatraceDeployment` step
+
 ### Version 3.0.2 (Jan 03, 2019)
 * fix CVE-2018-1000850 and CVE-2018-1000844
 * drop analysis-core dependency
