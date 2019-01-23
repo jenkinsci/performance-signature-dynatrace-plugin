@@ -10,7 +10,7 @@
 
     <groupId>de.tsystems.mms.apm</groupId>
     <artifactId>performance-signature-parent-pom</artifactId>
-    <version>3.0.4-SNAPSHOT</version>
+    <version>3.1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Performance Signature: Parent Pom</name>
@@ -28,6 +28,8 @@
             <id>rpionke</id>
             <name>Raphael Pionke</name>
             <email>raphael.pionke@t-systems.com</email>
+            <organization>T-Systems Multimedia Solutions GmbH</organization>
+            <organizationUrl>https://test-and-integration.t-systems-mms.com/</organizationUrl>
             <timezone>+1</timezone>
         </developer>
     </developers>
