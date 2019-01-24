@@ -5,12 +5,12 @@
     <parent>
         <groupId>de.tsystems.mms.apm</groupId>
         <artifactId>performance-signature-parent-pom</artifactId>
-        <version>3.1.0</version>
+        <version>3.1.1-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>performance-signature-viewer</artifactId>
-    <version>3.1.0</version>
+    <version>3.1.1-SNAPSHOT</version>
     <packaging>hpi</packaging>
 
     <name>Performance Signature: Viewer</name>
