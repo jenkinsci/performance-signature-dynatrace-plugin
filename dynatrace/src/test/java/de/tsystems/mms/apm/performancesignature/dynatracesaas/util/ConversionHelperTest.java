@@ -89,9 +89,9 @@ public class ConversionHelperTest {
             System.out.println("lowerWarning");
         } else if (ObjectUtils.compare(value, lowerSevere) <= 0) {
             System.out.println("lowerSevere");
-        } else if (ObjectUtils.compare(value, upperWarning) >= 0 && ObjectUtils.compare(value, upperSevere) < 0) {
+        } else if (ObjectUtils.compare(value, upperWarning, true) >= 0 && ObjectUtils.compare(value, upperSevere, true) < 0) {
             System.out.println("upperWarning");
-        } else if (ObjectUtils.compare(value, upperSevere) >= 0) {
+        } else if (ObjectUtils.compare(value, upperSevere, true) >= 0) {
             System.out.println("upperSevere");
         }
     }

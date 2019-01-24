@@ -165,13 +165,13 @@ public class DynatraceReportStepExecution extends SynchronousNonBlockingStepExec
                                 String.format("SpecFile threshold violation: %s lower severe bound exceeded", rule),
                                 String.format("%s: Measured peak value: %.2f %s on Entity: %s, Lower Severe Bound: %.2f %s",
                                         rule, value, result.getUnit(), entity, lowerSevere, result.getUnit()), timestamp, rule));
-                    } else if (ObjectUtils.compare(value, upperWarning) >= 0 && ObjectUtils.compare(value, upperSevere) < 0) {
+                    } else if (ObjectUtils.compare(value, upperWarning, true) >= 0 && ObjectUtils.compare(value, upperSevere, true) < 0) {
                         String rule = timeseries.get(result.getTimeseriesId()).getDetailedSource() + " - " + timeseries.get(result.getTimeseriesId()).getDisplayName();
                         alerts.add(new Alert(Alert.SeverityEnum.WARNING,
                                 String.format("SpecFile threshold violation: %s upper warning bound exceeded", rule),
                                 String.format("%s: Measured peak value: %.2f %s on Entity: %s, Upper Warning Bound: %.2f %s",
                                         rule, value, result.getUnit(), entity, upperWarning, result.getUnit()), timestamp, rule));
-                    } else if (ObjectUtils.compare(value, upperSevere) >= 0) {
+                    } else if (ObjectUtils.compare(value, upperSevere, true) >= 0) {
                         String rule = timeseries.get(result.getTimeseriesId()).getDetailedSource() + " - " + timeseries.get(result.getTimeseriesId()).getDisplayName();
                         alerts.add(new Alert(Alert.SeverityEnum.SEVERE,
                                 String.format("SpecFile threshold violation: %s upper severe bound exceeded", rule),
