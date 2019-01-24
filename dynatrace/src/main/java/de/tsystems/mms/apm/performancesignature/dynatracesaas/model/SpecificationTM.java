@@ -29,10 +29,14 @@ public class SpecificationTM {
     private String tags;
     @SerializedName("entityIds")
     private String entityIds;
-    @SerializedName("lowerLimit")
-    private Double lowerLimit;
-    @SerializedName("upperLimit")
-    private Double upperLimit;
+    @SerializedName(value = "lowerWarning", alternate = "lowerLimit")
+    private Double lowerWarning;
+    @SerializedName("lowerSevere")
+    private Double lowerSevere;
+    @SerializedName(value = "upperWarning", alternate = "upperLimit")
+    private Double upperWarning;
+    @SerializedName("upperSevere")
+    private Double upperSevere;
 
     /**
      * No args constructor for use in serialization
@@ -40,13 +44,16 @@ public class SpecificationTM {
     public SpecificationTM() {
     }
 
-    public SpecificationTM(String timeseriesId, AggregationTypeEnum aggregation, String tags, String entityIds, Double lowerLimit, Double upperLimit) {
+    public SpecificationTM(String timeseriesId, AggregationTypeEnum aggregation, String tags, String entityIds,
+                           Double lowerWarning, Double lowerSevere, Double upperWarning, Double upperSevere) {
         this.timeseriesId = timeseriesId;
         this.aggregation = aggregation;
         this.tags = tags;
         this.entityIds = entityIds;
-        this.lowerLimit = lowerLimit;
-        this.upperLimit = upperLimit;
+        this.lowerWarning = lowerWarning;
+        this.lowerSevere = lowerSevere;
+        this.upperWarning = upperWarning;
+        this.upperSevere = upperSevere;
     }
 
     public SpecificationTM(String metricId) {
@@ -86,24 +93,33 @@ public class SpecificationTM {
         this.entityIds = entityIds;
     }
 
-    public Double getLowerLimit() {
-        return lowerLimit;
+    public Double getLowerWarning() {
+        return lowerWarning;
     }
 
-    public void setLowerLimit(Double lowerLimit) {
-        this.lowerLimit = lowerLimit;
+    public Double getLowerSevere() {
+        return lowerSevere;
     }
 
-    public Double getUpperLimit() {
-        return upperLimit;
+    public Double getUpperWarning() {
+        return upperWarning;
     }
 
-    public void setUpperLimit(Double upperLimit) {
-        this.upperLimit = upperLimit;
+    public Double getUpperSevere() {
+        return upperSevere;
     }
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("timeseriesId", timeseriesId).append("aggregation", aggregation).append("tags", tags).append("entityIds", entityIds).append("lowerLimit", lowerLimit).append("upperLimit", upperLimit).toString();
+        return new ToStringBuilder(this)
+                .append("timeseriesId", timeseriesId)
+                .append("aggregation", aggregation)
+                .append("tags", tags)
+                .append("entityIds", entityIds)
+                .append("lowerWarning", lowerWarning)
+                .append("lowerSevere", lowerSevere)
+                .append("upperWarning", upperWarning)
+                .append("upperSevere", upperSevere)
+                .toString();
     }
 }

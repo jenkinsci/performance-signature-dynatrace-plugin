@@ -17,6 +17,7 @@
 package de.tsystems.mms.apm.performancesignature.dynatracesaas.util;
 
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.UnitEnum;
+import org.apache.commons.lang.ObjectUtils;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -75,5 +76,23 @@ public class ConversionHelperTest {
         Assert.assertEquals(UnitEnum.GIGABYTE, ConversionHelper.convertByteUnitEnum(9223372036854775807D, UnitEnum.BYTE));
         Assert.assertEquals(UnitEnum.MEGABYTE, ConversionHelper.convertByteUnitEnum(9000D, UnitEnum.KILOBYTE));
         Assert.assertEquals(UnitEnum.GIGABYTE, ConversionHelper.convertByteUnitEnum(9000D, UnitEnum.MEGABYTE));
+    }
+
+    @Test
+    public void compareNumbers() {
+        Double lowerWarning = 90D;
+        Double lowerSevere = 80D;
+        Double upperWarning = 270D;
+        Double upperSevere = 290D;
+        Double value = 291D;
+        if (ObjectUtils.compare(value, lowerWarning) <= 0 && ObjectUtils.compare(value, lowerSevere) > 0) {
+            System.out.println("lowerWarning");
+        } else if (ObjectUtils.compare(value, lowerSevere) <= 0) {
+            System.out.println("lowerSevere");
+        } else if (ObjectUtils.compare(value, upperWarning) >= 0 && ObjectUtils.compare(value, upperSevere) < 0) {
+            System.out.println("upperWarning");
+        } else if (ObjectUtils.compare(value, upperSevere) >= 0) {
+            System.out.println("upperSevere");
+        }
     }
 }

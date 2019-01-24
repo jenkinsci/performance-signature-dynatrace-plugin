@@ -21,8 +21,8 @@ import hudson.model.InvisibleAction;
 class DynatraceEnvInvisAction extends InvisibleAction {
 
     private final String testCase;
-    private final Long timeframeStart;
-    private Long timeframeStop;
+    private final long timeframeStart;
+    private long timeframeStop;
 
     DynatraceEnvInvisAction(final String testCase, final Long timeframeStart) {
         this.timeframeStart = timeframeStart;
@@ -33,11 +33,11 @@ class DynatraceEnvInvisAction extends InvisibleAction {
         return testCase;
     }
 
-    public Long getTimeframeStart() {
+    public long getTimeframeStart() {
         return timeframeStart;
     }
 
-    public Long getTimeframeStop() {
+    public long getTimeframeStop() {
         return timeframeStop;
     }
 

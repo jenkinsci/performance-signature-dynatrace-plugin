@@ -22,10 +22,6 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import java.util.List;
 
 public class Specification {
-    @SerializedName("lowerLimit")
-    private Double lowerLimit;
-    @SerializedName("upperLimit")
-    private Double upperLimit;
     @SerializedName("timeseries")
     private List<SpecificationTM> timeseries = null;
 
@@ -35,28 +31,8 @@ public class Specification {
     public Specification() {
     }
 
-    public Specification(Double lowerLimit, Double upperLimit, List<SpecificationTM> timeseries) {
-        this.lowerLimit = lowerLimit;
-        this.upperLimit = upperLimit;
+    public Specification(List<SpecificationTM> timeseries) {
         this.timeseries = timeseries;
-    }
-
-    public Double getLowerLimit() {
-        if (lowerLimit == null) return 1D;
-        return lowerLimit;
-    }
-
-    public void setLowerLimit(Double lowerLimit) {
-        this.lowerLimit = lowerLimit;
-    }
-
-    public Double getUpperLimit() {
-        if (upperLimit == null) return 4D;
-        return upperLimit;
-    }
-
-    public void setUpperLimit(Double upperLimit) {
-        this.upperLimit = upperLimit;
     }
 
     public List<SpecificationTM> getTimeseries() {
@@ -69,6 +45,6 @@ public class Specification {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("lowerLimit", lowerLimit).append("upperLimit", upperLimit).append("timeseries", timeseries).toString();
+        return new ToStringBuilder(this).append("timeseries", timeseries).toString();
     }
 }

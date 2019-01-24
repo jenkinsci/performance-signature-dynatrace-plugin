@@ -37,6 +37,7 @@ import hudson.model.TaskListener;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jenkinsci.plugins.workflow.steps.MissingContextVariableException;
 import org.jenkinsci.plugins.workflow.steps.StepContext;
@@ -140,60 +141,50 @@ public class DynatraceReportStepExecution extends SynchronousNonBlockingStepExec
         return 0;
     }
 
-    private static List<Alert> evaluateSpecification(double globalLowerBound, double globalUpperBound, SpecificationTM specTM, Map<AggregationTypeEnum,
+    private static List<Alert> evaluateSpecification(SpecificationTM specTM, Map<AggregationTypeEnum,
             TimeseriesDataPointQueryResult> aggregations, Map<String, TimeseriesDefinition> timeseries) {
 
         List<Alert> alerts = new ArrayList<>();
-        double lowerbound = Optional.ofNullable(specTM.getLowerLimit()).orElse(globalLowerBound);
-        double upperBound = Optional.ofNullable(specTM.getUpperLimit()).orElse(globalUpperBound);
+        Double lowerWarning = specTM.getLowerWarning();
+        Double lowerSevere = specTM.getLowerSevere();
+        Double upperWarning = specTM.getUpperWarning();
+        Double upperSevere = specTM.getUpperSevere();
         TimeseriesDataPointQueryResult result = aggregations.get(specTM.getAggregation());
         if (specTM.getAggregation() == null || result == null) return alerts;
 
-        for (Map.Entry<String, Map<Long, Double>> entry : result.getDataPoints().entrySet()) {
-            String entity = handleEntityIdString(result.getEntities(), entry.getKey());
+        result.getDataPoints().forEach((timeseriesId, timeseriesMap) -> {
+            String entity = handleEntityIdString(result.getEntities(), timeseriesId);
 
-            for (Map.Entry<Long, Double> e : entry.getValue().entrySet()) {
-                Long timestamp = e.getKey();
-                Double value = e.getValue();
+            timeseriesMap.forEach((timestamp, value) -> {
                 if (value != null) {
-                    if (lowerbound < upperBound) {
-                        if (value > lowerbound && value < upperBound) {
-                            String rule = timeseries.get(result.getTimeseriesId()).getDetailedSource() + " - " + timeseries.get(result.getTimeseriesId()).getDisplayName();
-                            alerts.add(new Alert(Alert.SeverityEnum.WARNING,
-                                    String.format("SpecFile threshold violation: %s lower bound exceeded", rule),
-                                    String.format("%s: Measured peak value: %.2f %s on Entity: %s, Lower Bound: %.2f %s",
-                                            rule, value, result.getUnit(), entity, lowerbound, result.getUnit()),
-                                    timestamp, rule));
-                        } else if (value > upperBound) {
-                            String rule = timeseries.get(result.getTimeseriesId()).getDetailedSource() + " - " + timeseries.get(result.getTimeseriesId()).getDisplayName();
-                            alerts.add(new Alert(Alert.SeverityEnum.SEVERE,
-                                    String.format("SpecFile threshold violation: %s upper bound exceeded", rule),
-                                    String.format("%s: Measured peak value: %.2f %s on Entity: %s, Upper Bound: %.2f %s",
-                                            rule, value, result.getUnit(), entity, upperBound, result.getUnit()),
-                                    timestamp, rule));
-                        }
-                    } else {
-                        if (value < lowerbound && value > upperBound) {
-                            String rule = timeseries.get(result.getTimeseriesId()).getDetailedSource() + " - " + timeseries.get(result.getTimeseriesId()).getDisplayName();
-                            alerts.add(new Alert(Alert.SeverityEnum.WARNING,
-                                    String.format("SpecFile threshold violation: %s lower bound exceeded", rule),
-                                    String.format("%s: Measured peak value: %.2f %s on Entity: %s, Lower Bound: %.2f %s",
-                                            rule, value, result.getUnit(), entity, lowerbound, result.getUnit()),
-                                    timestamp, rule));
-                        } else {
-                            if (value < upperBound) {
-                                String rule = timeseries.get(result.getTimeseriesId()).getDetailedSource() + " - " + timeseries.get(result.getTimeseriesId()).getDisplayName();
-                                alerts.add(new Alert(Alert.SeverityEnum.SEVERE,
-                                        String.format("SpecFile threshold violation: %s upper bound exceeded", rule),
-                                        String.format("%s: Measured peak value: %.2f %s on Entity: %s, Upper Bound: %.2f %s",
-                                                rule, value, result.getUnit(), entity, upperBound, result.getUnit()),
-                                        timestamp, rule));
-                            }
-                        }
+                    if (ObjectUtils.compare(value, lowerWarning) <= 0 && ObjectUtils.compare(value, lowerSevere) > 0) {
+                        String rule = timeseries.get(result.getTimeseriesId()).getDetailedSource() + " - " + timeseries.get(result.getTimeseriesId()).getDisplayName();
+                        alerts.add(new Alert(Alert.SeverityEnum.WARNING,
+                                String.format("SpecFile threshold violation: %s lower warning bound exceeded", rule),
+                                String.format("%s: Measured peak value: %.2f %s on Entity: %s, Lower Warning Bound: %.2f %s",
+                                        rule, value, result.getUnit(), entity, lowerWarning, result.getUnit()), timestamp, rule));
+                    } else if (ObjectUtils.compare(value, lowerSevere) <= 0) {
+                        String rule = timeseries.get(result.getTimeseriesId()).getDetailedSource() + " - " + timeseries.get(result.getTimeseriesId()).getDisplayName();
+                        alerts.add(new Alert(Alert.SeverityEnum.SEVERE,
+                                String.format("SpecFile threshold violation: %s lower severe bound exceeded", rule),
+                                String.format("%s: Measured peak value: %.2f %s on Entity: %s, Lower Severe Bound: %.2f %s",
+                                        rule, value, result.getUnit(), entity, lowerSevere, result.getUnit()), timestamp, rule));
+                    } else if (ObjectUtils.compare(value, upperWarning) >= 0 && ObjectUtils.compare(value, upperSevere) < 0) {
+                        String rule = timeseries.get(result.getTimeseriesId()).getDetailedSource() + " - " + timeseries.get(result.getTimeseriesId()).getDisplayName();
+                        alerts.add(new Alert(Alert.SeverityEnum.WARNING,
+                                String.format("SpecFile threshold violation: %s upper warning bound exceeded", rule),
+                                String.format("%s: Measured peak value: %.2f %s on Entity: %s, Upper Warning Bound: %.2f %s",
+                                        rule, value, result.getUnit(), entity, upperWarning, result.getUnit()), timestamp, rule));
+                    } else if (ObjectUtils.compare(value, upperSevere) >= 0) {
+                        String rule = timeseries.get(result.getTimeseriesId()).getDetailedSource() + " - " + timeseries.get(result.getTimeseriesId()).getDisplayName();
+                        alerts.add(new Alert(Alert.SeverityEnum.SEVERE,
+                                String.format("SpecFile threshold violation: %s upper severe bound exceeded", rule),
+                                String.format("%s: Measured peak value: %.2f %s on Entity: %s, Upper Severe Bound: %.2f %s",
+                                        rule, value, result.getUnit(), entity, upperSevere, result.getUnit()), timestamp, rule));
                     }
                 }
-            }
-        }
+            });
+        });
         return alerts;
     }
 
@@ -212,10 +203,6 @@ public class DynatraceReportStepExecution extends SynchronousNonBlockingStepExec
         return value.getDataPoints().get(key).get(timestamp);
     }
 
-    public DynatraceReportStep getStep() {
-        return step;
-    }
-
     static String translateAggregation(AggregationTypeEnum aggregation) {
         switch (aggregation) {
             case MIN:
@@ -227,6 +214,10 @@ public class DynatraceReportStepExecution extends SynchronousNonBlockingStepExec
             default:
                 return StringUtils.capitalize(aggregation.getValue().toLowerCase());
         }
+    }
+
+    public DynatraceReportStep getStep() {
+        return step;
     }
 
     private Specification getSpecifications() throws IOException, InterruptedException {
@@ -268,120 +259,24 @@ public class DynatraceReportStepExecution extends SynchronousNonBlockingStepExec
             throw new MissingContextVariableException(FilePath.class);
         }
         DynatraceServerConnection serverConnection = DynatraceUtils.createDynatraceServerConnection(step.getEnvId(), true);
-        println("getting metric data from Dynatrace");
 
+        println("getting available time series definitions");
         Map<String, TimeseriesDefinition> timeseries = serverConnection.getTimeseries()
                 .parallelStream().collect(Collectors.toMap(TimeseriesDefinition::getTimeseriesId, item -> item));
 
         final List<DynatraceEnvInvisAction> envInvisActions = run.getActions(DynatraceEnvInvisAction.class);
         final List<DashboardReport> dashboardReports = new ArrayList<>();
+
+        println("process available specifications");
         Specification spec = getSpecifications();
 
         try {
             for (DynatraceEnvInvisAction dynatraceAction : envInvisActions) {
-                Long start = dynatraceAction.getTimeframeStart();
-                Long end = dynatraceAction.getTimeframeStop();
-                DashboardReport dashboardReport = new DashboardReport(dynatraceAction.getTestCase());
+                long start = dynatraceAction.getTimeframeStart();
+                long end = dynatraceAction.getTimeframeStop();
 
-                //set url for Dynatrace dashboard
-                DynatraceServerConfiguration configuration = serverConnection.getConfiguration();
-                dashboardReport.setClientUrl(String.format("%s/#topglobalwebrequests;gtf=c_%d_%d", configuration.getServerUrl(), start, end));
-
-                //iterate over specified timeseries ids
-                spec.getTimeseries().forEach(specTM -> {
-                    TimeseriesDefinition tm = timeseries.get(specTM.getTimeseriesId());
-                    //get data points for every possible aggregation
-                    Map<AggregationTypeEnum, TimeseriesDataPointQueryResult> aggregations = tm.getAggregationTypes().parallelStream()
-                            .collect(Collectors.toMap(
-                                    Function.identity(),
-                                    aggregation -> serverConnection.getTimeseriesData(specTM.getTimeseriesId(), start, end, aggregation, specTM.getEntityIds(), specTM.getTags()),
-                                    (a, b) -> b, LinkedHashMap::new)
-                            );
-                    convertUnitOfDataPoints(aggregations);
-
-                    TimeseriesDataPointQueryResult baseResult = aggregations.get(AggregationTypeEnum.AVG);
-                    if (baseResult != null && MapUtils.isNotEmpty(baseResult.getDataPoints())) {
-                        //get a scalar value for every possible aggregation
-                        Map<AggregationTypeEnum, TimeseriesDataPointQueryResult> totalValues = tm.getAggregationTypes().parallelStream()
-                                .collect(Collectors.toMap(Function.identity(),
-                                        aggregation -> serverConnection.getTotalTimeseriesData(specTM.getTimeseriesId(), start, end, aggregation, specTM.getEntityIds(), specTM.getTags()),
-                                        (a, b) -> b, LinkedHashMap::new));
-                        convertUnitOfDataPoints(totalValues);
-
-                        //evaluate possible incidents
-                        dashboardReport.getIncidents().addAll(evaluateSpecification(spec.getLowerLimit(), spec.getUpperLimit(),
-                                specTM, aggregations, timeseries));
-
-                        ChartDashlet chartDashlet = new ChartDashlet();
-                        chartDashlet.setName(tm.getDetailedSource() + " - " + tm.getDisplayName());
-
-                        //create aggregated overall measure
-                        Measure overallMeasure = new Measure("overall");
-                        overallMeasure.setAggregation(translateAggregation(specTM.getAggregation()));
-                        overallMeasure.setColor(DEFAULT_COLOR);
-
-                        UnitEnum calculatedUnit = calculateUnitEnum(baseResult, getScalarValue(totalValues.get(AggregationTypeEnum.MAX)));
-
-                        overallMeasure.setUnit(calculatedUnit.getValue());
-
-                        //calculate aggregated values from totalValues
-                        overallMeasure.setAvg(getScalarValue(totalValues.get(AggregationTypeEnum.AVG)));
-                        overallMeasure.setMin(getScalarValue(totalValues.get(AggregationTypeEnum.MIN)));
-                        overallMeasure.setMax(getScalarValue(totalValues.get(AggregationTypeEnum.MAX)));
-                        overallMeasure.setSum(getScalarValue(totalValues.get(AggregationTypeEnum.SUM)));
-                        overallMeasure.setCount(getScalarValue(totalValues.get(AggregationTypeEnum.COUNT)));
-
-                        //calculate aggregated values from seriesValues
-                        Map<AggregationTypeEnum, Map<Long, Double>> scalarValues = getScalarValues(aggregations);
-                        scalarValues.entrySet().iterator().next().getValue().keySet().forEach(entry -> {
-                            Measurement m = new Measurement(entry,
-                                    getMeasurementValue(scalarValues, entry, AggregationTypeEnum.AVG),
-                                    getMeasurementValue(scalarValues, entry, AggregationTypeEnum.MIN),
-                                    getMeasurementValue(scalarValues, entry, AggregationTypeEnum.MAX),
-                                    getMeasurementValue(scalarValues, entry, AggregationTypeEnum.SUM),
-                                    getMeasurementValue(scalarValues, entry, AggregationTypeEnum.COUNT)
-                            );
-                            overallMeasure.getMeasurements().add(m);
-                        });
-                        chartDashlet.getMeasures().add(overallMeasure);
-
-                        //iterate over every entityId
-                        baseResult.getDataPoints().forEach((key, value) -> {
-                            Map<AggregationTypeEnum, Double> totalValuesPerDataPoint = tm.getAggregationTypes().stream()
-                                    .collect(Collectors.toMap(Function.identity(),
-                                            aggregation -> totalValues.get(aggregation).getDataPoints().get(key).entrySet().iterator().next().getValue(),
-                                            (a, b) -> b, LinkedHashMap::new));
-
-                            Measure measure = new Measure(handleEntityIdString(baseResult.getEntities(), key));
-                            measure.setAggregation(translateAggregation(specTM.getAggregation()));
-                            measure.setUnit(calculatedUnit.getValue());
-                            measure.setColor(DEFAULT_COLOR);
-
-                            measure.setAvg(totalValuesPerDataPoint.getOrDefault(AggregationTypeEnum.AVG, 0D));
-                            measure.setMin(totalValuesPerDataPoint.getOrDefault(AggregationTypeEnum.MIN, 0D));
-                            measure.setMax(totalValuesPerDataPoint.getOrDefault(AggregationTypeEnum.MAX, 0D));
-                            measure.setSum(totalValuesPerDataPoint.getOrDefault(AggregationTypeEnum.SUM, 0D));
-                            measure.setCount(totalValuesPerDataPoint.getOrDefault(AggregationTypeEnum.COUNT, 0D));
-
-                            value.entrySet().stream()
-                                    .filter(entry -> entry.getValue() != null)
-                                    .forEach(entry -> {
-                                        Measurement m = new Measurement(entry.getKey(),
-                                                getAggregationValue(aggregations.get(AggregationTypeEnum.AVG), key, entry.getKey()),
-                                                getAggregationValue(aggregations.get(AggregationTypeEnum.MIN), key, entry.getKey()),
-                                                getAggregationValue(aggregations.get(AggregationTypeEnum.MAX), key, entry.getKey()),
-                                                getAggregationValue(aggregations.get(AggregationTypeEnum.SUM), key, entry.getKey()),
-                                                getAggregationValue(aggregations.get(AggregationTypeEnum.COUNT), key, entry.getKey())
-                                        );
-                                        measure.getMeasurements().add(m);
-                                    });
-                            chartDashlet.getMeasures().add(measure);
-                        });
-                        dashboardReport.addChartDashlet(chartDashlet);
-                    } else {
-                        println(String.format("Timeseries %s has no data points", tm.getTimeseriesId()));
-                    }
-                });
+                println("getting metric data from Dynatrace for " + dynatraceAction.getTestCase());
+                DashboardReport dashboardReport = validateSpecTMs(serverConnection, timeseries, spec, start, end, dynatraceAction);
                 dashboardReports.add(dashboardReport);
 
                 PrintStream stream = Optional.ofNullable(DynatraceUtils.getTaskListener(getContext())).map(TaskListener::getLogger).orElseGet(() -> new PrintStream(System.out));
@@ -394,6 +289,111 @@ public class DynatraceReportStepExecution extends SynchronousNonBlockingStepExec
             run.addAction(action);
         }
         return null;
+    }
+
+    private DashboardReport validateSpecTMs(DynatraceServerConnection serverConnection, Map<String, TimeseriesDefinition> timeseries, Specification spec, long start, long end, DynatraceEnvInvisAction dynatraceAction) {
+        DashboardReport dashboardReport = new DashboardReport(dynatraceAction.getTestCase());
+
+        //set url for Dynatrace dashboard
+        DynatraceServerConfiguration configuration = serverConnection.getConfiguration();
+        dashboardReport.setClientUrl(String.format("%s/#topglobalwebrequests;gtf=c_%d_%d", configuration.getServerUrl(), start, end));
+
+        //iterate over specified timeseries ids
+        spec.getTimeseries().forEach(specTM -> {
+            TimeseriesDefinition tm = timeseries.get(specTM.getTimeseriesId());
+            //get data points for every possible aggregation
+            Map<AggregationTypeEnum, TimeseriesDataPointQueryResult> aggregations = tm.getAggregationTypes().parallelStream()
+                    .collect(Collectors.toMap(
+                            Function.identity(),
+                            aggregation -> serverConnection.getTimeseriesData(specTM.getTimeseriesId(), start, end, aggregation, specTM.getEntityIds(), specTM.getTags()),
+                            (a, b) -> b, LinkedHashMap::new)
+                    );
+            convertUnitOfDataPoints(aggregations);
+
+            //ToDo get rid of the baseResult = AVG
+            TimeseriesDataPointQueryResult baseResult = aggregations.get(AggregationTypeEnum.AVG);
+            if (baseResult != null && MapUtils.isNotEmpty(baseResult.getDataPoints())) {
+                //get a scalar value for every possible aggregation
+                Map<AggregationTypeEnum, TimeseriesDataPointQueryResult> totalValues = tm.getAggregationTypes().parallelStream()
+                        .collect(Collectors.toMap(Function.identity(),
+                                aggregation -> serverConnection.getTotalTimeseriesData(specTM.getTimeseriesId(), start, end, aggregation, specTM.getEntityIds(), specTM.getTags()),
+                                (a, b) -> b, LinkedHashMap::new));
+                convertUnitOfDataPoints(totalValues);
+
+                //evaluate possible incidents
+                dashboardReport.getIncidents().addAll(evaluateSpecification(specTM, aggregations, timeseries));
+
+                ChartDashlet chartDashlet = new ChartDashlet();
+                chartDashlet.setName(tm.getDetailedSource() + " - " + tm.getDisplayName());
+
+                //create aggregated overall measure
+                Measure overallMeasure = new Measure("overall");
+                overallMeasure.setAggregation(translateAggregation(specTM.getAggregation()));
+                overallMeasure.setColor(DEFAULT_COLOR);
+
+                UnitEnum calculatedUnit = calculateUnitEnum(baseResult, getScalarValue(totalValues.get(AggregationTypeEnum.MAX)));
+
+                overallMeasure.setUnit(calculatedUnit.getValue());
+
+                //calculate aggregated values from totalValues
+                overallMeasure.setAvg(getScalarValue(totalValues.get(AggregationTypeEnum.AVG)));
+                overallMeasure.setMin(getScalarValue(totalValues.get(AggregationTypeEnum.MIN)));
+                overallMeasure.setMax(getScalarValue(totalValues.get(AggregationTypeEnum.MAX)));
+                overallMeasure.setSum(getScalarValue(totalValues.get(AggregationTypeEnum.SUM)));
+                overallMeasure.setCount(getScalarValue(totalValues.get(AggregationTypeEnum.COUNT)));
+
+                //calculate aggregated values from seriesValues
+                Map<AggregationTypeEnum, Map<Long, Double>> scalarValues = getScalarValues(aggregations);
+                scalarValues.entrySet().iterator().next().getValue().keySet().forEach(entry -> {
+                    Measurement m = new Measurement(entry,
+                            getMeasurementValue(scalarValues, entry, AggregationTypeEnum.AVG),
+                            getMeasurementValue(scalarValues, entry, AggregationTypeEnum.MIN),
+                            getMeasurementValue(scalarValues, entry, AggregationTypeEnum.MAX),
+                            getMeasurementValue(scalarValues, entry, AggregationTypeEnum.SUM),
+                            getMeasurementValue(scalarValues, entry, AggregationTypeEnum.COUNT)
+                    );
+                    overallMeasure.getMeasurements().add(m);
+                });
+                chartDashlet.getMeasures().add(overallMeasure);
+
+                //iterate over every entityId
+                baseResult.getDataPoints().forEach((key, value) -> {
+                    Map<AggregationTypeEnum, Double> totalValuesPerDataPoint = tm.getAggregationTypes().stream()
+                            .collect(Collectors.toMap(Function.identity(),
+                                    aggregation -> totalValues.get(aggregation).getDataPoints().get(key).entrySet().iterator().next().getValue(),
+                                    (a, b) -> b, LinkedHashMap::new));
+
+                    Measure measure = new Measure(handleEntityIdString(baseResult.getEntities(), key));
+                    measure.setAggregation(translateAggregation(specTM.getAggregation()));
+                    measure.setUnit(calculatedUnit.getValue());
+                    measure.setColor(DEFAULT_COLOR);
+
+                    measure.setAvg(totalValuesPerDataPoint.getOrDefault(AggregationTypeEnum.AVG, 0D));
+                    measure.setMin(totalValuesPerDataPoint.getOrDefault(AggregationTypeEnum.MIN, 0D));
+                    measure.setMax(totalValuesPerDataPoint.getOrDefault(AggregationTypeEnum.MAX, 0D));
+                    measure.setSum(totalValuesPerDataPoint.getOrDefault(AggregationTypeEnum.SUM, 0D));
+                    measure.setCount(totalValuesPerDataPoint.getOrDefault(AggregationTypeEnum.COUNT, 0D));
+
+                    value.entrySet().stream()
+                            .filter(entry -> entry.getValue() != null)
+                            .forEach(entry -> {
+                                Measurement m = new Measurement(entry.getKey(),
+                                        getAggregationValue(aggregations.get(AggregationTypeEnum.AVG), key, entry.getKey()),
+                                        getAggregationValue(aggregations.get(AggregationTypeEnum.MIN), key, entry.getKey()),
+                                        getAggregationValue(aggregations.get(AggregationTypeEnum.MAX), key, entry.getKey()),
+                                        getAggregationValue(aggregations.get(AggregationTypeEnum.SUM), key, entry.getKey()),
+                                        getAggregationValue(aggregations.get(AggregationTypeEnum.COUNT), key, entry.getKey())
+                                );
+                                measure.getMeasurements().add(m);
+                            });
+                    chartDashlet.getMeasures().add(measure);
+                });
+                dashboardReport.addChartDashlet(chartDashlet);
+            } else {
+                println(String.format("Timeseries %s has no data points", tm.getTimeseriesId()));
+            }
+        });
+        return dashboardReport;
     }
 
     private void println(String message) {
