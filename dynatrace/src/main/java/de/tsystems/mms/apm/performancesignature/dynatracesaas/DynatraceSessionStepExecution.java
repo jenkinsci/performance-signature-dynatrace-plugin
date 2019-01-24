@@ -61,7 +61,7 @@ public class DynatraceSessionStepExecution extends StepExecution {
     public boolean start() {
         StepContext context = getContext();
 
-        println("getting build details ...");
+        println("starting session recording ...");
         run.addAction(action);
 
         if (context.hasBody()) {

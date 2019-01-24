@@ -1,5 +1,13 @@
 Changelog
 ====
+### Version 3.1.0 (Jan 24, 2019)
+* fix unit conversion (fixed time unit: MilliSecond, fixed byte unit: MegaByte)
+* introduced new SpecFile format
+  * global lowerLimit & upperLimit values are not supported anymore
+  * lowerLimit & upperLimit are deprecated
+  * introduced lowerWarning, lowerSevere, upperWarning, upperSevere
+* print out more readable error messages
+
 ### Version 3.0.3 (Jan 18, 2019)
 * [JENKINS-55562] - Apply workaround in the version number
 * always use Instant.now().toEpochMilli() to get a UTC timestamp
