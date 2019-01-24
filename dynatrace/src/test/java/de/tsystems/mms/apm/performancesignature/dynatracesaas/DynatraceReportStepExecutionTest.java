@@ -27,7 +27,9 @@ import hudson.util.ListBoxModel;
 import org.apache.commons.collections.MapUtils;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.jvnet.hudson.test.JenkinsRule;
 
 import java.time.Instant;
@@ -41,8 +43,9 @@ public class DynatraceReportStepExecutionTest {
 
     @ClassRule
     public static final JenkinsRule j = new JenkinsRule();
-
     private static ListBoxModel dynatraceConfigurations;
+    @Rule
+    public final ExpectedException exception = ExpectedException.none();
     private DynatraceServerConnection connection;
 
     public DynatraceReportStepExecutionTest() throws AbortException, RESTErrorException {
@@ -54,12 +57,23 @@ public class DynatraceReportStepExecutionTest {
         dynatraceConfigurations = TestUtils.prepareDynatraceConfigurations();
     }
 
+    /*@Test
+    public void testExceptions() {
+       connection.getTimeseriesData("com2.dynatrace.builtin:service.responsetime",
+                Instant.now().minus(2, HOURS).toEpochMilli(), Instant.now().toEpochMilli(), AggregationTypeEnum.AVG, null, null);
+        connection.createEvent(new EventPushMessage(EventTypeEnum.AVAILABILITY_EVENT, new PushEventAttachRules()));
+        exception.expect(CommandExecutionException.class);
+    }*/
+
     @Test
     public void testTimeseriesApi() {
-        TimeseriesDataPointQueryResult response = connection.getTimeseriesData("com.dynatrace.builtin:host.mem.used",
+        //final String timeseriesId = "com.dynatrace.builtin:host.mem.used";
+        final String timeseriesId = "com.dynatrace.builtin:service.responsetime";
+
+        TimeseriesDataPointQueryResult response = connection.getTimeseriesData(timeseriesId,
                 Instant.now().minus(2, HOURS).toEpochMilli(), Instant.now().toEpochMilli(), AggregationTypeEnum.AVG, null, null);
         assertNotNull(response);
-        //MapUtils.debugPrint(System.out, "myMap", response.getDataPoints());
+        MapUtils.debugPrint(System.out, "myMap", response.getDataPoints());
 
         Map<AggregationTypeEnum, TimeseriesDataPointQueryResult> map = new LinkedHashMap<>();
         map.put(AggregationTypeEnum.AVG, response);

@@ -77,25 +77,21 @@ public class DynatraceReportStepExecution extends SynchronousNonBlockingStepExec
                     .flatMapToDouble(stringMapEntry -> stringMapEntry.getValue().entrySet().stream()
                             .filter(longDoubleEntry -> longDoubleEntry.getValue() != null)
                             .mapToDouble(Map.Entry::getValue)).max();
-            UnitEnum calculatedUnit = calculateUnitEnum(aggregations.entrySet().iterator().next().getValue(), maxValue2.isPresent() ? maxValue2.getAsDouble() : 0);
+            UnitEnum targetUnit = calculateUnitEnum(aggregations.entrySet().iterator().next().getValue(), maxValue2.isPresent() ? maxValue2.getAsDouble() : 0);
 
             Map<String, Map<Long, Double>> convertedDataPoints = new LinkedHashMap<>();
-            for (Map.Entry<String, Map<Long, Double>> entry : dataPoints.entrySet()) {
-                String key = entry.getKey();
-                Map<Long, Double> value = entry.getValue();
+            dataPoints.forEach((key, value) -> {
                 Map<Long, Double> convertedValuesPerEntity = new LinkedHashMap<>();
-                for (Map.Entry<Long, Double> mapEntry : value.entrySet()) {
-                    convertedValuesPerEntity.put(mapEntry.getKey(), ConversionHelper.convertUnit(mapEntry.getValue(), queryResult.getUnit(), calculatedUnit));
-                }
+                value.forEach((key1, value1) -> convertedValuesPerEntity.put(key1, ConversionHelper.convertUnit(value1, queryResult.getUnit(), targetUnit)));
                 convertedDataPoints.put(key, convertedValuesPerEntity);
-            }
-            queryResult.setUnit(calculatedUnit);
+            });
+            queryResult.setUnit(targetUnit);
             queryResult.getDataPoints().clear();
             queryResult.getDataPoints().putAll(convertedDataPoints);
         }
     }
 
-    static double getMeasurementValue(Map<AggregationTypeEnum, Map<Long, Double>> scalarValues, long key, AggregationTypeEnum aggregation) {
+    private static double getMeasurementValue(Map<AggregationTypeEnum, Map<Long, Double>> scalarValues, long key, AggregationTypeEnum aggregation) {
         Map<Long, Double> aggregationValues = scalarValues.get(aggregation);
         if (MapUtils.isNotEmpty(aggregationValues)) {
             return PerfSigUIUtils.roundAsDouble(aggregationValues.get(key));
@@ -189,7 +185,6 @@ public class DynatraceReportStepExecution extends SynchronousNonBlockingStepExec
     }
 
     private static UnitEnum calculateUnitEnum(TimeseriesDataPointQueryResult baseResult, double maxValue) {
-        System.out.println(baseResult);
         UnitEnum unit = baseResult.getUnit();
         if (ConversionHelper.TIME_UNITS.contains(unit)) {
             return UnitEnum.MILLISECOND;
@@ -203,7 +198,7 @@ public class DynatraceReportStepExecution extends SynchronousNonBlockingStepExec
         return value.getDataPoints().get(key).get(timestamp);
     }
 
-    static String translateAggregation(AggregationTypeEnum aggregation) {
+    private static String translateAggregation(AggregationTypeEnum aggregation) {
         switch (aggregation) {
             case MIN:
                 return "Minimum";

@@ -16,11 +16,9 @@
 
 package de.tsystems.mms.apm.performancesignature.dynatracesaas.rest;
 
-import org.apache.commons.lang.exception.ExceptionUtils;
-
 public class CommandExecutionException extends RuntimeException {
     public CommandExecutionException(final String reason, final Exception ex) {
-        super(String.format("%s\n%s", reason, ExceptionUtils.getFullStackTrace(ex)));
+        super(reason, ex);
     }
 
     public CommandExecutionException(final String reason) {

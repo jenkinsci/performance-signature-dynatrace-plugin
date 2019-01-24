@@ -71,7 +71,7 @@ public class ConversionHelper {
         return PerfSigUIUtils.roundAsDouble(value);
     }
 
-    public static Double convertByteUnit(double value, UnitEnum from) {
+    static Double convertByteUnit(double value, UnitEnum from) {
         value = convertToByte(value, from);
         int exp = (int) (Math.log(value) / Math.log(UNIT));
         if (UNITS.contains(from)) {
@@ -86,16 +86,12 @@ public class ConversionHelper {
     }
 
     public static UnitEnum convertByteUnitEnum(double value, UnitEnum from) {
-        value = convertToByte(value, from);
-
         if (value < UNIT) return from;
-        int exp = (int) (Math.log(value) / Math.log(UNIT));
+
         if (UNITS.contains(from)) {
-            if (exp > 3) return UNITS.get(UNITS.size() - 1);
-            return UNITS.get(exp);
+            return MEGABYTE;
         } else if (UNITS_PER_SECOND.contains(from)) {
-            if (exp > 2) return UNITS_PER_SECOND.get(UNITS_PER_SECOND.size() - 1);
-            return UNITS_PER_SECOND.get(exp);
+            return MEGABYTEPERSECOND;
         } else {
             return from;
         }

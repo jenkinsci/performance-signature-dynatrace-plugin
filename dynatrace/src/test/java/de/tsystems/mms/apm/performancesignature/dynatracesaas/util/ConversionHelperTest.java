@@ -28,7 +28,7 @@ public class ConversionHelperTest {
         double value = 110592D;
         UnitEnum from = UnitEnum.BYTE;
         UnitEnum to = ConversionHelper.convertByteUnitEnum(value, from);
-        Assert.assertEquals(UnitEnum.KILOBYTE, to);
+        Assert.assertEquals(UnitEnum.MEGABYTE, to);
         Assert.assertEquals(110.592, ConversionHelper.convertByteUnit(value, from), 0.001);
     }
 
@@ -37,7 +37,7 @@ public class ConversionHelperTest {
         double value = 1855425871872D;
         UnitEnum from = UnitEnum.BYTE;
         UnitEnum to = ConversionHelper.convertByteUnitEnum(value, from);
-        Assert.assertEquals(UnitEnum.GIGABYTE, to);
+        Assert.assertEquals(UnitEnum.MEGABYTE, to);
         Assert.assertEquals(1855.425871872, ConversionHelper.convertByteUnit(value, from), 0.001);
     }
 
@@ -64,18 +64,18 @@ public class ConversionHelperTest {
         Assert.assertEquals(UnitEnum.BYTE, ConversionHelper.convertByteUnitEnum(0D, UnitEnum.BYTE));
         Assert.assertEquals(UnitEnum.BYTE, ConversionHelper.convertByteUnitEnum(27D, UnitEnum.BYTE));
         Assert.assertEquals(UnitEnum.BYTE, ConversionHelper.convertByteUnitEnum(999D, UnitEnum.BYTE));
-        Assert.assertEquals(UnitEnum.KILOBYTE, ConversionHelper.convertByteUnitEnum(1000D, UnitEnum.BYTE));
-        Assert.assertEquals(UnitEnum.KILOBYTE, ConversionHelper.convertByteUnitEnum(1023D, UnitEnum.BYTE));
-        Assert.assertEquals(UnitEnum.KILOBYTE, ConversionHelper.convertByteUnitEnum(1024D, UnitEnum.BYTE));
-        Assert.assertEquals(UnitEnum.KILOBYTE, ConversionHelper.convertByteUnitEnum(1728D, UnitEnum.BYTE));
-        Assert.assertEquals(UnitEnum.KILOBYTE, ConversionHelper.convertByteUnitEnum(110592D, UnitEnum.BYTE));
+        Assert.assertEquals(UnitEnum.MEGABYTE, ConversionHelper.convertByteUnitEnum(1000D, UnitEnum.BYTE));
+        Assert.assertEquals(UnitEnum.MEGABYTE, ConversionHelper.convertByteUnitEnum(1023D, UnitEnum.BYTE));
+        Assert.assertEquals(UnitEnum.MEGABYTE, ConversionHelper.convertByteUnitEnum(1024D, UnitEnum.BYTE));
+        Assert.assertEquals(UnitEnum.MEGABYTE, ConversionHelper.convertByteUnitEnum(1728D, UnitEnum.BYTE));
+        Assert.assertEquals(UnitEnum.MEGABYTE, ConversionHelper.convertByteUnitEnum(110592D, UnitEnum.BYTE));
         Assert.assertEquals(UnitEnum.MEGABYTE, ConversionHelper.convertByteUnitEnum(7077888D, UnitEnum.BYTE));
         Assert.assertEquals(UnitEnum.MEGABYTE, ConversionHelper.convertByteUnitEnum(452984832D, UnitEnum.BYTE));
-        Assert.assertEquals(UnitEnum.GIGABYTE, ConversionHelper.convertByteUnitEnum(28991029248D, UnitEnum.BYTE));
-        Assert.assertEquals(UnitEnum.GIGABYTE, ConversionHelper.convertByteUnitEnum(1855425871872D, UnitEnum.BYTE));
-        Assert.assertEquals(UnitEnum.GIGABYTE, ConversionHelper.convertByteUnitEnum(9223372036854775807D, UnitEnum.BYTE));
+        Assert.assertEquals(UnitEnum.MEGABYTE, ConversionHelper.convertByteUnitEnum(28991029248D, UnitEnum.BYTE));
+        Assert.assertEquals(UnitEnum.MEGABYTE, ConversionHelper.convertByteUnitEnum(1855425871872D, UnitEnum.BYTE));
+        Assert.assertEquals(UnitEnum.MEGABYTE, ConversionHelper.convertByteUnitEnum(9223372036854775807D, UnitEnum.BYTE));
         Assert.assertEquals(UnitEnum.MEGABYTE, ConversionHelper.convertByteUnitEnum(9000D, UnitEnum.KILOBYTE));
-        Assert.assertEquals(UnitEnum.GIGABYTE, ConversionHelper.convertByteUnitEnum(9000D, UnitEnum.MEGABYTE));
+        Assert.assertEquals(UnitEnum.MEGABYTE, ConversionHelper.convertByteUnitEnum(9000D, UnitEnum.MEGABYTE));
     }
 
     @Test
