@@ -99,42 +99,37 @@ perfSigDynatraceReports envId: 'Dynatrace Demo Environment', nonFunctionalFailur
 
 ### Spec file format
 
-The Spec file contains two parts, the global configuration and the timeseries configuration.
-Within the global configuration the user can set a global lower and also a upper bound.
-Wihtin the timeseries configuration, the user can specify: 
+The Spec file contains a timeseries configuration/array, within the array, the user can specify: 
 * the timeseriesId (all available timeseriesIds can be found [here](https://www.dynatrace.com/support/help/dynatrace-api/timeseries/how-do-i-fetch-the-metrics-of-monitored-entities/#available-metrics-)),
 * the aggregation of the metric (all available aggregations can be found [here](https://www.dynatrace.com/support/help/shortlink/api-metrics#aggregation-types))
 * tags, which should be used for the selection over all entityIds
 * entityIds
-* a lower and upper bound for this metric
+* a lower and upper warning/severe for this metric
 
 ```json
 {
-  "lowerBound": 1,
-  "upperBound": 4,
-  "_comment": "global configuration environment-wide",
-  "timeseries": [
-    {
-      "timeseriesId": "com.dynatrace.builtin:service.responsetime",
-      "aggregation": "avg",
-      "tags": "Frontend",
-      "lowerBound": 250000,
-      "upperBound": 1000000
-    },
-    {
-      "timeseriesId": "com.dynatrace.builtin:service.responsetime",
-      "aggregation": "avg",
-      "entityIds": "SERVICE-65778F58A66834D8",
-      "lowerBound": 4000000,
-      "upperBound": 8000000
-    },
-    {
-      "timeseriesId": "com.dynatrace.builtin:docker.container.cpu",
-      "aggregation": "avg",
-      "lowerBound": 50,
-      "upperBound": 70
-    }
-  ]
+	"spec_version": "2.0",
+	"timeseries": [{
+			"timeseriesId": "com.dynatrace.builtin:service.responsetime",
+			"aggregation": "avg",
+			"tags": "Frontend",
+			"upperWarning": 5000,
+			"upperSevere": 10000
+		},
+		{
+			"timeseriesId": "com.dynatrace.builtin:service.responsetime",
+			"aggregation": "avg",
+			"entityIds": "SERVICE-65778F58A66834D8",
+			"upperWarning": 5000,
+			"upperSevere": 8000
+		},
+		{
+			"timeseriesId": "com.dynatrace.builtin:docker.container.cpu",
+			"aggregation": "avg",
+			"upperWarning": 50,
+			"upperSevere": 70
+		}
+	]
 }
 ```
 
