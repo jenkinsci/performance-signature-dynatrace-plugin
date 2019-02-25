@@ -86,7 +86,7 @@ public class StartRecordingTest {
         PerfSigEnvInvisAction invisAction = build.getAction(PerfSigEnvInvisAction.class);
 
         assertNotNull(invisAction);
-        assertTrue(invisAction.getSessionName().matches("easy Travel_test0_Build-\\d+_unittest"));
+        assertTrue(invisAction.getSessionName().matches("easy Travel_test0_Build-\\d+_" + testCase));
         assertEquals(invisAction.getTestCase(), testCase);
         assertFalse(invisAction.getTestRunId().isEmpty());
         assertNotNull(invisAction.getTimeframeStart());

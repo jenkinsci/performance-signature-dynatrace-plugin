@@ -124,4 +124,20 @@ public class RecorderTwoTest {
 
         assertNotNull(alerts);
     }
+
+    /*@Test
+    public void testXMLFile() throws Exception {
+        FreeStyleProject project = j.createFreeStyleProject();
+
+        FreeStyleBuild build = j.assertBuildStatus(Result.SUCCESS, project.scheduleBuild2(0));
+        File file = new File("src/test/resources/test.xml");
+        JAXBContext jaxbContext = JAXBContext.newInstance(DashboardReport.class);
+        Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+        DashboardReport dashboardReport = (DashboardReport) jaxbUnmarshaller.unmarshal(file);
+        dashboardReport.setName("BA_test");
+
+        PerfSigBuildAction action = new PerfSigBuildAction(Collections.singletonList(dashboardReport));
+        build.addAction(action);
+        Thread.sleep(2000000000);
+    }*/
 }

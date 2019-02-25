@@ -42,7 +42,7 @@
             <artifactId>converter-jaxb</artifactId>
             <version>${retrofit-version}</version>
             <exclusions>
-                <exclusion> <!-- Use the one from the Jenkins JAXB Api plugin -->
+                <exclusion><!-- Use the one from the Jenkins JAXB Api plugin -->
                     <groupId>javax.xml.bind</groupId>
                     <artifactId>jaxb-api</artifactId>
                 </exclusion>
