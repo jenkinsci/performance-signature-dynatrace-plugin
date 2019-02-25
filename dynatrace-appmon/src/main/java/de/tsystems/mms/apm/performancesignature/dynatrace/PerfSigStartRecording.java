@@ -77,18 +77,18 @@ public class PerfSigStartRecording extends Builder implements SimpleBuildStep {
         String sessionName = pair.getProfile() + "_" + run.getParent().getName() + "_Build-" + run.getNumber() + "_" + testCase;
         sessionName = sessionName.replace("/", "_");
 
-        if (connection.getRecordingStatus()) {
-            logger.log(Messages.PerfSigStartRecording_AnotherSessionStillRecording());
-            PerfSigStopRecording stopRecording = new PerfSigStopRecording(dynatraceProfile);
-            stopRecording.perform(run, workspace, launcher, listener);
-        }
-
         String sessionId = null;
         String testRunId = null;
         Date timeframeStart = new Date();
         LicenseInformation licenseInformation = connection.getServerLicense();
 
         if (licenseInformation.isPreProductionLicence()) {
+            if (connection.getRecordingStatus()) {
+                logger.log(Messages.PerfSigStartRecording_AnotherSessionStillRecording());
+                PerfSigStopRecording stopRecording = new PerfSigStopRecording(dynatraceProfile);
+                stopRecording.perform(run, workspace, launcher, listener);
+            }
+
             sessionId = connection.startRecording(sessionName, Messages.PerfSigStartRecording_SessionTriggered(), getRecordingOption(), lockSession, false);
             if (sessionId != null) {
                 logger.log(Messages.PerfSigStartRecording_StartedSessionRecording(pair.getProfile(), sessionName));
