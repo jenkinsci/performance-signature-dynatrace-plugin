@@ -35,6 +35,10 @@ A Dynatrace API Token is needed for access to the Dynatrace API REST Interface. 
 
 The global settings for the plugin are located under `Manage Jenkins -> Configure System -> Performance Signature: Dynatrace`. The connection to the Dynatrace Server is configured in this section. 
 
+Use the following patterns to configure the Dynatrace REST Interface URL:
+* SaaS: `https://xxxxxxxx.live.dynatrace.com`
+* Managed: `https://{any host}/e/xxxxxxxx-xxxx-xxxx-xxxxxxxxxxxx/`
+ 
 ![global settings](../images/dynatrace_global_configuration.png)
 
 The advanced section enables you to set a delay before retrieving the test results from the server. Change this settings if you are not getting all the test results in Jenkins.
