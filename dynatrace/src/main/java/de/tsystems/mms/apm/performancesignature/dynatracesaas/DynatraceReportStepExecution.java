@@ -31,6 +31,7 @@ import de.tsystems.mms.apm.performancesignature.dynatracesaas.util.ConversionHel
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.util.DynatraceUtils;
 import de.tsystems.mms.apm.performancesignature.ui.PerfSigBuildAction;
 import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import hudson.FilePath;
 import hudson.model.Run;
 import hudson.model.TaskListener;
@@ -274,6 +275,7 @@ public class DynatraceReportStepExecution extends SynchronousNonBlockingStepExec
                 DashboardReport dashboardReport = validateSpecTMs(serverConnection, timeseries, spec, start, end, dynatraceAction);
                 dashboardReports.add(dashboardReport);
 
+                @SuppressFBWarnings(value = "DM_DEFAULT_ENCODING", justification = "pass StandardCharsets.UTF_8 with java >= 10")
                 PrintStream stream = Optional.ofNullable(DynatraceUtils.getTaskListener(getContext())).map(TaskListener::getLogger).orElseGet(() -> new PrintStream(System.out));
                 PerfSigUIUtils.handleIncidents(run, dashboardReport.getIncidents(), PerfSigUIUtils.createLogger(stream), step.getNonFunctionalFailure());
             }
