@@ -42,19 +42,23 @@ import java.lang.reflect.Type;
 import java.net.Proxy;
 import java.security.GeneralSecurityException;
 import java.security.cert.X509Certificate;
+import java.util.concurrent.TimeUnit;
 
 public class ApiClient {
     private static final String REST_DF = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX";
     private static final String API_SUFFIX = "api/v1/";
+    private final OkHttpClient.Builder okBuilder;
     private boolean debugging = false;
     private boolean verifyingSsl;
-    private final OkHttpClient.Builder okBuilder;
     private Retrofit.Builder adapterBuilder;
     private HttpLoggingInterceptor loggingInterceptor;
 
     public ApiClient() {
         verifyingSsl = true;
         okBuilder = new OkHttpClient.Builder();
+        okBuilder.connectTimeout(30, TimeUnit.SECONDS);
+        okBuilder.readTimeout(30, TimeUnit.SECONDS);
+
         String baseUrl = "https://localhost/" + API_SUFFIX;
 
         Gson gson = new GsonBuilder()
@@ -213,7 +217,6 @@ public class ApiClient {
      * when returnType is null.
      * @throws ApiException If fail to execute the call
      */
-
     public <T> ApiResponse<T> execute(final Call<T> call) throws ApiException {
         try {
             Response<T> response = call.execute();
