@@ -23,10 +23,10 @@
     "bootstrap-detached": "^3.3.5-v1",
     "datatables.net": "^1.10.19",
     "datatables.net-bs": "^1.10.19",
-    "lightbox2": "^2.10.0",
     "jquery": "latest",
-    "wurl": "^2.5.3",
-    "jquery-bridget": "latest"
+    "jquery-bridget": "latest",
+    "lightbox2": "^2.10.0",
+    "wurl": "^2.5.3"
   },
   "jenkinscd": {
     "import": [
