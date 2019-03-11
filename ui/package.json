@@ -14,8 +14,7 @@
   },
   "readme": "../README.md",
   "devDependencies": {
-    "@jenkins-cd/js-builder": "0.0.63",
-    "gulp": "^3.9.1",
+    "@jenkins-cd/js-builder": "0.0.64",
     "minifyify": "^7.3.5"
   },
   "dependencies": {
