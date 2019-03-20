@@ -1,10 +1,14 @@
 Changelog
 ====
+### Version 3.1.2 (unreleased)
+*
+
 ### Version 3.1.1 (Mar 11, 2019)
 * increased connect & read timeout
 * don't check for session recording status for production licenced instances
 * added a dependency to jaxb-plugin for java 11 compatibility
 * updated parent pom, nodejs & yarn version to latest version
+* Jenkins minimum version is now 2.89.4
 
 ### Version 3.1.0 (Jan 24, 2019)
 * fix unit conversion (fixed time unit: MilliSecond, fixed byte unit: MegaByte)
