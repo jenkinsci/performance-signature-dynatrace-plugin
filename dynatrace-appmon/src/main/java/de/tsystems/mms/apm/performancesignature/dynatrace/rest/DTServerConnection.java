@@ -134,6 +134,8 @@ public class DTServerConnection {
                     chartDashlet.getMeasures().removeAll(oldMeasures);
                     chartDashlet.getMeasures().addAll(dynamicMeasures);
                 }
+                //filter out "Synthetic Web Requests by Timer Name - PurePath Response Time - "
+                chartDashlet.getMeasures().forEach(m -> m.setName(m.getName().replace("Synthetic Web Requests by Timer Name - PurePath Response Time - ", "")));
             });
 
             return dashboardReport;

@@ -91,6 +91,10 @@ public class Measure extends MeasureBaseModel {
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public List<Measure> getMeasures() {
         if (measures == null) {
             measures = new ArrayList<>();

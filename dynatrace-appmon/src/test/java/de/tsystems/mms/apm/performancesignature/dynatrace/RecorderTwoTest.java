@@ -19,11 +19,14 @@ package de.tsystems.mms.apm.performancesignature.dynatrace;
 import de.tsystems.mms.apm.performancesignature.dynatrace.configuration.ConfigurationTestCase;
 import de.tsystems.mms.apm.performancesignature.dynatrace.configuration.GenericTestCase;
 import de.tsystems.mms.apm.performancesignature.dynatrace.model.Alert;
+import de.tsystems.mms.apm.performancesignature.dynatrace.model.DashboardReport;
+import de.tsystems.mms.apm.performancesignature.dynatrace.model.Measure;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.DTServerConnection;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.RESTErrorException;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.model.Agent;
 import de.tsystems.mms.apm.performancesignature.dynatrace.util.PerfSigUtils;
 import de.tsystems.mms.apm.performancesignature.dynatrace.util.TestUtils;
+import de.tsystems.mms.apm.performancesignature.ui.PerfSigBuildAction;
 import hudson.AbortException;
 import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
@@ -35,6 +38,10 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Unmarshaller;
+import java.io.File;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -125,7 +132,7 @@ public class RecorderTwoTest {
         assertNotNull(alerts);
     }
 
-    /*@Test
+    //@Test
     public void testXMLFile() throws Exception {
         FreeStyleProject project = j.createFreeStyleProject();
 
@@ -136,8 +143,25 @@ public class RecorderTwoTest {
         DashboardReport dashboardReport = (DashboardReport) jaxbUnmarshaller.unmarshal(file);
         dashboardReport.setName("BA_test");
 
+        //handle dynamic measures in the dashboard xml probably
+        dashboardReport.getChartDashlets().forEach(chartDashlet -> {
+            List<Measure> dynamicMeasures = new ArrayList<>();
+            List<Measure> oldMeasures = new ArrayList<>();
+            chartDashlet.getMeasures().stream().filter(measure -> !measure.getMeasures().isEmpty()).forEach(measure -> {
+                oldMeasures.add(measure);
+                List<Measure> copy = new ArrayList<>(measure.getMeasures());
+                measure.getMeasures().clear();
+                dynamicMeasures.addAll(copy);
+            });
+            if (!dynamicMeasures.isEmpty()) {
+                chartDashlet.getMeasures().removeAll(oldMeasures);
+                chartDashlet.getMeasures().addAll(dynamicMeasures);
+            }
+            chartDashlet.getMeasures().forEach(m -> m.setName(m.getName().replace("Synthetic Web Requests by Timer Name - PurePath Response Time - ", "")));
+        });
+
         PerfSigBuildAction action = new PerfSigBuildAction(Collections.singletonList(dashboardReport));
         build.addAction(action);
         Thread.sleep(2000000000);
-    }*/
+    }
 }
