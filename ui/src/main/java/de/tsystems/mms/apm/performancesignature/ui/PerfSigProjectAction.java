@@ -24,6 +24,7 @@ import de.tsystems.mms.apm.performancesignature.dynatrace.model.Measure;
 import de.tsystems.mms.apm.performancesignature.dynatrace.model.TestRun;
 import de.tsystems.mms.apm.performancesignature.ui.model.JSONDashlet;
 import de.tsystems.mms.apm.performancesignature.ui.model.JSONDashletComparator;
+import de.tsystems.mms.apm.performancesignature.ui.util.NumberOnlyBuildLabel;
 import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
 import hudson.XmlFile;
 import hudson.model.Job;
@@ -52,8 +53,8 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -179,8 +180,8 @@ public class PerfSigProjectAction extends PerfSigBaseAction implements Prominent
 
         final Graph graph = new TestRunGraphImpl(customName) {
             @Override
-            protected DataSetBuilder<String, ChartUtil.NumberOnlyBuildLabel> createDataSet() {
-                final DataSetBuilder<String, ChartUtil.NumberOnlyBuildLabel> dsb = new DataSetBuilder<>();
+            protected DataSetBuilder<String, NumberOnlyBuildLabel> createDataSet() {
+                final DataSetBuilder<String, NumberOnlyBuildLabel> dsb = new DataSetBuilder<>();
                 int buildCount = 0, i = 0;
                 if (StringUtils.isNotBlank(customBuildCount)) {
                     buildCount = Integer.parseInt(customBuildCount);
@@ -189,12 +190,12 @@ public class PerfSigProjectAction extends PerfSigBaseAction implements Prominent
                 for (Run<?, ?> run : job.getBuilds()) {
                     TestRun testRun = getTestRun(run);
                     if (testRun != null) {
-                        dsb.add(testRun.getNumFailed(), "failed", new ChartUtil.NumberOnlyBuildLabel(run));
-                        dsb.add(testRun.getNumDegraded(), "degraded", new ChartUtil.NumberOnlyBuildLabel(run));
-                        dsb.add(testRun.getNumImproved(), "improved", new ChartUtil.NumberOnlyBuildLabel(run));
-                        dsb.add(testRun.getNumPassed(), "passed", new ChartUtil.NumberOnlyBuildLabel(run));
-                        dsb.add(testRun.getNumVolatile(), "volatile", new ChartUtil.NumberOnlyBuildLabel(run));
-                        dsb.add(testRun.getNumInvalidated(), "invalidated", new ChartUtil.NumberOnlyBuildLabel(run));
+                        dsb.add(testRun.getNumFailed(), "failed", new NumberOnlyBuildLabel(run));
+                        dsb.add(testRun.getNumDegraded(), "degraded", new NumberOnlyBuildLabel(run));
+                        dsb.add(testRun.getNumImproved(), "improved", new NumberOnlyBuildLabel(run));
+                        dsb.add(testRun.getNumPassed(), "passed", new NumberOnlyBuildLabel(run));
+                        dsb.add(testRun.getNumVolatile(), "volatile", new NumberOnlyBuildLabel(run));
+                        dsb.add(testRun.getNumInvalidated(), "invalidated", new NumberOnlyBuildLabel(run));
                     }
                     i++;
                     if (buildCount != 0 && i == buildCount) {
@@ -533,7 +534,7 @@ public class PerfSigProjectAction extends PerfSigBaseAction implements Prominent
             this.customName = customName;
         }
 
-        protected abstract DataSetBuilder<String, ChartUtil.NumberOnlyBuildLabel> createDataSet();
+        protected abstract DataSetBuilder<String, NumberOnlyBuildLabel> createDataSet();
 
         protected JFreeChart createGraph() {
             String title = StringUtils.isNotBlank(customName) ? customName : "UnitTest overview";
