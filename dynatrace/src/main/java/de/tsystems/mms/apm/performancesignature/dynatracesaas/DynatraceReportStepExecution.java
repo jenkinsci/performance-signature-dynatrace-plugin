@@ -267,7 +267,7 @@ public class DynatraceReportStepExecution extends SynchronousNonBlockingStepExec
 
         try {
             for (DynatraceEnvInvisAction dynatraceAction : envInvisActions) {
-                long start = dynatraceAction.getTimeframeStart();
+                long start = dynatraceAction.getTimeframeStart(); //- 7200000L;
                 long end = dynatraceAction.getTimeframeStop();
 
                 println("getting metric data from Dynatrace for " + dynatraceAction.getTestCase());
@@ -286,7 +286,8 @@ public class DynatraceReportStepExecution extends SynchronousNonBlockingStepExec
         return null;
     }
 
-    private DashboardReport validateSpecTMs(DynatraceServerConnection serverConnection, Map<String, TimeseriesDefinition> timeseries, Specification spec, long start, long end, DynatraceEnvInvisAction dynatraceAction) {
+    private DashboardReport validateSpecTMs(DynatraceServerConnection serverConnection, Map<String, TimeseriesDefinition> timeseries,
+                                            Specification spec, long start, long end, DynatraceEnvInvisAction dynatraceAction) {
         DashboardReport dashboardReport = new DashboardReport(dynatraceAction.getTestCase());
 
         //set url for Dynatrace dashboard
@@ -305,8 +306,7 @@ public class DynatraceReportStepExecution extends SynchronousNonBlockingStepExec
                     );
             convertUnitOfDataPoints(aggregations);
 
-            //ToDo get rid of the baseResult = AVG
-            TimeseriesDataPointQueryResult baseResult = aggregations.get(AggregationTypeEnum.AVG);
+            TimeseriesDataPointQueryResult baseResult = aggregations.get(specTM.getAggregation());
             if (baseResult != null && MapUtils.isNotEmpty(baseResult.getDataPoints())) {
                 //get a scalar value for every possible aggregation
                 Map<AggregationTypeEnum, TimeseriesDataPointQueryResult> totalValues = tm.getAggregationTypes().parallelStream()
@@ -327,7 +327,6 @@ public class DynatraceReportStepExecution extends SynchronousNonBlockingStepExec
                 overallMeasure.setColor(DEFAULT_COLOR);
 
                 UnitEnum calculatedUnit = calculateUnitEnum(baseResult, getScalarValue(totalValues.get(AggregationTypeEnum.MAX)));
-
                 overallMeasure.setUnit(calculatedUnit.getValue());
 
                 //calculate aggregated values from totalValues
