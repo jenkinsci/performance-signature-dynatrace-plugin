@@ -1,7 +1,13 @@
 Changelog
 ====
-### Version 3.1.2 (unreleased)
+### Version 3.1.3 (unreleased)
 *
+
+### Version 3.1.2 (Mar 26, 2019)
+* use build number instead of display name
+* use aggregation from spec definition instead of fixed avg aggregation
+* filter out "Synthetic Web Requests by Timer Name - PurePath Response Time - " from measure name
+* dev: updated java dependencies
 
 ### Version 3.1.1 (Mar 11, 2019)
 * increased connect & read timeout
