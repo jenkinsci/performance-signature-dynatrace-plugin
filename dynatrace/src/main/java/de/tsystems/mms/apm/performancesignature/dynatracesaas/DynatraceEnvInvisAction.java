@@ -24,9 +24,15 @@ class DynatraceEnvInvisAction extends InvisibleAction {
     private final long timeframeStart;
     private long timeframeStop;
 
-    DynatraceEnvInvisAction(final String testCase, final Long timeframeStart) {
-        this.timeframeStart = timeframeStart;
+    DynatraceEnvInvisAction(final String testCase, final long timeframeStart) {
         this.testCase = testCase;
+        this.timeframeStart = timeframeStart;
+    }
+
+    DynatraceEnvInvisAction(final String testCase, final long timeframeStart, final long timeframeStop) {
+        this.testCase = testCase;
+        this.timeframeStart = timeframeStart;
+        this.timeframeStop = timeframeStop;
     }
 
     public String getTestCase() {
@@ -41,7 +47,7 @@ class DynatraceEnvInvisAction extends InvisibleAction {
         return timeframeStop;
     }
 
-    void setTimeframeStop(Long timeframeStop) {
+    void setTimeframeStop(final long timeframeStop) {
         this.timeframeStop = timeframeStop;
     }
 }
