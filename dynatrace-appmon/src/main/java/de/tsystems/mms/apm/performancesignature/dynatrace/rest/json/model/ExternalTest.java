@@ -30,11 +30,11 @@ import static de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils.to
 
 public class ExternalTest {
     @SerializedName("testName")
-    private String testName = null;
+    private final String testName = null;
     @SerializedName("timestamp")
-    private String timestamp = null;
+    private final String timestamp = null;
     @SerializedName("measures")
-    private List<ExternalTestMeasure> measures = new ArrayList<>();
+    private final List<ExternalTestMeasure> measures = new ArrayList<>();
 
     /**
      * Get testName

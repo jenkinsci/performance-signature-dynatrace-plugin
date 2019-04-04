@@ -88,6 +88,6 @@ public class TimeSeriesApiTwoTest {
     @Test
     public void testGetDashboardViaRest() {
         List<TimeseriesDefinition> dashboardList = connection.getTimeseries();
-        assertTrue(!dashboardList.isEmpty());
+        assertFalse(dashboardList.isEmpty());
     }
 }

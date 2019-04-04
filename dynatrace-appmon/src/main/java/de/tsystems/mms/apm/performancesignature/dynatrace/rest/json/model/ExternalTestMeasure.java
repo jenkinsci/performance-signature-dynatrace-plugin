@@ -27,19 +27,19 @@ import static de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils.to
 
 public class ExternalTestMeasure {
     @SerializedName("name")
-    private String name = null;
+    private final String name = null;
     @SerializedName("value")
-    private Double value = null;
+    private final Double value = null;
     @SerializedName("timestamp")
-    private String timestamp = null;
+    private final String timestamp = null;
     @SerializedName("unit")
-    private String unit = null;
+    private final String unit = null;
     @SerializedName("minValue")
-    private Double minValue = null;
+    private final Double minValue = null;
     @SerializedName("maxValue")
-    private Double maxValue = null;
+    private final Double maxValue = null;
     @SerializedName("color")
-    private String color = null;
+    private final String color = null;
 
     /**
      * Get name

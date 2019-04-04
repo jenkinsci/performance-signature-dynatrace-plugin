@@ -74,9 +74,9 @@ public class DynatraceReportStepExecution extends SynchronousNonBlockingStepExec
 
             //get the max value from each entity
             OptionalDouble maxValue2 = dataPoints.entrySet().stream()
-                    .flatMapToDouble(stringMapEntry -> stringMapEntry.getValue().entrySet().stream()
-                            .filter(longDoubleEntry -> longDoubleEntry.getValue() != null)
-                            .mapToDouble(Map.Entry::getValue)).max();
+                    .flatMapToDouble(stringMapEntry -> stringMapEntry.getValue().values().stream()
+                            .filter(Objects::nonNull)
+                            .mapToDouble(v -> v)).max();
             UnitEnum targetUnit = calculateUnitEnum(aggregations.entrySet().iterator().next().getValue(), maxValue2.isPresent() ? maxValue2.getAsDouble() : 0);
 
             Map<String, Map<Long, Double>> convertedDataPoints = new LinkedHashMap<>();
@@ -353,6 +353,9 @@ public class DynatraceReportStepExecution extends SynchronousNonBlockingStepExec
                 //iterate over every entityId
                 baseResult.getDataPoints().forEach((key, value) -> {
                     Map<AggregationTypeEnum, Double> totalValuesPerDataPoint = tm.getAggregationTypes().stream()
+                            .filter(aggregation -> totalValues.get(aggregation) != null
+                                    && totalValues.get(aggregation).getDataPoints() != null
+                                    && totalValues.get(aggregation).getDataPoints().get(key) != null)
                             .collect(Collectors.toMap(Function.identity(),
                                     aggregation -> totalValues.get(aggregation).getDataPoints().get(key).entrySet().iterator().next().getValue(),
                                     (a, b) -> b, LinkedHashMap::new));

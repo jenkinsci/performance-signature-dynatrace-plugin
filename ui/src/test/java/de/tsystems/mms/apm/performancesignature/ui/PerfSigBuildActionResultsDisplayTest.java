@@ -190,7 +190,7 @@ public class PerfSigBuildActionResultsDisplayTest {
             URL url = new URL(buildPage.getUrl() + "performance-signature/get" + type + "ReportList");
             List<String> obj = gson.fromJson(org.apache.commons.io.IOUtils.toString(url), new TypeToken<List<String>>() {
             }.getType());
-            assertTrue(!obj.isEmpty());
+            assertFalse(obj.isEmpty());
             assertEquals(2, obj.size());
         }
     }
