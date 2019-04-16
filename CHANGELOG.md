@@ -1,7 +1,9 @@
 Changelog
 ====
-### Version 3.1.3 (unreleased)
-*
+### Version 3.1.3 (Apr 16, 2019)
+* added a DynatraceCustomSession pipeline step for fixed timeframes (can be found under the advanced section)
+* fixed NPE in DynatraceReportStepExecution
+* Dev: update parent pom version to 3.42
 
 ### Version 3.1.2 (Mar 26, 2019)
 * use build number instead of display name
