@@ -19,7 +19,7 @@ import org.jvnet.hudson.test.JenkinsRule;
 import org.mockserver.integration.ClientAndServer;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -37,10 +37,14 @@ public class Java11Test {
     @BeforeClass
     public static void setUp() throws Exception {
         List<CredProfilePair> credProfilePairs = Collections.singletonList(new CredProfilePair("easy Travel", "myCreds"));
-        List<DynatraceServerConfiguration> configurations = new ArrayList<>();
-        configurations.add(new DynatraceServerConfiguration("Mock Server",
-                "https://demo6880830.mockable.io", credProfilePairs, true, DynatraceServerConfiguration.DescriptorImpl.defaultDelay,
-                DynatraceServerConfiguration.DescriptorImpl.defaultRetryCount, DynatraceServerConfiguration.DescriptorImpl.defaultReadTimeout, false));
+        List<DynatraceServerConfiguration> configurations = Arrays.asList(
+                new DynatraceServerConfiguration("Mock Server",
+                        "https://localhost:8021", credProfilePairs, false, DynatraceServerConfiguration.DescriptorImpl.defaultDelay,
+                        DynatraceServerConfiguration.DescriptorImpl.defaultRetryCount, DynatraceServerConfiguration.DescriptorImpl.defaultReadTimeout, false),
+                new DynatraceServerConfiguration("Mockable Server",
+                        "https://demo6880830.mockable.io", credProfilePairs, true, DynatraceServerConfiguration.DescriptorImpl.defaultDelay,
+                        DynatraceServerConfiguration.DescriptorImpl.defaultRetryCount, DynatraceServerConfiguration.DescriptorImpl.defaultReadTimeout, false));
+
         SystemCredentialsProvider.getInstance().getCredentials().add(new UsernamePasswordCredentialsImpl(CredentialsScope.GLOBAL,
                 "myCreds", null, "admin", "admin"));
         SystemCredentialsProvider.getInstance().save();

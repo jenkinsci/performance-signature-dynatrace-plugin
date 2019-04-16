@@ -28,7 +28,7 @@ import hudson.util.ListBoxModel;
 import jenkins.model.Jenkins;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -42,13 +42,14 @@ public class TestUtils {
 
     public static ListBoxModel prepareDTConfigurations() throws IOException {
         List<CredProfilePair> credProfilePairs = Collections.singletonList(new CredProfilePair("easy Travel", "myCreds"));
-        List<DynatraceServerConfiguration> configurations = new ArrayList<>();
-        configurations.add(new DynatraceServerConfiguration("PoC PerfSig",
-                "https://192.168.192.202:8021", credProfilePairs, false, DescriptorImpl.defaultDelay,
-                DescriptorImpl.defaultRetryCount, DescriptorImpl.defaultReadTimeout, false));
-        configurations.add(new DynatraceServerConfiguration("TestMigration",
-                "https://192.168.194.68:8021", credProfilePairs, false, DescriptorImpl.defaultDelay,
-                DescriptorImpl.defaultRetryCount, DescriptorImpl.defaultReadTimeout, false));
+        List<DynatraceServerConfiguration> configurations = Arrays.asList(
+                new DynatraceServerConfiguration("PoC PerfSig",
+                        "https://192.168.192.202:8021", credProfilePairs, false, DescriptorImpl.defaultDelay,
+                        DescriptorImpl.defaultRetryCount, DescriptorImpl.defaultReadTimeout, false),
+                new DynatraceServerConfiguration("TestMigration",
+                        "https://192.168.194.68:8021", credProfilePairs, false, DescriptorImpl.defaultDelay,
+                        DescriptorImpl.defaultRetryCount, DescriptorImpl.defaultReadTimeout, false));
+
         SystemCredentialsProvider.getInstance().getCredentials().add(new UsernamePasswordCredentialsImpl(CredentialsScope.GLOBAL,
                 "myCreds", null, "admin", "admin"));
         SystemCredentialsProvider.getInstance().save();
