@@ -53,17 +53,17 @@ The set of rules defining Dynatrace entities to be associated with the event. Yo
 The following code shows an example configuration:
 ```groovy
 createDynatraceDeploymentEvent(
-        envId: 'Dynatrace Demo Environment', 
-        tagMatchRules: [
-            [
-                meTypes: [
-                        [meType: 'PROCESS_GROUP']
-                ],
-                tags: [
-                        [context: 'CONTEXTLESS', key: '', value: 'frontend']
-                ]
+    envId: 'Dynatrace Demo Environment', 
+    tagMatchRules: [
+        [
+            meTypes: [
+                    [meType: 'PROCESS_GROUP']
+            ],
+            tags: [
+                    [context: 'CONTEXTLESS', key: '', value: 'frontend']
             ]
-        ]) {
+        ]
+    ]) {
     // some block
 }
 ```
@@ -76,19 +76,38 @@ The step is needed in order to track the start and end timestamps of the actual 
 The following code shows an example configuration:
 ```groovy
 recordDynatraceSession(
-        envId: 'Dynatrace Demo Environment',
-        testCase: 'loadtest',
-        tagMatchRules: [
-            [
-                meTypes: [[meType: 'PROCESS_GROUP']],
-                tags: [
-                        [context: 'CONTEXTLESS', key: '', value: 'frontend']
-                ]
+    envId: 'Dynatrace Demo Environment',
+    testCase: 'loadtest',
+    tagMatchRules: [
+        [
+            meTypes: [[meType: 'PROCESS_GROUP']],
+            tags: [
+                    [context: 'CONTEXTLESS', key: '', value: 'frontend']
             ]
-        ]) {
+        ]
+    ]) {
     // some block
-}
+    }
 ```
+The **`recordDynatraceCustomSession`** does the same as the **`recordDynatraceSession`** pipeline step but consumes a fixed timeframe instead of a Closure.
+The timeframeStart and timeframeStop parameter consume a UTC timestamp in milliseconds. The timeframeStop parameter is optional and uses the current timestamp if left empty or 0.
+```groovy
+recordDynatraceCustomSession(
+    envId: 'Dynatrace Demo Environment',
+    testCase: 'loadtest',
+    tagMatchRules: [
+            [
+                    meTypes: [[meType: 'PROCESS_GROUP']],
+                    tags   : [
+                            [context: 'CONTEXTLESS', key: '', value: 'frontend']
+                    ]
+            ]
+    ],
+    timeframeStart: 1555418988059,
+    timeframeStop: 0)
+```
+
+
 
 The **`perfSigDynatraceReports`** pipeline step queries all metrics from the configured Dynatrace instance.
 The user can choose between manual added metrics from the metric browser or a so called Specfile.
