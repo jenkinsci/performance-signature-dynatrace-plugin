@@ -44,17 +44,6 @@
         </dependency>
         <dependency>
             <groupId>com.squareup.retrofit2</groupId>
-            <artifactId>converter-jaxb</artifactId>
-            <version>${retrofit-version}</version>
-            <exclusions>
-                <exclusion><!-- Use the one from the Jenkins JAXB Api plugin -->
-                    <groupId>javax.xml.bind</groupId>
-                    <artifactId>jaxb-api</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>com.squareup.retrofit2</groupId>
             <artifactId>converter-scalars</artifactId>
             <version>${retrofit-version}</version>
         </dependency>
