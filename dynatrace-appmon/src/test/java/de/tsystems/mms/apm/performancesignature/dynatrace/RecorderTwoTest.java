@@ -46,8 +46,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class RecorderTwoTest {
 
@@ -104,19 +103,19 @@ public class RecorderTwoTest {
     @Test
     public void testGetDashboardViaRest() {
         List<de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.model.Dashboard> dashboardList = connection.getDashboards();
-        assertTrue(!dashboardList.isEmpty());
+        assertFalse(dashboardList.isEmpty());
     }
 
     @Test
     public void testGetAgentsViaRest() {
         List<Agent> agentList = connection.getAllAgents();
-        assertTrue(!agentList.isEmpty());
+        assertFalse(agentList.isEmpty());
     }
 
     @Test
     public void testHotSensorPlacementViaRest() {
         for (Agent agent : connection.getAgents()) {
-            if ("java".equalsIgnoreCase(agent.getTechnologyType())) {
+            if (agent.getName().startsWith("CustomerFrontend")) {
                 assertTrue(connection.hotSensorPlacement(agent.getAgentId()));
             }
         }
