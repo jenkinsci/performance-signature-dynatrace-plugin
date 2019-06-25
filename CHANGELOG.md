@@ -1,5 +1,10 @@
 Changelog
 ====
+### Version 3.1.4 (Jun 18, 2019)
+* activated [Dependabot](https://dependabot.com/)
+* several dependency updates
+* Dev: update parent pom version to 3.46
+
 ### Version 3.1.3 (Apr 16, 2019)
 * added a DynatraceCustomSession pipeline step for fixed timeframes (can be found under the advanced section)
 * fixed NPE in DynatraceReportStepExecution
