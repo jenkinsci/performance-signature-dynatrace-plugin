@@ -2399,9 +2399,9 @@ gulplog@^1.0.0:
     glogg "^1.0.0"
 
 handlebars@^3.0.3:
-  version "3.0.6"
-  resolved "https://registry.yarnpkg.com/handlebars/-/handlebars-3.0.6.tgz#61cf316cf98395971d38c66523fa530b8a3c7ed2"
-  integrity sha512-LxzdOvkYFsdL6ZT92igXthJIZLYKBSowtrM3oxfMdOwjv0dRWk6EK4PygNgXc0xwjH38BWMCSnktrOpKbec+Qw==
+  version "3.0.7"
+  resolved "https://registry.yarnpkg.com/handlebars/-/handlebars-3.0.7.tgz#d64f0d6a480e0a637420af75713475166a2d644b"
+  integrity sha512-Pb/VCTFwbcm3KbD5rIzVVsbVBk7XMfhS4ZIJUfXdMF7H+UngtsofnUBfop/i24GSr3HCDG1PL0KoIX0YqEsXTg==
   dependencies:
     optimist "^0.6.1"
     source-map "^0.1.40"
