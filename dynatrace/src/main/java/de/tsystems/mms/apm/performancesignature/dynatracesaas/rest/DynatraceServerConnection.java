@@ -50,7 +50,7 @@ public class DynatraceServerConnection {
                 .setApiKey(DynatraceUtils.getApiToken(apiTokenId));
 
         Proxy proxy = Proxy.NO_PROXY;
-        ProxyConfiguration proxyConfig = Jenkins.getInstance().proxy;
+        ProxyConfiguration proxyConfig = Jenkins.get().proxy;
         if (proxyConfig != null && useProxy) {
             proxy = proxyConfig.createProxy(PerfSigUIUtils.getHostFromUrl(serverUrl));
             if (proxyConfig.getUserName() != null) {

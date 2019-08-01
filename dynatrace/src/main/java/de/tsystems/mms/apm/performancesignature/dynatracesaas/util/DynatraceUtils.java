@@ -67,7 +67,7 @@ public final class DynatraceUtils {
 
     public static String getApiToken(final String apiTokenId) {
         StandardCredentials credentials = CredentialsMatchers.firstOrNull(
-                lookupCredentials(StandardCredentials.class, Jenkins.getInstance(), ACL.SYSTEM, Collections.emptyList()),
+                lookupCredentials(StandardCredentials.class, Jenkins.get(), ACL.SYSTEM, Collections.emptyList()),
                 CredentialsMatchers.withId(apiTokenId));
         if (credentials != null) {
             if (credentials instanceof DynatraceApiToken) {

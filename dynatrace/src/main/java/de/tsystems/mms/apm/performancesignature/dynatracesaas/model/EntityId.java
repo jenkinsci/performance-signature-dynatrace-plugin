@@ -35,13 +35,13 @@ public abstract class EntityId implements Describable<EntityId>, Serializable {
     }
 
     public EntityIdDescriptor getDescriptor() {
-        return (EntityIdDescriptor) Jenkins.getInstance().getDescriptorOrDie(getClass());
+        return (EntityIdDescriptor) Jenkins.get().getDescriptorOrDie(getClass());
     }
 
     public abstract static class EntityIdDescriptor extends Descriptor<EntityId> {
 
         public static DescriptorExtensionList<EntityId, Descriptor<EntityId>> all() {
-            return Jenkins.getInstance().getDescriptorList(EntityId.class);
+            return Jenkins.get().getDescriptorList(EntityId.class);
         }
     }
 }

@@ -99,7 +99,7 @@ public class DynatraceServerConfiguration extends AbstractDescribableImpl<Dynatr
                     .includeEmptyValue()
                     .includeMatchingAs(
                             ACL.SYSTEM,
-                            Jenkins.getInstance(),
+                            Jenkins.get(),
                             StandardCredentials.class,
                             Collections.emptyList(),
                             CredentialsMatchers.anyOf(
@@ -140,7 +140,7 @@ public class DynatraceServerConfiguration extends AbstractDescribableImpl<Dynatr
         }
 
         private boolean checkMissingPermission(final Item item) {
-            return item == null ? !Jenkins.getInstance().hasPermission(Jenkins.ADMINISTER) :
+            return item == null ? !Jenkins.get().hasPermission(Jenkins.ADMINISTER) :
                     !item.hasPermission(Item.EXTENDED_READ) && !item.hasPermission(CredentialsProvider.USE_ITEM);
         }
     }

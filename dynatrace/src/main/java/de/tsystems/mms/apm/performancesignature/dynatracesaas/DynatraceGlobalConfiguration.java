@@ -40,7 +40,7 @@ public class DynatraceGlobalConfiguration extends GlobalConfiguration {
 
     @Override
     public boolean configure(final StaplerRequest req, final JSONObject formData) {
-        Jenkins.getInstance().checkPermission(Jenkins.ADMINISTER);
+        Jenkins.get().checkPermission(Jenkins.ADMINISTER);
         setConfigurations(req.bindJSONToList(DynatraceServerConfiguration.class, formData.get("configurations")));
         save();
         return false;

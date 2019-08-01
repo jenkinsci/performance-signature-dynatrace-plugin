@@ -27,14 +27,14 @@ public class CustomProperty extends AbstractDescribableImpl<CustomProperty> {
     }
 
     public DecriptorImpl getDescriptor() {
-        return (DecriptorImpl) Jenkins.getInstance().getDescriptorOrDie(getClass());
+        return (DecriptorImpl) Jenkins.get().getDescriptorOrDie(getClass());
     }
 
     @Extension
     public static class DecriptorImpl extends Descriptor<CustomProperty> {
 
         public static DescriptorExtensionList<CustomProperty, Descriptor<CustomProperty>> all() {
-            return Jenkins.getInstance().getDescriptorList(CustomProperty.class);
+            return Jenkins.get().getDescriptorList(CustomProperty.class);
         }
     }
 }
