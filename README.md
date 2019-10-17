@@ -81,7 +81,7 @@ This procedure is meant for developers, who want to install a locally built plug
 
 ### Dynatrace SaaS/Managed Documentation
 
-- https://www.dynatrace.com/support/doc/nam/
+- https://www.dynatrace.com/support/help/
 
 ### Links
 
