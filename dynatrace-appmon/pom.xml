@@ -96,7 +96,7 @@
         <dependency>
             <groupId>org.mock-server</groupId>
             <artifactId>mockserver-netty</artifactId>
-            <version>5.6.1</version>
+            <version>5.7.1</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion><!-- Use the one from the Jenkins JAXB Api plugin -->
