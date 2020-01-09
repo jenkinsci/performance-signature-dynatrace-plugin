@@ -1,5 +1,10 @@
 Changelog
 ====
+### Version 3.1.5 (unreleased)
+* log error message, instead of response message
+* increase minimum jenkins version to 2.138.1
+* Dev: update parent pom version to 3.55
+
 ### Version 3.1.4 (Jun 18, 2019)
 * activated [Dependabot](https://dependabot.com/)
 * several dependency updates
