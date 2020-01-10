@@ -36,7 +36,6 @@ import hudson.tasks.junit.TestDataPublisher;
 import hudson.tasks.junit.TestResult;
 import hudson.tasks.junit.TestResultAction;
 import hudson.util.ListBoxModel;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
@@ -68,11 +67,11 @@ public class PerfSigTestDataPublisher extends TestDataPublisher {
             for (PerfSigEnvInvisAction registerEnvVars : envVars) {
                 if (StringUtils.isNotBlank(registerEnvVars.getTestRunId())) {
                     TestRun testRun = connection.getTestRun(registerEnvVars.getTestRunId());
-                    if (testRun != null && CollectionUtils.isNotEmpty(testRun.getTestResults())) {
+                    if (testRun != null) {
                         testRuns.add(testRun);
                         logger.log(Messages.PerfSigTestDataPublisher_XMLReportResults(testRun.getTestResults().size(), " " + testRun.getId()));
                     } else {
-                        throw new RESTErrorException(Messages.PerfSigRecorder_XMLReportError());
+                        throw new RESTErrorException("could not find any test run with the id " + registerEnvVars.getTestRunId());
                     }
                 }
             }
