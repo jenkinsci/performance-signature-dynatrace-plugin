@@ -20,7 +20,9 @@ import com.cloudbees.plugins.credentials.common.UsernamePasswordCredentials;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
+import com.sun.xml.bind.v2.ContextFactory;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.auth.HttpBasicAuth;
+import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.model.ObjectFactory;
 import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
@@ -38,6 +40,8 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
@@ -71,8 +75,19 @@ public class ApiClient {
                 .Builder()
                 .baseUrl(baseUrl)
                 .addConverterFactory(ScalarsConverterFactory.create())
-                .addConverterFactory(JaxbConverterFactory.create())
+                .addConverterFactory(JaxbConverterFactory.create(createJAXBContext()))
                 .addConverterFactory(GsonCustomConverterFactory.create(gson));
+    }
+
+    private JAXBContext createJAXBContext() {
+        JAXBContext context = null;
+        try {
+            context = ContextFactory.createContext(
+                    ObjectFactory.class.getPackage().getName(),
+                    ObjectFactory.class.getClassLoader(), null);
+        } catch (JAXBException ignored) {
+        }
+        return context;
     }
 
     /**
