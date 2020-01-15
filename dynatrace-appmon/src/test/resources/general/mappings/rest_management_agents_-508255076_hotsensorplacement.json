@@ -1,0 +1,26 @@
+{
+  "name": "rest_management_agents_-508255076_hotsensorplacement",
+  "request": {
+    "url": "/rest/management/agents/-508255076/hotsensorplacement",
+    "method": "GET"
+  },
+  "response": {
+    "status": 200,
+    "body": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><result value=\"true\"/>",
+    "headers": {
+      "Date": "Tue, 14 Jan 2020 09:21:01 GMT",
+      "X-Frame-Options": "SAMEORIGIN",
+      "X-XSS-Protection": "1; mode=block",
+      "X-Content-Type-Options": "nosniff",
+      "Set-Cookie": "JSESSIONID=p92aomn7kgq9h2aep0vsdps8;Path=/;Secure;HttpOnly",
+      "Expires": "Thu, 01 Jan 1970 00:00:00 GMT",
+      "Content-Type": "text/xml",
+      "Cache-Control": [
+        "no-cache",
+        "must-revalidate",
+        "max-age=0"
+      ],
+      "Pragma": "no-cache"
+    }
+  }
+}

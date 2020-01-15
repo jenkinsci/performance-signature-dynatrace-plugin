@@ -1,0 +1,32 @@
+{
+  "name": "rest_management_profiles_easy-travel_threaddump",
+  "request": {
+    "url": "/rest/management/profiles/easy%20Travel/threaddump",
+    "method": "POST",
+    "bodyPatterns": [
+      {
+        "equalTo": "agentName=CustomerFrontend_easyTravel_8080&hostName=wum192202&processId=2180&isSessionLocked=false",
+        "caseInsensitive": false
+      }
+    ]
+  },
+  "response": {
+    "status": 200,
+    "body": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><result value=\"Thread Dump [1579004339219]\"/>",
+    "headers": {
+      "Date": "Tue, 14 Jan 2020 12:18:59 GMT",
+      "X-Frame-Options": "SAMEORIGIN",
+      "X-XSS-Protection": "1; mode=block",
+      "X-Content-Type-Options": "nosniff",
+      "Set-Cookie": "JSESSIONID=1wrlxshqw2wka1669kahymlbh8;Path=/;Secure;HttpOnly",
+      "Expires": "Thu, 01 Jan 1970 00:00:00 GMT",
+      "Content-Type": "text/xml",
+      "Cache-Control": [
+        "no-cache",
+        "must-revalidate",
+        "max-age=0"
+      ],
+      "Pragma": "no-cache"
+    }
+  }
+}

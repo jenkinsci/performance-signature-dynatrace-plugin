@@ -1,0 +1,39 @@
+{
+  "id": "ee0e9a5b-d272-4ea2-85f6-2d17328bb6e4",
+  "name": "api_v2_profiles_easy-travel_testruns",
+  "request": {
+    "url": "/api/v2/profiles/easy%20Travel/testruns",
+    "method": "POST",
+    "bodyPatterns": [
+      {
+        "contains": "{\"versionBuild\":\"1\",\"category\":\"performance\",\"additionalMetaData\":{\"JENKINS_JOB\":\"http://localhost:",
+        "ignoreArrayOrder": true,
+        "ignoreExtraElements": true
+      }
+    ]
+  },
+  "response": {
+    "status": 201,
+    "body": "{\"id\":\"d6d167ce-8fda-4559-847c-77b93b7fe000\",\"category\":\"performance\",\"versionBuild\":\"1\",\"platform\":\"\",\"startTime\":\"2020-01-14T18:04:41.396+01:00\",\"sessionId\":\"easy Travel/20200114180441_0.t0.session\",\"session\":\"easy Travel_test0_Build-1_RecorderOneTest (7)\",\"systemProfile\":\"easy Travel\",\"href\":\"https://192.168.192.202:8021/api/v2/profiles/easy%20Travel/testruns/d6d167ce-8fda-4559-847c-77b93b7fe000\",\"creationMode\":\"MANUAL\",\"additionalMetaData\":{\"JENKINS_JOB\":\"http://localhost:60968/jenkins/job/test0/1/\"},\"numDegraded\":0,\"numFailed\":0,\"numImproved\":0,\"numInvalidated\":0,\"numPassed\":0,\"numVolatile\":0,\"finished\":false,\"includedMetrics\":[]}",
+    "headers": {
+      "Date": "Tue, 14 Jan 2020 17:04:41 GMT",
+      "X-Frame-Options": "SAMEORIGIN",
+      "X-XSS-Protection": "1; mode=block",
+      "X-Content-Type-Options": "nosniff",
+      "Set-Cookie": "JSESSIONID=4jrxe8y8u43qgojfcnu0s7wu;Path=/;Secure;HttpOnly",
+      "Expires": "Thu, 01 Jan 1970 00:00:00 GMT",
+      "Location": "https://192.168.192.202:8021/api/v2/profiles/easy%20Travel/testruns/d6d167ce-8fda-4559-847c-77b93b7fe000",
+      "Content-Type": "application/json",
+      "Content-Disposition": "inline; filename=\"response.json\"",
+      "Cache-Control": [
+        "no-cache",
+        "must-revalidate",
+        "max-age=0"
+      ],
+      "Pragma": "no-cache"
+    }
+  },
+  "uuid": "ee0e9a5b-d272-4ea2-85f6-2d17328bb6e4",
+  "persistent": true,
+  "insertionIndex": 10
+}

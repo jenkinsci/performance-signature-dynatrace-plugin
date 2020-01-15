@@ -1,0 +1,31 @@
+{
+  "id": "f1bea724-1a11-4b91-aa8f-f78f24a716b2",
+  "name": "api_v2_profiles_easy-travel_testruns_d6d167ce-8fda-4559-847c-77b93b7fe000_finish",
+  "request": {
+    "url": "/api/v2/profiles/easy%20Travel/testruns/d6d167ce-8fda-4559-847c-77b93b7fe000/finish",
+    "method": "POST"
+  },
+  "response": {
+    "status": 200,
+    "body": "{\"id\":\"d6d167ce-8fda-4559-847c-77b93b7fe000\",\"category\":\"performance\",\"versionBuild\":\"1\",\"platform\":\"\",\"startTime\":\"2020-01-14T18:04:41.396+01:00\",\"sessionId\":\"easy Travel/20200114180441_0.t0.session\",\"session\":\"easy Travel_test0_Build-1_RecorderOneTest (7)\",\"systemProfile\":\"easy Travel\",\"message\":\"No tests were executed within testRun with id 'd6d167ce-8fda-4559-847c-77b93b7fe000'\",\"creationMode\":\"MANUAL\",\"additionalMetaData\":{\"JENKINS_JOB\":\"http://localhost:60968/jenkins/job/test0/1/\"},\"numDegraded\":0,\"numFailed\":0,\"numImproved\":0,\"numInvalidated\":0,\"numPassed\":0,\"numVolatile\":0,\"finished\":true,\"includedMetrics\":[]}",
+    "headers": {
+      "Date": "Tue, 14 Jan 2020 17:04:50 GMT",
+      "X-Frame-Options": "SAMEORIGIN",
+      "X-XSS-Protection": "1; mode=block",
+      "X-Content-Type-Options": "nosniff",
+      "Set-Cookie": "JSESSIONID=qf9i218nes6yv9uz7oaey9oe;Path=/;Secure;HttpOnly",
+      "Expires": "Thu, 01 Jan 1970 00:00:00 GMT",
+      "Content-Type": "application/json",
+      "Content-Disposition": "inline; filename=\"response.json\"",
+      "Cache-Control": [
+        "no-cache",
+        "must-revalidate",
+        "max-age=0"
+      ],
+      "Pragma": "no-cache"
+    }
+  },
+  "uuid": "f1bea724-1a11-4b91-aa8f-f78f24a716b2",
+  "persistent": true,
+  "insertionIndex": 12
+}

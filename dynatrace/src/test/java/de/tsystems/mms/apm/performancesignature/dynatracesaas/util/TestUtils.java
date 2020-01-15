@@ -43,11 +43,11 @@ public class TestUtils {
         List<DynatraceServerConfiguration> configurations = Collections.singletonList(new DynatraceServerConfiguration("PoC PerfSig",
                 "https://192.168.122.138/e/b060b9c0-d824-468a-8c7c-9df3816c815a/", "myApiToken", false, false));
         SystemCredentialsProvider.getInstance().getCredentials().add(new DynatraceApiTokenImpl(CredentialsScope.GLOBAL,
-                "myApiToken", null, Secret.fromString("IOCgWbQ2Q6SZFzoje09tV")));
+                "myApiToken", null, Secret.fromString("Qxp1vNLPSqmb19BKmNwKa")));
         SystemCredentialsProvider.getInstance().save();
 
         DynatraceGlobalConfiguration.get().setConfigurations(configurations);
-        Jenkins.getInstance().save();
+        Jenkins.get().save();
 
         DynatraceUtils.listToListBoxModel(DynatraceUtils.getDynatraceConfigurations()).stream().map(option -> option.name).forEach(System.out::println);
 

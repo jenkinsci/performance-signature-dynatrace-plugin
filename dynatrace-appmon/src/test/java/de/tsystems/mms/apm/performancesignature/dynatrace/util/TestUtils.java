@@ -19,6 +19,7 @@ package de.tsystems.mms.apm.performancesignature.dynatrace.util;
 import com.cloudbees.plugins.credentials.CredentialsScope;
 import com.cloudbees.plugins.credentials.SystemCredentialsProvider;
 import com.cloudbees.plugins.credentials.impl.UsernamePasswordCredentialsImpl;
+import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import de.tsystems.mms.apm.performancesignature.dynatrace.PerfSigGlobalConfiguration;
 import de.tsystems.mms.apm.performancesignature.dynatrace.configuration.CredProfilePair;
 import de.tsystems.mms.apm.performancesignature.dynatrace.configuration.DynatraceServerConfiguration;
@@ -32,8 +33,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assume.assumeTrue;
 
 public class TestUtils {
 
@@ -44,10 +45,14 @@ public class TestUtils {
         List<CredProfilePair> credProfilePairs = Collections.singletonList(new CredProfilePair("easy Travel", "myCreds"));
         List<DynatraceServerConfiguration> configurations = Arrays.asList(
                 new DynatraceServerConfiguration("PoC PerfSig",
-                        "https://192.168.192.202:8021", credProfilePairs, false, DescriptorImpl.defaultDelay,
+                        //"https://192.168.192.202:8021", credProfilePairs, false, DescriptorImpl.defaultDelay,
+                        //"http://localhost:8080", credProfilePairs, false, DescriptorImpl.defaultDelay,
+                        "https://localhost:8021", credProfilePairs, false, DescriptorImpl.defaultDelay,
                         DescriptorImpl.defaultRetryCount, DescriptorImpl.defaultReadTimeout, false),
                 new DynatraceServerConfiguration("TestMigration",
-                        "https://192.168.194.68:8021", credProfilePairs, false, DescriptorImpl.defaultDelay,
+                        //"https://192.168.194.68:8021", credProfilePairs, false, DescriptorImpl.defaultDelay,
+                        //"http://localhost:8080", credProfilePairs, false, DescriptorImpl.defaultDelay,
+                        "https://localhost:8022", credProfilePairs, false, DescriptorImpl.defaultDelay,
                         DescriptorImpl.defaultRetryCount, DescriptorImpl.defaultReadTimeout, false));
 
         SystemCredentialsProvider.getInstance().getCredentials().add(new UsernamePasswordCredentialsImpl(CredentialsScope.GLOBAL,
@@ -55,7 +60,7 @@ public class TestUtils {
         SystemCredentialsProvider.getInstance().save();
 
         PerfSigGlobalConfiguration.get().setConfigurations(configurations);
-        Jenkins.getInstance().save();
+        Jenkins.get().save();
 
         PerfSigUtils.listToListBoxModel(PerfSigUtils.getDTConfigurations()).stream().map(option -> option.name).forEach(System.out::println);
 
@@ -63,13 +68,11 @@ public class TestUtils {
         assertTrue(containsOption(dynatraceConfigurations, "easy Travel (admin) @ PoC PerfSig"));
         assertTrue(containsOption(dynatraceConfigurations, "easy Travel (admin) @ TestMigration"));
 
-        for (ListBoxModel.Option configuration : dynatraceConfigurations) {
-            DTServerConnection connection = PerfSigUtils.createDTServerConnection(configuration.name, false);
-            assumeTrue("assume that the server is reachable", validateConnection(connection));
-        }
-
-
         return dynatraceConfigurations;
+    }
+
+    public static WireMockConfiguration getOptions() {
+        return options().dynamicPort().httpsPort(8021).usingFilesUnderDirectory(options().filesRoot().child("general").getPath());
     }
 
     private static boolean validateConnection(DTServerConnection connection) {
@@ -83,9 +86,5 @@ public class TestUtils {
 
     public static boolean containsOption(ListBoxModel listBoxModel, String search) {
         return listBoxModel.stream().anyMatch(option -> option.name.equalsIgnoreCase(search));
-    }
-
-    public static boolean isWindows() {
-        return System.getProperty("os.name").startsWith("Windows");
     }
 }

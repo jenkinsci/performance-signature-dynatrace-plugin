@@ -1,0 +1,31 @@
+{
+  "id": "8f3ea9db-0b4a-4a2b-a869-f9e889206137",
+  "name": "api_v2_sessions",
+  "request": {
+    "url": "/api/v2/sessions",
+    "method": "GET"
+  },
+  "response": {
+    "status": 200,
+    "body": "{\"sessions\":[{\"id\":\"easy Travel/20200114174619_0.session\",\"storedsessiontype\":\"purepath\",\"sessiontype\":\"stored\",\"systemprofile\":\"easy Travel\",\"href\":\"https://192.168.194.68:8021/api/v2/sessions/easy+Travel%252F20200114174619_0.session\"}]}",
+    "headers": {
+      "Date": "Tue, 14 Jan 2020 16:46:31 GMT",
+      "X-Frame-Options": "SAMEORIGIN",
+      "X-XSS-Protection": "1; mode=block",
+      "X-Content-Type-Options": "nosniff",
+      "Set-Cookie": "JSESSIONID=1anizb9sxiy2hqzy4ysmyvyf0;Path=/;Secure;HttpOnly",
+      "Expires": "Thu, 01 Jan 1970 00:00:00 GMT",
+      "Content-Type": "application/json",
+      "Cache-Control": [
+        "no-cache",
+        "must-revalidate",
+        "max-age=0"
+      ],
+      "Pragma": "no-cache",
+      "Content-Disposition": "inline; filename=\"response.json\""
+    }
+  },
+  "uuid": "8f3ea9db-0b4a-4a2b-a869-f9e889206137",
+  "persistent": true,
+  "insertionIndex": 238
+}

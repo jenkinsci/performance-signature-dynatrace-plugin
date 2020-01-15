@@ -1,0 +1,32 @@
+{
+  "name": "rest_management_profiles_easy-travel_memorydump",
+  "request": {
+    "url": "/rest/management/profiles/easy%20Travel/memorydump",
+    "method": "POST",
+    "bodyPatterns": [
+      {
+        "equalTo": "agentName=CustomerFrontend_easyTravel_8080&hostName=wum192202&processId=2180&type=extended&isSessionLocked=false&capturestrings=false&captureprimitives=false&autopostprocess=true&dogc=true",
+        "caseInsensitive": false
+      }
+    ]
+  },
+  "response": {
+    "status": 200,
+    "body": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><result value=\"Memory Dump [595933818624955]\"/>",
+    "headers": {
+      "Date": "Tue, 14 Jan 2020 12:04:14 GMT",
+      "X-Frame-Options": "SAMEORIGIN",
+      "X-XSS-Protection": "1; mode=block",
+      "X-Content-Type-Options": "nosniff",
+      "Set-Cookie": "JSESSIONID=1tpmtz463er8v1ei7x49kw5yka;Path=/;Secure;HttpOnly",
+      "Expires": "Thu, 01 Jan 1970 00:00:00 GMT",
+      "Content-Type": "text/xml",
+      "Cache-Control": [
+        "no-cache",
+        "must-revalidate",
+        "max-age=0"
+      ],
+      "Pragma": "no-cache"
+    }
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "name": "api_v2_server_version",
+  "request": {
+    "url": "/api/v2/server/version",
+    "method": "GET"
+  },
+  "response": {
+    "status": 200,
+    "body": "{\"result\":\"7.2.19.1064\"}",
+    "headers": {
+      "Date": "Tue, 14 Jan 2020 09:21:00 GMT",
+      "X-Frame-Options": "SAMEORIGIN",
+      "X-XSS-Protection": "1; mode=block",
+      "X-Content-Type-Options": "nosniff",
+      "Set-Cookie": "JSESSIONID=1cizuq6gwc2jr1obr4mz991imo;Path=/;Secure;HttpOnly",
+      "Expires": "Thu, 01 Jan 1970 00:00:00 GMT",
+      "Content-Type": "application/json",
+      "Content-Disposition": "inline; filename=\"response.json\"",
+      "Cache-Control": [
+        "no-cache",
+        "must-revalidate",
+        "max-age=0"
+      ],
+      "Pragma": "no-cache"
+    }
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "id": "932a8350-a89d-44ff-8586-e4a679e786d9",
+  "name": "api_v2_profiles_easy-travel_session_recording",
+  "request": {
+    "url": "/api/v2/profiles/easy%20Travel/session/recording",
+    "method": "POST",
+    "bodyPatterns": [
+      {
+        "equalToJson": "{\"sessionname\":\"testContinuousSessionRecording\",\"description\":\"triggered by UnitTest\",\"appendtimestamp\":false,\"recordingoption\":\"all\",\"locksession\":false}",
+        "ignoreArrayOrder": true,
+        "ignoreExtraElements": true
+      }
+    ]
+  },
+  "response": {
+    "status": 403,
+    "body": "{\"code\":403,\"message\":\"Manual Session recording is only allowed for pre-production licenses\"}",
+    "headers": {
+      "Date": "Tue, 14 Jan 2020 14:29:54 GMT",
+      "X-Frame-Options": "SAMEORIGIN",
+      "X-XSS-Protection": "1; mode=block",
+      "X-Content-Type-Options": "nosniff",
+      "Set-Cookie": "JSESSIONID=1u1n0dfav6a1ajcy4xck1foq6;Path=/;Secure;HttpOnly",
+      "Expires": "Thu, 01 Jan 1970 00:00:00 GMT",
+      "Content-Type": "application/json",
+      "Cache-Control": [
+        "no-cache",
+        "must-revalidate",
+        "max-age=0"
+      ],
+      "Pragma": "no-cache",
+      "Content-Disposition": "inline; filename=\"response.json\""
+    }
+  },
+  "uuid": "932a8350-a89d-44ff-8586-e4a679e786d9",
+  "persistent": true,
+  "insertionIndex": 204
+}

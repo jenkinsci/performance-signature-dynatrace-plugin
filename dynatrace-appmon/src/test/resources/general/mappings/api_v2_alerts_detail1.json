@@ -1,0 +1,28 @@
+{
+  "name": "api_v2_alerts_ffae92cc-0bab-4b95-8343-082d079dd154",
+  "request": {
+    "url": "/api/v2/alerts/ffae92cc-0bab-4b95-8343-082d079dd154",
+    "method": "GET"
+  },
+  "response": {
+    "status": 200,
+    "body": "{\"severity\":\"severe\",\"state\":\"Created\",\"message\":\"Web Requests/Time: Time upper bound exceeded\",\"description\":\"Time: Measured peak value: 331.84 [ms], Upper Severe Bound: 30.00, Upper Warning Bound: 25.00\",\"start\":\"2020-01-14T11:26:10.000+01:00\",\"end\":\"2020-01-14T11:26:20.000+01:00\",\"rule\":\"KPI_WebRequestTime\",\"systemprofile\":\"easy Travel\"}",
+    "headers": {
+      "Date": "Tue, 14 Jan 2020 13:32:47 GMT",
+      "X-Frame-Options": "SAMEORIGIN",
+      "X-XSS-Protection": "1; mode=block",
+      "X-Content-Type-Options": "nosniff",
+      "Set-Cookie": "JSESSIONID=x5dsokb5xyhi1039zwie7l1vy;Path=/;Secure;HttpOnly",
+      "Expires": "Thu, 01 Jan 1970 00:00:00 GMT",
+      "Content-Type": "application/json",
+      "Content-Disposition": "inline; filename=\"response.json\"",
+      "Cache-Control": [
+        "no-cache",
+        "must-revalidate",
+        "max-age=0"
+      ],
+      "Pragma": "no-cache",
+      "Vary": "Accept-Encoding, User-Agent"
+    }
+  }
+}

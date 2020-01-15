@@ -16,6 +16,7 @@
 
 package de.tsystems.mms.apm.performancesignature.dynatrace;
 
+import com.github.tomakehurst.wiremock.junit.WireMockClassRule;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.DTServerConnection;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model.SessionData;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.CommandExecutionException;
@@ -28,6 +29,7 @@ import hudson.model.FreeStyleProject;
 import hudson.tasks.BatchFile;
 import hudson.tasks.Shell;
 import hudson.util.ListBoxModel;
+import org.apache.commons.lang3.SystemUtils;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -37,12 +39,23 @@ import org.jvnet.hudson.test.JenkinsRule;
 
 import java.util.List;
 
+import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
+import static de.tsystems.mms.apm.performancesignature.dynatrace.util.TestUtils.getOptions;
 import static org.junit.Assert.*;
 
 public class StopRecordingTest {
 
     @ClassRule
     public static final JenkinsRule j = new JenkinsRule();
+    @ClassRule
+    public static WireMockClassRule wireMockRule = new WireMockClassRule(
+            getOptions().usingFilesUnderDirectory(options().filesRoot().child("StopRecordingTest1").getPath())
+    );
+    @ClassRule
+    public static WireMockClassRule wireMockRule2 = new WireMockClassRule(
+            getOptions().usingFilesUnderDirectory(options().filesRoot().child("StopRecordingTest2").getPath()).httpsPort(8022)
+    );
+
     private static ListBoxModel dynatraceConfigurations;
     @Rule
     public final ExpectedException exception = ExpectedException.none();
@@ -99,7 +112,7 @@ public class StopRecordingTest {
         PerfSigEnvInvisAction invisAction = createTestProject(1);
 
         assertNotNull(invisAction);
-        assertTrue(invisAction.getSessionName().matches("easy Travel_test0_Build-\\d+_unittest.*"));
+        assertTrue(invisAction.getSessionName().matches("easy Travel_test\\d+_Build-\\d+_unittest.*"));
         assertEquals(invisAction.getTestCase(), testCase);
         assertNull(invisAction.getTestRunId());
         assertNotNull(invisAction.getTimeframeStart());
@@ -109,7 +122,7 @@ public class StopRecordingTest {
         FreeStyleProject project = j.createFreeStyleProject();
         project.getBuildersList().add(new PerfSigStartRecording(dynatraceConfigurations.get(id).name, testCase));
         //wait some time to get some data into the session
-        if (TestUtils.isWindows()) {
+        if (SystemUtils.IS_OS_WINDOWS) {
             project.getBuildersList().add(new BatchFile("ping -n 10 127.0.0.1 > NUL"));
         } else {
             project.getBuildersList().add(new Shell("sleep 10"));
@@ -127,5 +140,4 @@ public class StopRecordingTest {
     private boolean containsSession(List<SessionData> sessions, String sessionId) {
         return sessions.stream().anyMatch(sessionData -> sessionData.getId().equalsIgnoreCase(sessionId));
     }
-
 }

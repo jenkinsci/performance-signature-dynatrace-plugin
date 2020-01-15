@@ -1,0 +1,28 @@
+{
+  "name": "api_v2_profiles_easy-travel_configurations",
+  "request": {
+    "url": "/api/v2/profiles/easy%20Travel/configurations",
+    "method": "GET"
+  },
+  "response": {
+    "status": 200,
+    "body": "{\"configurations\":[{\"id\":\"Default\",\"href\":\"https://192.168.192.202:8021/api/v2/profiles/easy%20Travel/configurations/Default\",\"isactive\":false},{\"id\":\"ActivateConfigurationTest\",\"href\":\"https://192.168.192.202:8021/api/v2/profiles/easy%20Travel/configurations/ActivateConfigurationTest\",\"isactive\":true}]}",
+    "headers": {
+      "Date": "Tue, 14 Jan 2020 11:19:19 GMT",
+      "X-Frame-Options": "SAMEORIGIN",
+      "X-XSS-Protection": "1; mode=block",
+      "X-Content-Type-Options": "nosniff",
+      "Set-Cookie": "JSESSIONID=1cvw2wc7y0fmo1ksj9rjnvwblb;Path=/;Secure;HttpOnly",
+      "Expires": "Thu, 01 Jan 1970 00:00:00 GMT",
+      "Content-Type": "application/json",
+      "Content-Disposition": "inline; filename=\"response.json\"",
+      "Cache-Control": [
+        "no-cache",
+        "must-revalidate",
+        "max-age=0"
+      ],
+      "Pragma": "no-cache",
+      "Vary": "Accept-Encoding, User-Agent"
+    }
+  }
+}

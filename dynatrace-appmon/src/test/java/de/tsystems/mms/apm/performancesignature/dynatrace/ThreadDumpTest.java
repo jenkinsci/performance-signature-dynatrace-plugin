@@ -16,6 +16,7 @@
 
 package de.tsystems.mms.apm.performancesignature.dynatrace;
 
+import com.github.tomakehurst.wiremock.junit.WireMockClassRule;
 import de.tsystems.mms.apm.performancesignature.dynatrace.util.TestUtils;
 import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
@@ -27,12 +28,18 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
 
+import java.nio.charset.Charset;
+
+import static de.tsystems.mms.apm.performancesignature.dynatrace.util.TestUtils.getOptions;
 import static org.junit.Assert.*;
 
 public class ThreadDumpTest {
 
     @ClassRule
     public static final JenkinsRule j = new JenkinsRule();
+    @ClassRule
+    public static WireMockClassRule wireMockRule = new WireMockClassRule(getOptions());
+
     private static ListBoxModel dynatraceConfigurations;
     private FreeStyleProject project;
 
@@ -47,7 +54,7 @@ public class ThreadDumpTest {
         project.getBuildersList().add(new PerfSigThreadDump(dynatraceConfigurations.get(0).name, "CustomerFrontend_easyTravel_8080", "wum192202"));
         FreeStyleBuild build = j.assertBuildStatusSuccess(project.scheduleBuild2(0));
 
-        String s = FileUtils.readFileToString(build.getLogFile());
+        String s = FileUtils.readFileToString(build.getLogFile(), Charset.defaultCharset());
         assertTrue(s.contains("successfully created thread dump on"));
     }
 

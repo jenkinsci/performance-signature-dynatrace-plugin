@@ -1,0 +1,33 @@
+{
+  "id": "e8561b14-5c70-4341-bb30-47d0a42ee838",
+  "name": "rest_management_profiles_easy-travel_threaddumpcreated_thread-dump-1579004339219",
+  "request": {
+    "url": "/rest/management/profiles/easy%20Travel/threaddumpcreated/Thread%20Dump%20[1579004339219]",
+    "method": "GET"
+  },
+  "response": {
+    "status": 200,
+    "body": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><result value=\"false\"><message language=\"en\"><text>No task result available</text></message><success>false</success></result>",
+    "headers": {
+      "Date": "Tue, 14 Jan 2020 12:18:59 GMT",
+      "X-Frame-Options": "SAMEORIGIN",
+      "X-XSS-Protection": "1; mode=block",
+      "X-Content-Type-Options": "nosniff",
+      "Set-Cookie": "JSESSIONID=gn56paezoxe6poqadnh8q26k;Path=/;Secure;HttpOnly",
+      "Expires": "Thu, 01 Jan 1970 00:00:00 GMT",
+      "Content-Type": "text/xml",
+      "Cache-Control": [
+        "no-cache",
+        "must-revalidate",
+        "max-age=0"
+      ],
+      "Pragma": "no-cache"
+    }
+  },
+  "uuid": "e8561b14-5c70-4341-bb30-47d0a42ee838",
+  "persistent": true,
+  "scenarioName": "scenario-3-rest-management-profiles-easy Travel-threaddumpcreated-Thread Dump [1579004339219]",
+  "requiredScenarioState": "Started",
+  "newScenarioState": "scenario-3-rest-management-profiles-easy Travel-threaddumpcreated-Thread Dump [1579004339219]-2",
+  "insertionIndex": 34
+}

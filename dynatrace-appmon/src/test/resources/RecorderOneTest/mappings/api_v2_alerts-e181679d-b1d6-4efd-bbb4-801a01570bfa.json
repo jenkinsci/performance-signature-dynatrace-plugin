@@ -1,0 +1,31 @@
+{
+  "id": "e181679d-b1d6-4efd-bbb4-801a01570bfa",
+  "name": "api_v2_alerts",
+  "request": {
+    "urlPattern": "^\\/api\\/v2\\/alerts\\?systemprofile=easy\\%20Travel\\&state=Created\\&from=(.*)\\&to=(.*)",
+    "method": "GET"
+  },
+  "response": {
+    "status": 200,
+    "body": "{\"alerts\":[{\"id\":\"4666ba46-3c81-4eb4-bdae-784126046b49\",\"href\":\"https://192.168.192.202:8021/api/v2/alerts/4666ba46-3c81-4eb4-bdae-784126046b49\",\"rule\":\"KPI_WebRequestTime\"}]}",
+    "headers": {
+      "Date": "Tue, 14 Jan 2020 17:05:44 GMT",
+      "X-Frame-Options": "SAMEORIGIN",
+      "X-XSS-Protection": "1; mode=block",
+      "X-Content-Type-Options": "nosniff",
+      "Set-Cookie": "JSESSIONID=1j6lg22ck10f7nl5zrcltblej;Path=/;Secure;HttpOnly",
+      "Expires": "Thu, 01 Jan 1970 00:00:00 GMT",
+      "Content-Type": "application/json",
+      "Content-Disposition": "inline; filename=\"response.json\"",
+      "Cache-Control": [
+        "no-cache",
+        "must-revalidate",
+        "max-age=0"
+      ],
+      "Pragma": "no-cache"
+    }
+  },
+  "uuid": "e181679d-b1d6-4efd-bbb4-801a01570bfa",
+  "persistent": true,
+  "insertionIndex": 18
+}

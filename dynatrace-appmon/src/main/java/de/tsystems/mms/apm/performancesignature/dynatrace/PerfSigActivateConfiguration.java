@@ -19,7 +19,6 @@ package de.tsystems.mms.apm.performancesignature.dynatrace;
 import de.tsystems.mms.apm.performancesignature.dynatrace.configuration.CredProfilePair;
 import de.tsystems.mms.apm.performancesignature.dynatrace.configuration.DynatraceServerConfiguration;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.DTServerConnection;
-import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.model.Agent;
 import de.tsystems.mms.apm.performancesignature.dynatrace.util.PerfSigUtils;
 import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
 import de.tsystems.mms.apm.performancesignature.ui.util.PluginLogger;
@@ -66,12 +65,16 @@ public class PerfSigActivateConfiguration extends Builder implements SimpleBuild
         connection.activateConfiguration(configuration);
         logger.log(Messages.PerfSigActivateConfiguration_SuccessfullyActivated(dynatraceProfile));
 
-        connection.getAgents().stream().filter(Agent::isSupportsHotsensorPlacement).forEach(agent -> {
-            boolean hotSensorPlacement = connection.hotSensorPlacement(agent.getAgentId());
-            if (hotSensorPlacement) {
-                logger.log(Messages.PerfSigActivateConfiguration_HotSensorPlacementDone(agent.getName()));
+        connection.getAgents().forEach(agent -> {
+            if (agent.isSupportsHotsensorPlacement()) {
+                boolean hotSensorPlacement = connection.hotSensorPlacement(agent.getAgentId());
+                if (hotSensorPlacement) {
+                    logger.log(Messages.PerfSigActivateConfiguration_HotSensorPlacementDone(agent.getName()));
+                } else {
+                    logger.log(Messages.PerfSigActivateConfiguration_FailureActivation(agent.getName()));
+                }
             } else {
-                logger.log(Messages.PerfSigActivateConfiguration_FailureActivation(agent.getName()));
+                logger.log("Agent " + agent.getName() + "does not support Hot Sensor placement");
             }
         });
     }

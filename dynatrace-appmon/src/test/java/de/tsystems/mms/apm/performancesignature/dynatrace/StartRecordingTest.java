@@ -16,6 +16,7 @@
 
 package de.tsystems.mms.apm.performancesignature.dynatrace;
 
+import com.github.tomakehurst.wiremock.junit.WireMockClassRule;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.DTServerConnection;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.CommandExecutionException;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.RESTErrorException;
@@ -35,12 +36,23 @@ import org.jvnet.hudson.test.JenkinsRule;
 
 import java.io.IOException;
 
+import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
+import static de.tsystems.mms.apm.performancesignature.dynatrace.util.TestUtils.getOptions;
 import static org.junit.Assert.*;
 
 public class StartRecordingTest {
 
     @ClassRule
     public static final JenkinsRule j = new JenkinsRule();
+    @ClassRule
+    public static WireMockClassRule wireMockRule = new WireMockClassRule(
+            getOptions().usingFilesUnderDirectory(options().filesRoot().child("StartRecordingTest1").getPath())
+    );
+    @ClassRule
+    public static WireMockClassRule wireMockRule2 = new WireMockClassRule(
+            getOptions().usingFilesUnderDirectory(options().filesRoot().child("StartRecordingTest2").getPath()).httpsPort(8022)
+    );
+
     @Rule
     public final ExpectedException exception = ExpectedException.none();
     private static ListBoxModel dynatraceConfigurations;
@@ -49,6 +61,7 @@ public class StartRecordingTest {
 
     @BeforeClass
     public static void setUp() throws Exception {
+        System.out.println(wireMockRule.getOptions().filesRoot());
         dynatraceConfigurations = TestUtils.prepareDTConfigurations();
     }
 
