@@ -1,0 +1,31 @@
+{
+  "id": "745a8334-202f-4f59-a4f6-44f3d546fc44",
+  "name": "api_v2_profiles_easy-travel_session_recording_status",
+  "request": {
+    "url": "/api/v2/profiles/easy%20Travel/session/recording/status",
+    "method": "GET"
+  },
+  "response": {
+    "status": 200,
+    "body": "{\"recording\":false}",
+    "headers": {
+      "Date": "Tue, 14 Jan 2020 16:16:16 GMT",
+      "X-Frame-Options": "SAMEORIGIN",
+      "X-XSS-Protection": "1; mode=block",
+      "X-Content-Type-Options": "nosniff",
+      "Set-Cookie": "JSESSIONID=ht74f1yihdh29vvjf7q2bvyl;Path=/;Secure;HttpOnly",
+      "Expires": "Thu, 01 Jan 1970 00:00:00 GMT",
+      "Content-Type": "application/json",
+      "Content-Disposition": "inline; filename=\"response.json\"",
+      "Cache-Control": [
+        "no-cache",
+        "must-revalidate",
+        "max-age=0"
+      ],
+      "Pragma": "no-cache"
+    }
+  },
+  "uuid": "745a8334-202f-4f59-a4f6-44f3d546fc44",
+  "persistent": true,
+  "insertionIndex": 202
+}

@@ -1,0 +1,28 @@
+{
+  "name": "api_v2_alerts",
+  "request": {
+    "urlPattern": "^\\/api\\/v2\\/alerts\\?systemprofile=easy\\%20Travel\\&state=Created\\&from=(.*)\\&to=(.*)",
+    "method": "GET"
+  },
+  "response": {
+    "status": 200,
+    "body": "{\"alerts\":[{\"id\":\"ffae92cc-0bab-4b95-8343-082d079dd154\",\"href\":\"https://192.168.192.202:8021/api/v2/alerts/ffae92cc-0bab-4b95-8343-082d079dd154\",\"rule\":\"KPI_WebRequestTime\"},{\"id\":\"ffe68707-05ff-42de-8b37-444fd245c55c\",\"href\":\"https://192.168.192.202:8021/api/v2/alerts/ffe68707-05ff-42de-8b37-444fd245c55c\",\"rule\":\"KPI_WebRequestTime\"}]}",
+    "headers": {
+      "Date": "Tue, 14 Jan 2020 13:32:29 GMT",
+      "X-Frame-Options": "SAMEORIGIN",
+      "X-XSS-Protection": "1; mode=block",
+      "X-Content-Type-Options": "nosniff",
+      "Set-Cookie": "JSESSIONID=dmqavh3jci831eal27bvs1hp3;Path=/;Secure;HttpOnly",
+      "Expires": "Thu, 01 Jan 1970 00:00:00 GMT",
+      "Content-Type": "application/json",
+      "Content-Disposition": "inline; filename=\"response.json\"",
+      "Cache-Control": [
+        "no-cache",
+        "must-revalidate",
+        "max-age=0"
+      ],
+      "Pragma": "no-cache",
+      "Vary": "Accept-Encoding, User-Agent"
+    }
+  }
+}

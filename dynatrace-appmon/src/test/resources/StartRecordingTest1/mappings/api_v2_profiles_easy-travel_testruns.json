@@ -1,0 +1,39 @@
+{
+  "id": "6d1cb984-87c2-4065-b80d-5fbc4856a10f",
+  "name": "api_v2_profiles_easy-travel_testruns",
+  "request": {
+    "url": "/api/v2/profiles/easy%20Travel/testruns",
+    "method": "POST",
+    "bodyPatterns": [
+      {
+        "contains": "{\"versionBuild\":\"1\",\"category\":\"performance\",\"additionalMetaData\":{\"JENKINS_JOB\":\"http://localhost:",
+        "ignoreArrayOrder": true,
+        "ignoreExtraElements": true
+      }
+    ]
+  },
+  "response": {
+    "status": 201,
+    "body": "{\"id\":\"17389bcc-498f-485c-99de-c7635d8ec378\",\"category\":\"performance\",\"versionBuild\":\"1\",\"platform\":\"\",\"startTime\":\"2020-01-14T15:09:27.111+01:00\",\"sessionId\":\"easy Travel/20200114150926_0.t0.session\",\"session\":\"easy Travel_test0_Build-1_unittest (10)\",\"systemProfile\":\"easy Travel\",\"href\":\"https://192.168.192.202:8021/api/v2/profiles/easy%20Travel/testruns/17389bcc-498f-485c-99de-c7635d8ec378\",\"creationMode\":\"MANUAL\",\"additionalMetaData\":{\"JENKINS_JOB\":\"http://localhost:54958/jenkins/job/test0/1/\"},\"numDegraded\":0,\"numFailed\":0,\"numImproved\":0,\"numInvalidated\":0,\"numPassed\":0,\"numVolatile\":0,\"finished\":false,\"includedMetrics\":[]}",
+    "headers": {
+      "Date": "Tue, 14 Jan 2020 14:09:27 GMT",
+      "X-Frame-Options": "SAMEORIGIN",
+      "X-XSS-Protection": "1; mode=block",
+      "X-Content-Type-Options": "nosniff",
+      "Set-Cookie": "JSESSIONID=ck60wii711fz1cznf30rjl9hb;Path=/;Secure;HttpOnly",
+      "Expires": "Thu, 01 Jan 1970 00:00:00 GMT",
+      "Location": "https://192.168.192.202:8021/api/v2/profiles/easy%20Travel/testruns/17389bcc-498f-485c-99de-c7635d8ec378",
+      "Content-Type": "application/json",
+      "Content-Disposition": "inline; filename=\"response.json\"",
+      "Cache-Control": [
+        "no-cache",
+        "must-revalidate",
+        "max-age=0"
+      ],
+      "Pragma": "no-cache"
+    }
+  },
+  "uuid": "6d1cb984-87c2-4065-b80d-5fbc4856a10f",
+  "persistent": true,
+  "insertionIndex": 190
+}

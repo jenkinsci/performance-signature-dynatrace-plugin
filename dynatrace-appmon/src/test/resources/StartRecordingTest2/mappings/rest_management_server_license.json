@@ -1,0 +1,27 @@
+{
+  "name": "rest_management_server_license",
+  "request": {
+    "url": "/rest/management/server/license",
+    "method": "GET"
+  },
+  "response": {
+    "status": 200,
+    "body": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><licenseinformation><licensedto>T-Systems International GmbH - Self-Service License 'Partner License AppMon 7 Prod'</licensedto><licensenumber>201912171007</licensenumber><licenseedition>Production Edition</licenseedition><usedvolumepercentage>0.0</usedvolumepercentage><nextvolumerenewaldate></nextvolumerenewaldate><nextvolumerenewaldate-iso></nextvolumerenewaldate-iso><validfrom>2019-12-16</validfrom><validfrom-iso>2019-12-16T01:00:00+01:00</validfrom-iso><expiredate>2020-01-22</expiredate><expiredate-iso>2020-01-22T12:58:00+01:00</expiredate-iso><currentuemtransactions>100000</currentuemtransactions><maximaluemtransactions>100000</maximaluemtransactions><licensedagents><agent name=\"Java\">5</agent><agent name=\"Message Broker\">0</agent><agent name=\"Browser\">2</agent><agent name=\"PHP\">5</agent><agent name=\"Web server\">5</agent><agent name=\"z/OS\">0</agent><agent name=\"Host Monitoring\">1</agent><agent name=\"Java (NoSQL)\">0</agent><agent name=\"Node.js\">5</agent><agent name=\"ADK\">1</agent><agent name=\"Database\">0</agent><agent name=\"Windows Instances\">5</agent><agent name=\"Web Server Developer\">0</agent></licensedagents></licenseinformation>",
+    "headers": {
+      "Date": "Tue, 14 Jan 2020 14:28:10 GMT",
+      "X-Frame-Options": "SAMEORIGIN",
+      "X-XSS-Protection": "1; mode=block",
+      "X-Content-Type-Options": "nosniff",
+      "Set-Cookie": "JSESSIONID=hwal4hmpigu6ge2pz9dmny4k;Path=/;Secure;HttpOnly",
+      "Expires": "Thu, 01 Jan 1970 00:00:00 GMT",
+      "Content-Type": "application/xml",
+      "Cache-Control": [
+        "no-cache",
+        "must-revalidate",
+        "max-age=0"
+      ],
+      "Pragma": "no-cache",
+      "Vary": "Accept-Encoding, User-Agent"
+    }
+  }
+}

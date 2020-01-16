@@ -66,11 +66,15 @@ public class PerfSigActivateConfiguration extends Builder implements SimpleBuild
         logger.log(Messages.PerfSigActivateConfiguration_SuccessfullyActivated(dynatraceProfile));
 
         connection.getAgents().forEach(agent -> {
-            boolean hotSensorPlacement = connection.hotSensorPlacement(agent.getAgentId());
-            if (hotSensorPlacement) {
-                logger.log(Messages.PerfSigActivateConfiguration_HotSensorPlacementDone(agent.getName()));
+            if (agent.isSupportsHotsensorPlacement()) {
+                boolean hotSensorPlacement = connection.hotSensorPlacement(agent.getAgentId());
+                if (hotSensorPlacement) {
+                    logger.log(Messages.PerfSigActivateConfiguration_HotSensorPlacementDone(agent.getName()));
+                } else {
+                    logger.log(Messages.PerfSigActivateConfiguration_FailureActivation(agent.getName()));
+                }
             } else {
-                logger.log(Messages.PerfSigActivateConfiguration_FailureActivation(agent.getName()));
+                logger.log("Agent " + agent.getName() + "does not support Hot Sensor placement");
             }
         });
     }

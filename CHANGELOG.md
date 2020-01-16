@@ -2,8 +2,9 @@ Changelog
 ====
 ### Version 3.1.5 (unreleased)
 * log error message, instead of response message
-* increase minimum jenkins version to 2.138.1
+* increase minimum jenkins version to 2.164.1
 * Dev: update parent pom version to 3.55
+* Dev: switch to wiremock for Dynatrace AppMon
 
 ### Version 3.1.4 (Jun 18, 2019)
 * activated [Dependabot](https://dependabot.com/)

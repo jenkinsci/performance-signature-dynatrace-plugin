@@ -72,8 +72,6 @@ public class TimeSeriesApiOneTest {
                 "perfSigDynatraceReports envId: 'PoC PerfSig', metrics: [[metricId: 'com.dynatrace.builtin:host.cpu.user']]}", true));
         WorkflowRun b = j.assertBuildStatusSuccess(p.scheduleBuild2(0));
         j.assertLogContains("getting metric data from Dynatrace", b);
-        //assertTrue(s.contains("getting PDF report: Singlereport")); //no Comparisonreport available
-        //assertTrue(s.contains("session successfully downloaded"));
 
         PerfSigBuildAction buildAction = b.getAction(PerfSigBuildAction.class);
         assertNotNull(buildAction);

@@ -1,0 +1,31 @@
+{
+  "name": "api_v2_profiles_easy-travel_configurations_activateconfigurationtest_status",
+  "request": {
+    "url": "/api/v2/profiles/easy%20Travel/configurations/ActivateConfigurationTest/status",
+    "method": "PUT",
+    "bodyPatterns": [
+      {
+        "equalToJson": "{\"status\":\"ENABLED\"}",
+        "ignoreArrayOrder": true,
+        "ignoreExtraElements": true
+      }
+    ]
+  },
+  "response": {
+    "status": 204,
+    "headers": {
+      "Date": "Tue, 14 Jan 2020 09:21:00 GMT",
+      "X-Frame-Options": "SAMEORIGIN",
+      "X-XSS-Protection": "1; mode=block",
+      "X-Content-Type-Options": "nosniff",
+      "Set-Cookie": "JSESSIONID=3bpeorqecl2x6htk5o9hq3w;Path=/;Secure;HttpOnly",
+      "Expires": "Thu, 01 Jan 1970 00:00:00 GMT",
+      "Cache-Control": [
+        "no-cache",
+        "must-revalidate",
+        "max-age=0"
+      ],
+      "Pragma": "no-cache"
+    }
+  }
+}

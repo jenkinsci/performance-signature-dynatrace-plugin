@@ -16,6 +16,7 @@
 
 package de.tsystems.mms.apm.performancesignature.dynatrace;
 
+import com.github.tomakehurst.wiremock.junit.WireMockClassRule;
 import de.tsystems.mms.apm.performancesignature.dynatrace.util.TestUtils;
 import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
@@ -27,12 +28,18 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
 
+import java.nio.charset.Charset;
+
+import static de.tsystems.mms.apm.performancesignature.dynatrace.util.TestUtils.getOptions;
 import static org.junit.Assert.*;
 
 public class ActivateConfigurationTest {
 
     @ClassRule
     public static final JenkinsRule j = new JenkinsRule();
+    @ClassRule
+    public static WireMockClassRule wireMockRule = new WireMockClassRule(getOptions());
+
     private static ListBoxModel dynatraceConfigurations;
     private FreeStyleProject project;
 
@@ -47,7 +54,7 @@ public class ActivateConfigurationTest {
         project.getBuildersList().add(new PerfSigActivateConfiguration(dynatraceConfigurations.get(0).name, "ActivateConfigurationTest"));
         FreeStyleBuild build = j.assertBuildStatusSuccess(project.scheduleBuild2(0));
 
-        String s = FileUtils.readFileToString(build.getLogFile());
+        String s = FileUtils.readFileToString(build.getLogFile(), Charset.defaultCharset());
         assertTrue(s.contains("activated configuration successfully on"));
     }
 

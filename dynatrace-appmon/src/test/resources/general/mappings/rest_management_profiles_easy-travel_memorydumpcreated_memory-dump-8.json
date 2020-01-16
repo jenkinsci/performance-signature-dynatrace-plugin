@@ -1,0 +1,33 @@
+{
+  "id": "bd1ce03a-40ce-41e6-862d-634e84056dad",
+  "name": "rest_management_profiles_easy-travel_memorydumpcreated_memory-dump-595933818624955",
+  "request": {
+    "url": "/rest/management/profiles/easy%20Travel/memorydumpcreated/Memory%20Dump%20[595933818624955]",
+    "method": "GET"
+  },
+  "response": {
+    "status": 200,
+    "body": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><result value=\"false\"><message language=\"en\"><text>No task result available</text></message><success>false</success></result>",
+    "headers": {
+      "Date": "Tue, 14 Jan 2020 12:04:19 GMT",
+      "X-Frame-Options": "SAMEORIGIN",
+      "X-XSS-Protection": "1; mode=block",
+      "X-Content-Type-Options": "nosniff",
+      "Set-Cookie": "JSESSIONID=1mu1odf3ogadf1sv6eglaxx4wy;Path=/;Secure;HttpOnly",
+      "Expires": "Thu, 01 Jan 1970 00:00:00 GMT",
+      "Content-Type": "text/xml",
+      "Cache-Control": [
+        "no-cache",
+        "must-revalidate",
+        "max-age=0"
+      ],
+      "Pragma": "no-cache"
+    }
+  },
+  "uuid": "bd1ce03a-40ce-41e6-862d-634e84056dad",
+  "persistent": true,
+  "scenarioName": "scenario-3-rest-management-profiles-easy Travel-memorydumpcreated-Memory Dump [595933818624955]",
+  "requiredScenarioState": "scenario-3-rest-management-profiles-easy Travel-memorydumpcreated-Memory Dump [595933818624955]-2",
+  "newScenarioState": "scenario-3-rest-management-profiles-easy Travel-memorydumpcreated-Memory Dump [595933818624955]-6",
+  "insertionIndex": 8
+}

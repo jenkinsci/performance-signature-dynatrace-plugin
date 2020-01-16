@@ -1,0 +1,34 @@
+{
+  "id": "cbf280f4-7e9a-48ec-a227-1f98dc2750b6",
+  "name": "api_v2_profiles_easy-travel_session_recording_status",
+  "request": {
+    "url": "/api/v2/profiles/easy%20Travel/session/recording/status",
+    "method": "GET"
+  },
+  "response": {
+    "status": 200,
+    "body": "{\"recording\":false}",
+    "headers": {
+      "Date": "Tue, 14 Jan 2020 17:04:40 GMT",
+      "X-Frame-Options": "SAMEORIGIN",
+      "X-XSS-Protection": "1; mode=block",
+      "X-Content-Type-Options": "nosniff",
+      "Set-Cookie": "JSESSIONID=mkxdsbekrgqh1lhunh8dgb4qo;Path=/;Secure;HttpOnly",
+      "Expires": "Thu, 01 Jan 1970 00:00:00 GMT",
+      "Content-Type": "application/json",
+      "Content-Disposition": "inline; filename=\"response.json\"",
+      "Cache-Control": [
+        "no-cache",
+        "must-revalidate",
+        "max-age=0"
+      ],
+      "Pragma": "no-cache"
+    }
+  },
+  "uuid": "cbf280f4-7e9a-48ec-a227-1f98dc2750b6",
+  "persistent": true,
+  "scenarioName": "scenario-2-api-v2-profiles-easy Travel-session-recording-status",
+  "requiredScenarioState": "Started",
+  "newScenarioState": "scenario-2-api-v2-profiles-easy Travel-session-recording-status-2",
+  "insertionIndex": 8
+}
