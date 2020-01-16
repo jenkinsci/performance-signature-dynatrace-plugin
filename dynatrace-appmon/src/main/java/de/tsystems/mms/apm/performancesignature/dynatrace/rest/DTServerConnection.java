@@ -35,6 +35,7 @@ import de.tsystems.mms.apm.performancesignature.dynatrace.util.PerfSigUtils;
 import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
 import hudson.FilePath;
 import hudson.ProxyConfiguration;
+import io.mikael.urlbuilder.util.Encoder;
 import jenkins.model.Jenkins;
 import okhttp3.ResponseBody;
 import org.apache.commons.lang.exception.ExceptionUtils;
@@ -43,6 +44,7 @@ import retrofit2.Response;
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
 import java.net.Proxy;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -59,6 +61,7 @@ public class DTServerConnection {
     public static final String BUILD_VAR_KEY_MARKER = "dtMarker";
     public static final String BUILD_VAR_KEY_PLATFORM = "dtPlatform";
     private static final String SESSION_PREFIX = "stored:";
+    private static final Encoder URLENCODER = new Encoder(StandardCharsets.UTF_8);
 
     private final String systemProfile;
     private final ApiClient apiClient;
@@ -338,7 +341,7 @@ public class DTServerConnection {
     public boolean threadDumpStatus(final String threadDump) {
         CustomXMLApi api = apiClient.createService(CustomXMLApi.class);
         try {
-            ApiResponse<XmlResult> response = apiClient.execute(api.getThreadDumpStatus(systemProfile, threadDump));
+            ApiResponse<XmlResult> response = apiClient.execute(api.getThreadDumpStatus(systemProfile, URLENCODER.encodePath(threadDump)));
             return response.getData().isSuccessTrue();
         } catch (Exception ex) {
             throw new CommandExecutionException("error while querying thread dump status: " + ex.getMessage(), ex);
@@ -361,7 +364,7 @@ public class DTServerConnection {
     public boolean memoryDumpStatus(final String memoryDump) {
         CustomXMLApi api = apiClient.createService(CustomXMLApi.class);
         try {
-            ApiResponse<XmlResult> response = apiClient.execute(api.getMemoryDumpStatus(systemProfile, memoryDump));
+            ApiResponse<XmlResult> response = apiClient.execute(api.getMemoryDumpStatus(systemProfile, URLENCODER.encodePath(memoryDump)));
             return response.getData().isSuccessTrue();
         } catch (Exception ex) {
             throw new CommandExecutionException("error while querying memory dump status: " + ex.getMessage(), ex);

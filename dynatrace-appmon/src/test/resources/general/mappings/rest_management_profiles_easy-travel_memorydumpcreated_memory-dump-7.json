@@ -2,7 +2,7 @@
   "id": "9666351e-53a7-4907-8164-cb759dba9503",
   "name": "rest_management_profiles_easy-travel_memorydumpcreated_memory-dump-595933818624955",
   "request": {
-    "url": "/rest/management/profiles/easy%20Travel/memorydumpcreated/Memory%20Dump%20[595933818624955]",
+    "url": "/rest/management/profiles/easy%20Travel/memorydumpcreated/Memory%20Dump%20%5B595933818624955%5D",
     "method": "GET"
   },
   "response": {

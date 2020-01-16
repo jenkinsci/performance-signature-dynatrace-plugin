@@ -77,7 +77,7 @@ public interface CustomXMLApi {
     })
     @GET("rest/management/profiles/{systemProfile}/memorydumpcreated/{memorydumpId}")
     Call<XmlResult> getMemoryDumpStatus(
-            @Path("systemProfile") String profileName, @Path("memorydumpId") String memoryDumpName
+            @Path("systemProfile") String profileName, @Path(value = "memorydumpId", encoded = true) String memoryDumpName
     );
 
     @Headers({
@@ -95,7 +95,7 @@ public interface CustomXMLApi {
     })
     @GET("rest/management/profiles/{systemProfile}/threaddumpcreated/{threaddumpId}")
     Call<XmlResult> getThreadDumpStatus(
-            @Path("systemProfile") String profileName, @Path("threaddumpId") String threadDumpName
+            @Path("systemProfile") String profileName, @Path(value = "threaddumpId", encoded = true) String threadDumpName
     );
 
     @Headers({
