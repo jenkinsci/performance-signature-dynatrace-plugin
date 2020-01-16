@@ -102,7 +102,7 @@ public class RecorderOneTest {
         assertEquals(7, dashboardReport.getChartDashlets().size());
     }
 
-    //@Test
+    @Test
     public void testPipelineConfiguration() throws Exception {
         String testCase = "RecorderOneTest";
 
