@@ -1,8 +1,10 @@
 Changelog
 ====
-### Version 3.1.5 (unreleased)
+### Version 3.1.5 (Jan 16, 2020)
+* JENKINS-55202 fix classloading issues with JAXB
 * log error message, instead of response message
 * increase minimum jenkins version to 2.164.1
+* several dependency updates
 * Dev: update parent pom version to 3.55
 * Dev: switch to wiremock for Dynatrace AppMon
 
