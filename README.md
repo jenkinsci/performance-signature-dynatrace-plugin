@@ -41,15 +41,15 @@ Send a [mail](mailto:performance@t-systems-mms.com) to the Application Performan
 
 The Performance Signature evaluates aggregated load and performance data from Dynatrace after each build.
 We are currently supporting three data sources:
-* Dynatrace AppMon
+* Dynatrace Application Monitoring (AppMon)
 * Dynatrace SaaS/Manged
 * Remote Jenkins Jobs with enabled Performance Signature
 
-Each data source has it's own Jenkins plugin, but all Jenkins plugins depend on the Performance Signature: UI Plugin.
+Each data source has it's own Jenkins plugin, whereof each one depends on the Performance Signature UI Plugin.
 Find below the documentation of each component.
 
 * **[Performance Signature: Dynatrace AppMon](dynatrace-appmon/README.md)**
-* **[Performance Signature: Dynatrace SaaS/Manged](dynatrace/README.md)**
+* **[Performance Signature: Dynatrace SaaS/Managed](dynatrace/README.md)**
 * **[Performance Signature: Dynatrace Viewer](viewer/README.md)**
 
 ## Installation
@@ -69,8 +69,7 @@ This procedure is meant for developers, who want to install a locally built plug
 
 ## Problems? Questions? Suggestions?
 
-* Post any problems, questions or suggestions to the Dynatrace Community's [Application Monitoring & UEM Forum](https://answers.dynatrace.com/spaces/146/index.html).
-* Contact the Performance Experts at T-Systems: `performance@t-systems-mms.com`
+Contact the Performance Experts at T-Systems: `performance@t-systems-mms.com` for professional support or consultancy. T-Systems offers support packages starting at 500 € p.a.
 
 ## Additional Resources
 
