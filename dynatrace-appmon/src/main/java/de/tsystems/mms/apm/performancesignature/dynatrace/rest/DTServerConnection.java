@@ -26,11 +26,34 @@ import de.tsystems.mms.apm.performancesignature.dynatrace.model.TestRun;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.ApiClient;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.ApiException;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.ApiResponse;
-import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.api.*;
-import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model.*;
+import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.api.AlertsIncidentsAndEventsApi;
+import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.api.CustomXMLApi;
+import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.api.LiveSessionsApi;
+import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.api.ServerManagementApi;
+import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.api.StoredSessionsApi;
+import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.api.SystemProfilesApi;
+import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.api.TestAutomationApi;
+import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model.ActivationStatus;
+import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model.Alerts;
+import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model.DeploymentEvent;
+import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model.EventUpdate;
+import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model.RecordingStatus;
+import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model.Result;
+import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model.SessionRecordingOptions;
+import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model.SessionStoringOptions;
+import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model.Sessions;
+import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model.SystemProfileConfiguration;
+import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model.SystemProfileConfigurations;
+import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model.SystemProfiles;
+import de.tsystems.mms.apm.performancesignature.dynatrace.rest.json.model.TestRunDefinition;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.CommandExecutionException;
 import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.ContentRetrievalException;
-import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.model.*;
+import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.model.Agent;
+import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.model.AgentList;
+import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.model.Dashboard;
+import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.model.DashboardList;
+import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.model.LicenseInformation;
+import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.model.XmlResult;
 import de.tsystems.mms.apm.performancesignature.dynatrace.util.PerfSigUtils;
 import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
 import hudson.FilePath;
@@ -138,7 +161,10 @@ public class DTServerConnection {
                     chartDashlet.getMeasures().addAll(dynamicMeasures);
                 }
                 //filter out "Synthetic Web Requests by Timer Name - PurePath Response Time - "
-                chartDashlet.getMeasures().forEach(m -> m.setName(m.getName().replace("Synthetic Web Requests by Timer Name - PurePath Response Time - ", "")));
+                chartDashlet.getMeasures()
+                        .stream().filter(m -> m.getName() != null)
+                        .forEach(m -> m.setName(m.getName()
+                                .replace("Synthetic Web Requests by Timer Name - PurePath Response Time - ", "")));
             });
 
             return dashboardReport;
