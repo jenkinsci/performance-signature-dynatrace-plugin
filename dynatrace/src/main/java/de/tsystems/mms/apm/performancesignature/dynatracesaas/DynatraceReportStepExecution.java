@@ -18,7 +18,11 @@ package de.tsystems.mms.apm.performancesignature.dynatracesaas;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import de.tsystems.mms.apm.performancesignature.dynatrace.model.*;
+import de.tsystems.mms.apm.performancesignature.dynatrace.model.Alert;
+import de.tsystems.mms.apm.performancesignature.dynatrace.model.ChartDashlet;
+import de.tsystems.mms.apm.performancesignature.dynatrace.model.DashboardReport;
+import de.tsystems.mms.apm.performancesignature.dynatrace.model.Measure;
+import de.tsystems.mms.apm.performancesignature.dynatrace.model.Measurement;
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.model.DynatraceServerConfiguration;
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.model.Specification;
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.model.SpecificationTM;
@@ -49,7 +53,12 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.OptionalDouble;
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -292,7 +301,7 @@ public class DynatraceReportStepExecution extends SynchronousNonBlockingStepExec
 
         //set url for Dynatrace dashboard
         DynatraceServerConfiguration configuration = serverConnection.getConfiguration();
-        dashboardReport.setClientUrl(String.format("%s/#topglobalwebrequests;gtf=c_%d_%d", configuration.getServerUrl(), start, end));
+        dashboardReport.setClientUrl(String.format("%s/ui/diagnostictools/mda?gtf=c_%d_%d&mdaId=topweb", configuration.getServerUrl(), start, end));
 
         //iterate over specified timeseries ids
         spec.getTimeseries().forEach(specTM -> {
