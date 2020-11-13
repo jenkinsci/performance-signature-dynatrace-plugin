@@ -1,0 +1,36 @@
+{
+  "id": "c8d130d7-ef6d-496b-86bd-fcb5c0f498f2",
+  "name": "api_v2_profiles_easy-travel_session_recording",
+  "request": {
+    "url": "/api/v2/profiles/easy%20Travel/session/recording",
+    "method": "POST",
+    "bodyPatterns": [
+      {
+        "equalToJson": "{\"sessionname\":\"easy Travel_test1_Build-1_RecorderOneTest\",\"description\":\"This session is triggered by Jenkins\",\"appendtimestamp\":false,\"recordingoption\":\"all\",\"locksession\":false}",
+        "ignoreArrayOrder": true,
+        "ignoreExtraElements": true
+      }
+    ]
+  },
+  "response": {
+    "status": 201,
+    "headers": {
+      "Date": "Tue, 14 Jan 2020 17:04:40 GMT",
+      "X-Frame-Options": "SAMEORIGIN",
+      "X-XSS-Protection": "1; mode=block",
+      "X-Content-Type-Options": "nosniff",
+      "Set-Cookie": "JSESSIONID=dl0s555x9m7synuzpfwcjg43;Path=/;Secure;HttpOnly",
+      "Expires": "Thu, 01 Jan 1970 00:00:00 GMT",
+      "Location": "https://192.168.192.202:8021/api/v2/sessions/easy+Travel%252F20200114180441_0.t0.session",
+      "Cache-Control": [
+        "no-cache",
+        "must-revalidate",
+        "max-age=0"
+      ],
+      "Pragma": "no-cache"
+    }
+  },
+  "uuid": "c8d130d7-ef6d-496b-86bd-fcb5c0f498f2",
+  "persistent": true,
+  "insertionIndex": 9
+}
