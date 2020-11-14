@@ -1,5 +1,14 @@
 Changelog
 ====
+### Version 3.1.6 (Nov 14, 2020)
+* fix NPE in AppMon module
+* update url to diagnostic tools
+* Optimized Images [(9b621c3)](https://github.com/jenkinsci/performance-signature-dynatrace-plugin/commit/d268da229cd2c15eb5515e27ea23bdadae09448c)
+* several dependency updates
+* increase minimum jenkins version to 2.164.3
+* Dev: update parent pom version to 4.13
+* Dev: bump bom-2.164.x from 9 to 10
+
 ### Version 3.1.5 (Jan 16, 2020)
 * JENKINS-55202 fix classloading issues with JAXB
 * log error message, instead of response message
