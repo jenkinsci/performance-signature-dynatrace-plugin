@@ -336,7 +336,7 @@ public class DynatraceReportStepExecution extends SynchronousNonBlockingStepExec
                 overallMeasure.setColor(DEFAULT_COLOR);
 
                 UnitEnum calculatedUnit = calculateUnitEnum(baseResult, getScalarValue(totalValues.get(AggregationTypeEnum.MAX)));
-                overallMeasure.setUnit(calculatedUnit.getValue());
+                if (calculatedUnit != null) overallMeasure.setUnit(calculatedUnit.getValue());
 
                 //calculate aggregated values from totalValues
                 overallMeasure.setAvg(getScalarValue(totalValues.get(AggregationTypeEnum.AVG)));
@@ -371,7 +371,7 @@ public class DynatraceReportStepExecution extends SynchronousNonBlockingStepExec
 
                     Measure measure = new Measure(handleEntityIdString(baseResult.getEntities(), key));
                     measure.setAggregation(translateAggregation(specTM.getAggregation()));
-                    measure.setUnit(calculatedUnit.getValue());
+                    if (calculatedUnit != null) measure.setUnit(calculatedUnit.getValue());
                     measure.setColor(DEFAULT_COLOR);
 
                     measure.setAvg(totalValuesPerDataPoint.getOrDefault(AggregationTypeEnum.AVG, 0D));
