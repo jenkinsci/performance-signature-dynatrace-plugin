@@ -102,7 +102,7 @@ public class DynatraceReportStepExecution extends SynchronousNonBlockingStepExec
 
     private static double getMeasurementValue(Map<AggregationTypeEnum, Map<Long, Double>> scalarValues, long key, AggregationTypeEnum aggregation) {
         Map<Long, Double> aggregationValues = scalarValues.get(aggregation);
-        if (MapUtils.isNotEmpty(aggregationValues)) {
+        if (MapUtils.isNotEmpty(aggregationValues) && aggregationValues.containsKey(key)) {
             return PerfSigUIUtils.roundAsDouble(aggregationValues.get(key));
         }
         return 0;
