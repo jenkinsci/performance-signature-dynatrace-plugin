@@ -20,7 +20,7 @@
   "dependencies": {
     "@jenkins-cd/js-modules": "latest",
     "bootstrap-detached": "^3.3.5-v1",
-    "datatables.net": "^1.10.19",
+    "datatables.net": "^1.10.22",
     "datatables.net-bs": "^1.10.19",
     "jquery": "^3.5.0",
     "jquery-bridget": "latest",
