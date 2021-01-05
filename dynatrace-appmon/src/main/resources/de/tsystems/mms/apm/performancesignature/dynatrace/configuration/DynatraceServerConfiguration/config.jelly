@@ -15,7 +15,6 @@
   ~ limitations under the License.
   -->
 <j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form" xmlns:st="jelly:stapler">
-
         <f:entry field="name" title="${%Name}">
             <f:textbox/>
         </f:entry>
@@ -53,5 +52,4 @@
                 </div>
             </f:repeatable>
         </f:entry>
-
 </j:jelly>

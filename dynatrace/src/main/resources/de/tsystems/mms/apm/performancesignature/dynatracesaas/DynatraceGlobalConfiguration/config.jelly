@@ -19,36 +19,32 @@
     <f:section title="${%Performance Signature: Dynatrace Saas/Managed}">
         <f:entry title="${%Dynatrace server configurations}">
             <f:repeatable field="configurations" header="${%Dynatrace server}" add="${%add Dynatrace server}">
-
-                    <f:entry field="name" title="${%Name}">
-                        <f:textbox clazz="required"/>
+                <f:entry field="name" title="${%Name}">
+                    <f:textbox clazz="required"/>
+                </f:entry>
+                <f:entry field="serverUrl" title="${%Dynatrace Server URL}"
+                         description="${%Specify the url to use}">
+                    <f:textbox default="${descriptor.defaultServerUrl}"/>
+                </f:entry>
+                <f:entry title="${%Dynatrace API Token}" field="apiTokenId">
+                    <c:select/>
+                </f:entry>
+                <f:advanced>
+                    <f:entry title="${%use Proxy}" field="useProxy"
+                             description="${%use proxy server configured in Jenkins}">
+                        <f:checkbox default="${descriptor.defaultUseProxy}"/>
                     </f:entry>
-                    <f:entry field="serverUrl" title="${%Dynatrace Server URL}"
-                             description="${%Specify the url to use}">
-                        <f:textbox default="${descriptor.defaultServerUrl}"/>
+                    <f:entry title="${%verify Certificate}" field="verifyCertificate"
+                             description="${%Verify or ignore the Dynatrace Server Certificate?}">
+                        <f:checkbox default="${descriptor.defaultVerifyCertificate}"/>
                     </f:entry>
-                    <f:entry title="${%Dynatrace API Token}" field="apiTokenId">
-                        <c:select/>
-                    </f:entry>
-                    <f:advanced>
-                        <f:entry title="${%use Proxy}" field="useProxy"
-                                 description="${%use proxy server configured in Jenkins}">
-                            <f:checkbox default="${descriptor.defaultUseProxy}"/>
-                        </f:entry>
-                        <f:entry title="${%verify Certificate}" field="verifyCertificate"
-                                 description="${%Verify or ignore the Dynatrace Server Certificate?}">
-                            <f:checkbox default="${descriptor.defaultVerifyCertificate}"/>
-                        </f:entry>
-                    </f:advanced>
-                    <f:validateButton title="${%Test connection}" progress="${%Testing...}"
-                                      method="testServerConnection"
-                                      with="serverUrl,verifyCertificate,envId,apiTokenId"/>
-                    <f:entry title="">
-
-                            <f:repeatableDeleteButton value="${%Remove Jenkins server}"/>
-
-                    </f:entry>
-
+                </f:advanced>
+                <f:validateButton title="${%Test connection}" progress="${%Testing...}"
+                                  method="testServerConnection"
+                                  with="serverUrl,verifyCertificate,envId,apiTokenId"/>
+                <f:entry title="">
+                    <f:repeatableDeleteButton value="${%Remove Jenkins server}"/>
+                </f:entry>
             </f:repeatable>
         </f:entry>
     </f:section>
