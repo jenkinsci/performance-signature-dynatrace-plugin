@@ -19,8 +19,7 @@
     <f:section title="${%Performance Signature: Dynatrace Saas/Managed}">
         <f:entry title="${%Dynatrace server configurations}">
             <f:repeatable field="configurations" header="${%Dynatrace server}" add="${%add Dynatrace server}">
-                <table width="100%">
-                    <br/>
+
                     <f:entry field="name" title="${%Name}">
                         <f:textbox clazz="required"/>
                     </f:entry>
@@ -45,11 +44,11 @@
                                       method="testServerConnection"
                                       with="serverUrl,verifyCertificate,envId,apiTokenId"/>
                     <f:entry title="">
-                        <div align="right">
+
                             <f:repeatableDeleteButton value="${%Remove Jenkins server}"/>
-                        </div>
+
                     </f:entry>
-                </table>
+
             </f:repeatable>
         </f:entry>
     </f:section>

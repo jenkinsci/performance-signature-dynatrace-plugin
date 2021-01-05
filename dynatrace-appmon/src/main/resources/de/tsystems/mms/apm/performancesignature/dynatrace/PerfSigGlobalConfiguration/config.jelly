@@ -19,9 +19,9 @@
         <f:entry title="${%Dynatrace server configurations}">
             <f:repeatable field="configurations" header="${%Dynatrace server}" add="${%add Dynatrace server}">
                 <st:include page="config.jelly" class="${descriptor.clazz}"/>
-                <div align="right">
+
                     <f:repeatableDeleteButton value="${%Remove Dynatrace server}"/>
-                </div>
+
             </f:repeatable>
         </f:entry>
     </f:section>
