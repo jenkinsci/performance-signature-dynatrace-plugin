@@ -14,42 +14,164 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form" xmlns:st="jelly:stapler">
-        <f:entry field="name" title="${%Name}">
-            <f:textbox/>
-        </f:entry>
-        <f:entry field="serverUrl" title="${%Dynatrace AppMon REST Endpoint}" description="${%Specify the url to use}">
-            <f:textbox default="${descriptor.defaultServerUrl}"/>
-        </f:entry>
 
-        <f:advanced>
-            <f:entry title="${%use Proxy}" field="useProxy"
-                     description="${%use proxy server configured in Jenkins}">
-                <f:checkbox default="${descriptor.defaultUseProxy}"/>
-            </f:entry>
-            <f:entry title="${%verify Certificate}" field="verifyCertificate"
-                     description="${%Verify or ignore the Dynatrace Server Certificate?}">
-                <f:checkbox default="${descriptor.defaultVerifyCertificate}"/>
-            </f:entry>
-            <f:entry title="${%Delay}" field="delay"
-                     description="${%Time to wait until requesting the build results to ensure all data has been processed by the Dynatrace Server}">
-                <f:number default="${descriptor.defaultDelay}"/>
-            </f:entry>
-            <f:entry title="${%Retry Count}" field="retryCount"
-                     description="${%The Dynatrace Server might take a while to fully process the data collected during the test run. By default, the plugin will try get data 5 times, 10 seconds apart.}">
-                <f:number default="${descriptor.defaultRetryCount}"/>
-            </f:entry>
-            <f:entry title="${%read timeout}" field="readTimeout"
-                     description="${%The Jenkins Server might take a while to fully stop the session or download a session. By default the plugin will wait 300 seconds.}">
-                <f:number default="${descriptor.defaultReadTimeout}"/>
-            </f:entry>
-        </f:advanced>
-        <f:entry title="${%Credentials/profiles pairs}">
-            <f:repeatable field="credProfilePairs" header="${%Credentials/profile pair}" add="${%Add credentials/profile pair}">
-                <st:include page="config.jelly" class="${descriptor.clazz}"/>
-                <div align="right">
-                    <f:repeatableDeleteButton value="${%Remove credentials/profile pair}"/>
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form" xmlns:st="jelly:stapler" xmlns:local="local" xmlns:d="jelly:define"  >
+    <d:taglib uri="local">
+    <d:tag name="blockWrapper">
+        <j:choose>
+            <j:when test="${divBasedFormLayout}">
+                <div>
+                    <d:invokeBody/>
                 </div>
-            </f:repeatable>
-        </f:entry>
+            </j:when>
+            <j:otherwise>
+                <table style="width:100%">
+                    <d:invokeBody/>
+                </table>
+            </j:otherwise>
+        </j:choose>
+    </d:tag>
+    <d:tag name="row">
+        <j:choose>
+            <j:when test="${divBasedFormLayout}">
+                <div class="tr">
+                    <d:invokeBody/>
+                </div>
+            </j:when>
+            <j:otherwise>
+                <tr>
+                    <d:invokeBody/>
+                </tr>
+            </j:otherwise>
+        </j:choose>
+    </d:tag>
+    <d:tag name="td">
+        <j:choose>
+            <j:when test="${divBasedFormLayout}">
+                <div>
+                    <d:invokeBody/>
+                </div>
+            </j:when>
+            <j:otherwise>
+                <td>
+                    <d:invokeBody/>
+                </td>
+            </j:otherwise>
+        </j:choose>
+    </d:tag>
+        <local:blockWrapper style="width:100%">
+            <local:row>
+            <local:td>
+            <local:row>
+            <local:td>
+            <j:if test="${divBasedFormLayout}">
+                <f:entry field="name" title="${%Name}">
+                    <f:textbox/>
+                </f:entry>
+            </j:if>
+            </local:td>
+                <j:if test="${!divBasedFormLayout}">
+                    <f:entry field="name" title="${%Name}">
+                        <f:textbox/>
+                    </f:entry>
+                </j:if>
+            </local:row>
+
+            <local:row>
+                <local:td>
+                    <j:if test="${divBasedFormLayout}">
+                        <f:entry field="serverUrl" title="${%Dynatrace AppMon REST Endpoint}" description="${%Specify the url to use}">
+                            <f:textbox default="${descriptor.defaultServerUrl}"/>
+                        </f:entry>
+                    </j:if>
+                </local:td>
+                <j:if test="${!divBasedFormLayout}">
+                    <f:entry field="serverUrl" title="${%Dynatrace AppMon REST Endpoint}" description="${%Specify the url to use}">
+                        <f:textbox default="${descriptor.defaultServerUrl}"/>
+                    </f:entry>
+                </j:if>
+            </local:row>
+
+
+            <local:row>
+                <local:td>
+                    <j:if test="${divBasedFormLayout}">
+                        <f:advanced>
+                            <f:entry title="${%use Proxy}" field="useProxy"
+                                     description="${%use proxy server configured in Jenkins}">
+                                <f:checkbox default="${descriptor.defaultUseProxy}"/>
+                            </f:entry>
+                            <f:entry title="${%verify Certificate}" field="verifyCertificate"
+                                     description="${%Verify or ignore the Dynatrace Server Certificate?}">
+                                <f:checkbox default="${descriptor.defaultVerifyCertificate}"/>
+                            </f:entry>
+                            <f:entry title="${%Delay}" field="delay"
+                                     description="${%Time to wait until requesting the build results to ensure all data has been processed by the Dynatrace Server}">
+                                <f:number default="${descriptor.defaultDelay}"/>
+                            </f:entry>
+                            <f:entry title="${%Retry Count}" field="retryCount"
+                                     description="${%The Dynatrace Server might take a while to fully process the data collected during the test run. By default, the plugin will try get data 5 times, 10 seconds apart.}">
+                                <f:number default="${descriptor.defaultRetryCount}"/>
+                            </f:entry>
+                            <f:entry title="${%read timeout}" field="readTimeout"
+                                     description="${%The Jenkins Server might take a while to fully stop the session or download a session. By default the plugin will wait 300 seconds.}">
+                                <f:number default="${descriptor.defaultReadTimeout}"/>
+                            </f:entry>
+                        </f:advanced>
+                    </j:if>
+                </local:td>
+                <j:if test="${!divBasedFormLayout}">
+                    <f:advanced>
+                        <f:entry title="${%use Proxy}" field="useProxy"
+                                 description="${%use proxy server configured in Jenkins}">
+                            <f:checkbox default="${descriptor.defaultUseProxy}"/>
+                        </f:entry>
+                        <f:entry title="${%verify Certificate}" field="verifyCertificate"
+                                 description="${%Verify or ignore the Dynatrace Server Certificate?}">
+                            <f:checkbox default="${descriptor.defaultVerifyCertificate}"/>
+                        </f:entry>
+                        <f:entry title="${%Delay}" field="delay"
+                                 description="${%Time to wait until requesting the build results to ensure all data has been processed by the Dynatrace Server}">
+                            <f:number default="${descriptor.defaultDelay}"/>
+                        </f:entry>
+                        <f:entry title="${%Retry Count}" field="retryCount"
+                                 description="${%The Dynatrace Server might take a while to fully process the data collected during the test run. By default, the plugin will try get data 5 times, 10 seconds apart.}">
+                            <f:number default="${descriptor.defaultRetryCount}"/>
+                        </f:entry>
+                        <f:entry title="${%read timeout}" field="readTimeout"
+                                 description="${%The Jenkins Server might take a while to fully stop the session or download a session. By default the plugin will wait 300 seconds.}">
+                            <f:number default="${descriptor.defaultReadTimeout}"/>
+                        </f:entry>
+                    </f:advanced>
+                </j:if>
+            </local:row>
+
+            <local:row>
+                <local:td>
+                    <j:if test="${divBasedFormLayout}">
+                        <f:entry title="${%Credentials/profiles pairs}">
+                            <f:repeatable field="credProfilePairs" header="${%Credentials/profile pair}" add="${%Add credentials/profile pair}">
+                                <st:include page="config.jelly" class="${descriptor.clazz}"/>
+                                <div align="right">
+                                    <f:repeatableDeleteButton value="${%Remove credentials/profile pair}"/>
+                                </div>
+                            </f:repeatable>
+                        </f:entry>
+                    </j:if>
+                </local:td>
+                <j:if test="${!divBasedFormLayout}">
+                    <f:entry title="${%Credentials/profiles pairs}">
+                        <f:repeatable field="credProfilePairs" header="${%Credentials/profile pair}" add="${%Add credentials/profile pair}">
+                            <st:include page="config.jelly" class="${descriptor.clazz}"/>
+                            <div align="right">
+                                <f:repeatableDeleteButton value="${%Remove credentials/profile pair}"/>
+                            </div>
+                        </f:repeatable>
+                    </f:entry>
+                </j:if>
+            </local:row>
+            </local:td>
+            </local:row>
+        </local:blockWrapper>
+    </d:taglib>
 </j:jelly>
