@@ -14,6 +14,18 @@
  * limitations under the License.
  */
 
-require('bootstrap-detached').getBootstrap();
-require('./prototypecompat.js');
-require('./tabhashes.js');
+(function ($) {
+    var hash = window.location.hash;
+    if (hash) {
+        $('ul.nav a[href="' + hash + '"]').tab('show');
+    } else {
+        $('#tabList').find('a:first').tab('show'); // Select first tab
+    }
+
+    $('.nav-tabs a').click(function () {
+        $(this).tab('show');
+        var scrollmem = $('body').scrollTop() || $('html').scrollTop();
+        window.location.hash = this.hash;
+        $('html,body').scrollTop(scrollmem);
+    });
+})(jQuery3);
