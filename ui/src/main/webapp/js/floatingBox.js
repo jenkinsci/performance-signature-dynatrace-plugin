@@ -14,11 +14,8 @@
  * limitations under the License.
  */
 
-var $ = require('bootstrap-detached').getBootstrap();
-require('./prototypecompat.js');
-require('./tabhashes.js');
 
-$(document).ready(function () {
+(function ($) {
     "use strict";
 
     var randomParam = '&_=' + $.now();
@@ -44,4 +41,4 @@ $(document).ready(function () {
             $('.carousel').carousel(0);
         });
     });
-});
+})(jQuery3);
