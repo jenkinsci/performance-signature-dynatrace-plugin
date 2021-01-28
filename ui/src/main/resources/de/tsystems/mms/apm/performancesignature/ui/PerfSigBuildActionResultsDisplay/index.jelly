@@ -178,7 +178,7 @@
             </div>
             <br style="clear:both;"/>
             <st:adjunct includes="io.jenkins.plugins.jquery3"/>
-            <script src="${resURL}/plugin/performance-signature-ui/js/buildactionresultsdisplay.js"/>
+            <script src="${resURL}/plugin/performance-signature-ui/js/tabhashes.js"/>
         </l:main-panel>
     </bs:layout>
 </j:jelly>
