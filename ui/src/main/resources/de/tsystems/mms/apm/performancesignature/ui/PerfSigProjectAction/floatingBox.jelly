@@ -15,10 +15,11 @@
   -->
 
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler">
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler"   xmlns:bs="/bootstrap">
+
     <j:if test="${from.lastDashboardReports != null}">
         <br/>
-        <div class="tw-bs">
+        <st:adjunct includes="io.jenkins.plugins.bootstrap4"/>
             <div class="pull-right" style="position:relative; z-index:1">
                 <div class="alert alert-success" role="alert">
                     <font size="3">${from.displayName}</font>
@@ -59,9 +60,9 @@
                 </div>
             </div>
             <br style="clear:both;"/>
-        </div>
     </j:if>
     <st:bind var="projectAction" value="${from}"/>
-    <st:adjunct includes="org.jenkins.ui.jsmodules.css.bootstrapprefix"/>
-    <st:adjunct includes="org.jenkins.ui.jsmodules.performance-signature-ui.floatingBox"/>
+    <st:adjunct includes="io.jenkins.plugins.jquery3"/>
+    <script src="${resURL}/plugin/performance-signature-ui/js/floatingBox.js"/>
+    <script src="${resURL}/plugin/performance-signature-ui/js/tabhashes.js"/>
 </j:jelly>
