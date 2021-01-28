@@ -14,17 +14,10 @@
  * limitations under the License.
  */
 
-var $ = require('bootstrap-detached').getBootstrap();
-require('./prototypecompat');
-require('./tabhashes');
-var wurl = require('wurl');
-require('datatables.net-bs')(window, $);
-require('lightbox2');
-var jQueryBridget = require('jquery-bridget');
-var Gridster = require('./gridster/jquery.gridster');
-jQueryBridget('gridster', Gridster, $);
+import wurl from 'wurl';
+import 'lightbox2';
 
-$(document).ready(function () {
+(function ($) {
     "use strict";
 
     var grid = [];
@@ -186,7 +179,7 @@ $(document).ready(function () {
         window.location.hash = this.hash;
         $('html,body').scrollTop(scrollmem);
     });
-});
+})(jQuery3);
 
 function generateTitle(measure, chartDashlet, aggregation) {
     var chartDashletName = measure.replace(/\s/g, '') === chartDashlet.replace(/\s/g, '') ? chartDashlet : chartDashlet + ' - ' + measure;

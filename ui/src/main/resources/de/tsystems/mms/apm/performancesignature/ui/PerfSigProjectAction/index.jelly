@@ -15,8 +15,8 @@
   -->
 
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout" xmlns:fmt="jelly:fmt">
-    <l:layout title="Performance Signature Overview for ${it.job.name}" norefresh="true">
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout" xmlns:fmt="jelly:fmt" xmlns:bs="/bootstrap">
+    <bs:layout title="Performance Signature Overview for ${it.job.name}" norefresh="true">
         <l:header>
             <link type="text/css" href="${resURL}/plugin/performance-signature-ui/css/datatables.min.css" rel="stylesheet"/>
             <link type="text/css" href="${resURL}/plugin/performance-signature-ui/css/jquery.gridster.min.css" rel="stylesheet"/>
@@ -34,17 +34,18 @@
         <j:set var="trpa" value="${it.testResultProjectAction}"/>
         <j:set var="tr" value="${trpa.lastTestResultAction}"/>
         <l:main-panel>
-            <div class="tw-bs">
-                <div class="container-fluid" style="height: 170px;">
-                    <h1>${%Performance Signature for} ${it.job.name}</h1>
-                    <div class="row col-md-24">
-                        <ul class="nav nav-tabs" role="tablist" id="tabList">
-                            <j:forEach var="lastDashboardReport" items="${it.lastDashboardReports}">
-                                <li role="presentation">
-                                    <a href="#${lastDashboardReport.name}" aria-controls="${lastDashboardReport.name}" data-toggle="tab" role="tab">
-                                        <h3>${lastDashboardReport.name}</h3>
-                                    </a>
-                                </li>
+            <st:adjunct includes="io.jenkins.plugins.bootstrap4"/>
+            <st:adjunct includes="io.jenkins.plugins.data-tables"/>
+            <div class="container-fluid" style="height: 170px;">
+                <h1>${%Performance Signature for} ${it.job.name}</h1>
+                <div class="row col-md-24">
+                    <ul class="nav nav-tabs" role="tablist" id="tabList">
+                        <j:forEach var="lastDashboardReport" items="${it.lastDashboardReports}">
+                            <li role="presentation">
+                                <a href="#${lastDashboardReport.name}" aria-controls="${lastDashboardReport.name}" data-toggle="tab" role="tab">
+                                    <h3>${lastDashboardReport.name}</h3>
+                                </a>
+                            </li>
                             </j:forEach>
                         </ul>
                     </div>
@@ -205,10 +206,8 @@
                         </div>
                     </j:forEach>
                 </div>
-            </div>
-            <st:adjunct includes="org.jenkins.ui.jsmodules.css.bootstrapprefix"/>
             <st:adjunct includes="org.jenkins.ui.jsmodules.performance-signature-ui.projectaction"/>
             <st:bind var="projectAction" value="${it}"/>
         </l:main-panel>
-    </l:layout>
+    </bs:layout>
 </j:jelly>

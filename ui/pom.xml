@@ -16,6 +16,17 @@
     <name>Performance Signature: UI</name>
     <url>https://wiki.jenkins.io/display/JENKINS/Performance+Signature+with+Dynatrace+Plugin</url>
 
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+            <resource>
+                <directory>target/generated-resources/adjuncts</directory>
+            </resource>
+        </resources>
+    </build>
+
     <dependencies>
         <dependency>
             <groupId>io.jenkins.plugins</groupId>
@@ -46,6 +57,11 @@
             <groupId>io.jenkins.plugins</groupId>
             <artifactId>jquery3-api</artifactId>
             <version>3.5.1-2</version>
+        </dependency>
+        <dependency>
+            <groupId>io.jenkins.plugins</groupId>
+            <artifactId>data-tables-api</artifactId>
+            <version>1.10.21-3</version>
         </dependency>
     </dependencies>
 </project>
