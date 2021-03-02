@@ -24,11 +24,11 @@
                 <div class="alert alert-success" role="alert">
                     <font size="3">${from.displayName}</font>
                 </div>
-                <div class="panel panel-success">
+                <div class="card card-success">
                     <ul class="nav nav-tabs" role="tablist" id="tabList" style="margin-top: 0;">
                         <j:forEach var="dashboardReport" items="${from.lastDashboardReports}">
-                            <li role="presentation">
-                                <a href="#${dashboardReport.name}" aria-controls="${dashboardReport.name}" role="tab" data-toggle="tab">
+                            <li  class="nav-item" role="presentation">
+                                <a  class="nav-link" href="#${dashboardReport.name}" aria-controls="${dashboardReport.name}" role="tab" data-toggle="tab">
                                     ${dashboardReport.name}
                                 </a>
                             </li>
@@ -38,20 +38,22 @@
                         <j:forEach var="dashboardReport" items="${from.lastDashboardReports}">
                             <div role="tabpanel" class="tab-pane" id="${dashboardReport.name}">
                                 <a href="${from.urlName}/#${dashboardReport.name}">
-                                    <div id="carousel-${dashboardReport.name}" class="carousel slide" data-ride="carousel">
+                                    <div id="carousel-${dashboardReport.name}" class="carousel" data-ride="carousel" data-interval="false">
                                         <!-- Wrapper for slides -->
                                         <div class="carousel-inner" role="listbox"/>
+
                                         <!-- Controls -->
-                                        <a style="background-image:none !important" class="left carousel-control"
+                                        <a style="background-image:none !important" class="carousel-control-prev"
                                            href="#carousel-${dashboardReport.name}" role="button" data-slide="prev">
-                                            <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"/>
+                                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                                             <span class="sr-only">Previous</span>
                                         </a>
-                                        <a style="background-image:none !important" class="right carousel-control"
+                                        <a style="background-image:none !important" class="carousel-control-next"
                                            href="#carousel-${dashboardReport.name}" role="button" data-slide="next">
-                                            <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"/>
+                                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
                                             <span class="sr-only">Next</span>
                                         </a>
+
                                     </div>
                                 </a>
                             </div>

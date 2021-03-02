@@ -27,18 +27,19 @@
             $.each(json, function (index) {
                 if (json[index].show) {
                     if (json[index].id === 'unittest_overview') {
-                        $('.carousel-inner', carousel).append('<div class="item">' +
+                        $('.carousel-inner', carousel).append('<div class="carousel-item">' +
                             '<img class="img-thumbnail" height="300" width="410" ' +
                             'src="performance-signature/testRunGraph?width=410&amp;height=300"' + randomParam + '></div>\n');
                     } else {
-                        $('.carousel-inner', carousel).append('<div class="item">' +
+                        $('.carousel-inner', carousel).append('<div class="carousel-item">' +
                             '<img class="img-thumbnail" height="300" width="410" ' +
                             'src="performance-signature/summarizerGraph?width=410&amp;height=300&amp;id=' + json[index].id + randomParam + '"></div>\n');
                     }
                 }
             });
-            $('.carousel-inner div:first-child', carousel).addClass('active');
-            $('.carousel').carousel(0);
+             $('.carousel-inner div:first-child', carousel).addClass('active');
+
+            // $('.carousel').carousel(0);
         });
     });
 })(jQuery3);

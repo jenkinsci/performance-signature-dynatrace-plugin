@@ -18,7 +18,7 @@
   "readme": "../README.md",
   "devDependencies": {
     "clean-webpack-plugin": "^3.0.0",
-    "webpack": "5.18.0",
+    "webpack": "5.24.2",
     "webpack-cli": "^4.4.0"
   },
   "dependencies": {
