@@ -19,17 +19,18 @@
          xmlns:jm="/de/tsystems/mms/apm/performancesignature/ui/tags">
     <style type="text/css">
         .grid-stack { background: #FAFAD2; }
-        .grid-stack-item-content { background-color: #18BC9C; }
+        .grid-stack-item-content { background-color: #18BC9C; height: auto;
+        width: auto; }
     </style>
-    <script>
-        (function($) {
-            options = {
-                cellHeight: 80,
-                verticalMargin: 10
-            };
-            $('.grid-stack').gridstack(options);
-        })(jQuery3);
-    </script>
+<!--    <script>-->
+<!--        (function($) {-->
+<!--            options = {-->
+<!--                cellHeight: 80,-->
+<!--                verticalMargin: 10-->
+<!--            };-->
+<!--            $('.grid-stack').gridstack(options);-->
+<!--        })(jQuery3);-->
+<!--    </script>-->
     <bs:layout norefresh="true"
                title="Performance Signature report details for build ${it.build.number}">
         <l:header>
@@ -84,6 +85,7 @@
                                 <fmt:formatDate dateStyle="medium" type="both" value="${it.build.time}"/></i>
                             </div>
                             <div class="grid-stack">
+
                             </div>
                             <br/>
                             <br/>
@@ -97,7 +99,7 @@
                                                 <h4 style="margin-top: -2px">${%Singlereports}</h4>
                                             </div>
                                             <div class="card-body">
-                                                <j:forEach var="pdfFile" items="${pdfFiles}">
+                                                 <j:forEach var="pdfFile" items="${pdfFiles}">
                                                     <a href="./getSingleReport?testCase=${dashboardReport.name}&amp;number=${pdfFiles.indexOf(pdfFile)}"
                                                        target="_blank">
                                                         <img src="${resURL}/plugin/performance-signature-ui/images/pdficon_small.png"/>

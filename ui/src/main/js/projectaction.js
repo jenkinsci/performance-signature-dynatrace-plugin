@@ -27,12 +27,14 @@ import 'lightbox2/dist/css/lightbox.css';
 
 let options = {
     disableOneColumnMode: false,
-    float: false
+    float: false,
 };
 
 (function ($) {
     "use strict";
-    let grid = [];
+    let grid = GridStack.initAll(options,'.grid-stack');
+
+
 
     let randomParam = '&_=' + $.now();
     $.fn.dataTableExt.sErrMode = 'none';
@@ -44,11 +46,13 @@ let options = {
     });
 
     $(".tab-pane").each(function (pageIndex, page) {
+        console.log("here");
         try {
             $(".table", this).has("tbody").dataTable({
                 "stateSave": false,
                 "order": [0, 'desc']
             });
+
         } catch (e) {
             console.log(e);
         }
@@ -95,63 +99,38 @@ let options = {
             $("#editform", page).show();
             $(".del_img", page).show();
             $(".chk_show", page).show();
-            // grid[pageIndex].enable();
+            grid[pageIndex].enableMove(true);
+            grid[pageIndex].enableResize(true);
         });
-        $("#cancelbutton", this).click(function () {
+        $("#cancelbutton", page).click(function () {
             location.reload(true);
         });
 
-        $("#addbutton", this).click(function () {
+        $("#addbutton", page).click(function () {
             var request_parameter = '&amp;width=410&amp;height=250&amp;customName=' + encode($("#customName", page).val()) +
                 '&amp;customBuildCount=' + $("#customBuildCount", page).val();
             if ($("#measureGroup", page).val() === 'UnitTest overview') {
                 grid[pageIndex].addWidget({w:3,h:2,content: '<span class="del_img float-left" style="display: none"><i class="fas fa-times" style="color: red"></i></span>' +
-                        '<span class="chk_show float-right" style="display: none"><input type="checkbox" title="show in project overview" checked="checked"/></span>'+'<img class="img-thumbnail" height="250" width="410" ' +
+                        '<span class="chk_show float-right" style="display: none"><input type="checkbox" title="show in project overview" checked="checked"/></span>'+'<img class="img-thumbnail" height="240" width="410" ' +
                     'src="testRunGraph?id=unittest_overview' + request_parameter + randomParam + '">'});
 
             } else {
-
-                grid[pageIndex].addWidget({w:3,h:2,content: '<span class="del_img float-left" style="display: none"><i class="fas fa-times" style="color: red"></i></span>' +
-                        '<span class="chk_show float-right" style="display: none"><input type="checkbox" title="show in project overview" checked="checked"/></span>'+'<img class="img-thumbnail" height="250" width="410" ' +
+                grid[pageIndex].addWidget({w:3,h:2,content: '<span class="del_img float-left" style="display: none"><i class="fas fa-times" style="color: #ff0000"></i></span>' +
+                        '<span class="chk_show float-right" style="display: none"><input type="checkbox" title="show in project overview" checked="checked"/></span>'+'<img class="img-thumbnail" height="240" width="410" ' +
                     'src="summarizerGraph?id=' + $("#measure", page).val() + request_parameter + '&amp;aggregation=' + $("#aggregation", page).val() + randomParam + '">' });
-            }l
+            }
             $(".del_img", page).click(function () {
                 grid[pageIndex].removeWidget($(this).parent());
             });
         });
-        $("#donebutton", this).click(function () {
-            projectAction.setDashboardConfiguration($(page).attr('id'), JSON.stringify(grid[pageIndex].serialize()), function () {
-                location.reload(true);
-            });
-        });
 
         $('#tabList').find('a').eq(pageIndex).tab('show'); // very messy :(
-        // if ($(".gridster ul", page).length !== 0) {
-            if ($(".grid-stack", page).length !== 0) {
-            // grid[pageIndex] = $(".gridster ul", page).gridster({
-            //     namespace: "#" + $(page).attr('id'),
-            //     widget_base_dimensions: [364, 267],
-            //     widget_margins: [5, 5],
-            //
-            //     serialize_params: function ($w, wgd) {
-            //         return {
-            //             col: wgd.col,
-            //             row: wgd.row,
-            //             id: getURLParameter($("img", $w), "id"),
-            //             dashboard: $(page).attr('id'),
-            //             chartDashlet: getURLParameter($("img", $w), "chartDashlet"),
-            //             measure: getURLParameter($("img", $w), "measure"),
-            //             customName: getURLParameter($("img", $w), "customName"),
-            //             customBuildCount: getURLParameter($("img", $w), "customBuildCount"),
-            //             show: $("input[type='checkbox']", $w).prop('checked'),
-            //             aggregation: getURLParameter($("img", $w), "aggregation")
-            //         };
-            //     }
-            // }).data('gridster').disable();
-                debugger;
-                grid[pageIndex]= GridStack.init(options)
+            if ($(".grid-stack ul", page).length !== 0) {
 
-            projectAction.getDashboardConfiguration($(page).attr('id'), function (data) {
+                grid[pageIndex].enableMove(false);
+                grid[pageIndex].enableResize(false);
+
+                projectAction.getDashboardConfiguration($(page).attr('id'), function (data) {
                 var json = JSON.parse(data.responseObject());
                 $.each(json, function (index) {
                     if (json[index].dashboard === $(page).attr('id')) {
@@ -161,7 +140,7 @@ let options = {
 
                             grid[pageIndex].addWidget({w:3,h:2,content:'<span class="del_img float-left" style="display: none"><i class="fas fa-times" style="color: red"></i></span>' +
                                     '<span class="chk_show float-right" style="display: none"><input type="checkbox" title="show in project overview" checked="checked"/></span>'+'<a href="./testRunGraph?width=800&amp;height=585&amp;id=unittest_overview' + randomParam + '" ' +
-                                'data-lightbox="' + $(page).attr('id') + '"><img class="img-thumbnail" height="250" width="410" ' +
+                                'data-lightbox="' + $(page).attr('id') + '"><img class="img-thumbnail" height="240" width="410" ' +
                                 'src="./testRunGraph?width=410&amp;height=250&amp;id=unittest_overview' + randomParam + '"></a>'
                             });
 
@@ -170,19 +149,43 @@ let options = {
                                     '<input type="checkbox" title="show in project overview" ' + (json[index].show ? "checked='checked'" : "") +
                                     '/></span>'+'<a href="./summarizerGraph?width=800&amp;height=585&amp;id=' + json[index].id + randomParam + '" ' +
                                 'data-lightbox="' + $(page).attr('id') + '" data-title="' + json[index].description + '">' +
-                                '<img class="img-thumbnail" height="250" width="410" ' +
-                                'src="./summarizerGraph?width=410&amp;height=250&amp;id=' + json[index].id + randomParam +
+                                '<img class="img-thumbnail" height="240" width="410" ' +
+                                'src="./summarizerGraph?width=410&amp;height=240&amp;id=' + json[index].id + randomParam +
                                 '" title="source: ' + json[index].chartDashlet + '-' + json[index].measure + ' (' + json[index].aggregation + ')\n' + json[index].description + '"></a>'
                                 });
                         }
                     }
                 });
                 $(".chk_show", page).hide();
-                $(".del_img", page).hide().click(function () {
-                    grid[pageIndex].removeWidget($(this).parent());
+                $(".del_img",page).hide().click(function () {
+                    grid[pageIndex].removeWidget(this.parentNode.parentNode);
                 });
             });
         }
+        $("#donebutton", this).click(function () {
+            var items = [];
+            $('.grid-stack-item.ui-draggable',page).each(function () {
+
+                var $this = $(this);
+                items.push({
+                    col: $this.attr("gs-x"),
+                    row: $this.attr("gs-y"),
+                    id: getURLParameter($("img", $this), "id"),
+                    dashboard: $(page).attr('id'),
+                    chartDashlet: getURLParameter($("img",$this), "chartDashlet"),
+                    measure: getURLParameter($("img", $this), "measure"),
+                    customName: getURLParameter($("img", $this), "customName"),
+                    customBuildCount: getURLParameter($("img",$this), "customBuildCount"),
+                    show: $("input[type='checkbox']",$this).prop('checked'),
+                    aggregation: getURLParameter($("img",$this), "aggregation")
+                });
+            });
+            projectAction.setDashboardConfiguration($(page).attr('id'), JSON.stringify(items), function () {
+                location.reload(true);
+            });
+
+        });
+
     });
 
     var hash = window.location.hash;
