@@ -43,7 +43,7 @@
                                   method="testServerConnection"
                                   with="serverUrl,verifyCertificate,envId,apiTokenId"/>
                 <f:entry title="">
-                    <f:repeatableDeleteButton value="${%Remove Jenkins server}"/>
+                    <f:repeatableDeleteButton value="${%Remove Dynatrace server}"/>
                 </f:entry>
             </f:repeatable>
         </f:entry>
