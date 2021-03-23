@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 (function ($) {
     "use strict";
 
@@ -37,7 +36,7 @@
                     }
                 }
             });
-             $('.carousel-inner div:first-child', carousel).addClass('active');
+            $('.carousel-inner div:first-child', carousel).addClass('active');
 
             // $('.carousel').carousel(0);
         });
