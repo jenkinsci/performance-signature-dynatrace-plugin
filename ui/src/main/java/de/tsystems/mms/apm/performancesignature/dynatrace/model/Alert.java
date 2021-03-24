@@ -187,9 +187,9 @@ public class Alert {
             if (severity == null) return "";
             switch (severity) {
                 case WARNING:
-                    return "panel-warning";
+                    return "card-warning";
                 case SEVERE:
-                    return "panel-danger";
+                    return "card-danger";
                 default:
                     return "";
             }
