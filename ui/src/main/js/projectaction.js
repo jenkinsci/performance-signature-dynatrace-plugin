@@ -27,6 +27,7 @@ import 'lightbox2/dist/css/lightbox.css';
 
 let options = {
     float: false,
+    verticalMargin:2
 };
 
 (function ($) {
@@ -106,16 +107,16 @@ let options = {
         });
 
         $("#addbutton", page).click(function () {
-            var request_parameter = '&amp;width=410&amp;height=250&amp;customName=' + encode($("#customName", page).val()) +
+            var request_parameter = '&amp;width=370&amp;height=250&amp;customName=' + encode($("#customName", page).val()) +
                 '&amp;customBuildCount=' + $("#customBuildCount", page).val();
             if ($("#measureGroup", page).val() === 'UnitTest overview') {
                 grid[pageIndex].addWidget({w:3,h:2,content: '<span class="del_img float-left" style="display: none"><i class="fas fa-times" style="color: red"></i></span>' +
-                        '<span class="chk_show float-right" style="display: none"><input type="checkbox" title="show in project overview" checked="checked"/></span>'+'<img class="img-thumbnail" height="205" width="410" ' +
+                        '<span class="chk_show float-right" style="display: none"><input type="checkbox" title="show in project overview" checked="checked"/></span>'+'<img class="img-thumbnail" height="240" width="370" ' +
                     'src="testRunGraph?id=unittest_overview' + request_parameter + randomParam + '">'});
 
             } else {
                 grid[pageIndex].addWidget({w:3,h:2,content: '<span class="del_img float-left" style="display: none"><i class="fas fa-times" style="color: #ff0000"></i></span>' +
-                        '<span class="chk_show float-right" style="display: none"><input type="checkbox" title="show in project overview" checked="checked"/></span>'+'<img class="img-thumbnail" height="205" width="410" ' +
+                        '<span class="chk_show float-right" style="display: none"><input type="checkbox" title="show in project overview" checked="checked"/></span>'+'<img class="img-thumbnail" height="240" width="370" ' +
                     'src="summarizerGraph?id=' + $("#measure", page).val() + request_parameter + '&amp;aggregation=' + $("#aggregation", page).val() + randomParam + '">' });
             }
             $(".del_img", page).click(function () {
@@ -139,8 +140,8 @@ let options = {
 
                             grid[pageIndex].addWidget({w:3,h:2,content:'<span class="del_img float-left" style="display: none"><i class="fas fa-times" style="color: red"></i></span>' +
                                     '<span class="chk_show float-right" style="display: none"><input type="checkbox" title="show in project overview" checked="checked"/></span>'+'<a href="./testRunGraph?width=800&amp;height=585&amp;id=unittest_overview' + randomParam + '" ' +
-                                'data-lightbox="' + $(page).attr('id') + '"><img class="img-thumbnail" height="205" width="410" ' +
-                                'src="./testRunGraph?width=410&amp;height=250&amp;id=unittest_overview' + randomParam + '"></a>'
+                                'data-lightbox="' + $(page).attr('id') + '"><img class="img-thumbnail" height="240" width="370" ' +
+                                'src="./testRunGraph?width=370&amp;height=240&amp;id=unittest_overview' + randomParam + '"></a>'
                             });
 
                         } else {
@@ -148,8 +149,8 @@ let options = {
                                     '<input type="checkbox" title="show in project overview" ' + (json[index].show ? "checked='checked'" : "") +
                                     '/></span>'+'<a href="./summarizerGraph?width=800&amp;height=585&amp;id=' + json[index].id + randomParam + '" ' +
                                 'data-lightbox="' + $(page).attr('id') + '" data-title="' + json[index].description + '">' +
-                                '<img class="img-thumbnail" height="205" width="410" ' +
-                                'src="./summarizerGraph?width=410&amp;height=240&amp;id=' + json[index].id + randomParam +
+                                '<img class="img-thumbnail" height="240" width="370" ' +
+                                'src="./summarizerGraph?width=370&amp;height=240&amp;id=' + json[index].id + randomParam +
                                 '" title="source: ' + json[index].chartDashlet + '-' + json[index].measure + ' (' + json[index].aggregation + ')\n' + json[index].description + '"></a>'
                                 });
                         }
