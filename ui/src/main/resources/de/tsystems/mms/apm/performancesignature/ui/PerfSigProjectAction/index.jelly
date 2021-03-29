@@ -22,15 +22,6 @@
 <!--            <link type="text/css" href="${resURL}/plugin/performance-signature-ui/css/jquery.gridster.min.css" rel="stylesheet"/>-->
 <!--            <link type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/gridstack.js/0.2.4/gridstack-extra.min.css" rel="stylesheet"/>-->
             <style>
-                .grid-stack {
-                background:#F8F8F8;
-                }
-
-                .grid-stack-item-content {
-
-                text-align: center;
-
-                }
 
                 .text-center { text-align: center !important; }
                 .col-sm-5 { width: 41.66666667%; }
