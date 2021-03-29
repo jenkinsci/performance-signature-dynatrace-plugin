@@ -19,8 +19,8 @@
          xmlns:jm="/de/tsystems/mms/apm/performancesignature/ui/tags">
     <style type="text/css">
         .grid-stack { background: #FAFAD2; }
-        .grid-stack-item-content { background-color: #18BC9C; height: auto;
-        width: auto; }
+        .grid-stack-item-content { background-color: #18BC9C;
+        }
         .card-danger {
         background-color: #f2dede !important;
         color: #a94442 !important;
@@ -54,6 +54,11 @@
         padding-bottom: 12px;
         text-align: left;
         color: black;
+        }
+        .grid-stack .grid-stack-item .grid-stack-item-content,
+        .grid-stack .grid-stack-item .placeholder-content {
+        bottom: -40px;
+        top: -60px;
         }
 
     </style>

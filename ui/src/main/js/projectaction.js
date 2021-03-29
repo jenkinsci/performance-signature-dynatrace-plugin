@@ -27,7 +27,8 @@ import 'lightbox2/dist/css/lightbox.css';
 
 let options = {
     float: false,
-    verticalMargin:2
+    verticalMargin:2,
+    cellHeight: 135
 };
 
 (function ($) {
