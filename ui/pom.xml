@@ -26,17 +26,6 @@
                 <directory>target/generated-resources/adjuncts</directory>
             </resource>
         </resources>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>com.github.eirslett</groupId>
-                    <artifactId>frontend-maven-plugin</artifactId>
-                    <version>
-                        1.11.2
-                    </version>
-                </plugin>
-            </plugins>
-        </pluginManagement>
     </build>
 
     <dependencies>
@@ -67,14 +56,8 @@
         </dependency>
         <dependency>
             <groupId>io.jenkins.plugins</groupId>
-            <artifactId>jquery3-api</artifactId>
-            <version>3.5.1-2</version>
-        </dependency>
-        <dependency>
-            <groupId>io.jenkins.plugins</groupId>
             <artifactId>data-tables-api</artifactId>
             <version>1.10.21-3</version>
         </dependency>
     </dependencies>
-
 </project>

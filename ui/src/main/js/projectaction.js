@@ -20,22 +20,19 @@ import '@fortawesome/fontawesome-free/js/fontawesome'
 import '@fortawesome/fontawesome-free/js/solid'
 import '@fortawesome/fontawesome-free/js/regular'
 import '@fortawesome/fontawesome-free/js/brands'
-import { GridStack} from 'gridstack'; // $ optional if you depend on it, to be removed in 3.x
+import {GridStack} from 'gridstack'; // $ optional if you depend on it, to be removed in 3.x
 import 'gridstack/dist/gridstack.css';
 import 'gridstack/dist/h5/gridstack-dd-native';
 import 'lightbox2/dist/css/lightbox.css';
 
-let options = {
-    float: false,
-    verticalMargin:2,
-    cellHeight: 135
-};
-
 (function ($) {
     "use strict";
-    let grid = GridStack.initAll(options,'.grid-stack');
-
-
+    let grid = GridStack.initAll({
+        disableOneColumnMode: false,
+        float: false,
+        verticalMargin:2,
+        cellHeight: 135
+    }, '.grid-stack');
 
     let randomParam = '&_=' + $.now();
     $.fn.dataTableExt.sErrMode = 'none';
@@ -126,12 +123,11 @@ let options = {
         });
 
         $('#tabList').find('a').eq(pageIndex).tab('show'); // very messy :(
-            if ($(".grid-stack ul", page).length !== 0) {
+        if ($(".grid-stack ul", page).length !== 0) {
+            grid[pageIndex].enableMove(false);
+            grid[pageIndex].enableResize(false);
 
-                grid[pageIndex].enableMove(false);
-                grid[pageIndex].enableResize(false);
-
-                projectAction.getDashboardConfiguration($(page).attr('id'), function (data) {
+            projectAction.getDashboardConfiguration($(page).attr('id'), function (data) {
                 var json = JSON.parse(data.responseObject());
                 $.each(json, function (index) {
                     if (json[index].dashboard === $(page).attr('id')) {
@@ -144,9 +140,11 @@ let options = {
                                 'data-lightbox="' + $(page).attr('id') + '"><img class="img-thumbnail" height="240" width="370" ' +
                                 'src="./testRunGraph?width=370&amp;height=240&amp;id=unittest_overview' + randomParam + '"></a>'
                             });
-
                         } else {
-                            grid[pageIndex].addWidget({w:3,h:2, content: '<span class="del_img float-left" style="display: none"><i class="fas fa-times" style="color: red"></i></span><span class="chk_show float-right" style="display: none">' +
+                            grid[pageIndex].addWidget({
+                                w: 3,
+                                h: 2,
+                                content: '<span class="del_img float-left" style="display: none"><i class="fas fa-times" style="color: red"></i></span><span class="chk_show float-right" style="display: none">' +
                                     '<input type="checkbox" title="show in project overview" ' + (json[index].show ? "checked='checked'" : "") +
                                     '/></span>'+'<a href="./summarizerGraph?width=800&amp;height=585&amp;id=' + json[index].id + randomParam + '" ' +
                                 'data-lightbox="' + $(page).attr('id') + '" data-title="' + json[index].description + '">' +
@@ -158,14 +156,14 @@ let options = {
                     }
                 });
                 $(".chk_show", page).hide();
-                $(".del_img",page).hide().click(function () {
+                $(".del_img", page).hide().click(function () {
                     grid[pageIndex].removeWidget(this.parentNode.parentNode);
                 });
             });
         }
         $("#donebutton", this).click(function () {
             var items = [];
-            $('.grid-stack-item.ui-draggable',page).each(function () {
+            $('.grid-stack-item.ui-draggable', page).each(function () {
 
                 var $this = $(this);
                 items.push({
@@ -173,12 +171,12 @@ let options = {
                     row: $this.attr("gs-y"),
                     id: getURLParameter($("img", $this), "id"),
                     dashboard: $(page).attr('id'),
-                    chartDashlet: getURLParameter($("img",$this), "chartDashlet"),
+                    chartDashlet: getURLParameter($("img", $this), "chartDashlet"),
                     measure: getURLParameter($("img", $this), "measure"),
                     customName: getURLParameter($("img", $this), "customName"),
-                    customBuildCount: getURLParameter($("img",$this), "customBuildCount"),
-                    show: $("input[type='checkbox']",$this).prop('checked'),
-                    aggregation: getURLParameter($("img",$this), "aggregation")
+                    customBuildCount: getURLParameter($("img", $this), "customBuildCount"),
+                    show: $("input[type='checkbox']", $this).prop('checked'),
+                    aggregation: getURLParameter($("img", $this), "aggregation")
                 });
             });
             projectAction.setDashboardConfiguration($(page).attr('id'), JSON.stringify(items), function () {

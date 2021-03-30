@@ -18,18 +18,8 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout" xmlns:fmt="jelly:fmt" xmlns:bs="/bootstrap">
     <bs:layout title="Performance Signature Overview for ${it.job.name}" norefresh="true">
         <l:header>
-<!--            <link type="text/css" href="${resURL}/plugin/performance-signature-ui/css/datatables.min.css" rel="stylesheet"/>-->
-<!--            <link type="text/css" href="${resURL}/plugin/performance-signature-ui/css/jquery.gridster.min.css" rel="stylesheet"/>-->
-<!--            <link type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/gridstack.js/0.2.4/gridstack-extra.min.css" rel="stylesheet"/>-->
             <style>
-
                 .text-center { text-align: center !important; }
-                .col-sm-5 { width: 41.66666667%; }
-                .col-sm-6 { width: 50%; }
-                .col-sm-7 { width: 58.33333333%; }
-                .dataTables_wrapper > .row:first-child { height: 50px; }
-
-
             </style>
         </l:header>
         <st:include it="${it.job}" page="sidepanel.jelly"/>
@@ -41,181 +31,180 @@
             <st:adjunct includes="io.jenkins.plugins.data-tables"/>
             <div class="container-fluid">
                 <h1>${%Performance Signature for} ${it.job.name}</h1>
-                    <ul class="nav nav-tabs" role="tablist" id="tabList">
-                        <j:forEach var="lastDashboardReport" items="${it.lastDashboardReports}">
-                            <li class="nav-item" role="presentation">
-                                <a href="#${lastDashboardReport.name}" class="nav-link" aria-controls="${lastDashboardReport.name}" data-toggle="tab" role="tab">
-                                    <h4>${lastDashboardReport.name}</h4>
-                                </a>
-                            </li>
-                            </j:forEach>
-                        </ul>
-
-                </div>
-                <div class="tab-content">
+                <ul class="nav nav-tabs" role="tablist" id="tabList">
                     <j:forEach var="lastDashboardReport" items="${it.lastDashboardReports}">
-                        <j:set var="isUnitTest" value="${lastDashboardReport.isUnitTest() and tr.previousResult!=null}"/>
-                        <div role="tabpanel fade" class="tab-pane" id="${lastDashboardReport.name}">
-                            <div class="container-fluid">
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <h3>${%Test case:} ${lastDashboardReport.name}</h3>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <button type="button"
-                                                class="btn btn-primary float-right" id="editbutton" style="display: inline-block">
-                                            <span class="fas fa-pen" aria-hidden="true"/>
-                                            Edit
-                                        </button>
-                                        <button style="margin-top: 20px; margin-left: 5px; display: none;"
-                                                type="button" class="btn btn-success float-right" id="donebutton">
-                                            <span class="fas fa-check" aria-hidden="true"/>
-                                            Done
-                                        </button>
-                                        <button style="margin-top: 20px; margin-left: 5px; display: none;"
-                                                type="button" class="btn btn-danger float-right" id="cancelbutton">
-                                            <span class="fas fa-times" aria-hidden="true"/>
-                                            Cancel
-                                        </button>
-                                    </div>
+                        <li class="nav-item" role="presentation">
+                            <a href="#${lastDashboardReport.name}" class="nav-link" aria-controls="${lastDashboardReport.name}" data-toggle="tab" role="tab">
+                                <h4>${lastDashboardReport.name}</h4>
+                            </a>
+                        </li>
+                    </j:forEach>
+                </ul>
+
+            </div>
+            <div class="tab-content">
+                <j:forEach var="lastDashboardReport" items="${it.lastDashboardReports}">
+                    <j:set var="isUnitTest" value="${lastDashboardReport.isUnitTest() and tr.previousResult!=null}"/>
+                    <div role="tabpanel fade" class="tab-pane" id="${lastDashboardReport.name}">
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h3>${%Test case:} ${lastDashboardReport.name}</h3>
                                 </div>
-                                <br/>
-                                <div id="editform" style="display:none; margin-left: 10px">
-                                    <form role="form" class="row">
-                                        <div class="form-group col-md-2" id="measureGroupContainer">
-                                            <label for="measureGroup">Select Measure Group:</label>
-                                            <select class="form-control" id="measureGroup">
-                                                <j:if test="${isUnitTest}">
-                                                    <option>UnitTest overview</option>
-                                                </j:if>
-                                                <j:forEach var="dr" items="${it.lastDashboardReports}">
-                                                    <j:if test="${dr.name.equals(lastDashboardReport.name)}">
-                                                        <j:forEach var="chartDashlet" items="${utils.sortChartDashletList(dr.chartDashlets)}">
-                                                            <option>${chartDashlet.name}</option>
-                                                        </j:forEach>
-                                                    </j:if>
-                                                </j:forEach>
-                                            </select>
-                                        </div>
-                                        <div class="form-group col-md-2">
-                                            <label for="measure">Select Measure:</label>
-                                            <select class="form-control" id="measure"/>
-                                        </div>
-                                        <div class="form-group col-md-2">
-                                            <label for="aggregation">Select Aggregation:</label>
-                                            <select class="form-control" id="aggregation">
-                                                <option>Minimum</option>
-                                                <option>Maximum</option>
-                                                <option>Average</option>
-                                                <option>Sum</option>
-                                                <option>Count</option>
-                                            </select>
-                                        </div>
-                                        <div class="form-group col-md-2">
-                                            <label for="measurename">Custom Measure Name</label>
-                                            <input type="text" class="form-control" id="customName" placeholder="measure name"/>
-                                        </div>
-                                        <div class="form-group col-md-2">
-                                            <label for="buildcount">Custom Build Count</label>
-                                            <input type="number" class="form-control" id="customBuildCount" placeholder="0"/>
-                                        </div>
-                                        <div class="form-group col-md-2">
-                                            <button type="button"
-                                                    class="btn btn-primary float-right" id="addbutton" style="margin-top: 15px">
-                                                <span class="fas fa-plus-circle" aria-hidden="true"/>
-                                                Add
-                                            </button>
-                                        </div>
-                                    </form>
+                                <div class="col-md-6">
+                                    <button type="button"
+                                            class="btn btn-primary float-right" id="editbutton" style="display: inline-block">
+                                        <span class="fas fa-pen" aria-hidden="true"/>
+                                        Edit
+                                    </button>
+                                    <button style="margin-top: 20px; margin-left: 5px; display: none;"
+                                            type="button" class="btn btn-success float-right" id="donebutton">
+                                        <span class="fas fa-check" aria-hidden="true"/>
+                                        Done
+                                    </button>
+                                    <button style="margin-top: 20px; margin-left: 5px; display: none;"
+                                            type="button" class="btn btn-danger float-right" id="cancelbutton">
+                                        <span class="fas fa-times" aria-hidden="true"/>
+                                        Cancel
+                                    </button>
                                 </div>
-<!--                                <div class="gridster" id="gridster-${lastDashboardReport.name}">-->
-<!--                                    <ul class="center-block"/>-->
-<!--                                </div>-->
-                                <div class="grid-stack">
-                                    <ul class="center-block"/>
-                                </div>
-                                <br/>
-                                <br/>
-                                <table class="table table-striped table-bordered text-center table-hover table-responsive">
-                                    <thead>
-                                        <tr>
-                                            <th class="text-center">${%build #}</th>
-                                            <th class="text-center">${%PDF}</th>
-                                            <th class="text-center">${%date}</th>
+                            </div>
+                            <br/>
+                            <div id="editform" style="display:none; margin-left: 10px">
+                                <form role="form" class="row">
+                                    <div class="form-group col-md-2" id="measureGroupContainer">
+                                        <label for="measureGroup">Select Measure Group:</label>
+                                        <select class="form-control" id="measureGroup">
                                             <j:if test="${isUnitTest}">
-                                                <th class="text-center">${%duration}</th>
-                                                <th class="text-center">${%failed #}</th>
-                                                <th class="text-center">${%failed #}<br/>${%incl. non-functional}
-                                                </th>
-                                                <th class="text-center">${%degraded #}</th>
-                                                <th class="text-center">${%volatile #}</th>
-                                                <th class="text-center">${%skipped #}</th>
-                                                <th class="text-center">${%improved #}</th>
-                                                <th class="text-center">${%passed #}<br/>${%functional}
-                                                </th>
-                                                <th class="text-center">${%passed #}<br/>${%non-functional}
-                                                </th>
-                                                <th class="text-center">${%sum #}</th>
+                                                <option>UnitTest overview</option>
                                             </j:if>
-                                            <j:forEach var="dashlet" items="${it.getFilteredChartDashlets(lastDashboardReport)}">
-                                                <th class="text-center">
-                                                    ${dashlet.key.generateDashletName()}<br/>(${dashlet.value.getUnit(dashlet.key.aggregation)})
-                                                </th>
+                                            <j:forEach var="dr" items="${it.lastDashboardReports}">
+                                                <j:if test="${dr.name.equals(lastDashboardReport.name)}">
+                                                    <j:forEach var="chartDashlet" items="${utils.sortChartDashletList(dr.chartDashlets)}">
+                                                        <option>${chartDashlet.name}</option>
+                                                    </j:forEach>
+                                                </j:if>
+                                            </j:forEach>
+                                        </select>
+                                    </div>
+                                    <div class="form-group col-md-2">
+                                        <label for="measure">Select Measure:</label>
+                                        <select class="form-control" id="measure"/>
+                                    </div>
+                                    <div class="form-group col-md-2">
+                                        <label for="aggregation">Select Aggregation:</label>
+                                        <select class="form-control" id="aggregation">
+                                            <option>Minimum</option>
+                                            <option>Maximum</option>
+                                            <option>Average</option>
+                                            <option>Sum</option>
+                                            <option>Count</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group col-md-2">
+                                        <label for="measurename">Custom Measure Name</label>
+                                        <input type="text" class="form-control" id="customName" placeholder="measure name"/>
+                                    </div>
+                                    <div class="form-group col-md-2">
+                                        <label for="buildcount">Custom Build Count</label>
+                                        <input type="number" class="form-control" id="customBuildCount" placeholder="0"/>
+                                    </div>
+                                    <div class="form-group col-md-2">
+                                        <button type="button"
+                                                class="btn btn-primary float-right" id="addbutton" style="margin-top: 15px">
+                                            <span class="fas fa-plus-circle" aria-hidden="true"/>
+                                            Add
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                            <!--                                <div class="gridster" id="gridster-${lastDashboardReport.name}">-->
+                            <!--                                    <ul class="center-block"/>-->
+                            <!--                                </div>-->
+                            <div class="grid-stack">
+                                <ul class="center-block"/>
+                            </div>
+                            <br/>
+                            <br/>
+                            <table class="table table-striped table-bordered text-center table-hover table-responsive">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center">${%build #}</th>
+                                        <th class="text-center">${%PDF}</th>
+                                        <th class="text-center">${%date}</th>
+                                        <j:if test="${isUnitTest}">
+                                            <th class="text-center">${%duration}</th>
+                                            <th class="text-center">${%failed #}</th>
+                                            <th class="text-center">${%failed #}<br/>${%incl. non-functional}
+                                            </th>
+                                            <th class="text-center">${%degraded #}</th>
+                                            <th class="text-center">${%volatile #}</th>
+                                            <th class="text-center">${%skipped #}</th>
+                                            <th class="text-center">${%improved #}</th>
+                                            <th class="text-center">${%passed #}<br/>${%functional}
+                                            </th>
+                                            <th class="text-center">${%passed #}<br/>${%non-functional}
+                                            </th>
+                                            <th class="text-center">${%sum #}</th>
+                                        </j:if>
+                                        <j:forEach var="dashlet" items="${it.getFilteredChartDashlets(lastDashboardReport)}">
+                                            <th class="text-center">
+                                                ${dashlet.key.generateDashletName()}<br/>(${dashlet.value.getUnit(dashlet.key.aggregation)})
+                                            </th>
+                                        </j:forEach>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <j:forEach var="dashboardReport" items="${it.getDashboardReports(lastDashboardReport.name)}">
+                                        <tr>
+                                            <td>
+                                                <a href="../${dashboardReport.key.number}/${it.urlName}/#${lastDashboardReport.name}">
+                                                    <b>${dashboardReport.key.number}</b>
+                                                </a>
+                                            </td>
+                                            <td>
+                                                <j:set var="files"
+                                                       value="${utils.getDownloadFiles('Comparison.*' + lastDashboardReport.name + '.*pdf',dashboardReport.key)}"/>
+                                                <j:forEach var="file" items="${files}">
+                                                    <a href="../${dashboardReport.key.number}/performance-signature/getComparisonReport?testCase=${lastDashboardReport.name}&amp;number=${files.indexOf(file)}"
+                                                       target="_blank">
+                                                        <img src="${resURL}/plugin/performance-signature-ui/images/pdficon_small.png"
+                                                             style="margin: 0 2px;"/>
+                                                    </a>
+                                                </j:forEach>
+                                            </td>
+                                            <td>
+                                                <fmt:formatDate dateStyle="medium" type="both" value="${dashboardReport.key.time}"/>
+                                            </td>
+                                            <j:if test="${isUnitTest}">
+                                                <j:set var="testRun" value="${it.getTestRun(dashboardReport.key)}"/>
+                                                <j:set var="testResult" value="${it.getTestResult(dashboardReport.key)}"/>
+                                                <td class="nowrap">${utils.getDurationString(testResult.duration)}</td>
+                                                <td>${testResult.failCount}</td>
+                                                <td>${testRun.numFailed}</td>
+                                                <td>${testRun.numDegraded}</td>
+                                                <td>${testRun.numVolatile}</td>
+                                                <td>${testResult.skipCount}</td>
+                                                <td>${testRun.numImproved}</td>
+                                                <td>${testResult.passCount}</td>
+                                                <td>${testRun.numPassed}</td>
+                                                <td>${testResult.totalCount}</td>
+                                            </j:if>
+                                            <j:forEach var="dashlet" items="${it.getFilteredChartDashlets(dashboardReport.value)}">
+                                                <td>${utils.round(dashlet.value.getMetricValue(dashlet.key.aggregation), 2)}</td>
                                             </j:forEach>
                                         </tr>
-                                    </thead>
-                                    <tbody>
-                                        <j:forEach var="dashboardReport" items="${it.getDashboardReports(lastDashboardReport.name)}">
-                                            <tr>
-                                                <td>
-                                                    <a href="../${dashboardReport.key.number}/${it.urlName}/#${lastDashboardReport.name}">
-                                                        <b>${dashboardReport.key.number}</b>
-                                                    </a>
-                                                </td>
-                                                <td>
-                                                    <j:set var="files"
-                                                           value="${utils.getDownloadFiles('Comparison.*' + lastDashboardReport.name + '.*pdf',dashboardReport.key)}"/>
-                                                    <j:forEach var="file" items="${files}">
-                                                        <a href="../${dashboardReport.key.number}/performance-signature/getComparisonReport?testCase=${lastDashboardReport.name}&amp;number=${files.indexOf(file)}"
-                                                           target="_blank">
-                                                            <img src="${resURL}/plugin/performance-signature-ui/images/pdficon_small.png"
-                                                                 style="margin: 0 2px;"/>
-                                                        </a>
-                                                    </j:forEach>
-                                                </td>
-                                                <td>
-                                                    <fmt:formatDate dateStyle="medium" type="both" value="${dashboardReport.key.time}"/>
-                                                </td>
-                                                <j:if test="${isUnitTest}">
-                                                    <j:set var="testRun" value="${it.getTestRun(dashboardReport.key)}"/>
-                                                    <j:set var="testResult" value="${it.getTestResult(dashboardReport.key)}"/>
-                                                    <td class="nowrap">${utils.getDurationString(testResult.duration)}</td>
-                                                    <td>${testResult.failCount}</td>
-                                                    <td>${testRun.numFailed}</td>
-                                                    <td>${testRun.numDegraded}</td>
-                                                    <td>${testRun.numVolatile}</td>
-                                                    <td>${testResult.skipCount}</td>
-                                                    <td>${testRun.numImproved}</td>
-                                                    <td>${testResult.passCount}</td>
-                                                    <td>${testRun.numPassed}</td>
-                                                    <td>${testResult.totalCount}</td>
-                                                </j:if>
-                                                <j:forEach var="dashlet" items="${it.getFilteredChartDashlets(dashboardReport.value)}">
-                                                    <td>${utils.round(dashlet.value.getMetricValue(dashlet.key.aggregation), 2)}</td>
-                                                </j:forEach>
-                                            </tr>
-                                        </j:forEach>
-                                    </tbody>
-                                </table>
-                            </div>
+                                    </j:forEach>
+                                </tbody>
+                            </table>
                         </div>
-                    </j:forEach>
-                </div>
+                    </div>
+                </j:forEach>
+            </div>
             <script>
                 var projectAction = <st:bind value="${it}"/>
             </script>
             <st:adjunct includes="org.jenkins.ui.jsmodules.performance-signature-ui.projectaction"/>
-
         </l:main-panel>
     </bs:layout>
 </j:jelly>

@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-
 (function ($) {
     "use strict";
 
-    var randomParam = '&_=' + $.now();
+    var randomParam = `_=${$.now()}`;
     $('.carousel').each(function (carouselIndex, carousel) {
         var testCase = $(carousel).attr('id').substring(9);
 
@@ -27,19 +26,15 @@
             $.each(json, function (index) {
                 if (json[index].show) {
                     if (json[index].id === 'unittest_overview') {
-                        $('.carousel-inner', carousel).append('<div class="carousel-item">' +
-                            '<img class="img-thumbnail" height="300" width="100%" ' +
-                            'src="performance-signature/testRunGraph?width=410&amp;height=300"' + randomParam + '></div>\n');
+                        $('.carousel-inner', carousel).append(`<div class="carousel-item"><img class="img-thumbnail" height="300" width="100%"
+                        src="performance-signature/testRunGraph?width=410&amp;height=300&amp;${randomParam}></div>`);
                     } else {
-                        $('.carousel-inner', carousel).append('<div class="carousel-item">' +
-                            '<img class="img-thumbnail" height="300" width="100%" ' +
-                            'src="performance-signature/summarizerGraph?width=410&amp;height=300&amp;id=' + json[index].id + randomParam + '"></div>\n');
+                        $('.carousel-inner', carousel).append(`<div class="carousel-item"><img class="img-thumbnail" height="300" width="100%"
+                        src="performance-signature/summarizerGraph?width=410&amp;height=300&amp;id=${json[index].id}&amp;${randomParam}"></div>`);
                     }
                 }
             });
-             $('.carousel-inner div:first-child', carousel).addClass('active');
-
-            // $('.carousel').carousel(0);
+            $('.carousel-inner div:first-child', carousel).addClass('active');
         });
     });
 })(jQuery3);
