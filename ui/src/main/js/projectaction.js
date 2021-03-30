@@ -16,10 +16,6 @@
 
 import wurl from 'wurl';
 import 'lightbox2';
-import '@fortawesome/fontawesome-free/js/fontawesome'
-import '@fortawesome/fontawesome-free/js/solid'
-import '@fortawesome/fontawesome-free/js/regular'
-import '@fortawesome/fontawesome-free/js/brands'
 import {GridStack} from 'gridstack'; // $ optional if you depend on it, to be removed in 3.x
 import 'gridstack/dist/gridstack.css';
 import 'gridstack/dist/h5/gridstack-dd-native';
@@ -42,13 +38,11 @@ import 'lightbox2/dist/css/lightbox.css';
     });
 
     $(".tab-pane").each(function (pageIndex, page) {
-        console.log("here");
         try {
             $(".table", this).has("tbody").dataTable({
                 "stateSave": false,
                 "order": [0, 'desc']
             });
-
         } catch (e) {
             console.log(e);
         }
@@ -126,7 +120,6 @@ import 'lightbox2/dist/css/lightbox.css';
 
         $('#tabList').find('a').eq(pageIndex).tab('show'); // very messy :(
         if ($(".grid-stack ul", page).length !== 0) {
-
             grid[pageIndex].enableMove(false);
             grid[pageIndex].enableResize(false);
 
@@ -135,8 +128,6 @@ import 'lightbox2/dist/css/lightbox.css';
                 $.each(json, function (index) {
                     if (json[index].dashboard === $(page).attr('id')) {
                         if (json[index].id === 'unittest_overview') {
-
-
                             grid[pageIndex].addWidget({
                                 w: 3,
                                 h: 2,
@@ -145,7 +136,6 @@ import 'lightbox2/dist/css/lightbox.css';
                                     'data-lightbox="' + $(page).attr('id') + '"><img class="img-thumbnail" height="240" width="410" ' +
                                     'src="./testRunGraph?width=410&amp;height=250&amp;id=unittest_overview' + randomParam + '"></a>'
                             });
-
                         } else {
                             grid[pageIndex].addWidget({
                                 w: 3,
