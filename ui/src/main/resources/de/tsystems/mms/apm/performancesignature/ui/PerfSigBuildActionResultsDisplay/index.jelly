@@ -19,8 +19,48 @@
          xmlns:jm="/de/tsystems/mms/apm/performancesignature/ui/tags">
     <style type="text/css">
         .grid-stack { background: #FAFAD2; }
-        .grid-stack-item-content { background-color: #18BC9C; height: auto;
-        width: auto; }
+        .grid-stack-item-content { background-color: #18BC9C;
+        }
+        .card-danger {
+        background-color: #f2dede !important;
+        color: #a94442 !important;
+        border-color:#ebccd1 !important;
+        }
+        .card-warning
+        {
+        color: #8a6d3b !important;
+        background-color: #fcf8e3 !important;
+        border-color: #faebcc !important;
+        }
+        .card-warning a
+        {
+        color: #8a6d3b !important;
+        }
+        .card-danger a {
+        color: #a94442 !important;
+        }
+        table {
+        border-collapse: collapse;
+        width: 100%;
+        }
+
+        table td, #table th {
+        border: 1px solid #ddd;
+        padding: 8px;
+        }
+
+        table th {
+        padding-top: 12px;
+        padding-bottom: 12px;
+        text-align: left;
+        color: black;
+        }
+        .grid-stack .grid-stack-item .grid-stack-item-content,
+        .grid-stack .grid-stack-item .placeholder-content {
+        bottom: -40px;
+        top: -60px;
+        }
+
     </style>
 <!--    <script>-->
 <!--        (function($) {-->
@@ -71,11 +111,13 @@
                                 </div>
                                 <div class="col-md-2">
                                     <a target="_blank" href="${dashboardReport.clientUrl}">
+                                        <i class="fas fa-eye">
                                         <button
                                                 title="Dynatrace client must be started on local machine"
-                                            class="btn btn-outline-success" id="editbutton">
+                                            class="btn btn-success rounded-lg" id="editbutton">
                                             Open in Dynatrace
                                         </button>
+                                        </i>
                                     </a>
                                 </div>
                             </div>
@@ -141,7 +183,7 @@
                                     <div class="col-md-6">
                                         <div class="card" style="height: 90%;border-color: #faebcc">
                                             <div class="card-header" style="height: 40%;color: #8a6d3b;background-color: #fcf8e3">
-                                                <h4 style="margin-top: -2px" class="panel-title">${%JUnit TestReport}</h4>
+                                                <h4 style="margin-top: -2px" class="card-title">${%JUnit TestReport}</h4>
                                             </div>
                                             <div class="card-body">
                                                 <a href="${rootURL}/job/${it.build.project.name}/${it.build.number}/testReport">
@@ -159,20 +201,22 @@
                                 <h3>${%Incidents}</h3>
 
                                 <j:forEach var="incidentSeverityEntry" items="${dashboardReport.incidentMap.entrySet()}">
-                                    <div class="panel-group" id="incidents-${dashboardReport.name}">
+                                    <div  id="incidents-${dashboardReport.name}">
                                         <j:forEach var="incidentEntry" items="${incidentSeverityEntry.value.entrySet()}">
                                             <j:set var="rootId" value="${h.generateId()}"/>
-                                            <div class="panel panel-default ${incidentSeverityEntry.key.panelColor}">
-                                                <div class="panel-heading">
-                                                    <h4 class="panel-title">
+                                            <div class="card  card-default mb-1" style="height: auto">
+                                                <div class="card-header ${incidentSeverityEntry.key.panelColor}">
+
+                                                    <h6 class="card-group">
                                                         <a data-toggle="collapse" href="#collapse-${dashboardReport.name}-${rootId}">
                                                             ${incidentEntry.key}
                                                         </a>
-                                                    </h4>
+                                                    </h6>
+
                                                 </div>
-                                                <div id="collapse-${dashboardReport.name}-${rootId}" class="panel-collapse collapse">
-                                                    <div class="panel-body">
-                                                        <div class="panel-group" id="incidents${rootId}-${dashboardReport.name}">
+                                                <div id="collapse-${dashboardReport.name}-${rootId}" class="collapse">
+                                                    <div class="card-body">
+                                                        <div class="card-group" id="incidents${rootId}-${dashboardReport.name}">
                                                             <j:forEach var="incident" items="${incidentEntry.value}">
                                                                 <jm:incidentPanel position="${incidentEntry.value.indexOf(incident)}"
                                                                                   incident="${incident}"/>

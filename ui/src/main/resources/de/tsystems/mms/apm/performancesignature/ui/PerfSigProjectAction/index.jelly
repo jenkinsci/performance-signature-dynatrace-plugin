@@ -202,8 +202,7 @@
                 </j:forEach>
             </div>
             <script>
-                var projectAction =
-                <st:bind value="${it}"/>
+                var projectAction = <st:bind value="${it}"/>
             </script>
             <st:adjunct includes="org.jenkins.ui.jsmodules.performance-signature-ui.projectaction"/>
         </l:main-panel>

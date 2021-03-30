@@ -56,18 +56,8 @@
         </dependency>
         <dependency>
             <groupId>io.jenkins.plugins</groupId>
-            <artifactId>jquery3-api</artifactId>
-            <version>3.5.1-2</version>
-        </dependency>
-        <dependency>
-            <groupId>io.jenkins.plugins</groupId>
             <artifactId>data-tables-api</artifactId>
             <version>1.10.21-3</version>
-        </dependency>
-        <dependency>
-            <groupId>io.jenkins.plugins</groupId>
-            <artifactId>font-awesome-api</artifactId>
-            <version>5.15.2-2</version>
         </dependency>
     </dependencies>
 </project>
