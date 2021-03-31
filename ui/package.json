@@ -8,7 +8,7 @@
     "dev": "webpack --config webpack.config.js",
     "prod": "webpack --config webpack.config.js --mode=production",
     "start": "yarn dev -- --watch",
-    "lint:js": "eslint src/main/js --ext js",
+    "lint:js": "eslint src/main/js src/main/webapp/js --ext js",
     "mvnbuild": "npm run prod",
     "mvntest": "npm run lint:js"
   },
