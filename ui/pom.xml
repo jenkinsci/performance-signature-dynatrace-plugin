@@ -58,6 +58,12 @@
             <groupId>io.jenkins.plugins</groupId>
             <artifactId>data-tables-api</artifactId>
             <version>1.10.23-3</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>io.jenkins.plugins</groupId>
+                    <artifactId>snakeyaml-api</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 </project>
