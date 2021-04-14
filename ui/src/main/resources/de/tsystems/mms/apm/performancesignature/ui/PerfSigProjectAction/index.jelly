@@ -118,9 +118,6 @@
                                     </div>
                                 </form>
                             </div>
-                            <!--                                <div class="gridster" id="gridster-${lastDashboardReport.name}">-->
-                            <!--                                    <ul class="center-block"/>-->
-                            <!--                                </div>-->
                             <div class="grid-stack">
                                 <ul class="center-block"/>
                             </div>

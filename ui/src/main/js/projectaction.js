@@ -20,7 +20,7 @@ import '@fortawesome/fontawesome-free/js/fontawesome'
 import '@fortawesome/fontawesome-free/js/solid'
 import '@fortawesome/fontawesome-free/js/regular'
 import '@fortawesome/fontawesome-free/js/brands'
-import {GridStack} from 'gridstack'; // $ optional if you depend on it, to be removed in 3.x
+import {GridStack} from 'gridstack';
 import 'gridstack/dist/gridstack.css';
 import 'gridstack/dist/h5/gridstack-dd-native';
 import 'lightbox2/dist/css/lightbox.css';
@@ -98,7 +98,6 @@ import 'lightbox2/dist/css/lightbox.css';
             $(".del_img", page).show();
             $(".chk_show", page).show();
             grid[pageIndex].enableMove(true);
-            grid[pageIndex].enableResize(true);
         });
         $("#cancelbutton", page).click(function () {
             location.reload(true);
