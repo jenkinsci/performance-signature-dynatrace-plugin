@@ -72,6 +72,7 @@ public class PerfSigProjectActionTest {
         assertNotNull("We should have a project named " + TEST_PROJECT_WITH_HISTORY, proj);
 
         JenkinsRule.WebClient wc = j.createWebClient();
+        wc.setJavaScriptEnabled(false);
         HtmlPage projectPage = wc.getPage(proj, "performance-signature");
 
         j.assertAllImageLoadSuccessfully(projectPage);
@@ -116,6 +117,8 @@ public class PerfSigProjectActionTest {
     public void testWebMethods() throws Exception {
         Project proj = (Project) j.jenkins.getItem(TEST_PROJECT_WITH_HISTORY);
         JenkinsRule.WebClient wc = j.createWebClient();
+        wc.setJavaScriptEnabled(false);
+
         assert proj != null;
         HtmlPage projectPage = wc.getPage(proj, "performance-signature");
 

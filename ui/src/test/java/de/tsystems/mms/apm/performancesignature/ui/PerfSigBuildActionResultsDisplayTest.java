@@ -59,6 +59,7 @@ public class PerfSigBuildActionResultsDisplayTest {
         Run<?, ?> build = proj.getBuildByNumber(11157);
         assertNotNull("We should have a build with number 11157", build);
         JenkinsRule.WebClient wc = j.createWebClient();
+        wc.setJavaScriptEnabled(false);
 
         wc.getPage(proj);
         wc.getPage(build);
@@ -160,6 +161,8 @@ public class PerfSigBuildActionResultsDisplayTest {
         Run<?, ?> build = proj.getBuildByNumber(11157);
 
         JenkinsRule.WebClient wc = j.createWebClient();
+        wc.setJavaScriptEnabled(false);
+
         HtmlPage page = wc.getPage(build, "performance-signature");
         j.assertXPathValueContains(page, "//*[@id=\"UnitTest\"]/div/div[4]/div/div/div[2]/a/text()", "UnitTestReport with performance data");
 

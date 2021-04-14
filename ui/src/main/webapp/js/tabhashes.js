@@ -15,17 +15,17 @@
  */
 
 (function ($) {
-    var hash = window.location.hash;
+    const hash = window.location.hash;
     if (hash) {
-        $('ul.nav a[href="' + hash + '"]').tab('show');
+        $(`ul.nav a[href="${hash}"]`).tab('show');
     } else {
         $('#tabList').find('a:first').tab('show'); // Select first tab
     }
 
     $('.nav-tabs a').click(function () {
         $(this).tab('show');
-        var scrollmem = $('body').scrollTop() || $('html').scrollTop();
+        const scrollMem = $('body').scrollTop() || $('html').scrollTop();
         window.location.hash = this.hash;
-        $('html,body').scrollTop(scrollmem);
+        $('html,body').scrollTop(scrollMem);
     });
 })(jQuery3);

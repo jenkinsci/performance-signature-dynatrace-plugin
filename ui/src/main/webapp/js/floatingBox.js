@@ -17,12 +17,12 @@
 (function ($) {
     "use strict";
 
-    var randomParam = `_=${$.now()}`;
+    const randomParam = `_=${$.now()}`;
     $('.carousel').each(function (carouselIndex, carousel) {
-        var testCase = $(carousel).attr('id').substring(9);
+        const testCase = $(carousel).attr('id').substring(9);
 
         projectAction.getDashboardConfiguration(testCase, function (data) {
-            var json = JSON.parse(data.responseObject());
+            const json = JSON.parse(data.responseObject());
             $.each(json, function (index) {
                 if (json[index].show) {
                     if (json[index].id === 'unittest_overview') {
