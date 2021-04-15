@@ -31,8 +31,19 @@ import de.tsystems.mms.apm.performancesignature.ui.PerfSigBuildAction;
 import de.tsystems.mms.apm.performancesignature.ui.model.ClientLinkGenerator;
 import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
 import de.tsystems.mms.apm.performancesignature.ui.util.PluginLogger;
-import hudson.*;
-import hudson.model.*;
+import edu.umd.cs.findbugs.annotations.NonNull;
+import hudson.AbortException;
+import hudson.DescriptorExtensionList;
+import hudson.EnvVars;
+import hudson.Extension;
+import hudson.FilePath;
+import hudson.Launcher;
+import hudson.model.AbstractProject;
+import hudson.model.Descriptor;
+import hudson.model.Item;
+import hudson.model.Result;
+import hudson.model.Run;
+import hudson.model.TaskListener;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
@@ -71,8 +82,8 @@ public class PerfSigRecorder extends Recorder implements SimpleBuildStep {
     }
 
     @Override
-    public void perform(@Nonnull final Run<?, ?> run, @Nonnull final FilePath workspace, @Nonnull final Launcher launcher, @Nonnull final TaskListener listener)
-            throws InterruptedException, IOException {
+    public void perform(@NonNull Run<?, ?> run, @NonNull FilePath workspace, @NonNull EnvVars env, @NonNull Launcher launcher,
+                        @NonNull TaskListener listener) throws InterruptedException, IOException {
         PluginLogger logger = PerfSigUIUtils.createLogger(listener.getLogger());
         DTServerConnection connection = PerfSigUtils.createDTServerConnection(dynatraceProfile);
         DynatraceServerConfiguration serverConfiguration = connection.getConfiguration();
@@ -92,7 +103,7 @@ public class PerfSigRecorder extends Recorder implements SimpleBuildStep {
         if (connection.getRecordingStatus()) {
             logger.log(Messages.PerfSigStartRecording_AnotherSessionStillRecording());
             PerfSigStopRecording stopRecording = new PerfSigStopRecording(dynatraceProfile);
-            stopRecording.perform(run, workspace, launcher, listener);
+            stopRecording.perform(run, workspace, env, launcher, listener);
         }
 
         String sessionId;

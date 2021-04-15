@@ -26,10 +26,16 @@ import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.model.License
 import de.tsystems.mms.apm.performancesignature.dynatrace.util.PerfSigUtils;
 import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
 import de.tsystems.mms.apm.performancesignature.ui.util.PluginLogger;
+import edu.umd.cs.findbugs.annotations.NonNull;
+import hudson.EnvVars;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
-import hudson.model.*;
+import hudson.model.AbstractProject;
+import hudson.model.Failure;
+import hudson.model.Item;
+import hudson.model.Run;
+import hudson.model.TaskListener;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
 import hudson.util.FormValidation;
@@ -66,8 +72,8 @@ public class PerfSigStartRecording extends Builder implements SimpleBuildStep {
     }
 
     @Override
-    public void perform(@Nonnull final Run<?, ?> run, @Nonnull final FilePath workspace, @Nonnull final Launcher launcher, @Nonnull final TaskListener listener)
-            throws InterruptedException, IOException {
+    public void perform(@NonNull Run<?, ?> run, @NonNull FilePath workspace, @NonNull EnvVars env, @NonNull Launcher launcher,
+                        @NonNull TaskListener listener) throws InterruptedException, IOException {
         PluginLogger logger = PerfSigUIUtils.createLogger(listener.getLogger());
         DTServerConnection connection = PerfSigUtils.createDTServerConnection(dynatraceProfile);
         CredProfilePair pair = connection.getCredProfilePair();
@@ -86,7 +92,7 @@ public class PerfSigStartRecording extends Builder implements SimpleBuildStep {
             if (connection.getRecordingStatus()) {
                 logger.log(Messages.PerfSigStartRecording_AnotherSessionStillRecording());
                 PerfSigStopRecording stopRecording = new PerfSigStopRecording(dynatraceProfile);
-                stopRecording.perform(run, workspace, launcher, listener);
+                stopRecording.perform(run, workspace, env, launcher, listener);
             }
 
             sessionId = connection.startRecording(sessionName, Messages.PerfSigStartRecording_SessionTriggered(), getRecordingOption(), lockSession, false);

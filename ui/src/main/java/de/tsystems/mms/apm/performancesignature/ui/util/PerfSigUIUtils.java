@@ -36,6 +36,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -58,7 +59,7 @@ public final class PerfSigUIUtils {
 
     public static BigDecimal round(final double d, final int scale) {
         try {
-            return new BigDecimal(Double.toString(d)).setScale(d % 1 == 0 ? 0 : scale, BigDecimal.ROUND_HALF_UP);
+            return new BigDecimal(Double.toString(d)).setScale(d % 1 == 0 ? 0 : scale, RoundingMode.HALF_UP);
         } catch (NumberFormatException ex) {
             if (Double.isInfinite(d)) {
                 return new BigDecimal(Double.toString(d));
@@ -206,8 +207,9 @@ public final class PerfSigUIUtils {
     }
 
     public static boolean checkForMissingPermission(@Nullable final Item item) {
+        Jenkins jenkins = Jenkins.get();
         return item == null ?
-                !Jenkins.getInstance().hasPermission(Item.CONFIGURE) && !Jenkins.getInstance().hasPermission(Item.EXTENDED_READ) :
+                !jenkins.hasPermission(Item.CONFIGURE) && !jenkins.hasPermission(Item.EXTENDED_READ) :
                 !item.hasPermission(Item.CONFIGURE) && !item.hasPermission(Item.EXTENDED_READ);
     }
 }

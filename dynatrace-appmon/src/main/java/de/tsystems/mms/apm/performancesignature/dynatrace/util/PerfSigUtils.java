@@ -89,7 +89,7 @@ public final class PerfSigUtils {
     @CheckForNull
     public static UsernamePasswordCredentials getCredentials(final String credsId) {
         return (credsId == null) ? null : CredentialsMatchers.firstOrNull(
-                CredentialsProvider.lookupCredentials(UsernamePasswordCredentials.class, Jenkins.getInstance(), ACL.SYSTEM,
+                CredentialsProvider.lookupCredentials(UsernamePasswordCredentials.class, Jenkins.get(), ACL.SYSTEM,
                         Collections.emptyList()), CredentialsMatchers.withId(credsId));
     }
 

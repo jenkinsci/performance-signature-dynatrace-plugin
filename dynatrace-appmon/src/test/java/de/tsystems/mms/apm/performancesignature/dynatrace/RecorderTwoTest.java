@@ -31,13 +31,11 @@ import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
 import hudson.util.ListBoxModel;
-import org.apache.commons.io.FileUtils;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
 
-import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.List;
@@ -53,7 +51,7 @@ public class RecorderTwoTest {
     public static WireMockClassRule wireMockRule = new WireMockClassRule(getOptions());
 
     private static ListBoxModel dynatraceConfigurations;
-    private DTServerConnection connection;
+    private final DTServerConnection connection;
 
     public RecorderTwoTest() throws AbortException, RESTErrorException {
         connection = PerfSigUtils.createDTServerConnection(dynatraceConfigurations.get(0).name);
@@ -71,7 +69,7 @@ public class RecorderTwoTest {
 
         FreeStyleBuild build = j.assertBuildStatus(Result.FAILURE, project.scheduleBuild2(0));
 
-        String s = FileUtils.readFileToString(build.getLogFile(), Charset.defaultCharset());
+        String s = String.join("", build.getLog(1000));
         assertTrue(s.contains("failed to lookup Dynatrace server configuration"));
     }
 
@@ -83,7 +81,7 @@ public class RecorderTwoTest {
         project.getPublishersList().add(new PerfSigRecorder(dynatraceConfigurations.get(0).name, Collections.singletonList(configurationTestCase)));
         FreeStyleBuild build = j.assertBuildStatus(Result.FAILURE, project.scheduleBuild2(0));
 
-        String s = FileUtils.readFileToString(build.getLogFile(), Charset.defaultCharset());
+        String s = String.join("", build.getLog(1000));
         assertTrue(s.contains("TestCase can not be validated"));
     }
 
@@ -96,7 +94,7 @@ public class RecorderTwoTest {
         project.getPublishersList().add(new PerfSigRecorder(dynatraceConfigurations.get(0).name, Collections.singletonList(configurationTestCase)));
         FreeStyleBuild build = j.assertBuildStatus(Result.FAILURE, project.scheduleBuild2(0));
 
-        String s = FileUtils.readFileToString(build.getLogFile(), Charset.defaultCharset());
+        String s = String.join("", build.getLog(1000));
         assertTrue(s.contains("no sessionname found, aborting ..."));
     }
 

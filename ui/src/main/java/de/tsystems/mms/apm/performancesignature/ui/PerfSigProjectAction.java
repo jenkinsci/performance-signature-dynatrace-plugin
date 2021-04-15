@@ -33,7 +33,12 @@ import hudson.model.Run;
 import hudson.tasks.junit.TestResult;
 import hudson.tasks.junit.TestResultAction;
 import hudson.tasks.test.TestResultProjectAction;
-import hudson.util.*;
+import hudson.util.ChartUtil;
+import hudson.util.ColorPalette;
+import hudson.util.DataSetBuilder;
+import hudson.util.Graph;
+import hudson.util.ShiftedCategoryAxis;
+import hudson.util.XStream2;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jfree.chart.ChartFactory;
@@ -53,8 +58,16 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.*;
+import java.util.Map;
+import java.util.Objects;
+import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -526,7 +539,7 @@ public class PerfSigProjectAction extends PerfSigBaseAction implements Prominent
         }
     }
 
-    private abstract class TestRunGraphImpl extends Graph {
+    private abstract static class TestRunGraphImpl extends Graph {
         private final String customName;
 
         TestRunGraphImpl(final String customName) {

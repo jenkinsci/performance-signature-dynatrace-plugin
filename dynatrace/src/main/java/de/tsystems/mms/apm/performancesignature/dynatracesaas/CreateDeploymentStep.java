@@ -133,6 +133,7 @@ public class CreateDeploymentStep extends Step {
             return DynatraceUtils.listToListBoxModel(DynatraceUtils.getDynatraceConfigurations());
         }
 
+
         @Override
         public CreateDeploymentStep newInstance(final Map<String, Object> arguments) throws Exception {
             CreateDeploymentStep step = (CreateDeploymentStep) super.newInstance(arguments);

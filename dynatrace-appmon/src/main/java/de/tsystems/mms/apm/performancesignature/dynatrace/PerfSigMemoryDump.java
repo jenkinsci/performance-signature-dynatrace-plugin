@@ -22,7 +22,9 @@ import de.tsystems.mms.apm.performancesignature.dynatrace.rest.xml.model.Agent;
 import de.tsystems.mms.apm.performancesignature.dynatrace.util.PerfSigUtils;
 import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
 import de.tsystems.mms.apm.performancesignature.ui.util.PluginLogger;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.AbortException;
+import hudson.EnvVars;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
@@ -68,8 +70,8 @@ public class PerfSigMemoryDump extends Builder implements SimpleBuildStep {
     }
 
     @Override
-    public void perform(@Nonnull final Run<?, ?> run, @Nonnull final FilePath workspace, @Nonnull final Launcher launcher, @Nonnull final TaskListener listener)
-            throws InterruptedException, IOException {
+    public void perform(@NonNull Run<?, ?> run, @NonNull FilePath workspace, @NonNull EnvVars env, @NonNull Launcher launcher,
+                        @NonNull TaskListener listener) throws InterruptedException, IOException {
         PluginLogger logger = PerfSigUIUtils.createLogger(listener.getLogger());
         DTServerConnection connection = PerfSigUtils.createDTServerConnection(dynatraceProfile);
 

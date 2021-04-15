@@ -45,7 +45,7 @@ public class TimeSeriesApiTwoTest {
     public static final JenkinsRule j = new JenkinsRule();
 
     private static ListBoxModel dynatraceConfigurations;
-    private DynatraceServerConnection connection;
+    private final DynatraceServerConnection connection;
 
     public TimeSeriesApiTwoTest() throws AbortException, RESTErrorException {
         connection = DynatraceUtils.createDynatraceServerConnection(dynatraceConfigurations.get(0).name, false);

@@ -29,7 +29,6 @@ import hudson.model.FreeStyleProject;
 import hudson.tasks.BatchFile;
 import hudson.tasks.Shell;
 import hudson.util.ListBoxModel;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
@@ -39,7 +38,6 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
 
-import java.nio.charset.Charset;
 import java.util.Collections;
 
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
@@ -87,7 +85,7 @@ public class RecorderOneTest {
         project.getPublishersList().add(recorder);
         FreeStyleBuild build = j.assertBuildStatusSuccess(project.scheduleBuild2(0));
 
-        String s = FileUtils.readFileToString(build.getLogFile(), Charset.defaultCharset());
+        String s = String.join("", build.getLog(1000));
         assertTrue(s.contains("connection successful, getting reports for this build and testcase " + testCase));
         assertTrue(s.contains("getting PDF report: Singlereport")); //no Comparisonreport available
         assertTrue(s.contains("parsing XML report"));

@@ -27,15 +27,17 @@ import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
 import hudson.model.AbstractBuild;
 import hudson.model.Project;
 import hudson.model.Run;
+import org.apache.commons.io.IOUtils;
+import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.jvnet.hudson.test.JenkinsRule;
 import org.jvnet.hudson.test.recipes.LocalData;
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 
@@ -44,11 +46,9 @@ import static org.junit.Assert.*;
 
 public class PerfSigBuildActionResultsDisplayTest {
 
-    private final String TEST_PROJECT_WITH_HISTORY = "projectAction";
     @Rule
     public final JenkinsRule j = new JenkinsRule();
-    @Rule
-    public final ExpectedException exception = ExpectedException.none();
+    private final String TEST_PROJECT_WITH_HISTORY = "projectAction";
 
     @LocalData
     @Test
@@ -100,9 +100,9 @@ public class PerfSigBuildActionResultsDisplayTest {
         j.assertGoodStatus(webRequestCount2);
         j.assertGoodStatus(webRequestTime2);
 
-        exception.expect(FailingHttpStatusCodeException.class);
-        wc.goTo(proj.getUrl() + "/lastBuild/performance-signature/" +
-                "summarizerGraph?measure=Time&testcase=TestNotFound&chartdashlet=WebRequestTime", "image/png");
+        Assert.assertThrows(FailingHttpStatusCodeException.class, () ->
+                wc.goTo(proj.getUrl() + "/lastBuild/performance-signature/" +
+                        "summarizerGraph?measure=Time&testcase=TestNotFound&chartdashlet=WebRequestTime", "image/png"));
     }
 
     @LocalData
@@ -148,9 +148,9 @@ public class PerfSigBuildActionResultsDisplayTest {
         assertEquals(14.0, xmlProjectPage.getFirstByXPath("count(/perfSigBuildActionResultsDisplay/dashboardReport/chartDashlet)"), 0);
 
         Run<?, ?> build = proj.getBuildByNumber(11157);
-        exception.expect(FailingHttpStatusCodeException.class);
-        wc.goTo(build.getUrl() + "/performance-signature/" +
-                "getSingleReport?testCase=nothing&number=0", "application/octet-stream");
+        Assert.assertThrows(FailingHttpStatusCodeException.class, () ->
+                wc.goTo(build.getUrl() + "/performance-signature/" +
+                        "getSingleReport?testCase=nothing&number=0", "application/octet-stream"));
     }
 
     @LocalData
@@ -173,9 +173,9 @@ public class PerfSigBuildActionResultsDisplayTest {
         j.assertGoodStatus(singleReportDownload);
         j.assertGoodStatus(sessionDownload);
 
-        exception.expect(FailingHttpStatusCodeException.class);
-        wc.goTo(build.getUrl() + "/performance-signature/" +
-                "getSingleReport?testCase=UnitTest&number=1", "application/octet-stream");
+        Assert.assertThrows(FailingHttpStatusCodeException.class, () ->
+                wc.goTo(build.getUrl() + "/performance-signature/" +
+                        "getSingleReport?testCase=UnitTest&number=1", "application/octet-stream"));
     }
 
     @LocalData
@@ -191,7 +191,7 @@ public class PerfSigBuildActionResultsDisplayTest {
 
         for (String type : Arrays.asList("Single", "Comparison")) {
             URL url = new URL(buildPage.getUrl() + "performance-signature/get" + type + "ReportList");
-            List<String> obj = gson.fromJson(org.apache.commons.io.IOUtils.toString(url), new TypeToken<List<String>>() {
+            List<String> obj = gson.fromJson(IOUtils.toString(url, StandardCharsets.UTF_8), new TypeToken<List<String>>() {
             }.getType());
             assertFalse(obj.isEmpty());
             assertEquals(2, obj.size());

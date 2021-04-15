@@ -86,7 +86,7 @@ public class CredProfilePair extends AbstractDescribableImpl<CredProfilePair> {
                     .includeEmptyValue()
                     .includeMatchingAs(
                             ACL.SYSTEM,
-                            Jenkins.getInstance(),
+                            Jenkins.get(),
                             StandardUsernamePasswordCredentials.class,
                             Collections.emptyList(),
                             CredentialsMatchers.instanceOf(StandardUsernamePasswordCredentials.class))
@@ -150,7 +150,7 @@ public class CredProfilePair extends AbstractDescribableImpl<CredProfilePair> {
         }
 
         private boolean checkMissingPermission(final Item item) {
-            return item == null ? !Jenkins.getInstance().hasPermission(Jenkins.ADMINISTER) :
+            return item == null ? !Jenkins.get().hasPermission(Jenkins.ADMINISTER) :
                     !item.hasPermission(Item.EXTENDED_READ) && !item.hasPermission(CredentialsProvider.USE_ITEM);
         }
     }

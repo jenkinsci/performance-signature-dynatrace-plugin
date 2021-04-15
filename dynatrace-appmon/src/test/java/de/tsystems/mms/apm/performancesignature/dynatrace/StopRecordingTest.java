@@ -30,11 +30,10 @@ import hudson.tasks.BatchFile;
 import hudson.tasks.Shell;
 import hudson.util.ListBoxModel;
 import org.apache.commons.lang3.SystemUtils;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.jvnet.hudson.test.JenkinsRule;
 
 import java.util.List;
@@ -57,10 +56,8 @@ public class StopRecordingTest {
     );
 
     private static ListBoxModel dynatraceConfigurations;
-    @Rule
-    public final ExpectedException exception = ExpectedException.none();
     private final static String testCase = "unittest";
-    private DTServerConnection connection;
+    private final DTServerConnection connection;
 
     @BeforeClass
     public static void setUp() throws Exception {
@@ -91,9 +88,7 @@ public class StopRecordingTest {
     public void testStopSessionRecording3() throws AbortException, RESTErrorException {
         DTServerConnection connection2 = PerfSigUtils.createDTServerConnection(dynatraceConfigurations.get(1).name);
 
-        exception.expect(CommandExecutionException.class);
-        exception.expectMessage("pre-production licenses");
-        connection2.stopRecording();
+        Assert.assertThrows("pre-production licenses", CommandExecutionException.class, connection2::stopRecording);
     }
 
     @Test

@@ -27,9 +27,7 @@ import hudson.util.ListBoxModel;
 import org.apache.commons.collections.MapUtils;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.jvnet.hudson.test.JenkinsRule;
 
 import java.time.Instant;
@@ -44,9 +42,7 @@ public class DynatraceReportStepExecutionTest {
     @ClassRule
     public static final JenkinsRule j = new JenkinsRule();
     private static ListBoxModel dynatraceConfigurations;
-    @Rule
-    public final ExpectedException exception = ExpectedException.none();
-    private DynatraceServerConnection connection;
+    private final DynatraceServerConnection connection;
 
     public DynatraceReportStepExecutionTest() throws AbortException, RESTErrorException {
         connection = DynatraceUtils.createDynatraceServerConnection(dynatraceConfigurations.get(0).name, false);

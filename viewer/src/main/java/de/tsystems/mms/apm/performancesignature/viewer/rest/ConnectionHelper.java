@@ -25,7 +25,11 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.CharEncoding;
 import org.apache.commons.lang.exception.ExceptionUtils;
-import org.jenkinsci.plugins.ParameterizedRemoteTrigger.*;
+import org.jenkinsci.plugins.ParameterizedRemoteTrigger.BuildContext;
+import org.jenkinsci.plugins.ParameterizedRemoteTrigger.ConnectionResponse;
+import org.jenkinsci.plugins.ParameterizedRemoteTrigger.JenkinsCrumb;
+import org.jenkinsci.plugins.ParameterizedRemoteTrigger.RemoteBuildConfiguration;
+import org.jenkinsci.plugins.ParameterizedRemoteTrigger.RemoteJenkinsServer;
 import org.jenkinsci.plugins.ParameterizedRemoteTrigger.auth2.Auth2;
 import org.jenkinsci.plugins.ParameterizedRemoteTrigger.exceptions.ForbiddenException;
 import org.jenkinsci.plugins.ParameterizedRemoteTrigger.exceptions.UnauthorizedException;
@@ -33,8 +37,16 @@ import org.jenkinsci.plugins.ParameterizedRemoteTrigger.pipeline.Handle;
 
 import javax.annotation.CheckForNull;
 import javax.annotation.Nullable;
-import java.io.*;
-import java.net.*;
+import java.io.ByteArrayInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLEncoder;
+import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
@@ -74,7 +86,7 @@ public class ConnectionHelper {
         msg.append(String.format("Remote build failed with '%s' for the following reason: '%s'.%s",
                 e.getClass().getSimpleName(), e.getMessage(), ""));
         msg.append(NL).append(ExceptionUtils.getFullStackTrace(e));
-        if (logger != null) logger.println("ERROR: " + msg.toString());
+        if (logger != null) logger.println("ERROR: " + msg);
         throw new AbortException(e.getClass().getSimpleName() + ": " + e.getMessage());
     }
 
@@ -185,14 +197,14 @@ public class ConnectionHelper {
         } catch (IOException e) {
             //E.g. "HTTP/1.1 403 No valid crumb was included in the request"
             List<String> hints = responseHeader != null ? responseHeader.get(null) : null;
-            String hintsString = CollectionUtils.isNotEmpty(hints) ? " - " + hints.toString() : "";
+            String hintsString = CollectionUtils.isNotEmpty(hints) ? " - " + hints : "";
 
             context.logger.println(e.getMessage() + hintsString);
             //If we have CONNECTIONRETRYLIMIT set to > 0 then retry that many times.
             if (numberOfAttempts <= CONNECTIONRETRYLIMIT) {
-                context.logger.println(String.format(
-                        "Connection to remote server failed %s, waiting for to retry - %s seconds until next attempt. URL: %s",
-                        "[" + responseCode + "]", POLLINTERVAL, url));
+                context.logger.printf(
+                        "Connection to remote server failed %s, waiting for to retry - %s seconds until next attempt. URL: %s%n",
+                        "[" + responseCode + "]", POLLINTERVAL, url);
 
                 // Sleep for 'pollInterval' seconds.
                 // Sleep takes miliseconds so need to convert this.pollInterval to milisecopnds (x 1000)
@@ -219,10 +231,6 @@ public class ConnectionHelper {
     /**
      * For POST requests a crumb is needed. This methods gets a crumb and sets it in the header.
      * https://wiki.jenkins.io/display/JENKINS/Remote+access+API#RemoteaccessAPI-CSRFProtection
-     *
-     * @param connection
-     * @param context
-     * @throws IOException
      */
     private void addCrumbToConnection(final HttpURLConnection connection, final BuildContext context) throws IOException {
         String method = connection.getRequestMethod();
@@ -256,7 +264,7 @@ public class ConnectionHelper {
     private RemoteJenkinsServer findRemoteHost(final String serverHost) {
         if (isBlank(serverHost)) return null;
         RemoteBuildConfiguration.DescriptorImpl descriptor = (RemoteBuildConfiguration.DescriptorImpl)
-                Jenkins.getInstance().getDescriptorOrDie(RemoteBuildConfiguration.class);
+                Jenkins.get().getDescriptorOrDie(RemoteBuildConfiguration.class);
         return Arrays.stream(descriptor.getRemoteSites())
                 .filter(host -> serverHost.equals(PerfSigUIUtils.getHostFromUrl(host.getAddress())))
                 .findFirst().orElse(null);

@@ -18,8 +18,9 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout" xmlns:fmt="jelly:fmt" xmlns:bs="/bootstrap">
     <bs:layout title="Performance Signature Overview for ${it.job.name}" norefresh="true">
         <l:header>
-            <style>
+            <style type="text/css">
                 .text-center { text-align: center !important; }
+                .grid-stack { background-color: #EDEDED; }
                 .chk_show, .del_img { position: absolute !important; top: 5px !important }
                 .chk_show { left: 5px }
                 .del_img { color: red; font-size: 16px; right: 5px }

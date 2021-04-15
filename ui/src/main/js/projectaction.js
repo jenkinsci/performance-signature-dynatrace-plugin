@@ -100,7 +100,7 @@ import 'lightbox2/dist/css/lightbox.css';
         });
 
         $('#addbutton', page).click(function () {
-            var request_parameter = '&amp;width=410&amp;height=300&amp;customName=' + encode($('#customName', page).val()) +
+            const request_parameter = '&amp;width=410&amp;height=300&amp;customName=' + encode($('#customName', page).val()) +
                 '&amp;customBuildCount=' + $('#customBuildCount', page).val();
             if ($('#measureGroup', page).val() === 'UnitTest overview') {
                 grid[pageIndex].addWidget({
@@ -151,7 +151,7 @@ src="summarizerGraph?id=${$('#measure', page).val()}${request_parameter}&amp;agg
                                 h: 2,
                                 content: `<span class="del_img float-left" style="display: none">
 <i class="fas fa-times" style="color: red"></i></span><span class="chk_show float-right" style="display: none">
-<input type="checkbox" title="show in project overview" ${json[index].show ? "checked='checked'" : ""}/></span>
+<input type="checkbox" title="show in project overview" ${json[index].show ? "checked='checked'" : ''}/></span>
 <a href="./summarizerGraph?width=800&amp;height=585&amp;id=${json[index].id}${randomParam}" data-lightbox="${$(page).attr('id')}" data-title="${json[index].description}">
 <img class="img-thumbnail" height="300" width="410" 
 src="./summarizerGraph?width=410&amp;height=300&amp;id=${json[index].id}${randomParam}" title="source: ${json[index].chartDashlet}-${json[index].measure} (${json[index].aggregation})

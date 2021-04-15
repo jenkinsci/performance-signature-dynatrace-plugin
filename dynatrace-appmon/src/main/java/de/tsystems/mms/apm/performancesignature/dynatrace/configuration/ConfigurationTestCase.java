@@ -91,7 +91,7 @@ public abstract class ConfigurationTestCase implements Describable<Configuration
     }
 
     public ConfigurationTestCaseDescriptor getDescriptor() {
-        return (ConfigurationTestCaseDescriptor) Jenkins.getInstance().getDescriptorOrDie(getClass());
+        return (ConfigurationTestCaseDescriptor) Jenkins.get().getDescriptorOrDie(getClass());
     }
 
     public abstract static class ConfigurationTestCaseDescriptor extends Descriptor<ConfigurationTestCase> {
@@ -105,7 +105,7 @@ public abstract class ConfigurationTestCase implements Describable<Configuration
         }
 
         public static DescriptorExtensionList<ConfigurationTestCase, Descriptor<ConfigurationTestCase>> all() {
-            return Jenkins.getInstance().getDescriptorList(ConfigurationTestCase.class);
+            return Jenkins.get().getDescriptorList(ConfigurationTestCase.class);
         }
 
         @Nonnull

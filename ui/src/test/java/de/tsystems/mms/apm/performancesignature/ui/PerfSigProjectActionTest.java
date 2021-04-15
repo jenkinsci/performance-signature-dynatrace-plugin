@@ -26,6 +26,7 @@ import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
 import de.tsystems.mms.apm.performancesignature.ui.util.TestUtils;
 import hudson.model.Project;
 import hudson.model.Run;
+import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -41,11 +42,11 @@ import static org.junit.Assert.assertTrue;
 
 public class PerfSigProjectActionTest {
 
-    private final String TEST_PROJECT_WITH_HISTORY = "projectAction";
     @Rule
     public final JenkinsRule j = new JenkinsRule();
     @Rule
     public final ExpectedException exception = ExpectedException.none();
+    private final String TEST_PROJECT_WITH_HISTORY = "projectAction";
 
     @LocalData
     @Test
@@ -108,8 +109,8 @@ public class PerfSigProjectActionTest {
             j.assertGoodStatus(graph);
         }
 
-        exception.expect(FailingHttpStatusCodeException.class);
-        wc.goTo(proj.getUrl() + "performance-signature/summarizerGraph?id=20571aabda401cc01546d7ebd62e0e58", "");
+        Assert.assertThrows(FailingHttpStatusCodeException.class, () ->
+                wc.goTo(proj.getUrl() + "performance-signature/summarizerGraph?id=20571aabda401cc01546d7ebd62e0e58", ""));
     }
 
     @LocalData

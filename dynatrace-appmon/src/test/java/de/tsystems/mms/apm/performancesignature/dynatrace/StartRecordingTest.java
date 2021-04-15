@@ -27,11 +27,10 @@ import hudson.AbortException;
 import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
 import hudson.util.ListBoxModel;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.jvnet.hudson.test.JenkinsRule;
 
 import java.io.IOException;
@@ -53,8 +52,6 @@ public class StartRecordingTest {
             getOptions().usingFilesUnderDirectory(options().filesRoot().child("StartRecordingTest2").getPath()).httpsPort(8022)
     );
 
-    @Rule
-    public final ExpectedException exception = ExpectedException.none();
     private static ListBoxModel dynatraceConfigurations;
     private final DTServerConnection connection2;
     private final DTServerConnection connection;
@@ -82,10 +79,9 @@ public class StartRecordingTest {
     public void testSessionRecording2() throws IOException {
         DTServerConnection connection2 = PerfSigUtils.createDTServerConnection(dynatraceConfigurations.get(1).name);
 
-        exception.expect(CommandExecutionException.class);
-        exception.expectMessage("pre-production licenses");
-        connection2.startRecording("testContinuousSessionRecording", "triggered by UnitTest",
-                PerfSigStartRecording.DescriptorImpl.defaultRecordingOption, false, false);
+        Assert.assertThrows("pre-production licenses", CommandExecutionException.class, () ->
+                connection2.startRecording("testContinuousSessionRecording", "triggered by UnitTest",
+                        PerfSigStartRecording.DescriptorImpl.defaultRecordingOption, false, false));
     }
 
     @Test

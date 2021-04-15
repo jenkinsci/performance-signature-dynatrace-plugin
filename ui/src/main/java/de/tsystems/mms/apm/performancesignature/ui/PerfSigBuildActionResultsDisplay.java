@@ -133,7 +133,7 @@ public class PerfSigBuildActionResultsDisplay implements ModelObject {
                 String measure = request.getParameter("measure");
                 String chartDashlet = request.getParameter("chartdashlet");
                 String testCase = request.getParameter("testcase");
-                TimeSeries timeSeries = new TimeSeries(chartDashlet, Second.class);
+                TimeSeries timeSeries = new TimeSeries(chartDashlet);
 
                 DashboardReport dashboardReport = getDashBoardReport(testCase);
                 Measure m = dashboardReport.getMeasure(chartDashlet, measure);
@@ -225,20 +225,17 @@ public class PerfSigBuildActionResultsDisplay implements ModelObject {
             response.sendError(404, "requested resource not found");
             return;
         }
-        InputStream inStream = requestedFile.read();
+
         // gets MIME type of the file
         String mimeType = "pdf".equals(extension) ? "application/pdf" : "application/octet-stream";// set to binary type if MIME mapping not found
-
-        try {
-            // forces download
-            String headerKey = "Content-Disposition";
+        // forces download
+        String headerKey = "Content-Disposition";
+        try (InputStream inStream = requestedFile.read()) {
             String headerValue = String.format("attachment; filename=\"%s\"", requestedFile.getName());
             response.setHeader(headerKey, headerValue);
             response.serveFile(request, inStream, requestedFile.lastModified(), requestedFile.length(), "mime-type:" + mimeType);
         } catch (ServletException e) {
             LOGGER.severe(ExceptionUtils.getFullStackTrace(e));
-        } finally {
-            IOUtils.closeQuietly(inStream);
         }
     }
 

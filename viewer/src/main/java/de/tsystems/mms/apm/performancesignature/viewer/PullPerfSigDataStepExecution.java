@@ -180,10 +180,10 @@ public class PullPerfSigDataStepExecution extends SynchronousNonBlockingStepExec
         boolean result = true;
         try {
             for (String reportType : Arrays.asList("Single", "Comparison")) {
-                List reportlist = getReportList(context, reportType);
-                for (Object report : reportlist) {
+                List<String> reportList = getReportList(context, reportType);
+                for (String report : reportList) {
                     URL url = new URL(step.getHandle().getBuildUrl() + "performance-signature/get" + reportType + "Report?number="
-                            + reportlist.indexOf(report));
+                            + reportList.indexOf(report));
                     result &= downloadArtifact(context, new FilePath(dir, report + ".pdf"), url, logger);
                 }
             }

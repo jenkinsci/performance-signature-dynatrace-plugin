@@ -114,9 +114,6 @@ public abstract class MeasureBaseModel {
     public double getMetricValue(final String aggregation) {
         if (aggregation == null) return this.getAvg();
         switch (aggregation.toLowerCase()) {
-            case "avg":
-            case "average":
-                return this.getAvg();
             case "min":
             case "minimum":
                 return this.getMin();
@@ -127,6 +124,8 @@ public abstract class MeasureBaseModel {
                 return this.getSum();
             case "count":
                 return this.getCount();
+            case "avg":
+            case "average":
             default:
                 return this.getAvg();
         }

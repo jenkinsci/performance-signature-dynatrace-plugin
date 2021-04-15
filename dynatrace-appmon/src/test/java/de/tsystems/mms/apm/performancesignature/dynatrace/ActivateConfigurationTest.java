@@ -22,13 +22,10 @@ import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
-import org.apache.commons.io.FileUtils;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
-
-import java.nio.charset.Charset;
 
 import static de.tsystems.mms.apm.performancesignature.dynatrace.util.TestUtils.getOptions;
 import static org.junit.Assert.*;
@@ -54,7 +51,7 @@ public class ActivateConfigurationTest {
         project.getBuildersList().add(new PerfSigActivateConfiguration(dynatraceConfigurations.get(0).name, "ActivateConfigurationTest"));
         FreeStyleBuild build = j.assertBuildStatusSuccess(project.scheduleBuild2(0));
 
-        String s = FileUtils.readFileToString(build.getLogFile(), Charset.defaultCharset());
+        String s = String.join("", build.getLog(1000));
         assertTrue(s.contains("activated configuration successfully on"));
     }
 

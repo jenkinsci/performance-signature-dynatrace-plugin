@@ -119,7 +119,7 @@ public class DTServerConnection {
                     public PasswordAuthentication getPasswordAuthentication() {
                         if (getRequestorType() != RequestorType.PROXY) return null;
                         return new PasswordAuthentication(proxyConfig.getUserName(),
-                                proxyConfig.getPassword().toCharArray());
+                                proxyConfig.getSecretPassword().getPlainText().toCharArray());
                     }
                 });
             }
