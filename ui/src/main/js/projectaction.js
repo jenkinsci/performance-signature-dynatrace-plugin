@@ -96,7 +96,7 @@ import 'lightbox2/dist/css/lightbox.css';
             grid[pageIndex].enableMove(true);
         });
         $('#cancelbutton', page).click(function () {
-            location.reload(true);
+             location.reload(true);
         });
 
         $('#addbutton', page).click(function () {
