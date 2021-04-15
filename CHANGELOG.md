@@ -1,6 +1,23 @@
 Changelog
 ====
+
+### Version 3.2.1 (Apr 15, 2021)
+
+* fixed [JENKINS-65184 & JENKINS-56109] Plugins breaking "Configure System" UI
+* fixed [JENKINS-64396] remove Dynatrace server button label mislabeled
+* fix NPEs in Dynatrace module
+* rebuild UI with webpack and gridstack
+* several dependency updates
+* increase minimum jenkins version to 2.277.1
+* Dev: update parent pom version to 4.18
+* Dev: bump bom-2.264.x to version 28
+
+### Version 3.2.0 (Apr 15, 2021)
+
+skipped due to issues with the release process
+
 ### Version 3.1.6 (Nov 14, 2020)
+
 * fix NPE in AppMon module
 * update url to diagnostic tools
 * Optimized Images [(9b621c3)](https://github.com/jenkinsci/performance-signature-dynatrace-plugin/commit/d268da229cd2c15eb5515e27ea23bdadae09448c)
