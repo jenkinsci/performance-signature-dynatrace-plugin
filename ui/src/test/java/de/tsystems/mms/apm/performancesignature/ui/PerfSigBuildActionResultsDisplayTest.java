@@ -164,7 +164,7 @@ public class PerfSigBuildActionResultsDisplayTest {
         wc.setJavaScriptEnabled(false);
 
         HtmlPage page = wc.getPage(build, "performance-signature");
-        j.assertXPathValueContains(page, "//*[@id=\"UnitTest\"]/div/div[4]/div/div/div[2]/a/text()", "UnitTestReport with performance data");
+        j.assertXPathValueContains(page, "//*[@id=\"UnitTest\"]/div/div[5]/div/div/div[2]/a/text()", "UnitTestReport with performance data");
 
         Page singleReportDownload = wc.goTo(build.getUrl() + "/performance-signature/" +
                 "getSingleReport?testCase=UnitTest&number=0", "application/octet-stream");
