@@ -20,6 +20,9 @@
         <l:header>
             <style>
                 .text-center { text-align: center !important; }
+                .chk_show, .del_img { position: absolute !important; top: 5px !important }
+                .chk_show { left: 5px }
+                .del_img { color: red; font-size: 16px; right: 5px }
             </style>
         </l:header>
         <st:include it="${it.job}" page="sidepanel.jelly"/>
