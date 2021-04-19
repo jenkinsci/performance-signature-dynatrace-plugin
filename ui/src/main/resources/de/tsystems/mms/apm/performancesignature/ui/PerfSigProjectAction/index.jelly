@@ -169,6 +169,7 @@
                                                 <j:forEach var="file" items="${files}">
                                                     <a href="../${dashboardReport.key.number}/performance-signature/getComparisonReport?testCase=${lastDashboardReport.name}&amp;number=${files.indexOf(file)}"
                                                        target="_blank">
+                                                        <i class="fas fa-file-pdf"></i>
                                                         <img src="${resURL}/plugin/performance-signature-ui/images/pdficon_small.png"
                                                              style="margin: 0 2px;"/>
                                                     </a>
