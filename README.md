@@ -1,11 +1,13 @@
 # Performance Signature with Dynatrace (AppMon) for Jenkins
 [![Build Status](https://ci.jenkins.io/job/Plugins/job/performance-signature-dynatrace-plugin/job/master/badge/icon)](https://ci.jenkins.io/job/Plugins/job/performance-signature-dynatrace-plugin/job/master/)
-[![Sonarqube](https://sonarcloud.io/api/project_badges/measure?project=de.tsystems.mms.apm%3Aperformance-signature-parent-pom&metric=security_rating)](https://sonarcloud.io/dashboard?id=de.tsystems.mms.apm%3Aperformance-signature-parent-pom)
-[![Jenkins Plugin](https://img.shields.io/jenkins/plugin/v/performance-signature-dynatrace.svg)](https://plugins.jenkins.io/performance-signature-dynatrace)
+[![Jenkins Plugin](https://img.shields.io/jenkins/plugin/v/performance-signature-dynatrace.svg)](https://plugins.jenkins.io/performance-signature-dynatrace/)
+[![Changelog](https://img.shields.io/github/v/tag/jenkinsci/performance-signature-dynatrace-plugin?label=changelog)](https://github.com/jenkinsci/performance-signature-dynatrace-plugin/blob/master/CHANGELOG.md)
+[![Jenkins Plugin Installs](https://img.shields.io/jenkins/plugin/i/performance-signature-ui?color=blue)](https://plugins.jenkins.io/performance-signature-dynatrace/)
 
-Smoking latest software products are created with the help of flexible and agile systems in a continuous integration (CI) environment. Such environments include a CI-Server like Jenkins.
- The Performance Signature collects performance values during a build and evaluates and compares the result with previous builds and non-functional requirements.
- Several software tests can be run and evaluated automatically, so that the most important key performance indicators (KPI) can be summarized and be available for all project participants very quickly.
+Smoking latest software products are created with the help of flexible and agile systems in a continuous integration (CI) environment. Such environments include
+a CI-Server like Jenkins. The Performance Signature collects performance values during a build and evaluates and compares the result with previous builds and
+non-functional requirements. Several software tests can be run and evaluated automatically, so that the most important key performance indicators (KPI) can be
+summarized and be available for all project participants very quickly.
 
 ### Get in touch with Application Performance Experts
 
