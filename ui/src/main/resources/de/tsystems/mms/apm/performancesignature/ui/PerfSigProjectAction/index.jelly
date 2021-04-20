@@ -169,10 +169,9 @@
                                                 <j:forEach var="file" items="${files}">
                                                     <a href="../${dashboardReport.key.number}/performance-signature/getComparisonReport?testCase=${lastDashboardReport.name}&amp;number=${files.indexOf(file)}"
                                                        target="_blank">
-                                                        <i class="fas fa-file-pdf"></i>
-                                                        <img src="${resURL}/plugin/performance-signature-ui/images/pdficon_small.png"
-                                                             style="margin: 0 2px;"/>
+                                                        <i class="far fa-file-pdf" style="color: red"></i>
                                                     </a>
+                                                    &#160;
                                                 </j:forEach>
                                             </td>
                                             <td>
@@ -204,7 +203,7 @@
                 </j:forEach>
             </div>
             <script>
-                var projectAction = <st:bind value="${it}"/>
+                var projectAction =<st:bind value="${it}"/>
             </script>
             <st:adjunct includes="org.jenkins.ui.jsmodules.performance-signature-ui.projectaction"/>
         </l:main-panel>
