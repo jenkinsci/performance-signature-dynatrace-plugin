@@ -155,7 +155,7 @@ public class PerfSigBuildActionResultsDisplayTest {
 
     @LocalData
     @Test
-    public void testDownloadMethods() throws IOException, SAXException {
+    public void testDownloadMethods() throws Exception {
         Project proj = (Project) j.jenkins.getItem(TEST_PROJECT_WITH_HISTORY);
         assert proj != null;
         Run<?, ?> build = proj.getBuildByNumber(11157);
@@ -164,7 +164,7 @@ public class PerfSigBuildActionResultsDisplayTest {
         wc.setJavaScriptEnabled(false);
 
         HtmlPage page = wc.getPage(build, "performance-signature");
-        j.assertXPathValueContains(page, "//*[@id=\"UnitTest\"]/div/div[5]/div/div/div[2]/a/text()", "UnitTestReport with performance data");
+        j.assertXPathValueContains(page, "//*[@id=\"UnitTest\"]/div/div[4]/div/div/div[2]/a/text()", "UnitTestReport with performance data");
 
         Page singleReportDownload = wc.goTo(build.getUrl() + "/performance-signature/" +
                 "getSingleReport?testCase=UnitTest&number=0", "application/octet-stream");
