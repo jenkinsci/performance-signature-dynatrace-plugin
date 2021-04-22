@@ -15,53 +15,51 @@
   -->
 
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler"   xmlns:bs="/bootstrap">
-
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler">
     <j:if test="${from.lastDashboardReports != null}">
         <br/>
         <st:adjunct includes="io.jenkins.plugins.bootstrap4"/>
-            <div class="pull-right" style="position:relative; z-index:1">
-                <div class="alert alert-success" role="alert">
-                    <font size="3">${from.displayName}</font>
-                </div>
-                <div class="card card-success">
-                    <ul class="nav nav-tabs" role="tablist" id="tabList" style="margin-top: 0;">
-                        <j:forEach var="dashboardReport" items="${from.lastDashboardReports}">
-                            <li  class="nav-item" role="presentation">
-                                <a  class="nav-link" href="#${dashboardReport.name}" aria-controls="${dashboardReport.name}" role="tab" data-toggle="tab">
-                                    ${dashboardReport.name}
-                                </a>
-                            </li>
-                        </j:forEach>
-                    </ul>
-                    <div class="tab-content">
-                        <j:forEach var="dashboardReport" items="${from.lastDashboardReports}">
-                            <div role="tabpanel" class="tab-pane" id="${dashboardReport.name}">
-                                <a href="${from.urlName}/#${dashboardReport.name}">
-                                    <div id="carousel-${dashboardReport.name}" class="carousel" data-ride="carousel" data-interval="false">
-                                        <!-- Wrapper for slides -->
-                                        <div class="carousel-inner" role="listbox"/>
+        <div class="pull-right" style="position:relative; z-index:1">
+            <div class="alert alert-success" role="alert">
+                <font size="3">${from.displayName}</font>
+            </div>
+            <div class="card card-success">
+                <ul class="nav nav-tabs" role="tablist" id="tabList" style="margin-top: 0;">
+                    <j:forEach var="dashboardReport" items="${from.lastDashboardReports}">
+                        <li class="nav-item" role="presentation">
+                            <a class="nav-link" href="#${dashboardReport.name}" aria-controls="${dashboardReport.name}" role="tab" data-toggle="tab">
+                                ${dashboardReport.name}
+                            </a>
+                        </li>
+                    </j:forEach>
+                </ul>
+                <div class="tab-content">
+                    <j:forEach var="dashboardReport" items="${from.lastDashboardReports}">
+                        <div role="tabpanel" class="tab-pane" id="${dashboardReport.name}">
+                            <a href="${from.urlName}/#${dashboardReport.name}">
+                                <div id="carousel-${dashboardReport.name}" class="carousel" data-ride="carousel" data-interval="false">
+                                    <!-- Wrapper for slides -->
+                                    <div class="carousel-inner" role="listbox"/>
 
-                                        <!-- Controls -->
-                                        <a style="background-image:none !important" class="carousel-control-prev"
-                                           href="#carousel-${dashboardReport.name}" role="button" data-slide="prev">
-                                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                            <span class="sr-only">Previous</span>
-                                        </a>
-                                        <a style="background-image:none !important" class="carousel-control-next"
-                                           href="#carousel-${dashboardReport.name}" role="button" data-slide="next">
-                                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                            <span class="sr-only">Next</span>
-                                        </a>
-
-                                    </div>
-                                </a>
-                            </div>
-                        </j:forEach>
-                    </div>
+                                    <!-- Controls -->
+                                    <a style="background-image:none !important" class="carousel-control-prev"
+                                       href="#carousel-${dashboardReport.name}" role="button" data-slide="prev">
+                                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                        <span class="sr-only">Previous</span>
+                                    </a>
+                                    <a style="background-image:none !important" class="carousel-control-next"
+                                       href="#carousel-${dashboardReport.name}" role="button" data-slide="next">
+                                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                        <span class="sr-only">Next</span>
+                                    </a>
+                                </div>
+                            </a>
+                        </div>
+                    </j:forEach>
                 </div>
             </div>
-            <br style="clear:both;"/>
+        </div>
+        <br style="clear:both;"/>
     </j:if>
     <st:bind var="projectAction" value="${from}"/>
     <st:adjunct includes="io.jenkins.plugins.jquery3"/>

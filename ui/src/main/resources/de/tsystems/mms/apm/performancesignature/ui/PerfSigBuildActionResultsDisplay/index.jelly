@@ -64,7 +64,7 @@
                 }
                 .pdf
                 {
-                 fill:red;
+                fill:red;
                 }
                 .text-center { text-align: center !important; }
             </style>
@@ -103,7 +103,7 @@
                                     <a target="_blank" href="${dashboardReport.clientUrl}">
                                         <button title="Dynatrace client must be started on local machine"
                                                 class="btn btn-success rounded-lg" id="editbutton" style="font-size: small">
-                                          <fa:svg-icon name="eye" class="icon"/>&#160;Open in Dynatrace
+                                            <fa:svg-icon name="eye" class="icon"/>&#160;Open in Dynatrace
                                         </button>
                                     </a>
                                 </div>
@@ -150,7 +150,7 @@
                                                 <j:if test="${!sessionFiles.isEmpty()}">
                                                     <a href="./getSession?testCase=${dashboardReport.name}"
                                                        target="_blank">
-                                                        <img src="${resURL}/plugin/performance-signature-ui/images/dtsession.png"/>
+                                                        <img src="${resURL}/plugin/performance-signature-ui/images/dtsession.png" width="16px" height="16px"/>
                                                         ${utils.removeExtension(sessionFiles.get(0).name)}
                                                     </a>
                                                 </j:if>

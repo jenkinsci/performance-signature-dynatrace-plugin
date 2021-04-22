@@ -26,11 +26,11 @@
             $.each(json, function (index) {
                 if (json[index].show) {
                     if (json[index].id === 'unittest_overview') {
-                        $('.carousel-inner', carousel).append('<div class="carousel-item">'+
-                            '<img class="img-thumbnail" height="300" width="100%"  src="performance-signature/testRunGraph?width=410&amp;height=300&amp;'+randomParam+'">'+'</div>');
+                        $('.carousel-inner', carousel).append('<div class="carousel-item">' +
+                            '<img class="img-thumbnail" height="250" width="100%" src="performance-signature/testRunGraph?width=350&amp;height=250&amp;' + randomParam + '">' + '</div>');
                     } else {
-                        $('.carousel-inner', carousel).append('<div class="carousel-item">'+
-                            '<img class="img-thumbnail" height="300" width="100%" src="performance-signature/summarizerGraph?width=410&amp;height=300&amp;id='+json[index].id+'&amp;'+randomParam+'">'+'</div>');
+                        $('.carousel-inner', carousel).append('<div class="carousel-item">' +
+                            '<img class="img-thumbnail" height="250" width="100%" src="performance-signature/summarizerGraph?width=350&amp;height=250&amp;id=' + json[index].id + '&amp;' + randomParam + '">' + '</div>');
                     }
                 }
             });
