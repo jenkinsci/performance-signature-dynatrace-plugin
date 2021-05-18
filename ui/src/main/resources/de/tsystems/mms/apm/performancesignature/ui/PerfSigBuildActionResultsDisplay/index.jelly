@@ -62,15 +62,6 @@
         }
 
     </style>
-<!--    <script>-->
-<!--        (function($) {-->
-<!--            options = {-->
-<!--                cellHeight: 80,-->
-<!--                verticalMargin: 10-->
-<!--            };-->
-<!--            $('.grid-stack').gridstack(options);-->
-<!--        })(jQuery3);-->
-<!--    </script>-->
     <bs:layout norefresh="true"
                title="Performance Signature report details for build ${it.build.number}">
         <l:header>
@@ -125,9 +116,6 @@
                             <div class="row col-md-6">
                                 <i> ${%Timestamp:}
                                 <fmt:formatDate dateStyle="medium" type="both" value="${it.build.time}"/></i>
-                            </div>
-                            <div class="grid-stack">
-
                             </div>
                             <br/>
                             <br/>
@@ -207,7 +195,7 @@
                                             <div class="card  card-default mb-1" style="height: auto">
                                                 <div class="card-header ${incidentSeverityEntry.key.panelColor}">
 
-                                                    <h6 class="card-group">
+                                                    <h6>
                                                         <a data-toggle="collapse" href="#collapse-${dashboardReport.name}-${rootId}">
                                                             ${incidentEntry.key}
                                                         </a>
@@ -216,7 +204,7 @@
                                                 </div>
                                                 <div id="collapse-${dashboardReport.name}-${rootId}" class="collapse">
                                                     <div class="card-body">
-                                                        <div class="card-group" id="incidents${rootId}-${dashboardReport.name}">
+                                                        <div id="incidents${rootId}-${dashboardReport.name}">
                                                             <j:forEach var="incident" items="${incidentEntry.value}">
                                                                 <jm:incidentPanel position="${incidentEntry.value.indexOf(incident)}"
                                                                                   incident="${incident}"/>
@@ -240,6 +228,7 @@
             </div>
             <br style="clear:both;"/>
             <st:adjunct includes="io.jenkins.plugins.jquery3"/>
+<!--            <script src="${resURL}/plugin/performance-signature-ui/js/echarts_functionality.js"/>-->
             <script src="${resURL}/plugin/performance-signature-ui/js/tabhashes.js"/>
         </l:main-panel>
     </bs:layout>
