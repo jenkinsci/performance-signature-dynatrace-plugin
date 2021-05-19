@@ -27,10 +27,10 @@
                 if (json[index].show) {
                     if (json[index].id === 'unittest_overview') {
                         $('.carousel-inner', carousel).append('<div class="carousel-item">' +
-                            '<img class="img-thumbnail" height="250" width="100%" src="performance-signature/testRunGraph?width=350&amp;height=250&amp;' + randomParam + '">' + '</div>');
+                            '<img class="img-thumbnail" height="250" src="performance-signature/testRunGraph?width=500&amp;height=250&amp;' + randomParam + '">' + '</div>');
                     } else {
                         $('.carousel-inner', carousel).append('<div class="carousel-item">' +
-                            '<img class="img-thumbnail" height="250" width="100%" src="performance-signature/summarizerGraph?width=350&amp;height=250&amp;id=' + json[index].id + '&amp;' + randomParam + '">' + '</div>');
+                            '<img class="img-thumbnail" height="250" src="performance-signature/summarizerGraph?width=500&amp;height=250&amp;id=' + json[index].id + '&amp;' + randomParam + '">' + '</div>');
                     }
                 }
             });
