@@ -15,10 +15,31 @@
   -->
 
 <?jelly escape-by-default='true'?>
+
 <j:jelly xmlns:j="jelly:core" xmlns:fmt="jelly:fmt" xmlns:jm="/de/tsystems/mms/apm/performancesignature/ui/tags"
          xmlns:st="jelly:stapler">
+    <style type="text/css">
+        table {
+        border-collapse: collapse;
+        width: 100%;
+        }
+
+        table td, #table th {
+        border: 1px solid #ddd;
+        padding: 8px;
+        }
+
+        table th {
+        padding-top: 12px;
+        padding-bottom: 12px;
+        text-align: left;
+        color: black;
+        }
+    </style>
+    <st:adjunct includes="io.jenkins.plugins.bootstrap4"/>
     <j:set var="testResult" value="${it.matchingTestResult}"/>
     <j:set var="previousTestResult" value="${it.previousTestResult}"/>
+
     <table>
         <tr>
             <td>Timestamp:</td>
