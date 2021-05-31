@@ -17,23 +17,25 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:jm="/de/tsystems/mms/apm/performancesignature/ui/tags">
     <j:set var="testResult" value="${it.matchingTestResult}"/>
+    <st:adjunct includes="org.jenkins.ui.jsmodules.performance-signature-ui.projectaction"/>
+    <st:adjunct includes="io.jenkins.plugins.bootstrap4"/>
     <j:if test="${testResult!=null}">
-        <st:adjunct includes="org.jenkins.ui.jsmodules.css.bootstrapprefix"/>
-        <st:adjunct includes="org.jenkins.ui.jsmodules.performance-signature-ui.buildactionresultsdisplay"/>
-        <div class="tw-bs" style="display: inline;">
             <j:set var="utils" value="${it.PerfSigUtils}"/>
             <j:new var="h" className="hudson.Functions"/>
             <j:set var="id" value="collapse${h.generateId()}"/>
-            <a data-toggle="collapse" href="#${id}" aria-expanded="false" aria-controls="${id}">
-                <span title="Dynatrace performance status: ${testResult.status}" class="glyphicon ${testResult.statusIcon}"
+            <a data-toggle="collapse" data-target="#${id}" aria-expanded="false" aria-controls="${id}">
+                <span title="Dynatrace performance status: ${testResult.status}"
+                      class="fas ${testResult.statusIcon}"
                       style="font-size: 15px; color: ${testResult.statusColor};" aria-hidden="true"/>
+
             </a>
-            <div class="collapse" id="${id}">
-                <div class="well" style="padding-top:5px;">
-                    <h4>Performance data</h4>
-                    <jm:testRunTable it="${it}"/>
-                </div>
+
+        <div class="collapse" id="${id}">
+            <div class="card card-body bg-light">
+                <h4>Performance data</h4>
+                <jm:testRunTable it="${it}"/>
             </div>
         </div>
     </j:if>
+
 </j:jelly>
