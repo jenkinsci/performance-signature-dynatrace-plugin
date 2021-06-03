@@ -143,15 +143,15 @@ public class TestResult {
     public String getStatusIcon() {
         switch (status) {
             case PASSED:
-                return "fa-check";
+                return "check";
             case FAILED:
-                return "fa-times-circle";
+                return "times-circle";
             case IMPROVED:
-                return "fa-arrow-up";
+                return "arrow-up";
             case DEGRADED:
-                return "fa-arrow-down";
+                return "arrow-down";
             case VOLATILE:
-                return "fa-sort";
+                return "sort";
             default:
                 return "";
         }

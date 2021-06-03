@@ -22,13 +22,15 @@
         <j:set var="utils" value="${it.PerfSigUtils}"/>
         <j:new var="h" className="hudson.Functions"/>
         <j:set var="id" value="collapse${h.generateId()}"/>
-        <!-- INSERT https://www.codeply.com/go/sOps2WhtG5 here -->
-        <a data-toggle="collapse" href="#${id}" aria-expanded="false" aria-controls="${id}">
-            <span title="Dynatrace performance status: ${testResult.status}" class="glyphicon ${testResult.statusIcon}"
-                  style="font-size: 15px; color: ${testResult.statusColor};" aria-hidden="true"/>
+        <a data-toggle="collapse" data-target="#${id}" aria-expanded="false" aria-controls="${id}">
+            <span title="Dynatrace performance status: ${testResult.status}">
+                <svg class="${testResult.statusIcon}" height="16px" width="16px" style="fill: ${testResult.statusColor}; cursor: pointer;">
+                    <use href="${resURL}/plugin/font-awesome-api/sprites/solid.svg#${testResult.statusIcon}"/>
+                </svg>
+            </span>
         </a>
         <div class="collapse" id="${id}">
-            <div class="well" style="padding-top:5px;">
+            <div class="card card-body bg-light">
                 <h4>Performance data</h4>
                 <jm:testRunTable it="${it}"/>
             </div>
