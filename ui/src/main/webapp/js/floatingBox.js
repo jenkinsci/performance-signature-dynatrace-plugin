@@ -13,10 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+var MyIDvariable
+var option;
 
 (function ($) {
     "use strict";
-
     const randomParam = `_=${$.now()}`;
     $('.carousel').each(function (carouselIndex, carousel) {
         const testCase = $(carousel).attr('id').substring(9);
@@ -29,9 +30,24 @@
                         $('.carousel-inner', carousel).append('<div class="carousel-item">'+
                             '<img class="img-thumbnail" height="300" width="100%"  src="performance-signature/testRunGraph?width=410&amp;height=300&amp;'+randomParam+'">'+'</div>');
                     } else {
+
+                        MyIDvariable=json[index].id+'&'+randomParam;
                         $('.carousel-inner', carousel).append('<div class="carousel-item">'+
-                            '<img class="img-thumbnail" height="300" width="100%" src="performance-signature/summarizerGraph?width=410&amp;height=300&amp;id='+json[index].id+'&amp;'+randomParam+'">'+'</div>');
-                    }
+                            '<div style="width: 498px; height:367px" id="'+MyIDvariable+'"></div></div>');
+                            $.ajax({
+                            url: 'performance-signature/generateGraph?width=410&height=300&id='+json[index].id+'&'+randomParam+'',
+                            type: 'get',
+                            dataType: 'JSON',
+                            async:false,
+                            }).done(function(result) {
+                                debugger;
+                                var chartDom = document.getElementById(MyIDvariable);
+                                var myChart = echarts.init(chartDom);
+                                option=result
+                                myChart.setOption(option);
+                            });
+                        //     '<img class="img-thumbnail" height="300" width="100%" src="performance-signature/generateGraph?width=410&amp;height=300&amp;id='+json[index].id+'&amp;'+randomParam+'">'+'</div>');
+                     }
                 }
             });
             $('.carousel-inner div:first-child', carousel).addClass('active');

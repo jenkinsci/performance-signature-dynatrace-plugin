@@ -25,6 +25,8 @@ import 'gridstack/dist/gridstack.css';
 import 'gridstack/dist/h5/gridstack-dd-native';
 import 'lightbox2/dist/css/lightbox.css';
 
+
+
 (function ($) {
     'use strict';
     let grid = GridStack.initAll({

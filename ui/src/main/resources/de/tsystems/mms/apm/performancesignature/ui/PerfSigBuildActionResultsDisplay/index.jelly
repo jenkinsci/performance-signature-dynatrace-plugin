@@ -17,6 +17,7 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout" xmlns:fmt="jelly:fmt" xmlns:bs="/bootstrap"
          xmlns:jm="/de/tsystems/mms/apm/performancesignature/ui/tags">
+
     <style type="text/css">
         .grid-stack { background: #FAFAD2; }
         .grid-stack-item-content { background-color: #18BC9C;
@@ -228,8 +229,8 @@
             </div>
             <br style="clear:both;"/>
             <st:adjunct includes="io.jenkins.plugins.jquery3"/>
-<!--            <script src="${resURL}/plugin/performance-signature-ui/js/echarts_functionality.js"/>-->
             <script src="${resURL}/plugin/performance-signature-ui/js/tabhashes.js"/>
+
         </l:main-panel>
     </bs:layout>
 </j:jelly>

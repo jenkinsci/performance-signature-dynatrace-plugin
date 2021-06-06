@@ -24,8 +24,10 @@ import de.tsystems.mms.apm.performancesignature.dynatrace.model.Measure;
 import de.tsystems.mms.apm.performancesignature.dynatrace.model.TestRun;
 import de.tsystems.mms.apm.performancesignature.ui.model.JSONDashlet;
 import de.tsystems.mms.apm.performancesignature.ui.model.JSONDashletComparator;
+import de.tsystems.mms.apm.performancesignature.ui.util.ECharts;
 import de.tsystems.mms.apm.performancesignature.ui.util.NumberOnlyBuildLabel;
 import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
+import de.tsystems.mms.apm.performancesignature.ui.util.SimpleBarChart;
 import hudson.XmlFile;
 import hudson.model.Job;
 import hudson.model.ProminentProjectAction;
@@ -52,6 +54,7 @@ import org.kohsuke.stapler.bind.JavaScriptMethod;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.*;
@@ -129,7 +132,7 @@ public class PerfSigProjectAction extends PerfSigBaseAction implements Prominent
 
         final Graph graph = new PerfGraphImpl(jsonDashletToRender) {
             @Override
-            protected DataSetBuilder<String, ChartUtil.NumberOnlyBuildLabel> createDataSet() {
+            protected DataSetBuilder<String, ChartUtil.NumberOnlyBuildLabel> createDataSet(){
                 String dashboard = jsonDashletToRender.getDashboard();
                 String chartDashlet = jsonDashletToRender.getChartDashlet();
                 String measure = jsonDashletToRender.getMeasure();
@@ -165,6 +168,99 @@ public class PerfSigProjectAction extends PerfSigBaseAction implements Prominent
         graph.doPng(request, response);
     }
 
+    public void doGenerateGraph(final StaplerRequest request, final StaplerResponse response) throws IOException
+    {
+        checkPermission();
+        String id = request.getParameter("id");
+        JSONDashlet knownJsonDashlet = getJsonDashletMap().get(id);
+        final JSONDashlet jsonDashletToRender;
+
+        if (knownJsonDashlet != null) { //dashlet from stored configuration
+            jsonDashletToRender = knownJsonDashlet;
+        } else {
+            JSONDashlet newJsonDashlet = createJSONConfiguration(false).get(id);
+            if (newJsonDashlet != null) { //new dashlet
+                if (StringUtils.isNotBlank(request.getParameter("aggregation"))) {
+                    newJsonDashlet.setAggregation(request.getParameter("aggregation"));
+                }
+                newJsonDashlet.setCustomName(request.getParameter("customName"));
+                newJsonDashlet.setCustomBuildCount(request.getParameter("customBuildCount"));
+
+                jsonDashletToRender = newJsonDashlet;
+            } else {
+                response.sendError(404, "no chartdashlet found for id " + id);
+                return;
+            }
+        }
+        String dashboard = jsonDashletToRender.getDashboard();
+        String chartDashlet = jsonDashletToRender.getChartDashlet();
+        String measure = jsonDashletToRender.getMeasure();
+        String buildCount = jsonDashletToRender.getCustomBuildCount();
+        String aggregation = jsonDashletToRender.getAggregation();
+        int customBuildCount = 0;
+        int i = 0;
+
+        if (StringUtils.isNotBlank(buildCount)) {
+            customBuildCount = Integer.parseInt(buildCount);
+        }
+        List<Double> series=new ArrayList<>();
+        List<String>  data=new ArrayList<>();
+        Map<Run<?, ?>, DashboardReport> dashboardReports = getDashboardReports(dashboard);
+
+        for (Map.Entry<Run<?, ?>, DashboardReport> dashboardReport : dashboardReports.entrySet()) {
+            double metricValue = 0;
+            if (dashboardReport.getValue().getChartDashlets() != null) {
+                Measure m = dashboardReport.getValue().getMeasure(chartDashlet, measure);
+                if (m != null) {
+                    metricValue = StringUtils.isBlank(aggregation) ? m.getMetricValue() : m.getMetricValue(aggregation);
+                }
+            }
+            i++;
+            series.add(metricValue);
+            data.add(new ChartUtil.NumberOnlyBuildLabel(dashboardReport.getKey()).toString());
+            if (customBuildCount != 0 && i == customBuildCount) {
+                break;
+            }
+        }
+
+        String unit = "";
+        String color = "#FF5555";
+
+        for (DashboardReport dr : getLastDashboardReports()) {
+            if (dr.getName().equals(dashboard)) {
+                final Measure m = dr.getMeasure(chartDashlet, measure);
+                if (m != null) {
+                    unit = m.getUnit(aggregation);
+                    color = m.getColor() != null ? m.getColor() : color;
+                }
+                break;
+            }
+        }
+
+        SimpleBarChart simpleBarChart=new SimpleBarChart();
+        simpleBarChart.setTitle(chartDashlet,"center");
+        simpleBarChart.setXaxis(data,"category"," ","middle",20);
+        simpleBarChart.setColor(color);
+        simpleBarChart.setYaxis("value",unit,"middle",15);
+        simpleBarChart.setSeries(series,"bar");
+        PrintWriter out = response.getWriter();
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        out.print(GSON.toJson(simpleBarChart));
+        out.flush();
+
+//        ECharts eCharts = new ECharts();
+//        eCharts.setXaxis("category",category);
+//        eCharts.setYaxis("value");
+//        eCharts.setSeries(data,"bar");
+//        eCharts.setTitle("New Title");
+//        PrintWriter out = response.getWriter();
+//        response.setContentType("application/json");
+//        response.setCharacterEncoding("UTF-8");
+//        out.print(GSON.toJson(eCharts));
+//        out.flush();
+
+    }
     public void doTestRunGraph(final StaplerRequest request, final StaplerResponse response) throws IOException {
         checkPermission();
         final String customName, customBuildCount;

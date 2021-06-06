@@ -15,7 +15,8 @@
   -->
 
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout" xmlns:fmt="jelly:fmt" xmlns:bs="/bootstrap">
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout" xmlns:fmt="jelly:fmt"
+         xmlns:bs="/bootstrap">
     <bs:layout title="Performance Signature Overview for ${it.job.name}" norefresh="true">
         <l:header>
             <style>
@@ -37,7 +38,8 @@
                 <ul class="nav nav-tabs" role="tablist" id="tabList">
                     <j:forEach var="lastDashboardReport" items="${it.lastDashboardReports}">
                         <li class="nav-item" role="presentation">
-                            <a href="#${lastDashboardReport.name}" class="nav-link" aria-controls="${lastDashboardReport.name}" data-toggle="tab" role="tab">
+                            <a href="#${lastDashboardReport.name}" class="nav-link"
+                               aria-controls="${lastDashboardReport.name}" data-toggle="tab" role="tab">
                                 <h4>${lastDashboardReport.name}</h4>
                             </a>
                         </li>
@@ -56,7 +58,8 @@
                                 </div>
                                 <div class="col-md-6">
                                     <button type="button"
-                                            class="btn btn-primary float-right" id="editbutton" style="display: inline-block">
+                                            class="btn btn-primary float-right" id="editbutton"
+                                            style="display: inline-block">
                                         <span class="fas fa-pen" aria-hidden="true"/>
                                         Edit
                                     </button>
@@ -83,7 +86,8 @@
                                             </j:if>
                                             <j:forEach var="dr" items="${it.lastDashboardReports}">
                                                 <j:if test="${dr.name.equals(lastDashboardReport.name)}">
-                                                    <j:forEach var="chartDashlet" items="${utils.sortChartDashletList(dr.chartDashlets)}">
+                                                    <j:forEach var="chartDashlet"
+                                                               items="${utils.sortChartDashletList(dr.chartDashlets)}">
                                                         <option>${chartDashlet.name}</option>
                                                     </j:forEach>
                                                 </j:if>
@@ -106,15 +110,18 @@
                                     </div>
                                     <div class="form-group col-md-2">
                                         <label for="measurename">Custom Measure Name</label>
-                                        <input type="text" class="form-control" id="customName" placeholder="measure name"/>
+                                        <input type="text" class="form-control" id="customName"
+                                               placeholder="measure name"/>
                                     </div>
                                     <div class="form-group col-md-2">
                                         <label for="buildcount">Custom Build Count</label>
-                                        <input type="number" class="form-control" id="customBuildCount" placeholder="0"/>
+                                        <input type="number" class="form-control" id="customBuildCount"
+                                               placeholder="0"/>
                                     </div>
                                     <div class="form-group col-md-2">
                                         <button type="button"
-                                                class="btn btn-primary float-right" id="addbutton" style="margin-top: 15px">
+                                                class="btn btn-primary float-right" id="addbutton"
+                                                style="margin-top: 15px">
                                             <span class="fas fa-plus-circle" aria-hidden="true"/>
                                             Add
                                         </button>
@@ -147,15 +154,18 @@
                                             </th>
                                             <th class="text-center">${%sum #}</th>
                                         </j:if>
-                                        <j:forEach var="dashlet" items="${it.getFilteredChartDashlets(lastDashboardReport)}">
+                                        <j:forEach var="dashlet"
+                                                   items="${it.getFilteredChartDashlets(lastDashboardReport)}">
                                             <th class="text-center">
-                                                ${dashlet.key.generateDashletName()}<br/>(${dashlet.value.getUnit(dashlet.key.aggregation)})
+                                                ${dashlet.key.generateDashletName()}<br/>
+                                                (${dashlet.value.getUnit(dashlet.key.aggregation)})
                                             </th>
                                         </j:forEach>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <j:forEach var="dashboardReport" items="${it.getDashboardReports(lastDashboardReport.name)}">
+                                    <j:forEach var="dashboardReport"
+                                               items="${it.getDashboardReports(lastDashboardReport.name)}">
                                         <tr>
                                             <td>
                                                 <a href="../${dashboardReport.key.number}/${it.urlName}/#${lastDashboardReport.name}">
@@ -174,11 +184,13 @@
                                                 </j:forEach>
                                             </td>
                                             <td>
-                                                <fmt:formatDate dateStyle="medium" type="both" value="${dashboardReport.key.time}"/>
+                                                <fmt:formatDate dateStyle="medium" type="both"
+                                                                value="${dashboardReport.key.time}"/>
                                             </td>
                                             <j:if test="${isUnitTest}">
                                                 <j:set var="testRun" value="${it.getTestRun(dashboardReport.key)}"/>
-                                                <j:set var="testResult" value="${it.getTestResult(dashboardReport.key)}"/>
+                                                <j:set var="testResult"
+                                                       value="${it.getTestResult(dashboardReport.key)}"/>
                                                 <td class="nowrap">${utils.getDurationString(testResult.duration)}</td>
                                                 <td>${testResult.failCount}</td>
                                                 <td>${testRun.numFailed}</td>
@@ -190,8 +202,11 @@
                                                 <td>${testRun.numPassed}</td>
                                                 <td>${testResult.totalCount}</td>
                                             </j:if>
-                                            <j:forEach var="dashlet" items="${it.getFilteredChartDashlets(dashboardReport.value)}">
-                                                <td>${utils.round(dashlet.value.getMetricValue(dashlet.key.aggregation), 2)}</td>
+                                            <j:forEach var="dashlet"
+                                                       items="${it.getFilteredChartDashlets(dashboardReport.value)}">
+                                                <td>
+                                                    ${utils.round(dashlet.value.getMetricValue(dashlet.key.aggregation), 2)}
+                                                </td>
                                             </j:forEach>
                                         </tr>
                                     </j:forEach>
@@ -202,7 +217,7 @@
                 </j:forEach>
             </div>
             <script>
-                var projectAction = <st:bind value="${it}"/>
+                var projectAction =<st:bind value="${it}"/>
             </script>
             <st:adjunct includes="org.jenkins.ui.jsmodules.performance-signature-ui.projectaction"/>
         </l:main-panel>

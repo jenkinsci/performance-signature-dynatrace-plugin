@@ -19,13 +19,16 @@ package de.tsystems.mms.apm.performancesignature.ui;
 import com.google.gson.Gson;
 import de.tsystems.mms.apm.performancesignature.dynatrace.model.DashboardReport;
 import de.tsystems.mms.apm.performancesignature.dynatrace.model.Measure;
+import de.tsystems.mms.apm.performancesignature.ui.util.ECharts;
 import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
+import de.tsystems.mms.apm.performancesignature.ui.util.TimeSeriesEChart;
 import hudson.FilePath;
 import hudson.model.Api;
 import hudson.model.Item;
 import hudson.model.ModelObject;
 import hudson.model.Run;
 import hudson.util.Graph;
+import jdk.vm.ci.meta.Local;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.filefilter.RegexFileFilter;
 import org.apache.commons.lang.StringUtils;
@@ -39,6 +42,7 @@ import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.time.Second;
+import org.jfree.data.time.TimePeriod;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 import org.kohsuke.accmod.Restricted;
@@ -52,12 +56,15 @@ import javax.servlet.ServletException;
 import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -66,6 +73,7 @@ public class PerfSigBuildActionResultsDisplay implements ModelObject {
     private static final Logger LOGGER = Logger.getLogger(PerfSigBuildActionResultsDisplay.class.getName());
     private final transient PerfSigBuildAction buildAction;
     private final transient List<DashboardReport> currentDashboardReports;
+    private static final Gson GSON = new Gson();
 
     public PerfSigBuildActionResultsDisplay(final PerfSigBuildAction buildAction) {
         this.buildAction = buildAction;
@@ -141,7 +149,7 @@ public class PerfSigBuildActionResultsDisplay implements ModelObject {
                     return null;
                 }
 
-                m.getMeasurements().stream().filter(Objects::nonNull).forEach(measurement ->
+                 m.getMeasurements().stream().filter(Objects::nonNull).forEach(measurement ->
                         timeSeries.add(
                                 new Second(new Date(measurement.getTimestamp())),
                                 measurement.getMetricValue(m.getAggregation())));
@@ -150,6 +158,85 @@ public class PerfSigBuildActionResultsDisplay implements ModelObject {
         };
         graph.doPng(request, response);
     }
+
+    @Restricted(NoExternalUse.class)
+    public void doGenerateGraph(final StaplerRequest request, final StaplerResponse response) throws IOException {
+        checkPermission();
+
+        String measure = request.getParameter("measure");
+        String chartDashlet = request.getParameter("chartdashlet");
+        String testCase = request.getParameter("testcase");
+        TimeSeries timeSeries = new TimeSeries(chartDashlet, Second.class);
+
+
+        DashboardReport dashboardReport = getDashBoardReport(testCase);
+        Measure m = dashboardReport.getMeasure(chartDashlet, measure);
+        String unit = m.getUnit();
+        String color=m.getColor();
+//        if (m == null || m.getMeasurements() == null) {
+//            return null;
+//        }
+
+        m.getMeasurements().stream().filter(Objects::nonNull).forEach(measurement ->
+                timeSeries.add(
+                        new Second(new Date(measurement.getTimestamp())),
+                        measurement.getMetricValue(m.getAggregation())));
+
+
+
+        List<List<Object>> mainList= new ArrayList<>();
+        List<Object> series;
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE MMM dd HH:mm:ss zzzz yyyy",Locale.getDefault());
+        for (int counter=0; counter<timeSeries.getItemCount() ;counter++ ) {
+            series = new ArrayList<Object>();
+            try {
+                series.add(LocalDateTime.parse(timeSeries.getTimePeriod(counter).toString(),formatter).toString().replace("T", " "));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            series.add(timeSeries.getValue(counter));
+            mainList.add(series);
+        }
+
+        if ("num".equalsIgnoreCase(unit)) {
+
+            ECharts eCharts=new ECharts();
+            eCharts.setXaxis("category");
+            eCharts.setYaxis("value",(timeSeries.getMinY()!=Double.NaN)?timeSeries.getMinY():0.0,(timeSeries.getMaxY()!=Double.NaN)?timeSeries.getMaxY():0.0);
+            eCharts.setSeries(mainList,"bar",color);
+            eCharts.setTitle(PerfSigUIUtils.generateTitle(measure, chartDashlet, m.getAggregation()), "center");
+
+                PrintWriter out = response.getWriter();
+                response.setContentType("application/json");
+                response.setCharacterEncoding("UTF-8");
+            try {
+                out.print(GSON.toJson(eCharts));
+                out.flush();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        else {
+
+            TimeSeriesEChart timeSeriesEChart = new TimeSeriesEChart();
+            timeSeriesEChart.setXaxis("time", false);
+            timeSeriesEChart.setYaxis("value",(timeSeries.getMinY()!=Double.NaN)?timeSeries.getMinY():0.0,(timeSeries.getMaxY()!=Double.NaN)?timeSeries.getMaxY():0.0);
+            timeSeriesEChart.setSeries(mainList, "line", false,color);
+            timeSeriesEChart.setTitle(PerfSigUIUtils.generateTitle(measure, chartDashlet, m.getAggregation()), "center");
+            PrintWriter out = response.getWriter();
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+            try {
+                out.print(GSON.toJson(timeSeriesEChart));
+                out.flush();
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+        }
+    }
+
 
     private void checkPermission() {
         buildAction.getBuild().checkPermission(Item.READ);
