@@ -80,7 +80,7 @@ public class PerfSigProjectActionTest {
         List<?> list = projectPage.getByXPath("//*[@id=\"PerfTest\"]//table/thead/tr/th/text()[1]");
         assertTrue(TestUtils.containsMeasure(list, "GC Utilization - Total GC Utilization (Average)"));
         assertTrue(TestUtils.containsMeasure(list, "WebServiceTime - WebService Count (Count)"));
-        j.assertXPath(projectPage, "//*[@id=\"UnitTest\"]/div/table/tbody/tr/td[2]/a/i"); //PDF symbol should be visible
+        j.assertXPath(projectPage, "//*[@id=\"UnitTest\"]/div/table/tbody/tr[2]/td[2]/a/*[name()='svg']"); //PDF symbol should be visible
         Run<?, ?> build = proj.getBuildByNumber(10147);
         Page comparisonReportDownload = wc.goTo(build.getUrl() + "/performance-signature/" +
                 "getComparisonReport?testCase=UnitTest&number=0", "application/octet-stream");
