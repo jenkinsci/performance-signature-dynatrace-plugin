@@ -45,7 +45,7 @@ public class PerfSigTestActionTest {
         JenkinsRule.WebClient wc = j.createWebClient();
         HtmlPage testReport = wc.getPage(build, "testReport");
 
-        assertEquals(18, testReport.getByXPath("//*[@id=\"main-panel\"]/table[2]/tbody/tr/td[1]/div[1]/a").size());
+        assertEquals(18, testReport.getByXPath("//*[@id=\"main-panel\"]/table[2]/tbody/tr/td[1]/a[@data-toggle=\"collapse\"]").size());
         j.assertXPath(testReport, "//*[contains(@id,\"collapseid\")]/div/table/tbody/tr[1]/td[1]/b");
         j.assertXPathValue(testReport, "//*[contains(@id,\"collapseid\")]/div/table/tbody/tr[1]/td[1]/b/text()", "PurePaths - PurePath Duration (ms)");
         j.assertXPath(testReport, "//*[contains(@id,\"collapseid\")]/div/table[1]/tbody/tr[3]/td[2]/text()");
@@ -66,11 +66,11 @@ public class PerfSigTestActionTest {
         HtmlPage testReport = wc.getPage(build, "testReport/com.dynatrace.easytravel.util/ZipUtilsTest/testZipSrcDirExclude/");
 
         //assert previous test result
-        j.assertXPath(testReport, "//*[@id=\"main-panel\"]/table/tbody/tr/td/div/table/thead/tr[1]/th[3]");
+        j.assertXPath(testReport, "//*[@id=\"main-panel\"]/table/tbody/tr/td/table/thead/tr[1]/th[3]");
         //assert pure path duration measure value
-        j.assertXPathValue(testReport, "//*[@id=\"main-panel\"]/table/tbody/tr/td/div/table[2]/tbody/tr[1]/td[2]/text()", "0.25");
+        j.assertXPathValue(testReport, "//*[@id=\"main-panel\"]/table/tbody/tr/td/table[2]/tbody/tr[1]/td[2]/text()", "0.25");
         //assert status failed
-        assertEquals(StringUtils.trim(((DomText) testReport.getByXPath("//*[@id=\"main-panel\"]/table/tbody/tr/td/div/table[1]/tbody/tr[3]/td[2]/text()").get(0))
+        assertEquals(StringUtils.trim(((DomText) testReport.getByXPath("//*[@id=\"main-panel\"]/table/tbody/tr/td/table[1]/tbody/tr[3]/td[2]/text()").get(0))
                 .getWholeText()), "Failed\n" +
                 "                 ");
     }
