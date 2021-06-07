@@ -3,39 +3,45 @@ package de.tsystems.mms.apm.performancesignature.ui.util;
 import java.util.List;
 
 public class SimpleBarChart{
-    public static class xAxis {
+    private class xAxis {
         private List<String> data;
         private String type;
         private String name;
         private String nameLocation;
         private int nameGap;
-        public static class axisLabel{
+
+      private class axisLabel{
             public int interval;
             public int rotate;
+            public String fontWeight;
         }
         axisLabel axisLabel=new axisLabel();
     }
-    public static class tooltip {
+    private class tooltip {
         private String trigger="item";
     }
-    public static class yAxis {
+    private class yAxis {
         private String type;
         private String name;
         private String nameLocation;
         private int nameGap;
+        private class nameTextStyle{
+            public String fontWeight;
+        }
+        nameTextStyle nameTextStyle =new nameTextStyle();
     }
-    public static class backgroundStyle{
+    private class backgroundStyle{
         private String color;
     }
 
-    public static class series {
+    private class series {
         private List<Double> data;
         private String type;
         private backgroundStyle backgroundStyle=new backgroundStyle();
         private Boolean showBackground;
     }
 
-    public static class title {
+    private class title {
         private String text;
         private String left;
     }
@@ -54,6 +60,7 @@ public class SimpleBarChart{
         yAxis.name=_name;
         yAxis.nameLocation=_nameLocation;
         yAxis.nameGap=_nameGap;
+        yAxis.nameTextStyle.fontWeight="bolder";
     }
 
     public void setSeries(List<Double> _data, String _type) {

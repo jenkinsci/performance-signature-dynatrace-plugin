@@ -32,8 +32,8 @@ var option;
                     } else {
 
                         MyIDvariable=json[index].id+'&'+randomParam;
-                        $('.carousel-inner', carousel).append('<div class="carousel-item">'+
-                            '<div style="width: 498px; height:367px" id="'+MyIDvariable+'"></div></div>');
+                        $('.carousel-inner', carousel).append('<div style="width:498px;height: 367px" class="carousel-item">'+
+                            '<div style="width: 488px; height:357px; margin:20px" id="'+MyIDvariable+'"></div></div>');
                             $.ajax({
                             url: 'performance-signature/generateGraph?width=410&height=300&id='+json[index].id+'&'+randomParam+'',
                             type: 'get',

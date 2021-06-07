@@ -239,9 +239,9 @@ public class PerfSigProjectAction extends PerfSigBaseAction implements Prominent
 
         SimpleBarChart simpleBarChart=new SimpleBarChart();
         simpleBarChart.setTitle(chartDashlet,"center");
-        simpleBarChart.setXaxis(data,"category"," ","middle",20);
+        simpleBarChart.setXaxis(data,"category"," ","middle",25);
         simpleBarChart.setColor(color);
-        simpleBarChart.setYaxis("value",unit,"middle",15);
+        simpleBarChart.setYaxis("value",unit,"middle",30);
         simpleBarChart.setSeries(series,"bar");
         PrintWriter out = response.getWriter();
         response.setContentType("application/json");
