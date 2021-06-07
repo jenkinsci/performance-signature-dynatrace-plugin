@@ -32,7 +32,6 @@
     "webpack-cli": "^4.7.0"
   },
   "dependencies": {
-    "@fortawesome/fontawesome-free": "^5.15.3",
     "gridstack": "^4.2.5",
     "lightbox2": "^2.11.3",
     "wurl": "^2.5.4"

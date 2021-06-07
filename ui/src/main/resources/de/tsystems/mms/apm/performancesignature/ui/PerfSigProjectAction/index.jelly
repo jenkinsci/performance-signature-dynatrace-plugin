@@ -21,9 +21,10 @@
             <style type="text/css">
                 .text-center { text-align: center !important; }
                 .grid-stack { background-color: #EDEDED; }
-                .chk_show, .del_img { position: absolute !important; top: 5px !important }
+                .chk_show, .del_img { position: absolute !important; top: 5px !important; cursor: pointer; }
                 .chk_show { left: 5px }
                 .del_img { color: red; font-size: 16px; right: 5px }
+                .svg { height: 1em; width: 1em; vertical-align: -.125em; fill: #ffffff}
             </style>
         </l:header>
         <st:include it="${it.job}" page="sidepanel.jelly"/>
@@ -58,17 +59,23 @@
                                 <div class="col-md-6">
                                     <button type="button"
                                             class="btn btn-primary float-right" id="editbutton" style="display: inline-block">
-                                        <span class="fas fa-pen" aria-hidden="true"/>
+                                        <svg class="svg" aria-hidden="true">
+                                            <use href="${resURL}/plugin/font-awesome-api/sprites/solid.svg#pen"/>
+                                        </svg>
                                         Edit
                                     </button>
                                     <button style="margin-top: 20px; margin-left: 5px; display: none;"
                                             type="button" class="btn btn-success float-right" id="donebutton">
-                                        <span class="fas fa-check" aria-hidden="true"/>
+                                        <svg class="svg" aria-hidden="true">
+                                            <use href="${resURL}/plugin/font-awesome-api/sprites/solid.svg#check"/>
+                                        </svg>
                                         Done
                                     </button>
                                     <button style="margin-top: 20px; margin-left: 5px; display: none;"
                                             type="button" class="btn btn-danger float-right" id="cancelbutton">
-                                        <span class="fas fa-times" aria-hidden="true"/>
+                                        <svg class="svg" aria-hidden="true">
+                                            <use href="${resURL}/plugin/font-awesome-api/sprites/solid.svg#times"/>
+                                        </svg>
                                         Cancel
                                     </button>
                                 </div>
@@ -113,10 +120,12 @@
                                         <label for="buildcount">Custom Build Count</label>
                                         <input type="number" class="form-control" id="customBuildCount" placeholder="0"/>
                                     </div>
-                                    <div class="form-group col-md-2">
+                                    <div class="form-group col-md-1">
                                         <button type="button"
-                                                class="btn btn-primary float-right" id="addbutton" style="margin-top: 15px">
-                                            <span class="fas fa-plus-circle" aria-hidden="true"/>
+                                                class="btn btn-primary float-right" id="addbutton" style="margin-top: 20px">
+                                            <svg class="svg" aria-hidden="true">
+                                                <use href="${resURL}/plugin/font-awesome-api/sprites/solid.svg#plus-circle"/>
+                                            </svg>
                                             Add
                                         </button>
                                     </div>
@@ -169,7 +178,9 @@
                                                 <j:forEach var="file" items="${files}">
                                                     <a href="../${dashboardReport.key.number}/performance-signature/getComparisonReport?testCase=${lastDashboardReport.name}&amp;number=${files.indexOf(file)}"
                                                        target="_blank">
-                                                        <i class="far fa-file-pdf" style="color: red"></i>
+                                                        <svg class="svg" style="fill: #ff0000" aria-hidden="true">
+                                                            <use href="${resURL}/plugin/font-awesome-api/sprites/solid.svg#file-pdf"/>
+                                                        </svg>
                                                     </a>
                                                     &#160;
                                                 </j:forEach>
@@ -202,8 +213,10 @@
                     </div>
                 </j:forEach>
             </div>
-            <script>
-                var projectAction =<st:bind value="${it}"/>
+            <script type="text/javascript">
+                var resURL="${resURL}";
+                var projectAction =
+                <st:bind value="${it}"/>
             </script>
             <st:adjunct includes="org.jenkins.ui.jsmodules.performance-signature-ui.projectaction"/>
         </l:main-panel>

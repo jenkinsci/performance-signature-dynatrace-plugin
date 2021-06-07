@@ -16,10 +16,6 @@
 
 import wurl from 'wurl';
 import 'lightbox2';
-import '@fortawesome/fontawesome-free/js/fontawesome'
-import '@fortawesome/fontawesome-free/js/solid'
-import '@fortawesome/fontawesome-free/js/regular'
-import '@fortawesome/fontawesome-free/js/brands'
 import {GridStack} from 'gridstack';
 import 'gridstack/dist/gridstack.css';
 import 'gridstack/dist/h5/gridstack-dd-native';
@@ -96,7 +92,7 @@ import 'lightbox2/dist/css/lightbox.css';
             grid[pageIndex].enableMove(true);
         });
         $('#cancelbutton', page).click(function () {
-             location.reload(true);
+            location.reload(true);
         });
 
         $('#addbutton', page).click(function () {
@@ -105,7 +101,9 @@ import 'lightbox2/dist/css/lightbox.css';
             if ($('#measureGroup', page).val() === 'UnitTest overview') {
                 grid[pageIndex].addWidget({
                     w: 3, h: 2, content: `<span class="del_img float-left">
-<i class="fas fa-times" style="color: red"></i></span>
+<svg class="svg" style="fill: #ff0000" aria-hidden="true">
+    <use href="${resURL}/plugin/font-awesome-api/sprites/solid.svg#times"/>
+</svg></span>
 <span class="chk_show float-right">
 <input type="checkbox" title="show in project overview" checked="checked"/></span>
 <img class="img-thumbnail" height="300" width="410" src="testRunGraph?id=unittest_overview${request_parameter}${randomParam}">`
@@ -113,7 +111,9 @@ import 'lightbox2/dist/css/lightbox.css';
             } else {
                 grid[pageIndex].addWidget({
                     w: 3, h: 2, content: `<span class="del_img float-left">
-<i class="fas fa-times" style="color: #ff0000"></i></span>
+<svg class="svg" style="fill: #ff0000" aria-hidden="true">
+    <use href="${resURL}/plugin/font-awesome-api/sprites/solid.svg#times"/>
+</svg></span>
 <span class="chk_show float-right">
 <input type="checkbox" title="show in project overview" checked="checked"/></span>
 <img class="img-thumbnail" height="300" width="410"
@@ -139,7 +139,9 @@ src="summarizerGraph?id=${$('#measure', page).val()}${request_parameter}&amp;agg
                                 w: 3,
                                 h: 2,
                                 content: `<span class="del_img float-left" style="display: none">
-<i class="fas fa-times" style="color: red"></i></span>
+<svg class="svg" style="fill: #ff0000" aria-hidden="true">
+    <use href="${resURL}/plugin/font-awesome-api/sprites/solid.svg#times"/>
+</svg></span>
 <span class="chk_show float-right" style="display: none">
 <input type="checkbox" title="show in project overview" checked="checked"/></span>
 <a href="./testRunGraph?width=800&amp;height=585&amp;id=unittest_overview${randomParam}" data-lightbox="${$(page).attr('id')}">
@@ -150,7 +152,10 @@ src="summarizerGraph?id=${$('#measure', page).val()}${request_parameter}&amp;agg
                                 w: 3,
                                 h: 2,
                                 content: `<span class="del_img float-left" style="display: none">
-<i class="fas fa-times" style="color: red"></i></span><span class="chk_show float-right" style="display: none">
+<svg class="svg" style="fill: #ff0000" aria-hidden="true">
+    <use href="${resURL}/plugin/font-awesome-api/sprites/solid.svg#times"/>
+</svg></span>
+<span class="chk_show float-right" style="display: none">
 <input type="checkbox" title="show in project overview" ${json[index].show ? "checked='checked'" : ''}/></span>
 <a href="./summarizerGraph?width=800&amp;height=585&amp;id=${json[index].id}${randomParam}" data-lightbox="${$(page).attr('id')}" data-title="${json[index].description}">
 <img class="img-thumbnail" height="300" width="410" 
