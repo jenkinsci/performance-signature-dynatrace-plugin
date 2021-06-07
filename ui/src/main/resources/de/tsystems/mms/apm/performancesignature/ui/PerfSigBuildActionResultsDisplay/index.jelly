@@ -17,57 +17,44 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout" xmlns:fmt="jelly:fmt" xmlns:bs="/bootstrap"
          xmlns:jm="/de/tsystems/mms/apm/performancesignature/ui/tags">
-
-    <style type="text/css">
-        .grid-stack { background: #FAFAD2; }
-        .grid-stack-item-content { background-color: #18BC9C;
-        }
-        .card-danger {
-        background-color: #f2dede !important;
-        color: #a94442 !important;
-        border-color:#ebccd1 !important;
-        }
-        .card-warning
-        {
-        color: #8a6d3b !important;
-        background-color: #fcf8e3 !important;
-        border-color: #faebcc !important;
-        }
-        .card-warning a
-        {
-        color: #8a6d3b !important;
-        }
-        .card-danger a {
-        color: #a94442 !important;
-        }
-        table {
-        border-collapse: collapse;
-        width: 100%;
-        }
-
-        table td, #table th {
-        border: 1px solid #ddd;
-        padding: 8px;
-        }
-
-        table th {
-        padding-top: 12px;
-        padding-bottom: 12px;
-        text-align: left;
-        color: black;
-        }
-        .grid-stack .grid-stack-item .grid-stack-item-content,
-        .grid-stack .grid-stack-item .placeholder-content {
-        bottom: -40px;
-        top: -60px;
-        }
-
-    </style>
-    <bs:layout norefresh="true"
-               title="Performance Signature report details for build ${it.build.number}">
+    <bs:layout norefresh="true" title="Performance Signature report details for build ${it.build.number}">
         <l:header>
-            <style>
+            <style type="text/css">
                 .text-center { text-align: center !important; }
+                .card-danger {
+                background-color: #f2dede !important;
+                color: #a94442 !important;
+                border-color:#ebccd1 !important;
+                }
+                .card-warning
+                {
+                color: #8a6d3b !important;
+                background-color: #fcf8e3 !important;
+                border-color: #faebcc !important;
+                }
+                .card-warning a
+                {
+                color: #8a6d3b !important;
+                }
+                .card-danger a {
+                color: #a94442 !important;
+                }
+                table {
+                border-collapse: collapse;
+                width: 100%;
+                }
+
+                table td, #table th {
+                border: 1px solid #ddd;
+                padding: 8px;
+                }
+
+                table th {
+                padding-top: 12px;
+                padding-bottom: 12px;
+                text-align: left;
+                color: black;
+                }
             </style>
         </l:header>
         <st:include it="${it.build}" page="sidepanel.jelly"/>
@@ -75,21 +62,23 @@
         <j:set var="utils" value="${it.PerfSigUIUtils}"/>
         <l:main-panel>
             <st:adjunct includes="io.jenkins.plugins.bootstrap4"/>
+            <st:adjunct includes="io.jenkins.plugins.jquery3"/>
+            <script src="${resURL}/plugin/performance-signature-ui/js/tabhashes.js"/>
+            <script src="${resURL}/plugin/echarts-api/webjars/echarts.min.js"/>
+            <script src="${resURL}/plugin/performance-signature-ui/js/echarts_functionality.js"/>
             <div class="container-fluid">
                 <h1>${%Performance Signature for build} #${it.build.number}</h1>
-
-
-                    <ul class="nav nav-tabs" role="tablist" id="tabList">
-                        <j:forEach var="dashboardReport" items="${it.currentDashboardReports}">
-                            <li role="presentation" class="nav-item">
-                                <a href="#${dashboardReport.name}"  class="nav-link" aria-controls="${dashboardReport.name}"
-                                   role="tab" data-toggle="tab">
-                                    <h5>${dashboardReport.name}</h5>
-                                </a>
-                            </li>
-                        </j:forEach>
-                    </ul>
-                </div>
+                <ul class="nav nav-tabs" role="tablist" id="tabList">
+                    <j:forEach var="dashboardReport" items="${it.currentDashboardReports}">
+                        <li role="presentation" class="nav-item">
+                            <a href="#${dashboardReport.name}" class="nav-link" aria-controls="${dashboardReport.name}"
+                               role="tab" data-toggle="tab">
+                                <h5>${dashboardReport.name}</h5>
+                            </a>
+                        </li>
+                    </j:forEach>
+                </ul>
+            </div>
             <br/>
 
             <div class="tab-content">
@@ -228,9 +217,6 @@
                 </j:forEach>
             </div>
             <br style="clear:both;"/>
-            <st:adjunct includes="io.jenkins.plugins.jquery3"/>
-            <script src="${resURL}/plugin/performance-signature-ui/js/tabhashes.js"/>
-
         </l:main-panel>
     </bs:layout>
 </j:jelly>

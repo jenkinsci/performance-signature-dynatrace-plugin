@@ -15,11 +15,8 @@
   -->
 
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:jm="/de/tsystems/mms/apm/performancesignature/ui/tags">
-    <st:adjunct includes="io.jenkins.plugins.jquery3"/>
-
+<j:jelly xmlns:j="jelly:core" xmlns:jm="/de/tsystems/mms/apm/performancesignature/ui/tags">
     <j:if test="${!it.measures.isEmpty()}">
-
         <br/>
         <h3>${it.name}</h3>
         <p>
@@ -27,15 +24,14 @@
         </p>
         <br/>
         <j:forEach var="measure" items="${it.measures}">
-
             <div id="ECharts" style="height:300px; width: 410px"></div>
             <script type="text/javascript">
-                debugger;
+                //debugger;
                 var measure='${utils.encodeString(measure.name)}';
                 var testcase='${utils.encodeString(dashboardReport.name)}';
                 var chartdashlet='${utils.encodeString(it.name)}';
+                jQuery3.loadchart(measure, testcase, chartdashlet);
             </script>
-            <script src="${resURL}/plugin/performance-signature-ui/js/echarts_functionality.js"/>
 <!--                        <img style="margin: 3px;" class="img-thumbnail"-->
 <!--                             src="./summarizerGraph?width=410&amp;height=300&amp;measure=${utils.encodeString(measure.name)}&amp;testcase=${utils.encodeString(dashboardReport.name)}&amp;chartdashlet=${utils.encodeString(it.name)}"-->
 <!--                             width="410" height="300"/>-->
