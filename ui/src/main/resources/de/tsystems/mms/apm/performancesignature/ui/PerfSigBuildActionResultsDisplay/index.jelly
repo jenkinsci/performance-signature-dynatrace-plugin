@@ -63,7 +63,6 @@
         <l:main-panel>
             <st:adjunct includes="io.jenkins.plugins.bootstrap4"/>
             <st:adjunct includes="io.jenkins.plugins.jquery3"/>
-            <script src="${resURL}/plugin/performance-signature-ui/js/tabhashes.js"/>
             <script src="${resURL}/plugin/echarts-api/webjars/echarts.min.js"/>
             <script src="${resURL}/plugin/performance-signature-ui/js/echarts_functionality.js"/>
             <div class="container-fluid">
@@ -217,6 +216,7 @@
                 </j:forEach>
             </div>
             <br style="clear:both;"/>
+            <script src="${resURL}/plugin/performance-signature-ui/js/tabhashes.js"/>
         </l:main-panel>
     </bs:layout>
 </j:jelly>
