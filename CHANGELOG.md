@@ -1,6 +1,12 @@
 Changelog
 ====
 
+### Version 3.2.2 (Jun 07, 2021)
+
+* use okhttp dependency from io.jenkins.plugin:okhttp-api plugin
+* optimize ui
+* use font-awesome-api plugin and remove old css
+
 ### Version 3.2.1 (Apr 15, 2021)
 
 * fixed [JENKINS-65184 & JENKINS-56109] Plugins breaking "Configure System" UI

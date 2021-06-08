@@ -15,7 +15,8 @@
   -->
 
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout" xmlns:fmt="jelly:fmt" xmlns:bs="/bootstrap">
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout" xmlns:fmt="jelly:fmt" xmlns:bs="/bootstrap"
+         xmlns:fa="/font-awesome">
     <bs:layout title="Performance Signature Overview for ${it.job.name}" norefresh="true">
         <l:header>
             <style type="text/css">
@@ -24,7 +25,8 @@
                 .chk_show, .del_img { position: absolute !important; top: 5px !important; cursor: pointer; }
                 .chk_show { left: 5px }
                 .del_img { color: red; font-size: 16px; right: 5px }
-                .svg { height: 1em; width: 1em; vertical-align: -.125em; fill: #ffffff}
+                .svg { height: 1em; width: 1em; vertical-align: -.125em; fill: #ffffff; }
+                .pdf { fill: #ff0000; }
             </style>
         </l:header>
         <st:include it="${it.job}" page="sidepanel.jelly"/>
@@ -57,25 +59,18 @@
                                     <h4>${%Test case:} ${lastDashboardReport.name}</h4>
                                 </div>
                                 <div class="col-md-6">
-                                    <button type="button"
-                                            class="btn btn-primary float-right" id="editbutton" style="display: inline-block">
-                                        <svg class="svg" aria-hidden="true">
-                                            <use href="${resURL}/plugin/font-awesome-api/sprites/solid.svg#pen"/>
-                                        </svg>
+                                    <button type="button" class="btn btn-primary float-right" id="editbutton" style="display: inline-block">
+                                        <fa:svg-icon name="pen" class="svg"/>
                                         Edit
                                     </button>
                                     <button style="margin-top: 20px; margin-left: 5px; display: none;"
                                             type="button" class="btn btn-success float-right" id="donebutton">
-                                        <svg class="svg" aria-hidden="true">
-                                            <use href="${resURL}/plugin/font-awesome-api/sprites/solid.svg#check"/>
-                                        </svg>
+                                        <fa:svg-icon name="check" class="svg"/>
                                         Done
                                     </button>
                                     <button style="margin-top: 20px; margin-left: 5px; display: none;"
                                             type="button" class="btn btn-danger float-right" id="cancelbutton">
-                                        <svg class="svg" aria-hidden="true">
-                                            <use href="${resURL}/plugin/font-awesome-api/sprites/solid.svg#times"/>
-                                        </svg>
+                                        <fa:svg-icon name="times" class="svg"/>
                                         Cancel
                                     </button>
                                 </div>
@@ -121,11 +116,8 @@
                                         <input type="number" class="form-control" id="customBuildCount" placeholder="0"/>
                                     </div>
                                     <div class="form-group col-md-1">
-                                        <button type="button"
-                                                class="btn btn-primary float-right" id="addbutton" style="margin-top: 20px">
-                                            <svg class="svg" aria-hidden="true">
-                                                <use href="${resURL}/plugin/font-awesome-api/sprites/solid.svg#plus-circle"/>
-                                            </svg>
+                                        <button type="button" class="btn btn-primary float-right" id="addbutton" style="margin-top: 20px">
+                                            <fa:svg-icon name="plus-circle" class="svg"/>
                                             Add
                                         </button>
                                     </div>
@@ -178,9 +170,7 @@
                                                 <j:forEach var="file" items="${files}">
                                                     <a href="../${dashboardReport.key.number}/performance-signature/getComparisonReport?testCase=${lastDashboardReport.name}&amp;number=${files.indexOf(file)}"
                                                        target="_blank">
-                                                        <svg class="svg" style="fill: #ff0000" aria-hidden="true">
-                                                            <use href="${resURL}/plugin/font-awesome-api/sprites/solid.svg#file-pdf"/>
-                                                        </svg>
+                                                        <fa:svg-icon name="file-pdf" class="svg pdf"/>
                                                     </a>
                                                     &#160;
                                                 </j:forEach>
