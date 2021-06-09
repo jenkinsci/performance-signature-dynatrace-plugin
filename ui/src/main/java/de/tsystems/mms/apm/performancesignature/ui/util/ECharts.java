@@ -6,14 +6,12 @@ public class ECharts {
 
     private class xAxis {
         private String type;
-
     }
 
     private class yAxis {
         private String type;
-        private Double axisMaximum;
-        private Double axisMinimum;
     }
+
 
     private class series {
 
@@ -32,6 +30,8 @@ public class ECharts {
             public String fontWeight;
             public String fontFamily;
             public Integer fontSize;
+            public String  overflow;
+            public Integer width;
         }
 
         private textStyle textStyle = new textStyle();
@@ -46,19 +46,8 @@ public class ECharts {
     private series series = new series();
     private tooltip tooltip=new tooltip();
 
-    public void setYaxis(String _type, Double _axisMin, Double _axisMax) {
+    public void setYaxis(String _type) {
         yAxis.type = _type;
-        if(_axisMax!=Double.NaN) {
-            yAxis.axisMaximum = _axisMax;
-        }
-        else {
-            yAxis.axisMaximum=0.0;
-        }
-        if (_axisMin!=Double.NaN) {
-            yAxis.axisMinimum=_axisMin;
-        } else {
-            yAxis.axisMinimum=0.0;
-        }
     }
 
     public void setSeries(List<List<Object>> _data, String _type, String _color) {
@@ -70,15 +59,19 @@ public class ECharts {
     public void setXaxis(String _type) {
 
        xAxis.type=_type;
+
     }
 
     public void setTitle(String _title, String _left) {
+        _title=_title.replace(" - ", "\n");
         title.text = _title;
         title.left = _left;
         title.textStyle.fontStyle = "normal";
         title.textStyle.fontFamily = "sans-serif";
         title.textStyle.fontSize = 15;
         title.textStyle.fontWeight = "normal";
+        title.textStyle.width=450;
+        title.textStyle.overflow="break";
     }
 
 }

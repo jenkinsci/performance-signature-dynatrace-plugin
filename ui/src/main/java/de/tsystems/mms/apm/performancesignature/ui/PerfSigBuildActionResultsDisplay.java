@@ -186,8 +186,9 @@ public class PerfSigBuildActionResultsDisplay implements ModelObject {
 
         List<List<Object>> mainList= new ArrayList<>();
         List<Object> series;
+        int counter=-1;
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE MMM dd HH:mm:ss zzzz yyyy",Locale.getDefault());
-        for (int counter=0; counter<timeSeries.getItemCount() ;counter++ ) {
+        for (counter=0; counter<timeSeries.getItemCount() ;counter++ ) {
             series = new ArrayList<Object>();
             try {
                 series.add(LocalDateTime.parse(timeSeries.getTimePeriod(counter).toString(),formatter).toString().replace("T", " "));
@@ -200,29 +201,38 @@ public class PerfSigBuildActionResultsDisplay implements ModelObject {
 
         if ("num".equalsIgnoreCase(unit)) {
 
-            ECharts eCharts=new ECharts();
-            eCharts.setXaxis("category");
-            eCharts.setYaxis("value",(timeSeries.getMinY()!=Double.NaN)?timeSeries.getMinY():0.0,(timeSeries.getMaxY()!=Double.NaN)?timeSeries.getMaxY():0.0);
-            eCharts.setSeries(mainList,"bar",color);
-            eCharts.setTitle(PerfSigUIUtils.generateTitle(measure, chartDashlet, m.getAggregation()), "center");
+
+                ECharts eCharts = new ECharts();
+                eCharts.setXaxis("category");
+                eCharts.setYaxis("value");
+                eCharts.setSeries(mainList, "bar", color);
+                eCharts.setTitle(PerfSigUIUtils.generateTitle(measure, chartDashlet, m.getAggregation()), "center");
 
                 PrintWriter out = response.getWriter();
                 response.setContentType("application/json");
                 response.setCharacterEncoding("UTF-8");
-            try {
-                out.print(GSON.toJson(eCharts));
-                out.flush();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+                try {
+                    out.print(GSON.toJson(eCharts));
+                    out.flush();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+
+
+
         }
         else {
 
             TimeSeriesEChart timeSeriesEChart = new TimeSeriesEChart();
-            timeSeriesEChart.setXaxis("time", false);
-            timeSeriesEChart.setYaxis("value",(timeSeries.getMinY()!=Double.NaN)?timeSeries.getMinY():0.0,(timeSeries.getMaxY()!=Double.NaN)?timeSeries.getMaxY():0.0);
+            timeSeriesEChart.setXaxis("time", true);
+            timeSeriesEChart.setYaxis("value");
             timeSeriesEChart.setSeries(mainList, "line", false,color);
             timeSeriesEChart.setTitle(PerfSigUIUtils.generateTitle(measure, chartDashlet, m.getAggregation()), "center");
+            if(counter<=0)
+            {
+                timeSeriesEChart.setSubTitle();
+            }
             PrintWriter out = response.getWriter();
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");

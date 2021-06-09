@@ -23,10 +23,11 @@
             ${it.description}
         </p>
         <br/>
+
         <j:forEach var="measure" items="${it.measures}">
             <div id="ECharts" style="height:300px; width: 410px"></div>
             <script type="text/javascript">
-                //debugger;
+                debugger;
                 var measure='${utils.encodeString(measure.name)}';
                 var testcase='${utils.encodeString(dashboardReport.name)}';
                 var chartdashlet='${utils.encodeString(it.name)}';

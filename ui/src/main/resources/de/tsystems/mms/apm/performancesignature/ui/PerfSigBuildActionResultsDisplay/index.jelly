@@ -63,7 +63,7 @@
         <l:main-panel>
             <st:adjunct includes="io.jenkins.plugins.bootstrap4"/>
             <st:adjunct includes="io.jenkins.plugins.jquery3"/>
-            <script src="${resURL}/plugin/echarts-api/webjars/echarts.min.js"/>
+            <st:adjunct includes="io.jenkins.plugins.echarts"/>
             <script src="${resURL}/plugin/performance-signature-ui/js/echarts_functionality.js"/>
             <div class="container-fluid">
                 <h1>${%Performance Signature for build} #${it.build.number}</h1>

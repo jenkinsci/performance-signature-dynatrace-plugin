@@ -1,5 +1,28 @@
+
 (function ($) {
     $.loadchart = function (measure, testcase, chartdashlet) {
+        let Bullion = {
+            title: {
+                text: 'No data temporarily',
+                show: true,
+                subtext: "Sub Title",
+                left: "center",
+                textStyle: {
+                    align: 'center'
+                },
+                subtextStyle: {
+                    fontSize: 15,
+                    lineHeight: 50
+                },
+                // textStyle: {
+                //     align: 'center',
+                //     color: 'black',
+                //     fontSize: 32,
+                // },
+                // top: 'center',
+                // left: 'center',
+            }
+        };
         let option;
         // var parent_id=$(this).parent().parent();
         // var $div = $("<div>", {id: "ECharts", "style": "height:300px; width: 410px"});
@@ -8,12 +31,13 @@
             url: './generateGraph?width=410&height=300&measure=' + measure + '&testcase=' + testcase + '&chartdashlet=' + chartdashlet + '',
             type: 'GET',
             dataType: 'JSON',
-            async: true,
-        }).then(function (result) {
+            async: false,
+        }).done(function (result) {
+            debugger;
             var chartDom = document.getElementById("ECharts");
             var cid = makeid(5);
             document.getElementById("ECharts").setAttribute("id", cid);
-            option = result
+            option = result;
             var myChart = echarts.init(chartDom);
             myChart.setOption(option);
         });
