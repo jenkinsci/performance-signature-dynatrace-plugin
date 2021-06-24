@@ -41,6 +41,15 @@
                     <groupId>io.jenkins.plugins</groupId>
                     <artifactId>echarts-api</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>io.jenkins.plugins</groupId>
+                    <artifactId>plugin-util-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.jenkins-ci.plugins</groupId>
+                    <artifactId>jackson2-api</artifactId>
+                </exclusion>
+
             </exclusions>
         </dependency>
         <dependency>
@@ -50,18 +59,50 @@
         </dependency>
         <dependency>
             <groupId>io.jenkins.plugins</groupId>
-            <artifactId>bootstrap4-api</artifactId>
+            <artifactId>bootstrap5-api</artifactId>
+            <version>5.0.1-2</version>
         </dependency>
         <dependency>
             <groupId>io.jenkins.plugins</groupId>
             <artifactId>data-tables-api</artifactId>
-            <version>1.10.23-3</version>
+            <version>1.10.25-1</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.jenkins-ci.plugins</groupId>
+                    <artifactId>jackson2-api</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>io.jenkins.plugins</groupId>
             <artifactId>echarts-api</artifactId>
             <version>4.9.0-3</version>
+            <exclusions>
+            <exclusion>
+                <groupId>org.jenkins-ci.plugins</groupId>
+                <artifactId>jackson2-api</artifactId>
+            </exclusion>
+            <exclusion>
+                <groupId>io.jenkins.plugins</groupId>
+                <artifactId>plugin-util-api</artifactId>
+            </exclusion>
+            </exclusions>
         </dependency>
-
+        <dependency>
+            <groupId>io.jenkins.plugins</groupId>
+            <artifactId>font-awesome-api</artifactId>
+            <version>5.15.3-3 </version>
+            <exclusions>
+                <exclusion>
+                    <groupId>io.jenkins.plugins</groupId>
+                    <artifactId>plugin-util-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+            <version>2.2.12</version>
+        </dependency>
     </dependencies>
 </project>

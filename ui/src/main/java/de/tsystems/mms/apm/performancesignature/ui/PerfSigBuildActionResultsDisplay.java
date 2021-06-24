@@ -17,18 +17,29 @@
 package de.tsystems.mms.apm.performancesignature.ui;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import de.tsystems.mms.apm.performancesignature.dynatrace.model.DashboardReport;
 import de.tsystems.mms.apm.performancesignature.dynatrace.model.Measure;
-import de.tsystems.mms.apm.performancesignature.ui.util.ECharts;
+import de.tsystems.mms.apm.performancesignature.ui.util.ApacheECharts.BarTimeChart;
+import de.tsystems.mms.apm.performancesignature.ui.util.ApacheECharts.TimeSeriesChart;
+import de.tsystems.mms.apm.performancesignature.ui.util.ApacheECharts.axis.BarChartsTimeXaxis;
+import de.tsystems.mms.apm.performancesignature.ui.util.ApacheECharts.axis.BarChartsTimeYaxis;
+import de.tsystems.mms.apm.performancesignature.ui.util.ApacheECharts.axis.TimeSeriesXaxis;
+import de.tsystems.mms.apm.performancesignature.ui.util.ApacheECharts.axis.TimeSeriesYAxis;
+import de.tsystems.mms.apm.performancesignature.ui.util.ApacheECharts.options.BackgroundStyle;
+import de.tsystems.mms.apm.performancesignature.ui.util.ApacheECharts.options.Title;
+import de.tsystems.mms.apm.performancesignature.ui.util.ApacheECharts.options.ToolTip;
+import de.tsystems.mms.apm.performancesignature.ui.util.ApacheECharts.series.BarTimeSeries;
+import de.tsystems.mms.apm.performancesignature.ui.util.ApacheECharts.series.TimeChartSeries;
+import de.tsystems.mms.apm.performancesignature.ui.util.ApacheECharts.styles.SubTextStyle;
+import de.tsystems.mms.apm.performancesignature.ui.util.ApacheECharts.styles.TextStyle;
 import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
-import de.tsystems.mms.apm.performancesignature.ui.util.TimeSeriesEChart;
 import hudson.FilePath;
 import hudson.model.Api;
 import hudson.model.Item;
 import hudson.model.ModelObject;
 import hudson.model.Run;
 import hudson.util.Graph;
-import jdk.vm.ci.meta.Local;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.filefilter.RegexFileFilter;
 import org.apache.commons.lang.StringUtils;
@@ -42,7 +53,6 @@ import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.time.Second;
-import org.jfree.data.time.TimePeriod;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 import org.kohsuke.accmod.Restricted;
@@ -58,9 +68,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -73,7 +81,8 @@ public class PerfSigBuildActionResultsDisplay implements ModelObject {
     private static final Logger LOGGER = Logger.getLogger(PerfSigBuildActionResultsDisplay.class.getName());
     private final transient PerfSigBuildAction buildAction;
     private final transient List<DashboardReport> currentDashboardReports;
-    private static final Gson GSON = new Gson();
+    private static final Gson GSON = new GsonBuilder().enableComplexMapKeySerialization()
+            .setPrettyPrinting().create();
 
     public PerfSigBuildActionResultsDisplay(final PerfSigBuildAction buildAction) {
         this.buildAction = buildAction;
@@ -166,7 +175,7 @@ public class PerfSigBuildActionResultsDisplay implements ModelObject {
         String measure = request.getParameter("measure");
         String chartDashlet = request.getParameter("chartdashlet");
         String testCase = request.getParameter("testcase");
-        TimeSeries timeSeries = new TimeSeries(chartDashlet, Second.class);
+        TimeSeries timeSeries = new TimeSeries(chartDashlet,Second.class);
 
 
         DashboardReport dashboardReport = getDashBoardReport(testCase);
@@ -177,62 +186,100 @@ public class PerfSigBuildActionResultsDisplay implements ModelObject {
 //            return null;
 //        }
 
-        m.getMeasurements().stream().filter(Objects::nonNull).forEach(measurement ->
-                timeSeries.add(
-                        new Second(new Date(measurement.getTimestamp())),
-                        measurement.getMetricValue(m.getAggregation())));
-
-
-
-        List<List<Object>> mainList= new ArrayList<>();
-        List<Object> series;
-        int counter=-1;
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE MMM dd HH:mm:ss zzzz yyyy",Locale.getDefault());
-        for (counter=0; counter<timeSeries.getItemCount() ;counter++ ) {
-            series = new ArrayList<Object>();
-            try {
-                series.add(LocalDateTime.parse(timeSeries.getTimePeriod(counter).toString(),formatter).toString().replace("T", " "));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            series.add(timeSeries.getValue(counter));
-            mainList.add(series);
-        }
+//        m.getMeasurements().stream().filter(Objects::nonNull).forEach(measurement ->
+//                timeSeries.add(
+//                        new Second(new Date(measurement.getTimestamp())),
+//                        measurement.getMetricValue(m.getAggregation())));
+//
+//
+//
+//        List<List<Object>> mainList= new ArrayList<>();
+//        List<Object> series;
+//        int counter=-1;
+//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE MMM dd HH:mm:ss zzzz yyyy",Locale.getDefault());
+//        for (counter=0; counter<timeSeries.getItemCount() ;counter++ ) {
+//            series = new ArrayList<Object>();
+//            try {
+//                series.add(LocalDateTime.parse(timeSeries.getTimePeriod(counter).toString(),formatter).toString().replace("T", " "));
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//            series.add(timeSeries.getValue(counter));
+//            mainList.add(series);
+//        }
 
         if ("num".equalsIgnoreCase(unit)) {
 
-
-                ECharts eCharts = new ECharts();
-                eCharts.setXaxis("category");
-                eCharts.setYaxis("value");
-                eCharts.setSeries(mainList, "bar", color);
-                eCharts.setTitle(PerfSigUIUtils.generateTitle(measure, chartDashlet, m.getAggregation()), "center");
-
-                PrintWriter out = response.getWriter();
-                response.setContentType("application/json");
-                response.setCharacterEncoding("UTF-8");
-                try {
-                    out.print(GSON.toJson(eCharts));
-                    out.flush();
-                } catch (Exception e) {
-                    e.printStackTrace();
+            BarChartsTimeXaxis xAxis=new BarChartsTimeXaxis();
+            BarChartsTimeYaxis yAxis=new BarChartsTimeYaxis();
+            BarTimeSeries barTimeSeries=new BarTimeSeries();
+            BackgroundStyle backgroundStyle=new BackgroundStyle();
+            backgroundStyle.setColor("rgba(180, 180, 180, 0.2)");
+            TextStyle textStyle=new TextStyle();
+            textStyle.setFontStyle("normal");
+            textStyle.fontFamily = "sans-serif";
+            textStyle.fontSize = 15;
+            textStyle.fontWeight = "normal";
+            textStyle.width=450;
+            textStyle.overflow="break";
+            xAxis.setXaxis("category");
+            yAxis.setYaxis("value");
+            m.getMeasurements().stream().filter(Objects::nonNull).forEach(measurement ->
+                    barTimeSeries.addSeries(new AbstractMap.SimpleEntry<Number,Number>(measurement.getTimestamp(), measurement.getMetricValue(m.getAggregation()))));
+            barTimeSeries.SetSeries("bar",false,color);
+            Title title=new Title();
+            title.setTextStyle(textStyle);
+            ToolTip toolTip=new ToolTip();
+            toolTip.setTrigger("axis");
+            title.setText(PerfSigUIUtils.generateTitle(measure, chartDashlet, m.getAggregation()));
+            title.setLeft("center");
+            BarTimeChart barTimeChart= new BarTimeChart();
+            barTimeChart.setSeries(barTimeSeries);
+            barTimeChart.setTitle(title);
+            barTimeChart.setTooltip(toolTip);
+            barTimeChart.setyAxis(yAxis);
+            barTimeChart.setxAxis(xAxis);
+            PrintWriter out = response.getWriter();
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+            try { out.print(GSON.toJson(barTimeChart));
+                out.flush();
+            } catch (Exception e) { e.printStackTrace();
                 }
-
-
-
-
         }
         else {
 
-            TimeSeriesEChart timeSeriesEChart = new TimeSeriesEChart();
-            timeSeriesEChart.setXaxis("time", true);
-            timeSeriesEChart.setYaxis("value");
-            timeSeriesEChart.setSeries(mainList, "line", false,color);
-            timeSeriesEChart.setTitle(PerfSigUIUtils.generateTitle(measure, chartDashlet, m.getAggregation()), "center");
-            if(counter<=0)
+
+            TimeSeriesXaxis xAxis=new TimeSeriesXaxis();
+            TimeSeriesYAxis yAxis=new TimeSeriesYAxis();
+            TimeChartSeries series=new TimeChartSeries();
+            BackgroundStyle backgroundStyle=new BackgroundStyle();
+            backgroundStyle.setColor("rgba(180, 180, 180, 0.2)");
+            Title title=new Title();
+            ToolTip toolTip=new ToolTip();
+            toolTip.setTrigger("axis");
+            m.getMeasurements().stream().filter(Objects::nonNull).forEach(measurement ->
+                    series.addSeries(new AbstractMap.SimpleEntry<Number,Number>(measurement.getTimestamp(), measurement.getMetricValue(m.getAggregation()))));
+//            tseries.setSeries(mainList,"line", false,color,true,backgroundStyle);
+            series.SetSeries("line",false,color);
+            xAxis.setAxis("time",true);
+            yAxis.setYaxis("value");
+            title.setText(PerfSigUIUtils.generateTitle(measure, chartDashlet, m.getAggregation()));
+            title.setLeft("center");
+            if(series.getData().isEmpty())
             {
-                timeSeriesEChart.setSubTitle();
+                SubTextStyle subTextStyle=new SubTextStyle();
+                subTextStyle.setLineHeight(50);
+                subTextStyle.setFontSize(15);
+                title.setSubtextStyle(subTextStyle);
+                title.setSubtext("No Data Available");
             }
+           TimeSeriesChart timeSeriesEChart=new TimeSeriesChart();
+            timeSeriesEChart.setSeries(series);
+            timeSeriesEChart.setxAxis(xAxis);
+            timeSeriesEChart.setyAxis(yAxis);
+            timeSeriesEChart.setTitle(title);
+            timeSeriesEChart.setTooltip(toolTip);
             PrintWriter out = response.getWriter();
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");

@@ -16,7 +16,7 @@
 (function ($) {
     const hash = window.location.hash;
     if (hash) {
-        $(`ul.nav a[href="${hash}"]`).tab('show');
+        $('ul.nav a[href="${hash}"]').tab('show');
     } else {
         $('#tabList').find('a:first').tab('show'); // Select first tab
     }

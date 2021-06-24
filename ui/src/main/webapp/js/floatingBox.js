@@ -28,12 +28,11 @@ var option;
                 if (json[index].show) {
                     if (json[index].id === 'unittest_overview') {
                         $('.carousel-inner', carousel).append('<div class="carousel-item">'+
-                            '<img class="img-thumbnail" height="300" width="100%"  src="performance-signature/testRunGraph?width=410&amp;height=300&amp;'+randomParam+'">'+'</div>');
+                            '<img class="img-thumbnail d-block w-100" height="300" width="100%"  src="performance-signature/testRunGraph?width=410&amp;height=300&amp;'+randomParam+'">'+'</div>');
                     } else {
-
                         MyIDvariable=json[index].id+'&'+randomParam;
                         $('.carousel-inner', carousel).append('<div style="width:498px;height: 367px" class="carousel-item">'+
-                            '<div style="width: 488px; height:357px; margin:18px" id="'+MyIDvariable+'"></div></div>');
+                            '<div  style="width: 488px; height:357px; margin:18px" id="'+MyIDvariable+'"></div></div>');
                             $.ajax({
                             url: 'performance-signature/generateGraph?width=410&height=300&id='+json[index].id+'&'+randomParam+'',
                             type: 'get',

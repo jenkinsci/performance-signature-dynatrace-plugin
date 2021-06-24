@@ -110,7 +110,7 @@ import 'lightbox2/dist/css/lightbox.css';
 <i class="fas fa-times" style="color: red"></i></span>
 <span class="chk_show float-right">
 <input type="checkbox" title="show in project overview" checked="checked"/></span>
-<img class="img-thumbnail" height="300" width="410" src="testRunGraph?id=unittest_overview${request_parameter}${randomParam}">`
+<img class="img-thumbnail" height="265" width="410" src="testRunGraph?id=unittest_overview${request_parameter}${randomParam}">`
                 });
             } else {
                 grid[pageIndex].addWidget({
@@ -118,7 +118,7 @@ import 'lightbox2/dist/css/lightbox.css';
 <i class="fas fa-times" style="color: #ff0000"></i></span>
 <span class="chk_show float-right">
 <input type="checkbox" title="show in project overview" checked="checked"/></span>
-<img class="img-thumbnail" height="300" width="410"
+<img class="img-thumbnail" height="265" width="410"
 src="summarizerGraph?id=${$('#measure', page).val()}${request_parameter}&amp;aggregation=${$('#aggregation', page).val()}${randomParam}">`
                 });
             }
@@ -145,7 +145,7 @@ src="summarizerGraph?id=${$('#measure', page).val()}${request_parameter}&amp;agg
 <span class="chk_show float-right" style="display: none">
 <input type="checkbox" title="show in project overview" checked="checked"/></span>
 <a href="./testRunGraph?width=800&amp;height=585&amp;id=unittest_overview${randomParam}" data-lightbox="${$(page).attr('id')}">
-<img class="img-thumbnail" height="300" width="410" src="./testRunGraph?width=410&amp;height=300&amp;id=unittest_overview${randomParam}"></a>`
+<img class="img-thumbnail" height="265" width="410" src="./testRunGraph?width=410&amp;height=265&amp;id=unittest_overview${randomParam}"></a>`
                             });
                         } else {
                             grid[pageIndex].addWidget({
@@ -155,8 +155,8 @@ src="summarizerGraph?id=${$('#measure', page).val()}${request_parameter}&amp;agg
 <i class="fas fa-times" style="color: red"></i></span><span class="chk_show float-right" style="display: none">
 <input type="checkbox" title="show in project overview" ${json[index].show ? "checked='checked'" : ""}/></span>
 <a href="./summarizerGraph?width=800&amp;height=585&amp;id=${json[index].id}${randomParam}" data-lightbox="${$(page).attr('id')}" data-title="${json[index].description}">
-<img class="img-thumbnail" height="300" width="410" 
-src="./summarizerGraph?width=410&amp;height=300&amp;id=${json[index].id}${randomParam}" title="source: ${json[index].chartDashlet}-${json[index].measure} (${json[index].aggregation})
+<img class="img-thumbnail" height="265" width="410" 
+src="./summarizerGraph?width=410&amp;height=265&amp;id=${json[index].id}${randomParam}" title="source: ${json[index].chartDashlet}-${json[index].measure} (${json[index].aggregation})
 ${json[index].description}"></a>`
                             });
                         }
