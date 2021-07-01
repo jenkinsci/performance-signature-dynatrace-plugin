@@ -1,11 +1,11 @@
 # Performance Signature with Dynatrace (AppMon) for Jenkins
 [![Build Status](https://ci.jenkins.io/job/Plugins/job/performance-signature-dynatrace-plugin/job/master/badge/icon)](https://ci.jenkins.io/job/Plugins/job/performance-signature-dynatrace-plugin/job/master/)
-[![Jenkins Plugin](https://img.shields.io/jenkins/plugin/v/performance-signature-dynatrace.svg)](https://plugins.jenkins.io/performance-signature-dynatrace/)
+[![Jenkins Plugin](https://img.shields.io/jenkins/plugin/v/performance-signature-dynatracesaas.svg)](https://plugins.jenkins.io/performance-signature-dynatracesaas/)
 [![Changelog](https://img.shields.io/github/v/tag/jenkinsci/performance-signature-dynatrace-plugin?label=changelog)](https://github.com/jenkinsci/performance-signature-dynatrace-plugin/blob/master/CHANGELOG.md)
 [![Jenkins Plugin Installs](https://img.shields.io/jenkins/plugin/i/performance-signature-ui?color=blue)](https://plugins.jenkins.io/performance-signature-dynatrace/)
 
-Smoking latest software products are created with the help of flexible and agile systems in a continuous integration (CI) environment. Such environments include
-a CI-Server like Jenkins. The Performance Signature collects performance values during a build and evaluates and compares the result with previous builds and
+Current software products are created with the help of flexible and agile systems in a continuous integration (CI) environment. Such environments include a
+CI-Server like Jenkins. The Performance Signature collects performance values during a build and evaluates and compares the result with previous builds and
 non-functional requirements. Several software tests can be run and evaluated automatically, so that the most important key performance indicators (KPI) can be
 summarized and be available for all project participants very quickly.
 
@@ -32,7 +32,6 @@ Send a [mail](mailto:performance@t-systems-mms.com) to the Application Performan
   * [Manual Installation](#manual-installation)
 - [Problems? Questions? Suggestions?](#problems-questions-suggestions)
 - [Additional Resources](#additional-resources)
-  * [Dynatrace AppMon Documentation](#dynatrace-appmon-documentation)
   * [Dynatrace SaaS/Managed Documentation](#dynatrace-saasmanaged-documentation)
   * [Links](#links)
 
@@ -49,7 +48,6 @@ We are currently supporting three data sources:
 Each data source has it's own Jenkins plugin, whereof each one depends on the Performance Signature UI Plugin.
 Find below the documentation of each component.
 
-* **[Performance Signature: Dynatrace AppMon](dynatrace-appmon/README.md)**
 * **[Performance Signature: Dynatrace SaaS/Managed](dynatrace/README.md)**
 * **[Performance Signature: Dynatrace Viewer](viewer/README.md)**
 
@@ -73,12 +71,6 @@ This procedure is meant for developers, who want to install a locally built plug
 Contact the Performance Experts at T-Systems: `performance@t-systems-mms.com` for professional support or consultancy. T-Systems offers support packages starting at 500 € p.a.
 
 ## Additional Resources
-
-### Dynatrace AppMon Documentation
-
-- [Continuous Delivery & Test Automation](https://community.dynatrace.com/community/pages/viewpage.action?pageId=215161284)
-- [Capture Performance Data from Tests](https://community.dynatrace.com/community/display/DOCDT63/Capture+Performance+Data+from+Tests)
-- [Integrate Dynatrace in Continuous Integration Builds](https://community.dynatrace.com/community/display/DOCDT63/Integrate+Dynatrace+in+Continuous+Integration+Builds)
 
 ### Dynatrace SaaS/Managed Documentation
 

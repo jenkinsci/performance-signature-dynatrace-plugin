@@ -35,7 +35,6 @@
     </developers>
 
     <modules>
-        <module>dynatrace-appmon</module>
         <module>dynatrace</module>
         <module>ui</module>
         <module>viewer</module>
