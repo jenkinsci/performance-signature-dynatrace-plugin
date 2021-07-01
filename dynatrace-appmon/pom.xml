@@ -14,7 +14,7 @@
     <packaging>hpi</packaging>
 
     <name>Performance Signature: Dynatrace AppMon</name>
-    <url>https://wiki.jenkins.io/display/JENKINS/Performance+Signature+with+Dynatrace+Plugin</url>
+    <url>https://github.com/jenkinsci/performance-signature-dynatrace-plugin</url>
 
     <properties>
         <retrofit-version>2.9.0</retrofit-version>
