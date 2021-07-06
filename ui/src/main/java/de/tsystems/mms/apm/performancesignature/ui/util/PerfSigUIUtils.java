@@ -98,9 +98,9 @@ public final class PerfSigUIUtils {
         if (StringUtils.deleteWhitespace(measure).equalsIgnoreCase(StringUtils.deleteWhitespace(chartDashlet))) {
             chartDashletName = chartDashlet;
         } else {
-            chartDashletName = chartDashlet + " - " + measure;
+            chartDashletName = chartDashlet + "-" + measure;
         }
-        return chartDashletName + " (" + aggregation + ")";
+        return chartDashletName.replace("-","\n") + " (" + aggregation + ")";
     }
 
     public static List<ChartDashlet> sortChartDashletList(final List<ChartDashlet> list) {

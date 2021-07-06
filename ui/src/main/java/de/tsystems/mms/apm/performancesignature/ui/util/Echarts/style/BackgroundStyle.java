@@ -1,4 +1,4 @@
-package de.tsystems.mms.apm.performancesignature.ui.util.ApacheECharts.options;
+package de.tsystems.mms.apm.performancesignature.ui.util.Echarts.style;
 
 public class BackgroundStyle {
     String color;

@@ -24,16 +24,20 @@ import de.tsystems.mms.apm.performancesignature.dynatrace.model.Measure;
 import de.tsystems.mms.apm.performancesignature.dynatrace.model.TestRun;
 import de.tsystems.mms.apm.performancesignature.ui.model.JSONDashlet;
 import de.tsystems.mms.apm.performancesignature.ui.model.JSONDashletComparator;
-import de.tsystems.mms.apm.performancesignature.ui.util.ApacheECharts.BarChart;
-import de.tsystems.mms.apm.performancesignature.ui.util.ApacheECharts.axis.BarChartXaxis;
-import de.tsystems.mms.apm.performancesignature.ui.util.ApacheECharts.axis.BarChartYaxis;
-import de.tsystems.mms.apm.performancesignature.ui.util.ApacheECharts.options.AxisLabel;
-import de.tsystems.mms.apm.performancesignature.ui.util.ApacheECharts.options.BackgroundStyle;
-import de.tsystems.mms.apm.performancesignature.ui.util.ApacheECharts.options.Title;
-import de.tsystems.mms.apm.performancesignature.ui.util.ApacheECharts.options.ToolTip;
-import de.tsystems.mms.apm.performancesignature.ui.util.ApacheECharts.series.BarSeries;
-import de.tsystems.mms.apm.performancesignature.ui.util.ApacheECharts.styles.NameTextStyle;
-import de.tsystems.mms.apm.performancesignature.ui.util.ApacheECharts.styles.TextStyle;
+import de.tsystems.mms.apm.performancesignature.ui.util.Echarts.Option;
+import de.tsystems.mms.apm.performancesignature.ui.util.Echarts.Title;
+import de.tsystems.mms.apm.performancesignature.ui.util.Echarts.Tooltip;
+import de.tsystems.mms.apm.performancesignature.ui.util.Echarts.axis.AxisLabel;
+import de.tsystems.mms.apm.performancesignature.ui.util.Echarts.axis.CategoryAxis;
+import de.tsystems.mms.apm.performancesignature.ui.util.Echarts.axis.ValueAxis;
+import de.tsystems.mms.apm.performancesignature.ui.util.Echarts.code.FontStyle;
+import de.tsystems.mms.apm.performancesignature.ui.util.Echarts.code.FontWeight;
+import de.tsystems.mms.apm.performancesignature.ui.util.Echarts.code.NameLocation;
+import de.tsystems.mms.apm.performancesignature.ui.util.Echarts.code.Trigger;
+import de.tsystems.mms.apm.performancesignature.ui.util.Echarts.series.Bar;
+import de.tsystems.mms.apm.performancesignature.ui.util.Echarts.style.BackgroundStyle;
+import de.tsystems.mms.apm.performancesignature.ui.util.Echarts.style.NameTextStyle;
+import de.tsystems.mms.apm.performancesignature.ui.util.Echarts.style.TextStyle;
 import de.tsystems.mms.apm.performancesignature.ui.util.NumberOnlyBuildLabel;
 import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
 import hudson.XmlFile;
@@ -46,9 +50,10 @@ import hudson.tasks.test.TestResultProjectAction;
 import hudson.util.*;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
+import org.checkerframework.checker.nullness.Opt;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.axis.CategoryAxis;
+////import org.jfree.chart.axis.CategoryAxis;
 import org.jfree.chart.axis.CategoryLabelPositions;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.CategoryPlot;
@@ -245,48 +250,49 @@ public class PerfSigProjectAction extends PerfSigBaseAction implements Prominent
                 break;
             }
         }
-        BarChartXaxis xAxis=new BarChartXaxis();
-        BarChartYaxis yAxis=new BarChartYaxis();
-        BarSeries barSeries=new BarSeries();
-        Title title=new Title();
-        ToolTip toolTip=new ToolTip();
-        toolTip.setTrigger("item");
+
+        Bar bar=new Bar();
+        CategoryAxis categoryAxis=new CategoryAxis();
+        Option option=new Option();
+        Tooltip toolTip=new Tooltip();
+        toolTip.setTrigger(Trigger.axis);
+        de.tsystems.mms.apm.performancesignature.ui.util.Echarts.style.TextStyle textStyle=new TextStyle();
+        textStyle.setFontStyle(FontStyle.normal);
+        textStyle.setFontFamily("sans-serif");
+        textStyle.setFontSize(15);
+        textStyle.setFontWeight(FontWeight.normal);
+
         BackgroundStyle backgroundStyle=new BackgroundStyle();
         backgroundStyle.setColor("rgba(180, 180, 180, 0.2)");
+        bar.setColor(color);
+        bar.setShowBackground(true);
         NameTextStyle nameTextStyle=new NameTextStyle();
-        nameTextStyle.setFontWeight("bolder");
+        nameTextStyle.setFontWeight(FontWeight.bolder);
+
         AxisLabel axisLabel=new AxisLabel();
         axisLabel.setInterval(0);
         axisLabel.setRotate(90);
-        title.setLeft("center");
+
+        ValueAxis valueAxis=new ValueAxis();
+        valueAxis.setName(unit);
+        valueAxis.setNameLocation(NameLocation.middle);
+        valueAxis.setNameGap(40);
+        option.yAxis(valueAxis);
+        categoryAxis.setData(data);
+        categoryAxis.axisLabel(axisLabel);
+        option.xAxis(categoryAxis);
+        Title title=new Title();
         title.setText(chartDashlet);
-        xAxis.setXaxis(data,"category","  ","middle",30,nameTextStyle,axisLabel);
-        yAxis.setYaxis("value",unit,"middle",40,nameTextStyle);
-        barSeries.setSeries(series,"bar",true,backgroundStyle);
-        BarChart barChart=new BarChart();
-        barChart.setSeries(barSeries);
-        barChart.setTitle(title);
-        barChart.setxAxis(xAxis);
-        barChart.setyAxis(yAxis);
-        barChart.setColor(color);
-        barChart.setTooltip(toolTip);
+        title.setLeft("center");
+        option.setTitle(title);
+        option.tooltip(toolTip);
+        bar.setData(series);
+        option.series(bar);
         PrintWriter out = response.getWriter();
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
-        out.print(GSON.toJson(barChart));
+        out.print(GSON.toJson(option));
         out.flush();
-
-//        ECharts eCharts = new ECharts();
-//        eCharts.setXaxis("category",category);
-//        eCharts.setYaxis("value");
-//        eCharts.setSeries(data,"bar");
-//        eCharts.setTitle("New Title");
-//        PrintWriter out = response.getWriter();
-//        response.setContentType("application/json");
-//        response.setCharacterEncoding("UTF-8");
-//        out.print(GSON.toJson(eCharts));
-//        out.flush();
-
     }
     public void doTestRunGraph(final StaplerRequest request, final StaplerResponse response) throws IOException {
         checkPermission();
@@ -632,12 +638,12 @@ public class PerfSigProjectAction extends PerfSigBaseAction implements Prominent
             plot.setRangeGridlinesVisible(true);
             plot.setRangeGridlinePaint(Color.black);
 
-            final CategoryAxis domainAxis = new ShiftedCategoryAxis(null);
+            final org.jfree.chart.axis.CategoryAxis domainAxis = new ShiftedCategoryAxis(null);
             plot.setDomainAxis(domainAxis);
             domainAxis.setCategoryLabelPositions(CategoryLabelPositions.UP_90);
-            //domainAxis.setLowerMargin(0.0);
-            //domainAxis.setUpperMargin(0.0);
-            //domainAxis.setCategoryMargin(0.0);
+            domainAxis.setLowerMargin(0.0);
+            domainAxis.setUpperMargin(0.0);
+            domainAxis.setCategoryMargin(0.0);
 
             final NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
             rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
@@ -682,12 +688,12 @@ public class PerfSigProjectAction extends PerfSigBaseAction implements Prominent
             plot.setRangeGridlinesVisible(true);
             plot.setRangeGridlinePaint(Color.black);
 
-            final CategoryAxis domainAxis = new ShiftedCategoryAxis(null);
+            final org.jfree.chart.axis.CategoryAxis domainAxis = new ShiftedCategoryAxis(null);
             plot.setDomainAxis(domainAxis);
             domainAxis.setCategoryLabelPositions(CategoryLabelPositions.UP_90);
-            //domainAxis.setLowerMargin(0.0);
-            //domainAxis.setUpperMargin(0.0);
-            //domainAxis.setCategoryMargin(0.0);
+            domainAxis.setLowerMargin(0.0);
+            domainAxis.setUpperMargin(0.0);
+            domainAxis.setCategoryMargin(0.0);
 
             final NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
             rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());

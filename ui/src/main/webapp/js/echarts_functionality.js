@@ -7,11 +7,10 @@
             type: 'GET',
             dataType: 'JSON',
             async: false,
-        }).done(function (result) {
+        }).done(function (option) {
             var chartDom = document.getElementById("ECharts");
             var cid = makeid(5);
             document.getElementById("ECharts").setAttribute("id", cid);
-            option = result;
             var myChart = echarts.init(chartDom);
             myChart.setOption(option);
         });
