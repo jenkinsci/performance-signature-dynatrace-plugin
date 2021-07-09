@@ -71,13 +71,14 @@ public class DynatraceCustomSessionStepExecution extends SynchronousNonBlockingS
             attachRules.setTagRule(step.getTagMatchRules());
 
             println("creating Performance Signature custom event");
-            EventPushMessage event = new EventPushMessage(EventTypeEnum.CUSTOM_INFO, attachRules)
+            EventPushMessage event = new EventPushMessage(EventTypeEnum.CUSTOM_ANNOTATION, attachRules)
                     .setSource("Jenkins")
-                    .setTitle("Performance Signature was executed")
+                    .setAnnotationType("Load test")
                     .setStartTime(action.getTimeframeStart())
                     .setEndTime(action.getTimeframeStop());
             if (envVars != null) {
-                event.setDescription("Performance Signature was executed in a Jenkins Pipeline")
+                event.setAnnotationDescription(String.format("%s %s", envVars.get("JOB_NAME"), envVars.get("BUILD_ID")))
+                        .setDescription("Performance Signature was executed in a Jenkins Pipeline")
                         .addCustomProperties("Jenkins Build Number", envVars.get("BUILD_ID"))
                         .addCustomProperties("Git Commit", envVars.get("GIT_COMMIT"))
                         .addCustomProperties("Deployment Version", envVars.get(BUILD_VAR_KEY_DEPLOYMENT_VERSION))
