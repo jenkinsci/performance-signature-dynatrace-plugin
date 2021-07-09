@@ -53,10 +53,10 @@ public class ProcessGroup extends EntityId {
             if (serverConfiguration != null) {
                 DynatraceServerConnection connection = new DynatraceServerConnection(serverConfiguration);
 
-                List<de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.ProcessGroup> entityIds = connection.getProcessGroups();
+                List<de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.env1.model.ProcessGroup> entityIds = connection.getProcessGroups();
                 entityIds.stream()
                         .filter(entityId -> !entityId.getDisplayName().startsWith("OneAgent"))
-                        .sorted(Comparator.comparing(de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.ProcessGroup::getDisplayName))
+                        .sorted(Comparator.comparing(de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.env1.model.ProcessGroup::getDisplayName))
                         .forEach(application -> model.add(application.getDisplayName(), application.getEntityId()));
                 return model;
             }

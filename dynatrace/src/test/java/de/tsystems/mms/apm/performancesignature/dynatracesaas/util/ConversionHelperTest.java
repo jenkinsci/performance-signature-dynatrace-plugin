@@ -16,7 +16,7 @@
 
 package de.tsystems.mms.apm.performancesignature.dynatracesaas.util;
 
-import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.UnitEnum;
+import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.env1.model.UnitEnum;
 import org.apache.commons.lang.ObjectUtils;
 import org.junit.Assert;
 import org.junit.Test;

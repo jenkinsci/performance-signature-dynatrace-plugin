@@ -27,10 +27,10 @@ import de.tsystems.mms.apm.performancesignature.dynatracesaas.model.DynatraceSer
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.model.Specification;
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.model.SpecificationTM;
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.DynatraceServerConnection;
-import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.AggregationTypeEnum;
-import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.TimeseriesDataPointQueryResult;
-import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.TimeseriesDefinition;
-import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.UnitEnum;
+import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.env1.model.AggregationTypeEnum;
+import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.env1.model.TimeseriesDataPointQueryResult;
+import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.env1.model.TimeseriesDefinition;
+import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.env1.model.UnitEnum;
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.util.ConversionHelper;
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.util.DynatraceUtils;
 import de.tsystems.mms.apm.performancesignature.ui.PerfSigBuildAction;

@@ -18,8 +18,8 @@ package de.tsystems.mms.apm.performancesignature.dynatracesaas;
 
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.DynatraceServerConnection;
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.RESTErrorException;
-import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.AggregationTypeEnum;
-import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.TimeseriesDataPointQueryResult;
+import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.env1.model.AggregationTypeEnum;
+import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.env1.model.TimeseriesDataPointQueryResult;
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.util.DynatraceUtils;
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.util.TestUtils;
 import hudson.AbortException;

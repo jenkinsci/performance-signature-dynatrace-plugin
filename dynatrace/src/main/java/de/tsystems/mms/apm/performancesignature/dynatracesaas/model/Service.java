@@ -53,10 +53,10 @@ public class Service extends EntityId {
             if (serverConfiguration != null) {
                 DynatraceServerConnection connection = new DynatraceServerConnection(serverConfiguration);
 
-                List<de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.Service> entityIds = connection.getServices();
+                List<de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.env1.model.Service> entityIds = connection.getServices();
                 entityIds.stream()
                         .filter(entityId -> !entityId.getDisplayName().startsWith("OneAgent"))
-                        .sorted(Comparator.comparing(de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.Service::getDisplayName))
+                        .sorted(Comparator.comparing(de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.env1.model.Service::getDisplayName))
                         .forEach(application -> model.add(application.getDisplayName(), application.getEntityId()));
                 return model;
             }

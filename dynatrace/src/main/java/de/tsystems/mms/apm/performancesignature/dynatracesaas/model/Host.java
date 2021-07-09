@@ -53,9 +53,9 @@ public class Host extends EntityId {
             if (serverConfiguration != null) {
                 DynatraceServerConnection connection = new DynatraceServerConnection(serverConfiguration);
 
-                List<de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.Host> entityIds = connection.getHosts();
+                List<de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.env1.model.Host> entityIds = connection.getHosts();
                 entityIds.stream()
-                        .sorted(Comparator.comparing(de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.Host::getDisplayName))
+                        .sorted(Comparator.comparing(de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.env1.model.Host::getDisplayName))
                         .forEach(application -> model.add(application.getDisplayName(), application.getEntityId()));
                 return model;
             }

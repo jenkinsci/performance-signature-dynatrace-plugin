@@ -17,7 +17,7 @@
 package de.tsystems.mms.apm.performancesignature.dynatracesaas.model;
 
 import com.google.gson.annotations.SerializedName;
-import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.AggregationTypeEnum;
+import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.env1.model.AggregationTypeEnum;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 public class SpecificationTM {

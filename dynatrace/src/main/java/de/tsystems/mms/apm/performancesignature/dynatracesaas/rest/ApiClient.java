@@ -46,7 +46,6 @@ import java.util.concurrent.TimeUnit;
 
 public class ApiClient {
     private static final String REST_DF = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX";
-    private static final String API_SUFFIX = "api/v1/";
     private final OkHttpClient.Builder okBuilder;
     private boolean debugging = false;
     private boolean verifyingSsl;
@@ -59,7 +58,7 @@ public class ApiClient {
         okBuilder.connectTimeout(30, TimeUnit.SECONDS);
         okBuilder.readTimeout(30, TimeUnit.SECONDS);
 
-        String baseUrl = "https://localhost/" + API_SUFFIX;
+        String baseUrl = "https://localhost/" + ApiSuffix.ENVIRONMENT;
 
         Gson gson = new GsonBuilder()
                 .setDateFormat(ApiClient.REST_DF)
@@ -88,11 +87,11 @@ public class ApiClient {
      * @param basePath Base path of the URL (e.g https://localhost/api/v2
      * @return An instance of OkHttpClient
      */
-    public ApiClient setBasePath(String basePath) {
+    public ApiClient setBasePath(String basePath, ApiSuffix suffix) {
         if (!basePath.endsWith("/")) {
             basePath += "/";
         }
-        adapterBuilder.baseUrl(basePath + API_SUFFIX);
+        adapterBuilder.baseUrl(basePath + suffix);
         return this;
     }
 

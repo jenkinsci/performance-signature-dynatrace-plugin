@@ -53,9 +53,9 @@ public class Application extends EntityId {
             if (serverConfiguration != null) {
                 DynatraceServerConnection connection = new DynatraceServerConnection(serverConfiguration);
 
-                List<de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.Application> entityIds = connection.getApplications();
+                List<de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.env1.model.Application> entityIds = connection.getApplications();
                 entityIds.stream()
-                        .sorted(Comparator.comparing(de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.Application::getDisplayName))
+                        .sorted(Comparator.comparing(de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.env1.model.Application::getDisplayName))
                         .forEach(application -> model.add(application.getDisplayName(), application.getEntityId()));
                 return model;
             }

@@ -16,7 +16,7 @@
 
 package de.tsystems.mms.apm.performancesignature.dynatracesaas.util;
 
-import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.UnitEnum;
+import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.env1.model.UnitEnum;
 import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
 
 import java.util.Arrays;
@@ -24,7 +24,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import static de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.UnitEnum.*;
+import static de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.env1.model.UnitEnum.*;
 
 public class ConversionHelper {
     public static final List<UnitEnum> TIME_UNITS = Collections.unmodifiableList(Arrays.asList(

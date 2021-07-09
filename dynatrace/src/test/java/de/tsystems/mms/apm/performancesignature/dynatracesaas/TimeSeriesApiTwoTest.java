@@ -19,7 +19,7 @@ package de.tsystems.mms.apm.performancesignature.dynatracesaas;
 import de.tsystems.mms.apm.performancesignature.dynatrace.model.DashboardReport;
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.DynatraceServerConnection;
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.RESTErrorException;
-import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.TimeseriesDefinition;
+import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.env1.model.TimeseriesDefinition;
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.util.DynatraceUtils;
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.util.TestUtils;
 import de.tsystems.mms.apm.performancesignature.ui.PerfSigBuildAction;

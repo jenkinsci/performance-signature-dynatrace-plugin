@@ -26,7 +26,7 @@ import de.tsystems.mms.apm.performancesignature.dynatracesaas.model.TagInfo;
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.model.TagMatchRule;
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.DynatraceServerConnection;
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.RESTErrorException;
-import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.TimeseriesDefinition;
+import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.env1.model.TimeseriesDefinition;
 import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
 import hudson.AbortException;
 import hudson.model.TaskListener;

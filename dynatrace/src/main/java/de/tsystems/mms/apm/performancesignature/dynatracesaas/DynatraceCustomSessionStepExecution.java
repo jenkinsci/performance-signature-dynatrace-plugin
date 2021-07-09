@@ -18,9 +18,9 @@ package de.tsystems.mms.apm.performancesignature.dynatracesaas;
 
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.model.EntityId;
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.DynatraceServerConnection;
-import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.EventPushMessage;
-import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.EventTypeEnum;
-import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.PushEventAttachRules;
+import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.env1.model.EventPushMessage;
+import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.env1.model.EventTypeEnum;
+import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.env1.model.PushEventAttachRules;
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.util.DynatraceUtils;
 import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
 import hudson.EnvVars;

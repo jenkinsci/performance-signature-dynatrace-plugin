@@ -17,28 +17,28 @@
 package de.tsystems.mms.apm.performancesignature.dynatracesaas.rest;
 
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.model.DynatraceServerConfiguration;
-import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.api.ClusterVersionApi;
-import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.api.EventApi;
-import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.api.TimeseriesApi;
-import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.api.TopologySmartscapeApplicationApi;
-import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.api.TopologySmartscapeHostApi;
-import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.api.TopologySmartscapeProcessApi;
-import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.api.TopologySmartscapeProcessGroupApi;
-import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.api.TopologySmartscapeServiceApi;
-import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.AggregationTypeEnum;
-import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.Application;
-import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.ClusterVersion;
-import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.EventPushMessage;
-import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.EventStoreResult;
-import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.FilterEnum;
-import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.Host;
-import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.ProcessGroup;
-import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.ProcessGroupInstance;
-import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.QueryModeEnum;
-import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.Service;
-import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.TimeseriesDataPointQueryResult;
-import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.TimeseriesDefinition;
-import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.model.TimeseriesQueryMessage;
+import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.env1.api.ClusterVersionApi;
+import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.env1.api.EventApi;
+import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.env1.api.TimeseriesApi;
+import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.env1.api.TopologySmartscapeApplicationApi;
+import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.env1.api.TopologySmartscapeHostApi;
+import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.env1.api.TopologySmartscapeProcessApi;
+import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.env1.api.TopologySmartscapeProcessGroupApi;
+import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.env1.api.TopologySmartscapeServiceApi;
+import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.env1.model.AggregationTypeEnum;
+import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.env1.model.Application;
+import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.env1.model.ClusterVersion;
+import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.env1.model.EventPushMessage;
+import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.env1.model.EventStoreResult;
+import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.env1.model.FilterEnum;
+import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.env1.model.Host;
+import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.env1.model.ProcessGroup;
+import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.env1.model.ProcessGroupInstance;
+import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.env1.model.QueryModeEnum;
+import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.env1.model.Service;
+import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.env1.model.TimeseriesDataPointQueryResult;
+import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.env1.model.TimeseriesDefinition;
+import de.tsystems.mms.apm.performancesignature.dynatracesaas.rest.env1.model.TimeseriesQueryMessage;
 import de.tsystems.mms.apm.performancesignature.dynatracesaas.util.DynatraceUtils;
 import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
 import hudson.ProxyConfiguration;
@@ -65,7 +65,7 @@ public class DynatraceServerConnection {
                                      final boolean useProxy) {
         this.apiClient = new ApiClient()
                 .setVerifyingSsl(verifyCertificate)
-                .setBasePath(serverUrl)
+                .setBasePath(serverUrl, ApiSuffix.ENVIRONMENT)
                 //.setDebugging(true)
                 .setApiKey(DynatraceUtils.getApiToken(apiTokenId));
 
