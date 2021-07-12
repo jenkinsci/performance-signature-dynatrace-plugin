@@ -163,24 +163,6 @@
                                 </div>
                             </j:if>
                             <br/>
-                            <j:if test="${dashboardReport.isUnitTest()}">
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="card" style="height: 90%;border-color: #faebcc">
-                                            <div class="card-header" style="height: 40%;color: #8a6d3b;background-color: #fcf8e3">
-                                                <h4 style="margin-top: -2px" class="card-title">${%JUnit TestReport}</h4>
-                                            </div>
-                                            <div class="card-body">
-                                                <a href="${rootURL}/job/${it.build.project.name}/${it.build.number}/testReport">
-                                                    <img width="16" height="16"
-                                                         src="${resURL}/images/24x24/clipboard.png"/>
-                                                    ${%UnitTestReport with performance data}
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </j:if>
 
                             <j:if test="${!dashboardReport.incidents.isEmpty()}">
                                 <h3>${%Incidents}</h3>

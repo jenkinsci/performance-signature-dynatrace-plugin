@@ -48,23 +48,17 @@ import 'lightbox2/dist/css/lightbox.css';
         }
 
         $('#measureGroup', this).change(function () {
-            if ($(this).val() === 'UnitTest overview') {
-                $('#measure', page).parent().hide();
-                $('#aggregation', page).parent().hide();
+            projectAction.getAvailableMeasures($(page).attr('id'), $(this).val(), function (data) {
+                $('#measure', page).empty();
                 $('#customName', page).val('');
-            } else {
-                projectAction.getAvailableMeasures($(page).attr('id'), $(this).val(), function (data) {
-                    $('#measure', page).empty();
-                    $('#customName', page).val('');
-                    $('#customBuildCount', page).val('');
-                    $('#measure', page).parent().show();
-                    $('#aggregation', page).parent().show();
-                    $.each(data.responseObject(), function (val, text) {
-                        $('#measure', page).append($('<option></option>').val(val).html(text));
-                    });
-                    $('#measure', page).trigger('change');
+                $('#customBuildCount', page).val('');
+                $('#measure', page).parent().show();
+                $('#aggregation', page).parent().show();
+                $.each(data.responseObject(), function (val, text) {
+                    $('#measure', page).append($('<option></option>').val(val).html(text));
                 });
-            }
+                $('#measure', page).trigger('change');
+            });
         });
 
         $('#measure', this).change(function () {
@@ -98,19 +92,8 @@ import 'lightbox2/dist/css/lightbox.css';
         $('#addbutton', page).click(function () {
             const request_parameter = '&amp;width=410&amp;height=300&amp;customName=' + encode($('#customName', page).val()) +
                 '&amp;customBuildCount=' + $('#customBuildCount', page).val();
-            if ($('#measureGroup', page).val() === 'UnitTest overview') {
-                grid[pageIndex].addWidget({
-                    w: 3, h: 2, content: `<span class="del_img float-left">
-<svg class="svg" style="fill: #ff0000" aria-hidden="true">
-    <use href="${resURL}/plugin/font-awesome-api/sprites/solid.svg#times"/>
-</svg></span>
-<span class="chk_show float-right">
-<input type="checkbox" title="show in project overview" checked="checked"/></span>
-<img class="img-thumbnail" height="300" width="410" src="testRunGraph?id=unittest_overview${request_parameter}${randomParam}">`
-                });
-            } else {
-                grid[pageIndex].addWidget({
-                    w: 3, h: 2, content: `<span class="del_img float-left">
+            grid[pageIndex].addWidget({
+                w: 3, h: 2, content: `<span class="del_img float-left">
 <svg class="svg" style="fill: #ff0000" aria-hidden="true">
     <use href="${resURL}/plugin/font-awesome-api/sprites/solid.svg#times"/>
 </svg></span>
@@ -118,8 +101,7 @@ import 'lightbox2/dist/css/lightbox.css';
 <input type="checkbox" title="show in project overview" checked="checked"/></span>
 <img class="img-thumbnail" height="300" width="410"
 src="summarizerGraph?id=${$('#measure', page).val()}${request_parameter}&amp;aggregation=${$('#aggregation', page).val()}${randomParam}">`
-                });
-            }
+            });
             $('.del_img', page).click(function () {
                 grid[pageIndex].removeWidget(this.parentNode.parentNode);
             });
@@ -134,24 +116,10 @@ src="summarizerGraph?id=${$('#measure', page).val()}${request_parameter}&amp;agg
                 const json = JSON.parse(data.responseObject());
                 $.each(json, function (index) {
                     if (json[index].dashboard === $(page).attr('id')) {
-                        if (json[index].id === 'unittest_overview') {
-                            grid[pageIndex].addWidget({
-                                w: 3,
-                                h: 2,
-                                content: `<span class="del_img float-left" style="display: none">
-<svg class="svg" style="fill: #ff0000" aria-hidden="true">
-    <use href="${resURL}/plugin/font-awesome-api/sprites/solid.svg#times"/>
-</svg></span>
-<span class="chk_show float-right" style="display: none">
-<input type="checkbox" title="show in project overview" checked="checked"/></span>
-<a href="./testRunGraph?width=800&amp;height=585&amp;id=unittest_overview${randomParam}" data-lightbox="${$(page).attr('id')}">
-<img class="img-thumbnail" height="300" width="410" src="./testRunGraph?width=410&amp;height=300&amp;id=unittest_overview${randomParam}"></a>`
-                            });
-                        } else {
-                            grid[pageIndex].addWidget({
-                                w: 3,
-                                h: 2,
-                                content: `<span class="del_img float-left" style="display: none">
+                        grid[pageIndex].addWidget({
+                            w: 3,
+                            h: 2,
+                            content: `<span class="del_img float-left" style="display: none">
 <svg class="svg" style="fill: #ff0000" aria-hidden="true">
     <use href="${resURL}/plugin/font-awesome-api/sprites/solid.svg#times"/>
 </svg></span>
@@ -161,8 +129,7 @@ src="summarizerGraph?id=${$('#measure', page).val()}${request_parameter}&amp;agg
 <img class="img-thumbnail" height="300" width="410" 
 src="./summarizerGraph?width=410&amp;height=300&amp;id=${json[index].id}${randomParam}" title="source: ${json[index].chartDashlet}-${json[index].measure} (${json[index].aggregation})
 ${json[index].description}"></a>`
-                            });
-                        }
+                        });
                     }
                 });
                 $('.chk_show', page).hide();

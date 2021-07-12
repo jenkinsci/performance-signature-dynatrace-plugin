@@ -100,12 +100,7 @@ public class PerfSigProjectActionTest {
         JenkinsRule.WebClient wc = j.createWebClient();
         for (JSONDashlet dashlet : configuration) {
             System.out.println(dashlet.generateDashletName() + " : " + dashlet.getId());
-            Page graph;
-            if (dashlet.getId().equals(PerfSigProjectAction.UNITTEST_DASHLETNAME)) {
-                graph = wc.goTo(proj.getUrl() + "performance-signature/testRunGraph?id=" + dashlet.getId(), "image/png");
-            } else {
-                graph = wc.goTo(proj.getUrl() + "performance-signature/summarizerGraph?id=" + dashlet.getId(), "image/png");
-            }
+            Page graph = wc.goTo(proj.getUrl() + "performance-signature/summarizerGraph?id=" + dashlet.getId(), "image/png");
             j.assertGoodStatus(graph);
         }
 
@@ -126,7 +121,6 @@ public class PerfSigProjectActionTest {
         PerfSigProjectAction projectAction = new PerfSigProjectAction(proj);
         assertEquals(PerfSigUIUtils.class, projectAction.getPerfSigUIUtils());
 
-        j.assertXPathValue(projectPage, "//*[@id=\"measureGroup\"]/option[1]", "UnitTest overview");
         j.assertXPathValue(projectPage, "//*[@id=\"measureGroup\"]/option[6]", "Synthetic WebRequest Time");
 
         Map<String, String> jsonDashletIDs = projectAction.getAvailableMeasures("PerfTest", "Errors");

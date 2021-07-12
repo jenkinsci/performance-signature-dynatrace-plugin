@@ -21,20 +21,14 @@ import com.google.gson.reflect.TypeToken;
 import de.tsystems.mms.apm.performancesignature.dynatrace.model.ChartDashlet;
 import de.tsystems.mms.apm.performancesignature.dynatrace.model.DashboardReport;
 import de.tsystems.mms.apm.performancesignature.dynatrace.model.Measure;
-import de.tsystems.mms.apm.performancesignature.dynatrace.model.TestRun;
 import de.tsystems.mms.apm.performancesignature.ui.model.JSONDashlet;
 import de.tsystems.mms.apm.performancesignature.ui.model.JSONDashletComparator;
-import de.tsystems.mms.apm.performancesignature.ui.util.NumberOnlyBuildLabel;
 import de.tsystems.mms.apm.performancesignature.ui.util.PerfSigUIUtils;
 import hudson.XmlFile;
 import hudson.model.Job;
 import hudson.model.ProminentProjectAction;
 import hudson.model.Run;
-import hudson.tasks.junit.TestResult;
-import hudson.tasks.junit.TestResultAction;
-import hudson.tasks.test.TestResultProjectAction;
 import hudson.util.ChartUtil;
-import hudson.util.ColorPalette;
 import hudson.util.DataSetBuilder;
 import hudson.util.Graph;
 import hudson.util.ShiftedCategoryAxis;
@@ -49,7 +43,6 @@ import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.renderer.category.BarRenderer;
-import org.jfree.chart.renderer.category.StackedBarRenderer;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
@@ -74,7 +67,6 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 public class PerfSigProjectAction extends PerfSigBaseAction implements ProminentProjectAction {
-    static final String UNITTEST_DASHLETNAME = "unittest_overview";
     private static final String JSON_FILENAME = "gridconfig.xml";
     private static final Logger logger = Logger.getLogger(PerfSigProjectAction.class.getName());
     private static final XStream2 XSTREAM2 = new XStream2();
@@ -97,10 +89,6 @@ public class PerfSigProjectAction extends PerfSigBaseAction implements Prominent
 
     public Job<?, ?> getJob() {
         return job;
-    }
-
-    public TestResultProjectAction getTestResultProjectAction() {
-        return job.getAction(TestResultProjectAction.class);
     }
 
     @SuppressWarnings("WeakerAccess")
@@ -178,49 +166,6 @@ public class PerfSigProjectAction extends PerfSigBaseAction implements Prominent
         graph.doPng(request, response);
     }
 
-    public void doTestRunGraph(final StaplerRequest request, final StaplerResponse response) throws IOException {
-        checkPermission();
-        final String customName, customBuildCount;
-
-        JSONDashlet jsonDashlet = getJsonDashletMap().get(UNITTEST_DASHLETNAME);
-        if (jsonDashlet != null) {
-            customName = jsonDashlet.getCustomName();
-            customBuildCount = String.valueOf(jsonDashlet.getCustomBuildCount());
-        } else { //generate test run graph with GET parameters
-            customName = request.getParameter("customName");
-            customBuildCount = request.getParameter("customBuildCount");
-        }
-
-        final Graph graph = new TestRunGraphImpl(customName) {
-            @Override
-            protected DataSetBuilder<String, NumberOnlyBuildLabel> createDataSet() {
-                final DataSetBuilder<String, NumberOnlyBuildLabel> dsb = new DataSetBuilder<>();
-                int buildCount = 0, i = 0;
-                if (StringUtils.isNotBlank(customBuildCount)) {
-                    buildCount = Integer.parseInt(customBuildCount);
-                }
-
-                for (Run<?, ?> run : job.getBuilds()) {
-                    TestRun testRun = getTestRun(run);
-                    if (testRun != null) {
-                        dsb.add(testRun.getNumFailed(), "failed", new NumberOnlyBuildLabel(run));
-                        dsb.add(testRun.getNumDegraded(), "degraded", new NumberOnlyBuildLabel(run));
-                        dsb.add(testRun.getNumImproved(), "improved", new NumberOnlyBuildLabel(run));
-                        dsb.add(testRun.getNumPassed(), "passed", new NumberOnlyBuildLabel(run));
-                        dsb.add(testRun.getNumVolatile(), "volatile", new NumberOnlyBuildLabel(run));
-                        dsb.add(testRun.getNumInvalidated(), "invalidated", new NumberOnlyBuildLabel(run));
-                    }
-                    i++;
-                    if (buildCount != 0 && i == buildCount) {
-                        break;
-                    }
-                }
-                return dsb;
-            }
-        };
-        graph.doPng(request, response);
-    }
-
     private void checkPermission() {
         job.checkPermission(Job.READ);
     }
@@ -241,27 +186,6 @@ public class PerfSigProjectAction extends PerfSigBaseAction implements Prominent
             b = b.getPreviousBuild();
         }
         return new ArrayList<>();
-    }
-
-    public TestRun getTestRun(final Run<?, ?> run) {
-        TestResult testResult = getTestResult(run);
-        if (testResult != null) {
-            PerfSigTestAction testAction = testResult.getTestAction(PerfSigTestAction.class);
-            if (testAction != null) {
-                return TestRun.mergeTestRuns(testAction.getTestData().getTestRuns());
-            }
-        }
-        return null;
-    }
-
-    public TestResult getTestResult(final Run<?, ?> run) {
-        if (run != null) {
-            TestResultAction testResultAction = run.getAction(TestResultAction.class);
-            if (testResultAction != null) {
-                return testResultAction.getResult();
-            }
-        }
-        return null;
     }
 
     @SuppressWarnings("WeakerAccess")
@@ -298,10 +222,6 @@ public class PerfSigProjectAction extends PerfSigBaseAction implements Prominent
         logger.fine(addTimeStampToLog("grid configuration generation started"));
         Map<String, JSONDashlet> newJsonDashletMap = new HashMap<>();
         for (DashboardReport dashboardReport : getLastDashboardReports()) {
-            if (dashboardReport.isUnitTest()) {
-                JSONDashlet dashlet = new JSONDashlet(col++, row, UNITTEST_DASHLETNAME, dashboardReport.getName());
-                newJsonDashletMap.put(UNITTEST_DASHLETNAME, dashlet);
-            }
             for (ChartDashlet chartDashlet : dashboardReport.getChartDashlets()) {
                 for (Measure measure : chartDashlet.getMeasures()) {
                     JSONDashlet dashlet = new JSONDashlet(col++, row, dashboardReport.getName(), chartDashlet.getName(), measure.getName(),
@@ -356,13 +276,7 @@ public class PerfSigProjectAction extends PerfSigBaseAction implements Prominent
         jsonDashletList.forEach(modifiedDashlet -> {
             JSONDashlet unmodifiedDashlet = defaultConfiguration.get(modifiedDashlet.getId());
             JSONDashlet originalDashlet = getJsonDashletMap().get(modifiedDashlet.getId());
-            if (modifiedDashlet.getId().equals(UNITTEST_DASHLETNAME)) {
-                if (originalDashlet != null) {
-                    modifiedDashlet.setCustomBuildCount(originalDashlet.getCustomBuildCount());
-                    modifiedDashlet.setCustomName(originalDashlet.getCustomName());
-                }
-                getJsonDashletMap().put(modifiedDashlet.getId(), modifiedDashlet);
-            } else if (unmodifiedDashlet != null) { //newly added dashlets
+            if (unmodifiedDashlet != null) { //newly added dashlets
                 modifiedDashlet.setDashboard(unmodifiedDashlet.getDashboard());
                 modifiedDashlet.setChartDashlet(unmodifiedDashlet.getChartDashlet());
                 modifiedDashlet.setMeasure(unmodifiedDashlet.getMeasure());
@@ -428,7 +342,7 @@ public class PerfSigProjectAction extends PerfSigBaseAction implements Prominent
                     }
                 }
             }
-            if (!chartDashletFound && !jsonDashlet.getId().equals(UNITTEST_DASHLETNAME)) {
+            if (!chartDashletFound) {
                 filteredChartDashlets.put(jsonDashlet, new Measure());
             }
         }
@@ -534,62 +448,6 @@ public class PerfSigProjectAction extends PerfSigBaseAction implements Prominent
 
             final BarRenderer renderer = (BarRenderer) chart.getCategoryPlot().getRenderer();
             renderer.setSeriesPaint(0, Color.decode(color));
-
-            return chart;
-        }
-    }
-
-    private abstract static class TestRunGraphImpl extends Graph {
-        private final String customName;
-
-        TestRunGraphImpl(final String customName) {
-            super(-1, 600, 300);
-            this.customName = customName;
-        }
-
-        protected abstract DataSetBuilder<String, NumberOnlyBuildLabel> createDataSet();
-
-        protected JFreeChart createGraph() {
-            String title = StringUtils.isNotBlank(customName) ? customName : "UnitTest overview";
-
-            final JFreeChart chart = ChartFactory.createBarChart(title, // title
-                    "build", // category axis label
-                    "num", // value axis label
-                    createDataSet().build(), // data
-                    PlotOrientation.VERTICAL, // orientation
-                    true, // include legend
-                    true, // tooltips
-                    false // urls
-            );
-
-            chart.setBackgroundPaint(Color.white);
-
-            final CategoryPlot plot = chart.getCategoryPlot();
-
-            plot.setBackgroundPaint(Color.WHITE);
-            plot.setOutlinePaint(null);
-            plot.setForegroundAlpha(0.8f);
-            plot.setRangeGridlinesVisible(true);
-            plot.setRangeGridlinePaint(Color.black);
-
-            final CategoryAxis domainAxis = new ShiftedCategoryAxis(null);
-            plot.setDomainAxis(domainAxis);
-            domainAxis.setCategoryLabelPositions(CategoryLabelPositions.UP_90);
-            //domainAxis.setLowerMargin(0.0);
-            //domainAxis.setUpperMargin(0.0);
-            //domainAxis.setCategoryMargin(0.0);
-
-            final NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
-            rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
-
-            final StackedBarRenderer br = new StackedBarRenderer();
-            plot.setRenderer(br);
-            br.setSeriesPaint(0, new Color(0xFF, 0x99, 0x99)); // degraded
-            br.setSeriesPaint(1, ColorPalette.RED); // failed
-            br.setSeriesPaint(2, new Color(0x00, 0xFF, 0x00)); // improved
-            br.setSeriesPaint(3, ColorPalette.GREY); // invalidated
-            br.setSeriesPaint(4, ColorPalette.BLUE); // passed
-            br.setSeriesPaint(5, ColorPalette.YELLOW); // volatile
 
             return chart;
         }

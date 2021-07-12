@@ -20,7 +20,11 @@ import de.tsystems.mms.apm.performancesignature.dynatrace.model.Alert.SeverityEn
 import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
 
-import javax.xml.bind.annotation.*;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -40,7 +44,6 @@ public class DashboardReport {
     @XmlElement(name = "incident")
     private final List<Alert> incidents;
     private String name;
-    private boolean unitTest;
     private String clientUrl;
 
     public DashboardReport(final String testCaseName) {
@@ -116,14 +119,6 @@ public class DashboardReport {
 
     public void addChartDashlet(final ChartDashlet chartDashlet) {
         this.chartDashlets.add(chartDashlet);
-    }
-
-    public boolean isUnitTest() {
-        return unitTest;
-    }
-
-    public void setUnitTest(final boolean unitTest) {
-        this.unitTest = unitTest;
     }
 
     public String getClientUrl() {

@@ -31,8 +31,6 @@
         </l:header>
         <st:include it="${it.job}" page="sidepanel.jelly"/>
         <j:set var="utils" value="${it.PerfSigUIUtils}"/>
-        <j:set var="trpa" value="${it.testResultProjectAction}"/>
-        <j:set var="tr" value="${trpa.lastTestResultAction}"/>
         <l:main-panel>
             <st:adjunct includes="io.jenkins.plugins.bootstrap4"/>
             <st:adjunct includes="io.jenkins.plugins.data-tables"/>
@@ -51,7 +49,6 @@
             </div>
             <div class="tab-content">
                 <j:forEach var="lastDashboardReport" items="${it.lastDashboardReports}">
-                    <j:set var="isUnitTest" value="${lastDashboardReport.isUnitTest() and tr.previousResult!=null}"/>
                     <div role="tabpanel fade" class="tab-pane" id="${lastDashboardReport.name}">
                         <div class="container-fluid">
                             <div class="row">
@@ -81,9 +78,6 @@
                                     <div class="form-group col-md-2" id="measureGroupContainer">
                                         <label for="measureGroup">Select Measure Group:</label>
                                         <select class="form-control" id="measureGroup">
-                                            <j:if test="${isUnitTest}">
-                                                <option>UnitTest overview</option>
-                                            </j:if>
                                             <j:forEach var="dr" items="${it.lastDashboardReports}">
                                                 <j:if test="${dr.name.equals(lastDashboardReport.name)}">
                                                     <j:forEach var="chartDashlet" items="${utils.sortChartDashletList(dr.chartDashlets)}">
@@ -134,21 +128,6 @@
                                         <th class="text-center">${%build #}</th>
                                         <th class="text-center">${%PDF}</th>
                                         <th class="text-center">${%date}</th>
-                                        <j:if test="${isUnitTest}">
-                                            <th class="text-center">${%duration}</th>
-                                            <th class="text-center">${%failed #}</th>
-                                            <th class="text-center">${%failed #}<br/>${%incl. non-functional}
-                                            </th>
-                                            <th class="text-center">${%degraded #}</th>
-                                            <th class="text-center">${%volatile #}</th>
-                                            <th class="text-center">${%skipped #}</th>
-                                            <th class="text-center">${%improved #}</th>
-                                            <th class="text-center">${%passed #}<br/>${%functional}
-                                            </th>
-                                            <th class="text-center">${%passed #}<br/>${%non-functional}
-                                            </th>
-                                            <th class="text-center">${%sum #}</th>
-                                        </j:if>
                                         <j:forEach var="dashlet" items="${it.getFilteredChartDashlets(lastDashboardReport)}">
                                             <th class="text-center">
                                                 ${dashlet.key.generateDashletName()}<br/>(${dashlet.value.getUnit(dashlet.key.aggregation)})
@@ -178,20 +157,6 @@
                                             <td>
                                                 <fmt:formatDate dateStyle="medium" type="both" value="${dashboardReport.key.time}"/>
                                             </td>
-                                            <j:if test="${isUnitTest}">
-                                                <j:set var="testRun" value="${it.getTestRun(dashboardReport.key)}"/>
-                                                <j:set var="testResult" value="${it.getTestResult(dashboardReport.key)}"/>
-                                                <td class="nowrap">${utils.getDurationString(testResult.duration)}</td>
-                                                <td>${testResult.failCount}</td>
-                                                <td>${testRun.numFailed}</td>
-                                                <td>${testRun.numDegraded}</td>
-                                                <td>${testRun.numVolatile}</td>
-                                                <td>${testResult.skipCount}</td>
-                                                <td>${testRun.numImproved}</td>
-                                                <td>${testResult.passCount}</td>
-                                                <td>${testRun.numPassed}</td>
-                                                <td>${testResult.totalCount}</td>
-                                            </j:if>
                                             <j:forEach var="dashlet" items="${it.getFilteredChartDashlets(dashboardReport.value)}">
                                                 <td>${utils.round(dashlet.value.getMetricValue(dashlet.key.aggregation), 2)}</td>
                                             </j:forEach>
