@@ -121,7 +121,7 @@ public class PerfSigProjectActionTest {
         PerfSigProjectAction projectAction = new PerfSigProjectAction(proj);
         assertEquals(PerfSigUIUtils.class, projectAction.getPerfSigUIUtils());
 
-        j.assertXPathValue(projectPage, "//*[@id=\"measureGroup\"]/option[6]", "Synthetic WebRequest Time");
+        j.assertXPathValue(projectPage, "//*[@id=\"measureGroup\"]/option[5]", "Synthetic WebRequest Time");
 
         Map<String, String> jsonDashletIDs = projectAction.getAvailableMeasures("PerfTest", "Errors");
         assertTrue(jsonDashletIDs.containsKey("f1cb5c773c9c5cf98d81827513ad9e46"));
