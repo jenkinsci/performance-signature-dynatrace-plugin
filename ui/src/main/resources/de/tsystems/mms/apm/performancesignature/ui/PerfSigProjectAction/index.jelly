@@ -31,7 +31,7 @@
         <j:set var="trpa" value="${it.testResultProjectAction}"/>
         <j:set var="tr" value="${trpa.lastTestResultAction}"/>
         <l:main-panel>
-            <st:adjunct includes="io.jenkins.plugins.bootstrap4"/>
+            <st:adjunct includes="io.jenkins.plugins.bootstrap5"/>
             <st:adjunct includes="io.jenkins.plugins.data-tables"/>
             <div class="container-fluid">
                 <h1>${%Performance Signature for} ${it.job.name}</h1>
@@ -39,7 +39,7 @@
                     <j:forEach var="lastDashboardReport" items="${it.lastDashboardReports}">
                         <li class="nav-item" role="presentation">
                             <a href="#${lastDashboardReport.name}" class="nav-link"
-                               aria-controls="${lastDashboardReport.name}" data-toggle="tab" role="tab">
+                               aria-controls="${lastDashboardReport.name}" data-bs-toggle="tab" aria-current="page">
                                 <h4>${lastDashboardReport.name}</h4>
                             </a>
                         </li>

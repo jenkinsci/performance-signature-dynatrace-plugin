@@ -61,7 +61,7 @@
         <j:new var="h" className="hudson.Functions"/>
         <j:set var="utils" value="${it.PerfSigUIUtils}"/>
         <l:main-panel>
-            <st:adjunct includes="io.jenkins.plugins.bootstrap4"/>
+            <st:adjunct includes="io.jenkins.plugins.bootstrap5"/>
             <st:adjunct includes="io.jenkins.plugins.jquery3"/>
             <st:adjunct includes="io.jenkins.plugins.echarts"/>
             <script src="${resURL}/plugin/performance-signature-ui/js/echarts_functionality.js"/>
@@ -71,7 +71,7 @@
                     <j:forEach var="dashboardReport" items="${it.currentDashboardReports}">
                         <li role="presentation" class="nav-item">
                             <a href="#${dashboardReport.name}" class="nav-link" aria-controls="${dashboardReport.name}"
-                               role="tab" data-toggle="tab">
+                               role="tab" data-bs-toggle="tab">
                                 <h5>${dashboardReport.name}</h5>
                             </a>
                         </li>
@@ -185,7 +185,7 @@
                                                 <div class="card-header ${incidentSeverityEntry.key.panelColor}">
 
                                                     <h6>
-                                                        <a data-toggle="collapse" href="#collapse-${dashboardReport.name}-${rootId}">
+                                                        <a data-bs-toggle="collapse" href="#collapse-${dashboardReport.name}-${rootId}">
                                                             ${incidentEntry.key}
                                                         </a>
                                                     </h6>
@@ -216,7 +216,8 @@
                 </j:forEach>
             </div>
             <br style="clear:both;"/>
-            <script src="${resURL}/plugin/performance-signature-ui/js/tabhashes.js"/>
+
         </l:main-panel>
+        <script src="${resURL}/plugin/performance-signature-ui/js/tabhashes.js"/>
     </bs:layout>
 </j:jelly>

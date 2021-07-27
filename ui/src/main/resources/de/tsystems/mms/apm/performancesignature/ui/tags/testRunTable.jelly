@@ -36,7 +36,7 @@
         color: black;
         }
     </style>
-    <st:adjunct includes="io.jenkins.plugins.bootstrap4"/>
+    <st:adjunct includes="io.jenkins.plugins.bootstrap5"/>
     <j:set var="testResult" value="${it.matchingTestResult}"/>
     <j:set var="previousTestResult" value="${it.previousTestResult}"/>
 

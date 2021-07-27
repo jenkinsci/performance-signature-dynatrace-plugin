@@ -16,7 +16,7 @@
 
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:jm="/de/tsystems/mms/apm/performancesignature/ui/tags">
-    <st:adjunct includes="io.jenkins.plugins.bootstrap4"/>
+    <st:adjunct includes="io.jenkins.plugins.bootstrap5"/>
     <j:set var="utils" value="${it.PerfSigUtils}"/>
     <j:if test="${it.matchingTestResult!=null}">
         <tr>

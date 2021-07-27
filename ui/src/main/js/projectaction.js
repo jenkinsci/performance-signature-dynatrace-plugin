@@ -127,7 +127,8 @@ src="summarizerGraph?id=${$('#measure', page).val()}${request_parameter}&amp;agg
             });
         });
 
-        $('#tabList').find('a').eq(pageIndex).tab('show'); // very messy :(
+        setTimeout(function(){
+            $("#tabList").find('a:first').tab("show"); }, 500);
         if ($('.grid-stack ul', page).length !== 0) {
             grid[pageIndex].enableMove(false);
             grid[pageIndex].enableResize(false);

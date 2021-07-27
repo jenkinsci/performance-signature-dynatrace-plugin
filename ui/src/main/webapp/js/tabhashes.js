@@ -13,12 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 (function ($) {
     const hash = window.location.hash;
+    debugger;
     if (hash) {
-        $('ul.nav a[href="${hash}"]').tab('show');
+        setTimeout(function(){
+            $('.nav-tabs a[href="${hash}"]').tab("show"); }, 500);
+
     } else {
-        $('#tabList').find('a:first').tab('show'); // Select first tab
+        setTimeout(function(){
+            $("#tabList").find('a:first').tab("show"); }, 500);
     }
 
     $('.nav-tabs a').click(function () {
@@ -27,4 +32,5 @@
         window.location.hash = this.hash;
         $('html,body').scrollTop(scrollMem);
     });
-})(jQuery3);
+})
+(jQuery3);

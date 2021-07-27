@@ -18,7 +18,7 @@
 <j:jelly xmlns:j="jelly:core">
     <div class="card card-default ">
         <div class="card-header ${incident.severity.panelColor}">
-                <h6 class="card-group"><a data-toggle="collapse" href="#${dashboardReport.name}-collapse${rootId}-${position}">
+                <h6 class="card-group"><a data-bs-toggle="collapse" href="#${dashboardReport.name}-collapse${rootId}-${position}">
                     ${incident.severity} ${%Incident}: ${incident.message}
                 </a>
                 </h6>
