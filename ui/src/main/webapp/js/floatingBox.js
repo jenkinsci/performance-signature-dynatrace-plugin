@@ -39,6 +39,7 @@ var option;
                             dataType: 'JSON',
                             async:false,
                             }).done(function(result) {
+                                debugger;
                                 var chartDom = document.getElementById(MyIDvariable);
                                 var myChart = echarts.init(chartDom);
                                 option=result
