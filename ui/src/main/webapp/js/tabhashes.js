@@ -16,7 +16,6 @@
 
 (function ($) {
     const hash = window.location.hash;
-    debugger;
     if (hash) {
         setTimeout(function(){
             $('.nav-tabs a[href="${hash}"]').tab("show"); }, 500);
