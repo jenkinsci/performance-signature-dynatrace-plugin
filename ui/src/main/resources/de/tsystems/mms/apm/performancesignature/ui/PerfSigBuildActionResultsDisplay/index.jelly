@@ -44,16 +44,16 @@
                 width: 100%;
                 }
 
-                table td, #table th {
-                border: 1px solid #ddd;
-                padding: 8px;
+                table td, table th,table tr {
+                border: 1px solid #ddd !important;
+                padding: 8px !important;
                 }
 
                 table th {
-                padding-top: 12px;
-                padding-bottom: 12px;
-                text-align: left;
-                color: black;
+                padding-top: 12px !important;
+                padding-bottom: 12px !important;
+                text-align: left !important;
+                color: black !important;
                 }
             </style>
         </l:header>

@@ -24,10 +24,25 @@ import {GridStack} from 'gridstack';
 import 'gridstack/dist/gridstack.css';
 import 'gridstack/dist/h5/gridstack-dd-native';
 import 'lightbox2/dist/css/lightbox.css';
+import * as echarts from 'echarts';
 
 
 
 (function ($) {
+
+    function generateECharts(url) {
+        return new Promise(function(resolve, reject) {
+            $.ajax({
+                url: url,
+                success: function(data) {
+                    resolve(data) // Resolve promise and go to then()
+                },
+                error: function(err) {
+                    reject(err) // Reject the promise and go to catch()
+                }
+            });
+        });
+    }
     'use strict';
     let grid = GridStack.initAll({
         margin: 5,
@@ -110,7 +125,7 @@ import 'lightbox2/dist/css/lightbox.css';
 <i class="fas fa-times" style="color: red"></i></span>
 <span class="chk_show float-right">
 <input type="checkbox" title="show in project overview" checked="checked"/></span>
-<img class="img-thumbnail" height="265" width="410" src="testRunGraph?id=unittest_overview${request_parameter}${randomParam}">`
+<img class="img-thumbnail" height="265" width="410" src="testRunGraph?id=unittest_overview${request_parameter}${randomParam}"  attr_param="testRunGraph?id=unittest_overview${request_parameter}${randomParam}">`
                 });
             } else {
                 grid[pageIndex].addWidget({
@@ -118,9 +133,31 @@ import 'lightbox2/dist/css/lightbox.css';
 <i class="fas fa-times" style="color: #ff0000"></i></span>
 <span class="chk_show float-right">
 <input type="checkbox" title="show in project overview" checked="checked"/></span>
-<img class="img-thumbnail" height="265" width="410"
-src="summarizerGraph?id=${$('#measure', page).val()}${request_parameter}&amp;aggregation=${$('#aggregation', page).val()}${randomParam}">`
+ <div id="ECharts" style="height:265px; width: 410px; display: none"></div>
+<img class="img-thumbnail" height="265" width="410"  src="" attr_param="./generateGraph?id=${$('#measure', page).val()}${request_parameter}&amp;aggregation=${$('#aggregation', page).val()}${randomParam}">`
                 });
+                debugger;
+                var uri="./generateGraph?id="+$('#measure', page).val()+request_parameter+"&aggregation="+$('#aggregation', page).val()+randomParam;
+                generateECharts(uri).then(function(data) {
+                    var chartDom = document.getElementById("ECharts");
+                    var cid = makeid(5);
+                    document.getElementById("ECharts").setAttribute("id", cid);
+                    var myChart = echarts.init(chartDom);
+                    myChart.setOption(data);
+                    $("#" + cid).closest("a").attr("href", myChart.getDataURL({
+                        pixelRatio: 2,
+                        backgroundColor: "white"
+                    }));
+                    $("#" + cid).next().attr("src", myChart.getDataURL({
+                        pixelRatio: 2,
+                        backgroundColor: "white"
+                    }));
+                    $("#" + cid).remove();
+                }).catch(function(err) {
+                    // Run this when promise was rejected via reject()
+                    console.log(err)
+                })
+
             }
             $('.del_img', page).click(function () {
                 grid[pageIndex].removeWidget(this.parentNode.parentNode);
@@ -130,6 +167,7 @@ src="summarizerGraph?id=${$('#measure', page).val()}${request_parameter}&amp;agg
         setTimeout(function(){
             $("#tabList").find('a:first').tab("show"); }, 500);
         if ($('.grid-stack ul', page).length !== 0) {
+            $('.tab-content').hide();
             grid[pageIndex].enableMove(false);
             grid[pageIndex].enableResize(false);
 
@@ -146,7 +184,7 @@ src="summarizerGraph?id=${$('#measure', page).val()}${request_parameter}&amp;agg
 <span class="chk_show float-right" style="display: none">
 <input type="checkbox" title="show in project overview" checked="checked"/></span>
 <a href="./testRunGraph?width=800&amp;height=585&amp;id=unittest_overview${randomParam}" data-lightbox="${$(page).attr('id')}">
-<img class="img-thumbnail" height="265" width="410" src="./testRunGraph?width=410&amp;height=265&amp;id=unittest_overview${randomParam}"></a>`
+<img class="img-thumbnail" height="265" width="410" src="./testRunGraph?width=410&amp;height=265&amp;id=unittest_overview${randomParam}" attr_param="testRunGraph?id=unittest_overview${randomParam}"></a>`
                             });
                         } else {
                             grid[pageIndex].addWidget({
@@ -156,10 +194,36 @@ src="summarizerGraph?id=${$('#measure', page).val()}${request_parameter}&amp;agg
 <i class="fas fa-times" style="color: red"></i></span><span class="chk_show float-right" style="display: none">
 <input type="checkbox" title="show in project overview" ${json[index].show ? "checked='checked'" : ""}/></span>
 <a href="./summarizerGraph?width=800&amp;height=585&amp;id=${json[index].id}${randomParam}" data-lightbox="${$(page).attr('id')}" data-title="${json[index].description}">
-<img class="img-thumbnail" height="265" width="410" 
-src="./summarizerGraph?width=410&amp;height=265&amp;id=${json[index].id}${randomParam}" title="source: ${json[index].chartDashlet}-${json[index].measure} (${json[index].aggregation})
+ <div id="ECharts" style="height:265px; width: 410px; display: none"></div>
+<img class="img-thumbnail" height="265" width="410"  attr_param="./generateGraph?id=${json[index].id}${randomParam}"
+src="" title="source: ${json[index].chartDashlet}-${json[index].measure} (${json[index].aggregation})
 ${json[index].description}"></a>`
                             });
+                            var uri="./generateGraph?id="+json[index].id+randomParam;
+                            generateECharts(uri).then(function(data) {
+                                console.log(data);
+                                var chartDom = document.getElementById("ECharts");
+                                var cid = makeid(5);
+                                document.getElementById("ECharts").setAttribute("id", cid);
+                                var myChart = echarts.init(chartDom);
+                                myChart.setOption(data)
+                                setTimeout(function(){
+                                    $("#" + cid).closest("a").attr("href", myChart.getDataURL({
+                                        pixelRatio: 2,
+                                        backgroundColor: "white"
+                                    }));
+
+                                    $("#" + cid).next().attr("src", myChart.getDataURL({
+                                        pixelRatio: 2,
+                                        backgroundColor: "white"
+                                    }));
+                                    $("#" + cid).remove();
+                                    $('.tab-content').show();}, 500);
+
+                            }).catch(function(err) {
+                                // Run this when promise was rejected via reject()
+                                console.log(err)
+                            })
                         }
                     }
                 });
@@ -172,7 +236,7 @@ ${json[index].description}"></a>`
         $('#donebutton', this).click(function () {
             const items = [];
             $('.grid-stack-item.ui-draggable', page).each(function () {
-
+                debugger;
                 const $this = $(this);
                 items.push({
                     col: $this.attr('gs-x'),
@@ -187,17 +251,24 @@ ${json[index].description}"></a>`
                     aggregation: getURLParameter($('img', $this), 'aggregation')
                 });
             });
+
             projectAction.setDashboardConfiguration($(page).attr('id'), JSON.stringify(items), function () {
                 location.reload(true);
             });
+
         });
     });
 
     const hash = window.location.hash;
     if (hash) {
-        $(`ul.nav a[href="${hash}"]`).tab('show');
+        setTimeout(function(){
+            $(`ul.nav a[href="${hash}"]`).tab('show'); }, 500);
+
     } else {
-        $('#tabList').find('a:first').tab('show'); // Select first tab
+
+        setTimeout(function(){
+            $('#tabList').find('a:first').tab('show'); }, 500);
+
     }
 
     $('.nav-tabs a').click(function () {
@@ -206,6 +277,7 @@ ${json[index].description}"></a>`
         window.location.hash = this.hash;
         $('html,body').scrollTop(scrollMem);
     });
+
 })(jQuery3);
 
 function generateTitle(measure, chartDashlet, aggregation) {
@@ -214,7 +286,7 @@ function generateTitle(measure, chartDashlet, aggregation) {
 }
 
 function getURLParameter(obj, parameter) {
-    return $(obj).attr('src').indexOf(parameter) > -1 ? wurl(`?${parameter}`, $(obj).attr('src')) : ''
+    return $(obj).attr('attr_param').indexOf(parameter) > -1 ? wurl(`?${parameter}`, $(obj).attr('attr_param')) : ''
 }
 
 function encode(toEncode) {
@@ -224,4 +296,14 @@ function encode(toEncode) {
         .replace(/\(/g, '%28')
         .replace(/\)/g, '%29')
         .replace(/\*/g, '%2A');
+}
+function makeid(length) {
+    var result = [];
+    var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var charactersLength = characters.length;
+    while (length > 0) {
+        length = length - 1;
+        result.push(characters.charAt(Math.floor(Math.random() * charactersLength)));
+    }
+    return result.join('');
 }

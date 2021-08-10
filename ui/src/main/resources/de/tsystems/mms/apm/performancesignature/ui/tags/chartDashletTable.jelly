@@ -33,13 +33,10 @@
                 var chartdashlet='${utils.encodeString(it.name)}';
                 jQuery3.loadchart(measure, testcase, chartdashlet);
             </script>
-<!--                        <img style="margin: 3px;" class="img-thumbnail"-->
-<!--                             src="./summarizerGraph?width=410&amp;height=300&amp;measure=${utils.encodeString(measure.name)}&amp;testcase=${utils.encodeString(dashboardReport.name)}&amp;chartdashlet=${utils.encodeString(it.name)}"-->
-<!--                             width="410" height="300"/>-->
         </j:forEach>
         <br/>
         <br/>
-        <table class="table table-striped table-bordered">
+        <table class="table table-bordered table-striped">
             <thead>
                 <tr>
                     <th rowspan="2">${%Measure}</th>

@@ -211,6 +211,7 @@ public class PerfSigProjectAction extends PerfSigBaseAction implements Prominent
         String measure = jsonDashletToRender.getMeasure();
         String buildCount = jsonDashletToRender.getCustomBuildCount();
         String aggregation = jsonDashletToRender.getAggregation();
+        final String customMeasureName = jsonDashletToRender.getCustomName();
         int customBuildCount = 0;
         int i = 0;
 
@@ -250,9 +251,10 @@ public class PerfSigProjectAction extends PerfSigBaseAction implements Prominent
                 break;
             }
         }
-
+        String chartTitle = StringUtils.isBlank(customMeasureName) ? PerfSigUIUtils.generateTitle(measure, chartDashlet, aggregation) : customMeasureName;
         Bar bar=new Bar();
         CategoryAxis categoryAxis=new CategoryAxis();
+        categoryAxis.interval(3);
         Option option=new Option();
         Tooltip toolTip=new Tooltip();
         toolTip.setTrigger(Trigger.axis);
@@ -260,18 +262,23 @@ public class PerfSigProjectAction extends PerfSigBaseAction implements Prominent
         textStyle.setFontStyle(FontStyle.normal);
         textStyle.setFontFamily("sans-serif");
         textStyle.setFontSize(15);
-        textStyle.setFontWeight(FontWeight.normal);
+        textStyle.setFontWeight(FontWeight.bold);
+        textStyle.setWidth(300);
+        textStyle.setOverflow("break");
+
 
         BackgroundStyle backgroundStyle=new BackgroundStyle();
         backgroundStyle.setColor("rgba(180, 180, 180, 0.2)");
         bar.setColor(color);
         bar.setShowBackground(true);
+        bar.setAnimation(true);
         NameTextStyle nameTextStyle=new NameTextStyle();
         nameTextStyle.setFontWeight(FontWeight.bolder);
 
         AxisLabel axisLabel=new AxisLabel();
-        axisLabel.setInterval(0);
+        axisLabel.setInterval(2);
         axisLabel.setRotate(90);
+        axisLabel.setFontWeight("bold");
 
         ValueAxis valueAxis=new ValueAxis();
         valueAxis.setName(unit);
@@ -280,9 +287,11 @@ public class PerfSigProjectAction extends PerfSigBaseAction implements Prominent
         option.yAxis(valueAxis);
         categoryAxis.setData(data);
         categoryAxis.axisLabel(axisLabel);
+        categoryAxis.minInterval(5);
         option.xAxis(categoryAxis);
         Title title=new Title();
-        title.setText(chartDashlet);
+        title.textStyle(textStyle);
+        title.setText(chartTitle);
         title.setLeft("center");
         option.setTitle(title);
         option.tooltip(toolTip);

@@ -2,7 +2,7 @@
 
 const path = require('path');
 const MiniCSSExtractPlugin = require('mini-css-extract-plugin');
-const {CleanWebpackPlugin: CleanPlugin} = require('clean-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 module.exports = {
     mode: 'development',
@@ -19,6 +19,7 @@ module.exports = {
         jquery: 'jQuery'
     },
     module: {
+
         rules: [
             {
                 test: /\.(css|less)$/i,
@@ -64,6 +65,6 @@ module.exports = {
         },
         // Clean all assets within the specified output.
         // It will not clean copied fonts
-        new CleanPlugin()
+        new CleanWebpackPlugin()
     ]
 };

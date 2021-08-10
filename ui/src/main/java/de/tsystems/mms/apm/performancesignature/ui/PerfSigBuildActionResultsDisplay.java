@@ -206,7 +206,9 @@ public class PerfSigBuildActionResultsDisplay implements ModelObject {
             textStyle.setFontStyle(FontStyle.normal);
             textStyle.setFontFamily("sans-serif");
             textStyle.setFontSize(15);
-            textStyle.setFontWeight(FontWeight.normal);
+            textStyle.setWidth(250);
+            textStyle.setOverflow("break");
+            textStyle.setFontWeight(FontWeight.bold);
             Tooltip tooltip=new Tooltip();
             tooltip.setTrigger(Trigger.axis);
             option.setTooltip(tooltip);;
@@ -259,7 +261,9 @@ public class PerfSigBuildActionResultsDisplay implements ModelObject {
             textStyle.setFontStyle(FontStyle.normal);
             textStyle.setFontFamily("sans-serif");
             textStyle.setFontSize(15);
-            textStyle.setFontWeight(FontWeight.normal);
+            textStyle.setWidth(250);
+            textStyle.setOverflow("break");
+            textStyle.setFontWeight(FontWeight.bold);
             Tooltip tooltip=new Tooltip();
             tooltip.setTrigger(Trigger.axis);
             option.setTooltip(tooltip);;
