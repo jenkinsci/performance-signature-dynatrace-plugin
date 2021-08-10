@@ -136,7 +136,6 @@ import * as echarts from 'echarts';
  <div id="ECharts" style="height:265px; width: 410px; display: none"></div>
 <img class="img-thumbnail" height="265" width="410"  src="" attr_param="./generateGraph?id=${$('#measure', page).val()}${request_parameter}&amp;aggregation=${$('#aggregation', page).val()}${randomParam}">`
                 });
-                debugger;
                 var uri="./generateGraph?id="+$('#measure', page).val()+request_parameter+"&aggregation="+$('#aggregation', page).val()+randomParam;
                 generateECharts(uri).then(function(data) {
                     var chartDom = document.getElementById("ECharts");
@@ -236,7 +235,6 @@ ${json[index].description}"></a>`
         $('#donebutton', this).click(function () {
             const items = [];
             $('.grid-stack-item.ui-draggable', page).each(function () {
-                debugger;
                 const $this = $(this);
                 items.push({
                     col: $this.attr('gs-x'),
