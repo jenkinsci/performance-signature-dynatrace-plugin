@@ -29,7 +29,7 @@
         <dependency>
             <groupId>org.jenkins-ci.plugins</groupId>
             <artifactId>Parameterized-Remote-Trigger</artifactId>
-            <version>3.0.1</version>
+            <version>3.1.5.1</version>
         </dependency>
         <dependency>
             <groupId>org.jenkins-ci.plugins</groupId>
