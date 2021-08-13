@@ -32,7 +32,7 @@
     "webpack-cli": "^4.7.2"
   },
   "dependencies": {
-    "gridstack": "^4.2.5",
+    "gridstack": "^4.2.6",
     "lightbox2": "^2.11.3",
     "wurl": "^2.5.4"
   },
