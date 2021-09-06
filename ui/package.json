@@ -28,7 +28,7 @@
     "eslint-plugin-only-warn": "^1.0.3",
     "mini-css-extract-plugin": "^2.2.0",
     "style-loader": "^3.2.1",
-    "webpack": "5.50.0",
+    "webpack": "5.52.0",
     "webpack-cli": "^4.8.0"
   },
   "dependencies": {
