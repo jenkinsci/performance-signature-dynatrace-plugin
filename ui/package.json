@@ -23,7 +23,7 @@
     "@babel/preset-env": "^7.15.0",
     "babel-loader": "^8.2.2",
     "clean-webpack-plugin": "^4.0.0",
-    "css-loader": "^6.2.0",
+    "css-loader": "^6.4.0",
     "eslint": "^7.32.0",
     "eslint-plugin-only-warn": "^1.0.3",
     "mini-css-extract-plugin": "^2.4.2",
