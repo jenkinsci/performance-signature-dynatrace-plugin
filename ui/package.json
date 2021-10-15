@@ -20,7 +20,7 @@
   "devDependencies": {
     "@babel/cli": "^7.15.7",
     "@babel/core": "^7.15.8",
-    "@babel/preset-env": "^7.15.0",
+    "@babel/preset-env": "^7.15.8",
     "babel-loader": "^8.2.2",
     "clean-webpack-plugin": "^4.0.0",
     "css-loader": "^6.2.0",
@@ -32,7 +32,7 @@
     "webpack-cli": "^4.8.0"
   },
   "dependencies": {
-    "gridstack": "^4.2.6",
+    "gridstack": "^4.2.7",
     "lightbox2": "^2.11.3",
     "wurl": "^2.5.4"
   },
