@@ -1,4 +1,4 @@
-# Performance Signature with Dynatrace (AppMon) for Jenkins
+# Performance Signature with Dynatrace for Jenkins
 [![Build Status](https://ci.jenkins.io/job/Plugins/job/performance-signature-dynatrace-plugin/job/master/badge/icon)](https://ci.jenkins.io/job/Plugins/job/performance-signature-dynatrace-plugin/job/master/)
 [![Jenkins Plugin](https://img.shields.io/jenkins/plugin/v/performance-signature-dynatracesaas.svg)](https://plugins.jenkins.io/performance-signature-dynatracesaas/)
 [![Changelog](https://img.shields.io/github/v/tag/jenkinsci/performance-signature-dynatrace-plugin?label=changelog)](https://github.com/jenkinsci/performance-signature-dynatrace-plugin/blob/master/CHANGELOG.md)
@@ -41,7 +41,6 @@ Send a [mail](mailto:performance@t-systems-mms.com) to the Application Performan
 
 The Performance Signature evaluates aggregated load and performance data from Dynatrace after each build.
 We are currently supporting three data sources:
-* Dynatrace Application Monitoring (AppMon)
 * Dynatrace SaaS/Manged
 * Remote Jenkins Jobs with enabled Performance Signature
 
