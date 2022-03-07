@@ -49,7 +49,7 @@
         <dependency>
             <groupId>io.jenkins.plugins</groupId>
             <artifactId>data-tables-api</artifactId>
-            <version>1.10.25-3</version>
+            <version>1.11.4-2</version>
         </dependency>
     </dependencies>
 </project>
