@@ -29,7 +29,7 @@
     "mini-css-extract-plugin": "^2.4.2",
     "style-loader": "^3.3.0",
     "webpack": "5.58.2",
-    "webpack-cli": "^4.9.0"
+    "webpack-cli": "^5.0.0"
   },
   "dependencies": {
     "gridstack": "^4.3.0",
