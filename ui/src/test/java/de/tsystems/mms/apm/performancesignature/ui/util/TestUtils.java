@@ -16,7 +16,7 @@
 
 package de.tsystems.mms.apm.performancesignature.ui.util;
 
-import com.gargoylesoftware.htmlunit.html.DomText;
+import org.htmlunit.html.DomText;
 
 import java.util.List;
 
