@@ -1,5 +1,10 @@
 ## Performance Signature: Dynatrace AppMon
 
+> **Deprecated and no longer maintained.** Development and maintenance have ended due to insufficient maintainer resources.
+> No further releases, bug fixes, security fixes, compatibility updates, or project support are planned.
+> This repository is being archived. The documentation below is retained as historical reference and may be outdated.
+> See the [end-of-maintenance notice](https://github.com/jenkinsci/performance-signature-dynatrace-plugin#end-of-maintenance).
+
 ### 1. Application overview
 This chapter includes all required information to get a brief overview about the available features and the requirements to run the application.
 

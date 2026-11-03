@@ -4,18 +4,37 @@
 [![Changelog](https://img.shields.io/github/v/tag/jenkinsci/performance-signature-dynatrace-plugin?label=changelog)](https://github.com/jenkinsci/performance-signature-dynatrace-plugin/blob/master/CHANGELOG.md)
 [![Jenkins Plugin Installs](https://img.shields.io/jenkins/plugin/i/performance-signature-ui?color=blue)](https://plugins.jenkins.io/performance-signature-dynatrace/)
 
+## End of maintenance
+
+**Deprecated and no longer maintained as of November 3, 2026.**
+
+Development and maintenance have ended due to insufficient maintainer resources.
+No further releases, bug fixes, security fixes, compatibility updates, or project support are planned.
+This repository is being archived and retained for reference.
+
+This applies to all plugins in this repository:
+
+* `performance-signature-dynatracesaas` (Dynatrace SaaS/Managed)
+* `performance-signature-ui` (shared UI)
+* `performance-signature-viewer` (Viewer)
+* `performance-signature-dynatrace` (legacy Dynatrace AppMon, already deprecated)
+
+Previously published releases are not being removed from Jenkins Update Centers as part of this retirement.
+Existing installations are not automatically disabled, but users should evaluate alternatives before continuing to rely on these plugins.
+New installations are not recommended. The documentation below is retained as historical reference and may be outdated.
+
+## Project overview
+
 Current software products are created with the help of flexible and agile systems in a continuous integration (CI) environment. Such environments include a
 CI-Server like Jenkins. The Performance Signature collects performance values during a build and evaluates and compares the result with previous builds and
 non-functional requirements. Several software tests can be run and evaluated automatically, so that the most important key performance indicators (KPI) can be
 summarized and be available for all project participants very quickly.
 
-### Get in touch with Application Performance Experts
+### Original project team
 
 ![T-Systems](https://www.t-systems-mms.com/typo3conf/ext/mkmms/Resources/Public/img/logos/logo.png)
 
 **T-Systems Multimedia Solutions GmbH**
-
-Send a [mail](mailto:performance@t-systems-mms.com) to the Application Performance Team
 
 ### Awards
 * Winner of the Dynatrace Solution Innovation Award EMEA 2016
@@ -40,7 +59,7 @@ Send a [mail](mailto:performance@t-systems-mms.com) to the Application Performan
 ## Introduction
 
 The Performance Signature evaluates aggregated load and performance data from Dynatrace after each build.
-We are currently supporting three data sources:
+The implementation includes the following data sources:
 * Dynatrace SaaS/Manged
 * Remote Jenkins Jobs with enabled Performance Signature
 
@@ -53,7 +72,7 @@ Find below the documentation of each component.
 ## Installation
 ### Using Jenkins Update Center
 
-The recommended way of installing the plugin is by using the Update Center (plugin directory). Navigate to `Manage Jenkins -> Manage Plugins` page and switch to the `Available` tab. Search for the keyword "Performance Signature:" and install the plugin.
+Published releases can be found in the Update Center (plugin directory). Navigate to `Manage Jenkins -> Manage Plugins` page and switch to the `Available` tab. Search for the keyword "Performance Signature:".
 
 ### Manual Installation
 
@@ -67,7 +86,8 @@ This procedure is meant for developers, who want to install a locally built plug
 
 ## Problems? Questions? Suggestions?
 
-Contact the Performance Experts at T-Systems: `performance@t-systems-mms.com` for professional support or consultancy. T-Systems offers support packages starting at 500 € p.a.
+The project is no longer maintained. Issues and pull requests are closed as part of the repository's archival.
+See [End of maintenance](#end-of-maintenance) for the scope of the retirement.
 
 ## Additional Resources
 

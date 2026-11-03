@@ -1,5 +1,10 @@
 ## Performance Signature: Dynatrace SaaS/Managed
 
+> **Deprecated and no longer maintained.** Development and maintenance have ended due to insufficient maintainer resources.
+> No further releases, bug fixes, security fixes, compatibility updates, or project support are planned.
+> This repository is being archived. The documentation below is retained as historical reference and may be outdated.
+> See the [end-of-maintenance notice](https://github.com/jenkinsci/performance-signature-dynatrace-plugin#end-of-maintenance).
+
 ### Features
 
 * Implements continuous performance measurements during load tests with possibility to utilize the full power of Dynatrace (monitoring, analyze problems & root causes)
@@ -12,7 +17,7 @@
 ### Installation
 #### Using Jenkins Update Center 
 
-The recommended way of installing the plugin is by the Update Center (plugin directory). Navigate to `Manage Jenkins -> Manage Plugins` page and switch to the `Available` tab. Search for the "Dynatrace" keyword and install the plugin.
+Published releases can be found in the Update Center (plugin directory). Navigate to `Manage Jenkins -> Manage Plugins` page and switch to the `Available` tab. Search for the "Dynatrace" keyword.
 
 #### Manual Installation
 

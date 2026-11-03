@@ -1,12 +1,17 @@
 ## Performance Signature: Viewer
 
+> **Deprecated and no longer maintained.** Development and maintenance have ended due to insufficient maintainer resources.
+> No further releases, bug fixes, security fixes, compatibility updates, or project support are planned.
+> This repository is being archived. The documentation below is retained as historical reference and may be outdated.
+> See the [end-of-maintenance notice](https://github.com/jenkinsci/performance-signature-dynatrace-plugin#end-of-maintenance).
+
 This Jenkins plugin utilizes the [Parameterized Remote Trigger plugin](https://plugins.jenkins.io/Parameterized-Remote-Trigger) and fetches all Performance Signature data from a remote Jenkins build.
 This plugin is a native Jenkins Pipeline plugin without any support for FreeStyle Jobs.
 
 ### Installation
 #### Using Jenkins Update Center 
 
-The recommended way of installing the plugin is by the Update Center (plugin directory). Navigate to `Manage Jenkins -> Manage Plugins` page and switch to the `Available` tab. Search for the "Viewer" keyword and install the plugin.
+Published releases can be found in the Update Center (plugin directory). Navigate to `Manage Jenkins -> Manage Plugins` page and switch to the `Available` tab. Search for the "Viewer" keyword.
 
 #### Manual Installation
 
